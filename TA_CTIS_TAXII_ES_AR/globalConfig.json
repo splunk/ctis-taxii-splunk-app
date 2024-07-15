@@ -112,7 +112,7 @@
         "dashboard": {
             "panels": [
                 {
-                    "name": "default"
+                    "name": "errors_in_the_addon"
                 }
             ]
         }
@@ -120,9 +120,9 @@
     "meta": {
         "name": "TA_CTIS_TAXII_ES_AR",
         "restRoot": "TA_CTIS_TAXII_ES_AR",
-        "version": "0.0.0R4c44a6a",
+        "version": "0.0.0Rbcc608f",
         "displayName": "CTIS TAXII ES Adaptive Response Add-on",
         "schemaVersion": "0.0.7",
-        "_uccVersion": "5.47.0"
+        "_uccVersion": "5.40.0"
     }
 }
