@@ -2,6 +2,7 @@
 ## Setup
 - Install `splunk-add-on-ucc-framework` pip package. See https://splunk.github.io/addonfactory-ucc-generator/#installation
 - SplunkUI Toolkit requirements: https://splunkui.splunk.com/Toolkits/SUIT/Overview
+- rsync is required for the `copy-ui-to-ucc-app.sh` script
  
 ## Custom Build Steps
 ```bash
@@ -10,6 +11,8 @@ yarn run build # From project root
 
 # Copy the SplunkUI app files to the source of the UCC app
 ./copy-ui-to-ucc-app.sh
+
+# If adding new views, manually edit TA_CTIS_TAXII_ES_AR/package/default/data/ui/nav/default.xml
 
 # Rebuild the UCC app
 cd TA_CTIS_TAXII_ES_AR # move into UCC app directory containing package dir
