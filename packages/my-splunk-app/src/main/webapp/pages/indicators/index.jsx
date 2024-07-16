@@ -1,18 +1,20 @@
 import React from 'react';
 
 import layout from '@splunk/react-page';
-import MyReactComponent from '@splunk/my-react-component';
 import { getUserTheme } from '@splunk/splunk-utils/themes';
 
 import { StyledContainer, StyledGreeting } from './StartStyles';
-
+import ExpandableRows from "./expandableRows";
+import SearchControlGroup from "./search";
+import SearchPaginator from "./paginator";
 getUserTheme()
     .then((theme) => {
         layout(
             <StyledContainer>
-                <StyledGreeting>Indicators page</StyledGreeting>
-                <div>Your component will appear below.</div>
-                <MyReactComponent name="from inside MyReactComponent" />
+                <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
+                <SearchControlGroup />
+                <ExpandableRows />
+                <SearchPaginator />
             </StyledContainer>,
             {
                 theme,
