@@ -3,7 +3,7 @@ import React from 'react';
 import layout from '@splunk/react-page';
 import { getUserTheme } from '@splunk/splunk-utils/themes';
 
-import { StyledContainer, StyledGreeting } from './StartStyles';
+import { StyledContainer, StyledGreeting } from './styles';
 import ExpandableRows from "./expandableRows";
 import SearchControlGroup from "./search";
 import SearchPaginator from "./paginator";
