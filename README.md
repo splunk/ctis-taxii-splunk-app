@@ -1,4 +1,7 @@
-# Contributing to MyReactRepo
+# CTIS TAXII ES Integration App
+## Background
+https://splunk.atlassian.net/browse/FDSE-2250
+
 ## Setup
 - Install `splunk-add-on-ucc-framework` pip package. See https://splunk.github.io/addonfactory-ucc-generator/#installation
 - SplunkUI Toolkit requirements: https://splunkui.splunk.com/Toolkits/SUIT/Overview
