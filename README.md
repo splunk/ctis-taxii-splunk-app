@@ -7,9 +7,10 @@ https://splunk.atlassian.net/browse/FDSE-2250
 - SplunkUI Toolkit requirements: https://splunkui.splunk.com/Toolkits/SUIT/Overview
 - rsync is required for the `copy-ui-to-ucc-app.sh` script
  
-## Custom Build Steps
+## Build
 ```bash
 # Just run the full build script from project root
+# Read the script code for details
 ./full-build.sh
 ```
 
