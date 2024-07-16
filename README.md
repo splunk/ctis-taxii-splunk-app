@@ -6,21 +6,14 @@
  
 ## Custom Build Steps
 ```bash
-# Build the SplunkUI app
-yarn run build # From project root
-
-# Copy the SplunkUI app files to the source of the UCC app
-./copy-ui-to-ucc-app.sh
-
-# If adding new views, manually edit TA_CTIS_TAXII_ES_AR/package/default/data/ui/nav/default.xml
-
-# Rebuild the UCC app
-cd TA_CTIS_TAXII_ES_AR # move into UCC app directory containing package dir
-# instead of ucc-gen build, contains additional build steps
-./ucc-build.sh 
-
-# Symblink the app UCC builds in the output directory to your $SPLUNK_HOME/etc/apps directory
+# Just run the full build script from project root
+./full-build.sh
 ```
+
+May need to restart Splunk to see new views added to nav.
+Alternatively can try:
+- http://localhost:8001/en-GB/_bump
+- http://localhost:8001/en-GB/debug/refresh
 
 ## Custom REST endpoints
 Endpoints exposed on web port require Splunk cookies to access via `web.conf`.

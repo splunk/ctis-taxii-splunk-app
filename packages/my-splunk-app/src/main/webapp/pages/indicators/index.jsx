@@ -10,7 +10,7 @@ getUserTheme()
     .then((theme) => {
         layout(
             <StyledContainer>
-                <StyledGreeting>Hello, from inside MySplunkApp!</StyledGreeting>
+                <StyledGreeting>Indicators page</StyledGreeting>
                 <div>Your component will appear below.</div>
                 <MyReactComponent name="from inside MyReactComponent" />
             </StyledContainer>,

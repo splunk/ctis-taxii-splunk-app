@@ -1,7 +1,8 @@
 <?xml version="1.0" ?>
 <nav>
-    <view default="true" name="configuration"/>
+    <view name="configuration"/>
     <view name="dashboard"/>
-    <view name="search"/>
-    <view name="start"/>
+    <view default="true" name="search"/>
+    <view name="indicators"/>
+    <view name="groupings"/>
 </nav>
