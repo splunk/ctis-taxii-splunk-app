@@ -1,7 +1,7 @@
 {
     "schemaVersion": "2.0.0",
     "info": {
-        "title": "CTIS TAXII ES Adaptive Response Add-on",
+        "title": "CTIS TAXII ES Add-on",
         "id": {
             "group": null,
             "name": "TA_CTIS_TAXII_ES_AR_2",
@@ -15,7 +15,7 @@
             }
         ],
         "releaseDate": null,
-        "description": "CTIS TAXII ES Adaptive Response Add-on",
+        "description": "CTIS TAXII ES Add-on",
         "classification": {
             "intendedAudience": "IT Professionals",
             "categories": [
