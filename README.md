@@ -15,6 +15,15 @@ Alternatively can try:
 - http://localhost:8001/en-GB/_bump
 - http://localhost:8001/en-GB/debug/refresh
 
+## Adding new views
+- Add files to the SplunkUI app `packages/my-splunk-app`
+  - HTML template: `packages/my-splunk-app/src/main/resources/splunk/appserver/templates/new-view.html`
+  - XML view: `packages/my-splunk-app/src/main/resources/splunk/default/data/ui/views/new-view.xml`
+  - JS/JSX: `packages/my-splunk-app/src/main/webapp/pages/new-view/index.jsx` and relevant js files
+- Update the `default.xml` in the UCC app: `TA_CTIS_TAXII_ES_AR/package/default/data/ui/nav/default.xml`
+- rebuild with the full build script
+- restart Splunk
+
 ## Custom REST endpoints
 Endpoints exposed on web port require Splunk cookies to access via `web.conf`.
 E.g. `http://localhost:8001/en-GB/splunkd/__raw/servicesNS/nobody/TA_CTIS_TAXII_ES_AR_2/say-hello?output_mode=json`
