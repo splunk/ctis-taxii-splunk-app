@@ -90,7 +90,7 @@ function IndicatorActionButtons({row}){
 }
 function ExpandableRows() {
     return (
-        <Table stripeRows rowExpansion="single">
+        <Table stripeRows rowExpansion="multi">
             <Table.Head>
                 <Table.HeadCell>Indicator ID</Table.HeadCell>
                 <Table.HeadCell>Name</Table.HeadCell>
