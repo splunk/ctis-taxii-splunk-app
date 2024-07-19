@@ -9,11 +9,11 @@ const StyledList = styled(List)`
 `;
 
 export function GroupingsLinks({groupings}) {
-    return (<StyledList ordered>
+    return (<div><StyledList ordered>
         {groupings.map((grouping) => (
             <List.Item>
                 <a key={grouping} href={`/groupings/${grouping}`}>{grouping}</a>
             </List.Item>
         ))}
-    </StyledList>);
+    </StyledList></div>);
 }

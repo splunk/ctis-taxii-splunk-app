@@ -4,7 +4,7 @@ import layout from '@splunk/react-page';
 import {getUserTheme} from '@splunk/splunk-utils/themes';
 
 import {StyledContainer, StyledGreeting} from './styles';
-import ExpandableDataTable from "./ExpandableDataTable";
+import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import SearchPaginator from "./paginator";
 import {SearchBar} from "@splunk/my-react-component/src/SearchBar";
 import Button from "@splunk/react-ui/Button";

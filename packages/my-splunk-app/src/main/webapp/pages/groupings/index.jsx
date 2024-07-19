@@ -1,18 +1,72 @@
 import React from 'react';
 
 import layout from '@splunk/react-page';
-import MyReactComponent from '@splunk/my-react-component';
-import { getUserTheme } from '@splunk/splunk-utils/themes';
+import {getUserTheme} from '@splunk/splunk-utils/themes';
 
-import { StyledContainer, StyledGreeting } from './StartStyles';
+import {StyledContainer, StyledGreeting} from './styles';
+import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
+import SearchPaginator from "./paginator";
+import {SearchBar} from "@splunk/my-react-component/src/SearchBar";
+import Button from "@splunk/react-ui/Button";
+import Plus from '@splunk/react-icons/Plus';
+import Pencil from '@splunk/react-icons/Pencil';
+import TrashCanCross from '@splunk/react-icons/TrashCanCross';
+import mockGroupingsData from "./mockGroupingsData";
+import {GroupingsLinks} from "./groupingsLinks";
+import PaperPlane from '@splunk/react-icons/PaperPlane';
 
+
+
+const handleChange = (e, {value: searchValue}) => {
+    console.log(searchValue);
+};
+const SEARCH_FIELD_OPTIONS = [
+    {label: 'Any Field', value: '1'},
+    {label: 'Indicator ID', value: '2'},
+    {label: 'Splunk Field', value: '3'},
+    {label: 'TLP Rating', value: '4'},
+];
+
+function GroupingActionButtons({row}){
+    return (<div>
+        <Button icon={<PaperPlane/>} label="Submit to CTIS" appearance="primary" />
+        <Button icon={<Pencil/>} label={`Edit`} appearance="secondary" />
+        <Button icon={<TrashCanCross/>} label={`Delete`} appearance="destructive" />
+    </div>)
+}
+const mappingOfColumnNameToCellValue = [
+    {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
+    {columnName: "Name", getCellContent: (row) => row.name},
+    {columnName: "Description", getCellContent: (row) => row.description},
+    {columnName: "Created At", getCellContent: (row) => row.created_at},
+    {columnName: "Actions", getCellContent: (row) => <GroupingActionButtons row={row}/>},
+]
+
+const expansionFieldNameToCellValue = {
+    "Grouping ID": (row) => row.grouping_id,
+    "Name": (row) => row.name,
+    "Description": (row) => row?.description || "No description provided",
+    "Created At": (row) => row.created_at,
+    "Created By": (row) => row.created_by_ref,
+    "Modified At": (row) => row.modified_at,
+    "Context": (row) => row.context,
+    "Object Refs": (row) => <GroupingsLinks groupings={row.object_refs}/>,
+}
 getUserTheme()
     .then((theme) => {
         layout(
             <StyledContainer>
                 <StyledGreeting>Groupings</StyledGreeting>
-                <div>Your component will appear below.</div>
-                <MyReactComponent name="from inside MyReactComponent" />
+                <div>
+                    {/*// TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page*/}
+                    <Button icon={<Plus/>} label="New Grouping" appearance="primary" />
+                </div>
+                <SearchBar handleChange={handleChange} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
+                <ExpandableDataTable data={mockGroupingsData}
+                                     rowKeyFunction={(row) => row.grouping_id}
+                                     expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
+                                     mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue} />
+                <SearchPaginator />
             </StyledContainer>,
             {
                 theme,
