@@ -20,6 +20,7 @@
   },
   "main": "MyReactComponent.js",
   "dependencies": {
+    "@splunk/moment": "^0.7.0",
     "@splunk/react-ui": "^4.30.0",
     "@splunk/themes": "^0.18.0"
   },

@@ -1586,6 +1586,15 @@
   resolved "https://registry.npmjs.org/@splunk/eslint-config/-/eslint-config-4.0.0.tgz"
   integrity sha512-u2ZbzoLVJUtcBwX5RcAzET9cGuKjFrDOHLcA0FswmhPkrfSWVl7Ajd6ewGWCyG3tJxXSPvuYutD7SPeSBurIMg==
 
+"@splunk/moment@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.npmjs.org/@splunk/moment/-/moment-0.7.0.tgz"
+  integrity sha512-cTNYeVVl+EP929oUKDTeTsFB1bsxWxF+qVg8lhbY3+EQTV7zqz0tJGHzXslyMk77RiS85IF1aqyAiSAsbUhRsg==
+  dependencies:
+    "@splunk/splunk-utils" "^3.0.0"
+    "@splunk/ui-utils" "^1.6.0"
+    lodash "^4.17.14"
+
 "@splunk/my-react-component@^0.0.1", "@splunk/my-react-component@file:/Users/bliew/dev/ctis-taxii-es-ar/packages/my-react-component":
   version "0.0.1"
   resolved "file:packages/my-react-component"
@@ -1597,6 +1606,7 @@
   version "0.0.1"
   resolved "file:packages/my-splunk-app"
   dependencies:
+    "@splunk/moment" "^0.7.0"
     prop-types "^15.8.1"
     uuid "^10.0.0"
 
@@ -1644,7 +1654,7 @@
     tinycolor2 "^1.4.1"
     use-typed-event-listener "^3.0.0"
 
-"@splunk/splunk-utils@^3.0.1", "@splunk/splunk-utils@^3.1.0":
+"@splunk/splunk-utils@^3.0.0", "@splunk/splunk-utils@^3.0.1", "@splunk/splunk-utils@^3.1.0":
   version "3.1.0"
   resolved "https://registry.npmjs.org/@splunk/splunk-utils/-/splunk-utils-3.1.0.tgz"
   integrity sha512-x4OSnnr5VG23uMtg8HNVU0SYKVQXEdQskLbnBgDchLNkcc5NuuWIKWd6C11BVQiOqtY8r5i6/qjU/VG/U98Atg==
