@@ -3,7 +3,10 @@
     <view name="configuration"/>
 <!--    <view name="dashboard"/>-->
     <view name="search"/>
-    <view default="true" name="indicators"/>
+    <collection label="Indicators">
+        <view default="true" name="indicators"/>
+        <view name="new_indicator"/>
+    </collection>
     <view name="groupings"/>
     <view name="submissions"/>
 </nav>

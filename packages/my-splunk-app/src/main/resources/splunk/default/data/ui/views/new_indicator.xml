@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="my-splunk-app:/templates/new_indicator.html" type="html">
+	<label>New Indicator</label>
+</view>

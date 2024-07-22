@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "node bin/build.js build",
+    "build": "yarn run eslint; node bin/build.js build",
     "eslint": "eslint src --ext \".js,.jsx\"",
     "eslint:ci": "yarn run eslint -f junit -o test-reports/lint-results.xml",
     "eslint:fix": "eslint src --ext \".js, .jsx\" --fix",
@@ -13,12 +13,15 @@
     "start": "webpack --watch",
     "stylelint": "stylelint \"src/**/*.{js,jsx}\" --config stylelint.config.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "prop-types": "^15.8.1",
+    "uuid": "^10.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.2.0",
-    "@splunk/my-react-component": "^0.0.1",
     "@splunk/babel-preset": "^4.0.0",
     "@splunk/eslint-config": "^4.0.0",
+    "@splunk/my-react-component": "^0.0.1",
     "@splunk/react-page": "^7.0.0",
     "@splunk/react-ui": "^4.30.0",
     "@splunk/splunk-utils": "^3.0.1",
