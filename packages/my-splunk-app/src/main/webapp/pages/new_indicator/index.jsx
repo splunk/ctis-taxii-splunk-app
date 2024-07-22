@@ -10,11 +10,17 @@ import PropTypes from 'prop-types';
 import {StyledContainer, StyledGreeting} from './styles';
 
 
-function MyForm({initialIndicatorId}) {
+function MyForm({initialIndicatorId, splunkFieldName, splunkFieldValue}) {
     return (
         <form>
             <ControlGroup label="Indicator ID">
                 <Text canClear value={initialIndicatorId} />
+            </ControlGroup>
+            <ControlGroup label="Splunk Field Name">
+                <Text canClear value={splunkFieldName} />
+            </ControlGroup>
+            <ControlGroup label="Splunk Field Value">
+                <Text canClear value={splunkFieldValue} />
             </ControlGroup>
         </form>
     );
@@ -22,13 +28,22 @@ function MyForm({initialIndicatorId}) {
 MyForm.propTypes = {
     initialIndicatorId: PropTypes.string,
 };
-
+function getUrlQueryParams() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const splunkFieldName = urlParams.get('splunkFieldName');
+    const splunkFieldValue = urlParams.get('splunkFieldValue');
+    return {splunkFieldName, splunkFieldValue}
+}
 getUserTheme()
     .then((theme) => {
+        const {splunkFieldName, splunkFieldValue} = getUrlQueryParams();
         layout(
             <StyledContainer>
                 <StyledGreeting>New Indicator of Compromise (IoC)</StyledGreeting>
-                <MyForm initialIndicatorId={`indicator--${uuidv4()}`} />
+                <MyForm initialIndicatorId={`indicator--${uuidv4()}`}
+                        splunkFieldName={splunkFieldName}
+                        splunkFieldValue={splunkFieldValue}
+                />
 
             </StyledContainer>,
             {
