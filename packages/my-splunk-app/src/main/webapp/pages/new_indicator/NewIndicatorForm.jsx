@@ -4,10 +4,15 @@ import Text from "@splunk/react-ui/Text";
 import TextArea from "@splunk/react-ui/TextArea";
 import Number from "@splunk/react-ui/Number";
 import {DateTimeWithTimezone} from "@splunk/my-react-component/src/DateTimeWithTimezone";
+
 import React from "react";
+
 import PropTypes from "prop-types";
 import {useForm} from "react-hook-form";
 import Button from "@splunk/react-ui/Button";
+import IndicatorIdControl from "./IndicatorIdControl";
+import GroupingIdControl from "./GroupingIdControl";
+import TextControlGroup from "./TextControlGroup";
 
 const GROUPING_ID = "groupingId";
 const INDICATOR_ID = "indicatorId";
@@ -15,52 +20,50 @@ const SPLUNK_FIELD_NAME = "splunkFieldName";
 const SPLUNK_FIELD_VALUE = "splunkFieldValue";
 
 export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, initialSplunkFieldValue}) {
-    const {watch, handleSubmit, setValue, setError, clearErrors, formState: {errors}} = useForm({
+    const {watch, handleSubmit, setValue, trigger, register, formState: {errors}} = useForm({
         defaultValues: {
             [GROUPING_ID]: null,
             [INDICATOR_ID]: initialIndicatorId,
-            [SPLUNK_FIELD_NAME] : initialSplunkFieldName,
-            [SPLUNK_FIELD_VALUE] : initialSplunkFieldValue
+            [SPLUNK_FIELD_NAME]: initialSplunkFieldName,
+            [SPLUNK_FIELD_VALUE]: initialSplunkFieldValue
         }
     });
-    const groupingId = watch(GROUPING_ID);
-    const indicatorId = watch(INDICATOR_ID);
-    const splunkFieldName = watch(SPLUNK_FIELD_NAME);
-    const splunkFieldValue = watch(SPLUNK_FIELD_VALUE);
 
+    register(GROUPING_ID, {required: "Grouping ID is required."});
+    register(INDICATOR_ID, {
+        required: "Indicator ID is required.", pattern: {
+            value: /indicator--.{36,}/,
+            message: "Indicator ID must be 'indicator--' followed by a UUID."
+        }
+    });
+    register(SPLUNK_FIELD_NAME, {required: "Splunk Field Name is required."});
+    register(SPLUNK_FIELD_VALUE, {required: "Splunk Field Value is required."});
 
-    function onSubmit(data) {
+    const onSubmit = async (data) => {
         console.log(data);
+        await trigger(); // TODO can this be removed?
     }
 
     function generateSetValueHandler(fieldName) {
-        return (e, {value}) => setValue(fieldName, value);
+        return (e, {value}) => setValue(fieldName, value, {shouldValidate: true});
+    }
+
+    const formInputProps = (fieldName) => {
+        return {
+            help: errors?.[fieldName]?.message,
+            error: !!errors?.[fieldName],
+            onChange: generateSetValueHandler(fieldName),
+            value: watch(fieldName)
+        }
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <ControlGroup label="Grouping ID">
-                <Select value={groupingId} onChange={generateSetValueHandler(GROUPING_ID)}>
-                    <Select.Option label="Grouping A" value="A"/>
-                    <Select.Option label="Grouping B" value="B"/>
-                </Select>
-            </ControlGroup>
-            <ControlGroup label="Indicator ID" help={errors?.indicatorId?.message} error={!!errors?.indicatorId}>
-                <Text canClear value={indicatorId} onChange={(e, {value}) => {
-                    setValue(INDICATOR_ID, value);
-                    if (!value.startsWith('indicator--')) {
-                        setError(INDICATOR_ID, {type: 'manual', message: 'Indicator ID must begin with "indicator--"'});
-                    } else {
-                        clearErrors(INDICATOR_ID)
-                    }
-                }}/>
-            </ControlGroup>
-            <ControlGroup label="Splunk Field Name">
-                <Text canClear value={splunkFieldName} onChange={generateSetValueHandler(SPLUNK_FIELD_NAME)}/>
-            </ControlGroup>
-            <ControlGroup label="Splunk Field Value">
-                <Text canClear value={splunkFieldValue} onChange={generateSetValueHandler(SPLUNK_FIELD_VALUE)}/>
-            </ControlGroup>
+        <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
+            <GroupingIdControl {...formInputProps(GROUPING_ID)}/>
+            <IndicatorIdControl {...formInputProps(INDICATOR_ID)} />
+            <TextControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} />
+            <TextControlGroup label="Splunk Field Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />
+
             <ControlGroup label="Name">
                 <Text canClear/>
             </ControlGroup>
