@@ -16,6 +16,7 @@
   "dependencies": {
     "@splunk/moment": "^0.7.0",
     "prop-types": "^15.8.1",
+    "react-hook-form": "^7.52.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

@@ -1599,6 +1599,7 @@
   version "0.0.1"
   resolved "file:packages/my-react-component"
   dependencies:
+    "@splunk/moment" "^0.7.0"
     "@splunk/react-ui" "^4.30.0"
     "@splunk/themes" "^0.18.0"
 
@@ -1608,6 +1609,7 @@
   dependencies:
     "@splunk/moment" "^0.7.0"
     prop-types "^15.8.1"
+    react-hook-form "^7.52.1"
     uuid "^10.0.0"
 
 "@splunk/react-icons@^4.6.0":
@@ -8686,6 +8688,11 @@ react-dom@^16.12.0, react-dom@^16.8, "react-dom@^16.8.0  || ^17.0.0", react-dom@
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-hook-form@^7.52.1:
+  version "7.52.1"
+  resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.52.1.tgz"
+  integrity sha512-uNKIhaoICJ5KQALYZ4TOaOLElyM+xipord+Ha3crEFhTntdLvWZqVY49Wqd/0GiVCA/f9NjemLeiNPjG7Hpurg==
+
 react-is@^16.13.1, react-is@^16.7.0, react-is@^16.8.4, react-is@^16.8.6, "react-is@>= 16.8.0":
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
@@ -8733,7 +8740,7 @@ react-test-renderer@^16.12.0:
     react-is "^16.8.6"
     scheduler "^0.19.1"
 
-react@^16.0.0, react@^16.12.0, react@^16.14.0, react@^16.8, "react@^16.8.0  || ^17.0.0", react@<18.0.0, "react@>= 16.8.0", react@>=0.14.0, react@>=16.11, react@>=16.8.0:
+react@^16.0.0, react@^16.12.0, react@^16.14.0, react@^16.8, "react@^16.8.0  || ^17.0.0", "react@^16.8.0 || ^17 || ^18 || ^19", react@<18.0.0, "react@>= 16.8.0", react@>=0.14.0, react@>=16.11, react@>=16.8.0:
   version "16.14.0"
   resolved "https://registry.npmjs.org/react/-/react-16.14.0.tgz"
   integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==

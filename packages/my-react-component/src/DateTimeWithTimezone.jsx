@@ -67,6 +67,7 @@ function getTimeFromMins(totalMinutes) {
     return `${sign}${hoursString}:${minutesString}`
 }
 
+// TODO: unit test this function
 function getUserUTCOffset() {
     const userTimezoneOffsetInMinutes = new Date().getTimezoneOffset() * -1;
     return getTimeFromMins(userTimezoneOffsetInMinutes);
