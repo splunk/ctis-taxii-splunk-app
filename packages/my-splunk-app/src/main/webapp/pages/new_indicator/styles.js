@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
 
 const StyledGreeting = styled.div`
     font-weight: bold;
-    color: ${variables.infoColor};
+    color: ${variables.statusColorInfo};
     font-size: ${variables.fontSizeXXLarge};
 `;
 

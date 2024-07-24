@@ -1,5 +1,4 @@
 import ControlGroup from "@splunk/react-ui/ControlGroup";
-import {DateTimeWithTimezone} from "@splunk/my-react-component/src/DateTimeWithTimezone";
 
 import React from "react";
 
@@ -10,6 +9,7 @@ import TextControlGroup from "./TextControlGroup";
 import TextAreaControlGroup from "./TextAreaControlGroup";
 import NumberControlGroup from "./NumberControlGroup";
 import SelectControlGroup from "./SelectControlGroup";
+import DatetimeControlGroup from "./DateTimeControlGroup";
 
 const GROUPING_ID = "groupingId";
 const INDICATOR_ID = "indicatorId";
@@ -33,7 +33,8 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             [DESCRIPTION]: "",
             [STIX_PATTERN]: "",
             [CONFIDENCE]: 100,
-            [TLP_RATING]: "GREEN"
+            [TLP_RATING]: "GREEN",
+            [VALID_FROM]: new Date().toISOString().slice(0, -1),
         }
     });
 
@@ -51,15 +52,23 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     register(STIX_PATTERN, {required: "STIX Pattern is required."});
     register(TLP_RATING, {required: "TLP Rating is required."});
     register(CONFIDENCE, {required: "Confidence is required."});
-    register(VALID_FROM );
+    register(VALID_FROM, {required: "Valid from is required."});
 
     const onSubmit = async (data) => {
         console.log(data);
-        await trigger(); // TODO can this be removed?
+        await trigger();
     }
 
     function generateSetValueHandler(fieldName) {
-        return (e, {value}) => setValue(fieldName, value, {shouldValidate: true});
+        return (e, extra) => {
+            // In vanilla JS change events only a single event parameter is passed
+            // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event#examples
+            // However for Splunk UI onChange events two values are passed: (event, {name, value})
+            // See code in the examples: https://splunkui.splunk.com/Packages/react-ui/Select?section=examples
+            const value = extra?.value || e.target.value;
+            console.log(e, extra, value)
+            setValue(fieldName, value, {shouldValidate: true})
+        };
     }
 
     const formInputProps = (fieldName) => {
@@ -91,9 +100,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                 {label: "GREEN", value: "GREEN"},
                 {label: "WHITE", value: "WHITE"}
             ]}/>
-            <ControlGroup label="Valid From">
-                <DateTimeWithTimezone/>
-            </ControlGroup>
+            <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
             <ControlGroup>
                 <Button type="submit" label="Submit" appearance="primary" disabled={Object.keys(errors).length > 0}/>
             </ControlGroup>
