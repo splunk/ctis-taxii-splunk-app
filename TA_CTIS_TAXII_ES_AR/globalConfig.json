@@ -120,9 +120,9 @@
     "meta": {
         "name": "TA_CTIS_TAXII_ES_AR",
         "restRoot": "TA_CTIS_TAXII_ES_AR",
-        "version": "0.0.0R7a68687",
+        "version": "0.0.0R81ba88b",
         "displayName": "CTIS TAXII ES Add-on",
         "schemaVersion": "0.0.7",
-        "_uccVersion": "5.40.0"
+        "_uccVersion": "5.47.0"
     }
 }

@@ -5,7 +5,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
-from common import get_logger_for_script, get_json_payload
+try:
+    from common import get_logger_for_script, get_json_payload
+    from cim_to_stix import convert_cim_to_stix2_pattern
+except ImportError as e:
+    sys.stderr.write(f"ImportError: {e}\n")
+    raise e
 
 logger = get_logger_for_script(__file__)
 
@@ -77,8 +82,19 @@ class SuggestStixPatternHandler(PersistentServerConnectionApplication):
         logger.info(f"Handling request: {in_string}")
         input_payload = get_json_payload(in_string)
         logger.info(f"input_payload: {input_payload}")
-        your_name = input_payload.get("name", "Anon")
-        payload = {
-            "text": f"Hello {your_name}!"
-        }
-        return {'payload': payload, 'status': 200}
+        # TODO: make try/except reusable across other handlers
+        #   maybe context manager
+        try:
+            field_name = input_payload.get("splunk_field_name")
+            assert field_name, "splunk_field_name is required"
+
+            field_value = input_payload.get("splunk_field_value")
+            assert field_value, "splunk_field_value is required"
+
+            generated_pattern = convert_cim_to_stix2_pattern(field_name, field_value)
+            payload = {
+                "pattern": generated_pattern
+            }
+            return {'payload': payload, 'status': 200}
+        except Exception as e:
+            return {'payload': {"error": str(e)}, 'status': 400}

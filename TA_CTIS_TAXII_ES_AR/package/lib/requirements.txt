@@ -1,3 +1,4 @@
+stix2
 splunktaucclib
 splunk-sdk
 solnlib
