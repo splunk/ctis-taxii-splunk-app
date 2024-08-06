@@ -2,6 +2,10 @@
 ## Background
 https://splunk.atlassian.net/browse/FDSE-2250
 
+App to support threat intelligence sharing with CTIS's TAXII/STIX server.
+
+This app combines SplunkUI Toolkit and UCC Framework to create a custom Splunk app.
+
 ## Setup
 - Install `splunk-add-on-ucc-framework` pip package. See https://splunk.github.io/addonfactory-ucc-generator/#installation
 - SplunkUI Toolkit requirements: https://splunkui.splunk.com/Toolkits/SUIT/Overview
