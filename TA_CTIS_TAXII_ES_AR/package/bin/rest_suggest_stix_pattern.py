@@ -82,17 +82,3 @@ class SuggestStixPatternHandler(PersistentServerConnectionApplication):
             "text": f"Hello {your_name}!"
         }
         return {'payload': payload, 'status': 200}
-
-    def handleStream(self, handle, in_string):
-        """
-        For future use
-        """
-        raise NotImplementedError(
-            "PersistentServerConnectionApplication.handleStream")
-
-    def done(self):
-        """
-        Virtual method which can be optionally overridden to receive a
-        callback after the request completes.
-        """
-        pass

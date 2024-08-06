@@ -20,6 +20,7 @@ def get_json_payload(in_string: str) -> dict:
     """
     Where in_string is a JSON encoded string with a key "payload".
     The value associated with the key "payload" is also a JSON encoded string.
+    Requires that restmap.conf has passPayload=true.
     """
     in_string_dict = json.loads(in_string)
     payload_json = in_string_dict["payload"]
