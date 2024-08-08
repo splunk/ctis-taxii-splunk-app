@@ -17,7 +17,7 @@ logger = get_logger_for_script(__file__)
 
 
 class Handler(AbstractRestHandler):
-    def handle(self, input_json: dict) -> dict:
+    def handle(self, input_json: dict, session_key: str) -> dict:
         field_name = input_json.get("splunk_field_name")
         assert field_name, "splunk_field_name is required"
 

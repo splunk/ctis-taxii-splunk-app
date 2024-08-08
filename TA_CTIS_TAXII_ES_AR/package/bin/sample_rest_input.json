@@ -40,13 +40,5 @@
   },
   "form": [
   ],
-  "payload": "{\\n    \\"
-  hello
-  \
-  \
-  " : \\"
-  world
-  \
-  \
-  "\\n}"
+  "payload": "{}"
 }

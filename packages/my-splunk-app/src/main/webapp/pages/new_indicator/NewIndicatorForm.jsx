@@ -1,4 +1,6 @@
 import ControlGroup from "@splunk/react-ui/ControlGroup";
+import {createRESTURL} from '@splunk/splunk-utils/url';
+import {getCSRFToken} from '@splunk/splunk-utils/config';
 
 import React from "react";
 
@@ -11,10 +13,10 @@ import NumberControlGroup from "./NumberControlGroup";
 import SelectControlGroup from "./SelectControlGroup";
 import DatetimeControlGroup from "./DateTimeControlGroup";
 
-const GROUPING_ID = "groupingId";
-const INDICATOR_ID = "indicatorId";
-const SPLUNK_FIELD_NAME = "splunkFieldName";
-const SPLUNK_FIELD_VALUE = "splunkFieldValue";
+const GROUPING_ID = "grouping_id";
+const INDICATOR_ID = "indicator_id";
+const SPLUNK_FIELD_NAME = "splunk_field_name";
+const SPLUNK_FIELD_VALUE = "splunk_field_value";
 const NAME = "name";
 const DESCRIPTION = "description";
 const STIX_PATTERN = "stix_pattern";
@@ -57,6 +59,18 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     const onSubmit = async (data) => {
         console.log(data);
         await trigger();
+        console.log(`Errors: ${JSON.stringify(errors)}`);
+
+        // TODO: check if errors and return if there are any
+
+        const resp = await fetch(createRESTURL('create-indicator', {app: 'TA_CTIS_TAXII_ES_AR_2'}),
+            {
+                method: 'POST', body: JSON.stringify(data), headers: {
+                    'X-Splunk-Form-Key': getCSRFToken(),
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+        console.log(resp)
     }
 
     function generateSetValueHandler(fieldName) {
@@ -101,7 +115,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                 {label: "WHITE", value: "WHITE"}
             ]}/>
             <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
-            <ControlGroup>
+            <ControlGroup label="Submit">
                 <Button type="submit" label="Submit" appearance="primary" disabled={Object.keys(errors).length > 0}/>
             </ControlGroup>
             <p>Errors: {JSON.stringify(errors)}</p>

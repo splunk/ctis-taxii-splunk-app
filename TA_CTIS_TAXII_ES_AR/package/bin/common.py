@@ -4,6 +4,9 @@ import os
 import sys
 import abc
 
+# Local imports
+import remote_pdb
+
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 
@@ -22,7 +25,7 @@ class AbstractRestHandler(abc.ABC):
         self.logger = logger
 
     @abc.abstractmethod
-    def handle(self, input_json: dict) -> dict:
+    def handle(self, input_json: dict, session_key:str) -> dict:
         """
         Return any dict response or throw an exception.
         This will be wrapped by a common wrapper method.
@@ -48,8 +51,11 @@ class AbstractRestHandler(abc.ABC):
     def generate_response(self, in_string: str) -> dict:
         try:
             self.logger.info(f"Handling request with input: {in_string}")
-            input_json = self.get_json_payload(in_string)
-            payload = self.handle(input_json)
+            in_string_dict = json.loads(in_string)
+            input_json = json.loads(in_string_dict["payload"])
+            session_key = in_string_dict["session"]["authtoken"]
+            # remote_pdb.RemotePdb(host="0.0.0.0", port=4444).set_trace()
+            payload = self.handle(input_json=input_json, session_key=session_key)
             return {"payload": payload, "status": 200}
         except AssertionError as e:
             self.logger.exception("Client error")
