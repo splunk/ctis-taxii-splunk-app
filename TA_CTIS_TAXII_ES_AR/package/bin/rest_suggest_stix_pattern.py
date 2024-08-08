@@ -1,8 +1,9 @@
 import os
 import sys
 
+sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
 sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
