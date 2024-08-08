@@ -1,12 +1,14 @@
 import ControlGroup from "@splunk/react-ui/ControlGroup";
-import {createRESTURL} from '@splunk/splunk-utils/url';
-import {getCSRFToken} from '@splunk/splunk-utils/config';
+import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
 import React from "react";
-
+import {useState, useMemo, useEffect} from "react";
 import PropTypes from "prop-types";
 import {useForm} from "react-hook-form";
+
 import Button from "@splunk/react-ui/Button";
+import WaitSpinner from '@splunk/react-ui/WaitSpinner';
+
 import TextControlGroup from "./TextControlGroup";
 import TextAreaControlGroup from "./TextAreaControlGroup";
 import NumberControlGroup from "./NumberControlGroup";
@@ -24,8 +26,17 @@ const CONFIDENCE = "confidence";
 const TLP_RATING = "tlp_rating";
 const VALID_FROM = "valid_from";
 
+function SubmitButton({disabled, submitting}) {
+    return (
+        <Button type="submit" label="Submit" appearance="primary" disabled={disabled}>
+            {submitting && <WaitSpinner/>}
+        </Button>
+    );
+}
+
 export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, initialSplunkFieldValue}) {
-    const {watch, handleSubmit, setValue, trigger, register, formState: {errors}} = useForm({
+    const {watch, handleSubmit, setValue, trigger, register, formState} = useForm({
+        mode: 'all',
         defaultValues: {
             [GROUPING_ID]: null,
             [INDICATOR_ID]: initialIndicatorId,
@@ -39,6 +50,14 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             [VALID_FROM]: new Date().toISOString().slice(0, -1),
         }
     });
+    // TODO replace with react-hook-form's builtin submitting
+    //   https://react-hook-form.com/docs/useform/formstate
+    const [submitting, setSubmitting] = useState(false);
+    const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || submitting, [formState, submitting]);
+
+    useEffect(() => {
+        console.log("Watching", formState, submitting, submitButtonDisabled);
+    }, [formState, submitting, submitButtonDisabled]);
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
     register(INDICATOR_ID, {
@@ -57,21 +76,16 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     register(VALID_FROM, {required: "Valid from is required."});
 
     const onSubmit = async (data) => {
+        setSubmitting(true);
         console.log(data);
-        await trigger();
-
-        // Custom CSRF headers set for POST requests to custom endpoints
-        // See https://docs.splunk.com/Documentation/StreamApp/7.1.3/DeployStreamApp/SplunkAppforStreamRESTAPI
-        // TODO: move to utility function for reuse. Make app name a constant somewhere OR dynamically get it via SplunkUI Utils
-        //   https://splunkui.splunk.com/Packages/splunk-utils/Config -> app
-        const resp = await fetch(createRESTURL('create-indicator', {app: 'TA_CTIS_TAXII_ES_AR_2'}),
-            {
-                method: 'POST', body: JSON.stringify(data), headers: {
-                    'X-Splunk-Form-Key': getCSRFToken(),
-                    'X-Requested-With': 'XMLHttpRequest',
-                }
-            })
-        console.log(resp)
+        const formIsValid = await trigger();
+        if(formIsValid){
+            // TODO: error handling
+            await postCreateIndicator(data, (resp) => console.log(resp), (error) => console.error(error));
+        }else{
+            console.error(formState.errors);
+        }
+        setSubmitting(false);
     }
 
     function generateSetValueHandler(fieldName) {
@@ -87,6 +101,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     }
 
     const formInputProps = (fieldName) => {
+        const {errors} = formState;
         return {
             help: errors?.[fieldName]?.message,
             error: !!errors?.[fieldName],
@@ -117,9 +132,8 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             ]}/>
             <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
             <ControlGroup label="Submit">
-                <Button type="submit" label="Submit" appearance="primary" disabled={Object.keys(errors).length > 0}/>
+                <SubmitButton disabled={submitButtonDisabled} submitting={submitting}/>
             </ControlGroup>
-            <p>Errors: {JSON.stringify(errors)}</p>
         </form>
     );
 }
