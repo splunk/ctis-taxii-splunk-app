@@ -62,6 +62,8 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
 
         // Custom CSRF headers set for POST requests to custom endpoints
         // See https://docs.splunk.com/Documentation/StreamApp/7.1.3/DeployStreamApp/SplunkAppforStreamRESTAPI
+        // TODO: move to utility function for reuse. Make app name a constant somewhere OR dynamically get it via SplunkUI Utils
+        //   https://splunkui.splunk.com/Packages/splunk-utils/Config -> app
         const resp = await fetch(createRESTURL('create-indicator', {app: 'TA_CTIS_TAXII_ES_AR_2'}),
             {
                 method: 'POST', body: JSON.stringify(data), headers: {
