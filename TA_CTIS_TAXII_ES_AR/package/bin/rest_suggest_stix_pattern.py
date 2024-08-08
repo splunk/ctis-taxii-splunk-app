@@ -1,28 +1,41 @@
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
-    from common import get_logger_for_script, get_json_payload
+    from common import get_logger_for_script, AbstractRestHandler
     from cim_to_stix import convert_cim_to_stix2_pattern
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
 
+from splunk.persistconn.application import PersistentServerConnectionApplication
+
 logger = get_logger_for_script(__file__)
 
-from splunk.persistconn.application import PersistentServerConnectionApplication
+
+class Handler(AbstractRestHandler):
+    def handle(self, input_json: dict) -> dict:
+        field_name = input_json.get("splunk_field_name")
+        assert field_name, "splunk_field_name is required"
+
+        field_value = input_json.get("splunk_field_value")
+        assert field_value, "splunk_field_value is required"
+
+        generated_pattern = convert_cim_to_stix2_pattern(field_name, field_value)
+        response = {
+            "pattern": generated_pattern
+        }
+        return response
 
 
 class SuggestStixPatternHandler(PersistentServerConnectionApplication):
     def __init__(self, _command_line, _command_arg):
         super(PersistentServerConnectionApplication, self).__init__()
-        logger.info(f"Called with command_line: {_command_line} and command_arg: {_command_arg}")
 
-    # Handle a synchronous request from splunkd.
     def handle(self, in_string):
         """
         Called for a simple synchronous request.
@@ -79,22 +92,4 @@ class SuggestStixPatternHandler(PersistentServerConnectionApplication):
               "payload": "{\\n    \\"hello\\" : \\"world\\"\\n}"
         }
         """
-        logger.info(f"Handling request: {in_string}")
-        input_payload = get_json_payload(in_string)
-        logger.info(f"input_payload: {input_payload}")
-        # TODO: make try/except reusable across other handlers
-        #   maybe context manager
-        try:
-            field_name = input_payload.get("splunk_field_name")
-            assert field_name, "splunk_field_name is required"
-
-            field_value = input_payload.get("splunk_field_value")
-            assert field_value, "splunk_field_value is required"
-
-            generated_pattern = convert_cim_to_stix2_pattern(field_name, field_value)
-            payload = {
-                "pattern": generated_pattern
-            }
-            return {'payload': payload, 'status': 200}
-        except Exception as e:
-            return {'payload': {"error": str(e)}, 'status': 400}
+        return Handler(logger=logger).generate_response(in_string)
