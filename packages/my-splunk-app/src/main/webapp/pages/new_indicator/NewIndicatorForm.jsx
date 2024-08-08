@@ -59,10 +59,9 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     const onSubmit = async (data) => {
         console.log(data);
         await trigger();
-        console.log(`Errors: ${JSON.stringify(errors)}`);
 
-        // TODO: check if errors and return if there are any
-
+        // Custom CSRF headers set for POST requests to custom endpoints
+        // See https://docs.splunk.com/Documentation/StreamApp/7.1.3/DeployStreamApp/SplunkAppforStreamRESTAPI
         const resp = await fetch(createRESTURL('create-indicator', {app: 'TA_CTIS_TAXII_ES_AR_2'}),
             {
                 method: 'POST', body: JSON.stringify(data), headers: {
