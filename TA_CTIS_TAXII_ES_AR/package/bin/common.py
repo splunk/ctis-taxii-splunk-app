@@ -4,9 +4,6 @@ import os
 import sys
 import abc
 
-# External libraries
-import solnlib
-
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 
@@ -15,6 +12,7 @@ sys.stderr.write(f"NAMESPACE: {NAMESPACE}\n")
 
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
+    import solnlib
     script_name = os.path.basename(script_filepath)
     return solnlib.log.Logs().get_logger(f"{NAMESPACE}.{script_name}")
 
@@ -59,3 +57,17 @@ class AbstractRestHandler(abc.ABC):
         except Exception as e:
             self.logger.exception("Server error")
             return self.exception_response(e, 500)
+
+    def generate_splunk_server_class(self):
+        from splunk.persistconn.application import PersistentServerConnectionApplication
+        outer_self = self
+
+        # https://dev.splunk.com/enterprise/docs/devtools/customrestendpoints/customrestscript
+        class Handler(PersistentServerConnectionApplication):
+            def __init__(cls_self, _command_line, _command_arg):
+                super(PersistentServerConnectionApplication, cls_self).__init__()
+
+            def handle(cls_self, in_string):
+                return outer_self.generate_response(in_string)
+
+        return Handler

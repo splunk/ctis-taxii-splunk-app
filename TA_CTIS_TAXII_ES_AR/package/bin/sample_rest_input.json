@@ -1,0 +1,52 @@
+{
+  "output_mode": "json",
+  "output_mode_explicit": true,
+  "server": {
+    "rest_uri": "https://127.0.0.1:8089",
+    "hostname": "XG6CM0P360",
+    "servername": "XG6CM0P360",
+    "guid": "D7249C54-D20F-4893-9031-C2C1B079B54B"
+  },
+  "restmap": {
+    "name": "script:suggest-stix-pattern",
+    "conf": {
+      "handler": "rest_suggest_stix_pattern.SuggestStixPatternHandler",
+      "match": "/suggest-stix-pattern",
+      "passPayload": "true",
+      "python.version": "python3",
+      "script": "rest_suggest_stix_pattern.py",
+      "scripttype": "persist"
+    }
+  },
+  "query": [
+    [
+      "key",
+      "val"
+    ]
+  ],
+  "connection": {
+    "src_ip": "127.0.0.1",
+    "ssl": true,
+    "listening_port": 8089
+  },
+  "session": {
+    "user": "admin",
+    "authtoken": "abc1234"
+  },
+  "rest_path": "/suggest-stix-pattern",
+  "method": "POST",
+  "ns": {
+    "app": "TA_CTIS_TAXII_ES_AR_2"
+  },
+  "form": [
+  ],
+  "payload": "{\\n    \\"
+  hello
+  \
+  \
+  " : \\"
+  world
+  \
+  \
+  "\\n}"
+}
