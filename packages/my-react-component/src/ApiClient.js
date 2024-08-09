@@ -14,10 +14,8 @@ async function postData(endpoint, data, successHandler, errorHandler) {
                     'X-Requested-With': 'XMLHttpRequest',
                 }
             })
-        console.log(resp);
         successHandler(resp);
     } catch (error){
-        console.error(error);
         errorHandler(error);
     }
 

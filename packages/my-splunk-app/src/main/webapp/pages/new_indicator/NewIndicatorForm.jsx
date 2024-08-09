@@ -1,13 +1,18 @@
 import ControlGroup from "@splunk/react-ui/ControlGroup";
 import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
-import React from "react";
-import {useState, useMemo, useEffect} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {useForm} from "react-hook-form";
 
 import Button from "@splunk/react-ui/Button";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
+import Modal from '@splunk/react-ui/Modal';
+import P from '@splunk/react-ui/Paragraph';
+
+
+import {createURL} from '@splunk/splunk-utils/url';
+import {app} from '@splunk/splunk-utils/config';
 
 import TextControlGroup from "./TextControlGroup";
 import TextAreaControlGroup from "./TextAreaControlGroup";
@@ -28,14 +33,14 @@ const VALID_FROM = "valid_from";
 
 function SubmitButton({disabled, submitting}) {
     return (
-        <Button type="submit" label="Submit" appearance="primary" disabled={disabled}>
+        <Button type="submit" label="Create Indicator" appearance="primary" disabled={disabled}>
             {submitting && <WaitSpinner/>}
         </Button>
     );
 }
 
 export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, initialSplunkFieldValue}) {
-    const {watch, handleSubmit, setValue, trigger, register, formState} = useForm({
+    const {watch, handleSubmit, setValue, getValues, trigger, register, formState, reset} = useForm({
         mode: 'all',
         defaultValues: {
             [GROUPING_ID]: null,
@@ -50,14 +55,13 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             [VALID_FROM]: new Date().toISOString().slice(0, -1),
         }
     });
-    // TODO replace with react-hook-form's builtin submitting
-    //   https://react-hook-form.com/docs/useform/formstate
-    const [submitting, setSubmitting] = useState(false);
-    const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || submitting, [formState, submitting]);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+    const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
+        [submitSuccess, formState]);
 
     useEffect(() => {
-        console.log("Watching", formState, submitting, submitButtonDisabled);
-    }, [formState, submitting, submitButtonDisabled]);
+        console.log("Watching", formState, submitButtonDisabled);
+    }, [formState, submitButtonDisabled]);
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
     register(INDICATOR_ID, {
@@ -76,16 +80,17 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     register(VALID_FROM, {required: "Valid from is required."});
 
     const onSubmit = async (data) => {
-        setSubmitting(true);
         console.log(data);
         const formIsValid = await trigger();
-        if(formIsValid){
+        if (formIsValid) {
             // TODO: error handling
-            await postCreateIndicator(data, (resp) => console.log(resp), (error) => console.error(error));
-        }else{
+            await postCreateIndicator(data, (resp) => {
+                console.log(resp);
+                setSubmitSuccess(true);
+            }, (error) => console.error(error));
+        } else {
             console.error(formState.errors);
         }
-        setSubmitting(false);
     }
 
     function generateSetValueHandler(fieldName) {
@@ -109,6 +114,10 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             value: watch(fieldName)
         }
     }
+    const navigateToIndicatorsPage = () => {
+        const url = createURL(`/app/${app}/indicators`);
+        window.location.href = url;
+    }
 
     return (
         <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
@@ -131,9 +140,22 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                 {label: "WHITE", value: "WHITE"}
             ]}/>
             <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
-            <ControlGroup label="Submit">
-                <SubmitButton disabled={submitButtonDisabled} submitting={submitting}/>
+            <ControlGroup label="">
+                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
             </ControlGroup>
+            <Modal open={submitSuccess}>
+                <Modal.Header
+                    title="Successfully Created New Indicator"
+                />
+                <Modal.Body>
+                    <P>To submit this IoC to CTIS, proceed to submit the Grouping.</P>
+                    <Button label="Go to Indicators" appearance="secondary" onClick={() => {
+                        navigateToIndicatorsPage();
+                    } }/>
+                    <Button label={`Go to Grouping (${getValues(GROUPING_ID)})`} appearance="primary" onClick={() => {
+                    } }/>
+                </Modal.Body>
+            </Modal>
         </form>
     );
 }
