@@ -6,19 +6,17 @@ import PropTypes from "prop-types";
 import {useForm} from "react-hook-form";
 
 import Button from "@splunk/react-ui/Button";
-import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
 
-
-import {createURL} from '@splunk/splunk-utils/url';
-import {app} from '@splunk/splunk-utils/config';
+import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 
 import TextControlGroup from "./TextControlGroup";
 import TextAreaControlGroup from "./TextAreaControlGroup";
 import NumberControlGroup from "./NumberControlGroup";
 import SelectControlGroup from "./SelectControlGroup";
 import DatetimeControlGroup from "./DateTimeControlGroup";
+import SubmitButton from "./SubmitButton";
 
 const GROUPING_ID = "grouping_id";
 const INDICATOR_ID = "indicator_id";
@@ -31,12 +29,14 @@ const CONFIDENCE = "confidence";
 const TLP_RATING = "tlp_rating";
 const VALID_FROM = "valid_from";
 
-function SubmitButton({disabled, submitting}) {
-    return (
-        <Button type="submit" label="Create Indicator" appearance="primary" disabled={disabled}>
-            {submitting && <WaitSpinner/>}
-        </Button>
-    );
+
+function GotoIndicatorsPageButton() {
+    // TODO: this should probs change to viewing the indicator created?
+    return (<Button to={VIEW_INDICATORS_PAGE} appearance="secondary" label="Go to Indicators"/>);
+}
+
+function GotoGroupingPageButton({groupingId}) {
+    return (<Button to={`#${groupingId}`} appearance="primary" label={`Go to Grouping ${groupingId}`}/>);
 }
 
 export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, initialSplunkFieldValue}) {
@@ -64,6 +64,8 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     }, [formState, submitButtonDisabled]);
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
+    const groupingId = watch(GROUPING_ID);
+
     register(INDICATOR_ID, {
         required: "Indicator ID is required.", pattern: {
             value: /indicator--.{36,}/,
@@ -114,10 +116,6 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             value: watch(fieldName)
         }
     }
-    const navigateToIndicatorsPage = () => {
-        const url = createURL(`/app/${app}/indicators`);
-        window.location.href = url;
-    }
 
     return (
         <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
@@ -149,11 +147,8 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                 />
                 <Modal.Body>
                     <P>To submit this IoC to CTIS, proceed to submit the Grouping.</P>
-                    <Button label="Go to Indicators" appearance="secondary" onClick={() => {
-                        navigateToIndicatorsPage();
-                    } }/>
-                    <Button label={`Go to Grouping (${getValues(GROUPING_ID)})`} appearance="primary" onClick={() => {
-                    } }/>
+                    <GotoIndicatorsPageButton/>
+                    <GotoGroupingPageButton groupingId={groupingId}/>
                 </Modal.Body>
             </Modal>
         </form>
