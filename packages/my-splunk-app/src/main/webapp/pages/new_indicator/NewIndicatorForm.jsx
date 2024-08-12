@@ -1,14 +1,13 @@
 import ControlGroup from "@splunk/react-ui/ControlGroup";
 import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {useForm} from "react-hook-form";
 
 import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
-import Popover from '@splunk/react-ui/Popover';
 
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
@@ -20,6 +19,7 @@ import SelectControlGroup from "./SelectControlGroup";
 import DatetimeControlGroup from "./DateTimeControlGroup";
 import SubmitButton from "./SubmitButton";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
+import {getStixPatternSuggestion} from "@splunk/my-react-component/src/ApiClient";
 
 const GROUPING_ID = "grouping_id";
 const INDICATOR_ID = "indicator_id";
@@ -62,9 +62,6 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
 
-    useEffect(() => {
-        console.log("Watching", formState, submitButtonDisabled);
-    }, [formState, submitButtonDisabled]);
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
     const groupingId = watch(GROUPING_ID);
@@ -80,6 +77,10 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
 
     register(SPLUNK_FIELD_VALUE, {required: "Splunk Field Value is required."});
     const splunkFieldValue = watch(SPLUNK_FIELD_VALUE);
+
+    // useEffect(() => {
+    //     console.log("Watching splunk key/value:", formState)
+    // }, [formState])
 
     register(NAME, {required: "Name is required."});
     register(DESCRIPTION, {required: "Description is required."});
@@ -102,7 +103,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         }
     }
 
-    function generateSetValueHandler(fieldName) {
+    function generateSetValueHandler(fieldName, setValueHook) {
         return (e, extra) => {
             // In vanilla JS change events only a single event parameter is passed
             // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event#examples
@@ -111,26 +112,54 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             const value = extra?.value || e.target.value;
             console.log(e, extra, value)
             setValue(fieldName, value, {shouldValidate: true})
+            if(setValueHook){
+                setValueHook(value);
+            }
         };
     }
 
-    const formInputProps = (fieldName) => {
+    const formInputProps = (fieldName, setValueHook) => {
         const {errors} = formState;
         return {
             help: errors?.[fieldName]?.message,
             error: !!errors?.[fieldName],
-            onChange: generateSetValueHandler(fieldName),
+            onChange: generateSetValueHandler(fieldName, setValueHook),
             value: watch(fieldName)
         }
     }
 
-    const patternHelpText = (<span>
-        {/*// TODO populate with API*/}
-        <Button to={`#`} onClick={(e) => console.log(e)} appearance="secondary" label={`Use suggested pattern`}/>
-    </span>);
+    // https://stackoverflow.com/a/77124113/23523267
+    const useDebounce = (cb, delay) => {
+        const [debounceValue, setDebounceValue] = useState(cb);
+        useEffect(() => {
+            const handler = setTimeout(() => {
+                setDebounceValue(cb);
+            }, delay);
 
-    const [anchor, setAnchor] = useState();
-    const anchorRef = useCallback((el) => setAnchor(el), []);
+            return () => {
+                clearTimeout(handler);
+            };
+        }, [cb, delay]);
+        return debounceValue;
+    }
+    const debounceSplunkFieldName = useDebounce(splunkFieldName, 300);
+    const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 300);
+    const [suggestedPattern, setSuggestedPattern] = useState(null);
+
+    useEffect(() => {
+        console.log("Debounced:", splunkFieldName, splunkFieldValue);
+        if(!!splunkFieldName && !!splunkFieldValue){
+            getStixPatternSuggestion(splunkFieldName, splunkFieldValue, (resp) => {
+                console.log("Response json:", resp);
+                setSuggestedPattern(resp?.pattern);
+            }, (error) => {
+                console.error(error);
+                setSuggestedPattern(null);
+            });
+        }else{
+            setSuggestedPattern(null);
+        }
+    }, [debounceSplunkFieldName, debounceSplunkFieldValue]);
 
     return (
         <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
@@ -144,15 +173,10 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             <TextControlGroup label="Name" {...formInputProps(NAME)} />
             <TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />
             <StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}
-                                     useSuggestedPattern={() => setValue(STIX_PATTERN, "suggested")}/>
-            {/*<TextAreaControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)} elementRef={anchorRef}/>*/}
-            {/*<Popover open={true} anchor={anchor} defaultPlacement='right'>*/}
-            {/*    <div style={{padding: '10px'}}><P>*/}
-            {/*        {`A suggested pattern for ${splunkFieldName}=${splunkFieldValue} is available`}*/}
-            {/*    </P>*/}
-            {/*        <Button appearance="primary" label="Use suggested pattern" />*/}
-            {/*    </div>*/}
-            {/*</Popover>*/}
+                                     useSuggestedPattern={() => setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true})}
+                                     hasSuggestedPattern={() => !!suggestedPattern}
+                                     valueIsDifferentToSuggestedPattern={(value) => value !== suggestedPattern}
+            />
 
             <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
             <SelectControlGroup label="TLP Rating" {...formInputProps(TLP_RATING)} options={[
