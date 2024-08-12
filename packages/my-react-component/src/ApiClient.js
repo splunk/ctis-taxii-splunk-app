@@ -20,6 +20,20 @@ async function postData(endpoint, data, successHandler, errorHandler) {
     }
 
 }
+async function getStixPatternSuggestion(splunkFieldName, splunkFieldValue){
+    const endpoint = `suggest-stix-pattern`;
+    const resp = await fetch(createRESTURL(endpoint, {app}),
+        {
+            method: 'POST',
+            headers: {
+                'X-Splunk-Form-Key': getCSRFToken(),
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+    const resp_json = await resp.json();
+    console.log(resp_json);
+    return resp_json?.pattern;
+}
 
 export async function postCreateIndicator(data, successHandler, errorHandler) {
     await postData('create-indicator', data, successHandler, errorHandler)

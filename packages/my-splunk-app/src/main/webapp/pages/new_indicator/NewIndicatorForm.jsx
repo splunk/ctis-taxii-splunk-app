@@ -1,22 +1,25 @@
 import ControlGroup from "@splunk/react-ui/ControlGroup";
 import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {useForm} from "react-hook-form";
 
 import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
+import Popover from '@splunk/react-ui/Popover';
+
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 
 import TextControlGroup from "./TextControlGroup";
-import TextAreaControlGroup from "./TextAreaControlGroup";
+import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import NumberControlGroup from "./NumberControlGroup";
 import SelectControlGroup from "./SelectControlGroup";
 import DatetimeControlGroup from "./DateTimeControlGroup";
 import SubmitButton from "./SubmitButton";
+import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 
 const GROUPING_ID = "grouping_id";
 const INDICATOR_ID = "indicator_id";
@@ -73,7 +76,11 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         }
     });
     register(SPLUNK_FIELD_NAME, {required: "Splunk Field Name is required."});
+    const splunkFieldName = watch(SPLUNK_FIELD_NAME);
+
     register(SPLUNK_FIELD_VALUE, {required: "Splunk Field Value is required."});
+    const splunkFieldValue = watch(SPLUNK_FIELD_VALUE);
+
     register(NAME, {required: "Name is required."});
     register(DESCRIPTION, {required: "Description is required."});
     register(STIX_PATTERN, {required: "STIX Pattern is required."});
@@ -117,6 +124,14 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         }
     }
 
+    const patternHelpText = (<span>
+        {/*// TODO populate with API*/}
+        <Button to={`#`} onClick={(e) => console.log(e)} appearance="secondary" label={`Use suggested pattern`}/>
+    </span>);
+
+    const [anchor, setAnchor] = useState();
+    const anchorRef = useCallback((el) => setAnchor(el), []);
+
     return (
         <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
             <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
@@ -128,7 +143,16 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             <TextControlGroup label="Splunk Field Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />
             <TextControlGroup label="Name" {...formInputProps(NAME)} />
             <TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />
-            <TextAreaControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)} />
+            <StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}
+                                     useSuggestedPattern={() => setValue(STIX_PATTERN, "suggested")}/>
+            {/*<TextAreaControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)} elementRef={anchorRef}/>*/}
+            {/*<Popover open={true} anchor={anchor} defaultPlacement='right'>*/}
+            {/*    <div style={{padding: '10px'}}><P>*/}
+            {/*        {`A suggested pattern for ${splunkFieldName}=${splunkFieldValue} is available`}*/}
+            {/*    </P>*/}
+            {/*        <Button appearance="primary" label="Use suggested pattern" />*/}
+            {/*    </div>*/}
+            {/*</Popover>*/}
 
             <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
             <SelectControlGroup label="TLP Rating" {...formInputProps(TLP_RATING)} options={[
