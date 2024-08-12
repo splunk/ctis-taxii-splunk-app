@@ -3,18 +3,34 @@ import TextArea from "@splunk/react-ui/TextArea";
 import React from "react";
 import PropTypes from "prop-types";
 import Link from "@splunk/react-ui/Link";
+import styled from "styled-components";
+import { variables } from '@splunk/themes';
 
-const StixPatternControlGroup = ({label, value, onChange, help, error, hasSuggestedPattern, useSuggestedPattern, valueIsDifferentToSuggestedPattern, ...rest}) => {
+const LinkContainer = styled.div`
+    padding: ${variables.spacingXSmall} 0 0;
+`;
+
+const StixPatternControlGroup = ({
+                                     label,
+                                     value,
+                                     onChange,
+                                     help,
+                                     error,
+                                     hasSuggestedPattern,
+                                     useSuggestedPattern,
+                                     valueIsDifferentToSuggestedPattern,
+                                     ...rest
+                                 }) => {
     const onClick = (e) => {
         console.log(e);
         e.preventDefault();
         useSuggestedPattern();
     }
-    const suggestionText = (<div>
+    const suggestionText = (<LinkContainer>
         <Link to='#' onClick={onClick}>
             Use suggested pattern
         </Link>
-    </div>);
+    </LinkContainer>);
     return (
         <ControlGroup controlsLayout='stack' label={label} help={help} error={error} {...rest}>
             <TextArea value={value} onChange={onChange} error={error}/>
