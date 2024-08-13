@@ -2,11 +2,14 @@ from .destination_ipv4 import DestinationIpv4Converter
 from .destination_ipv6 import DestinationIpv6Converter
 from .source_ipv4 import SourceIpv4Converter
 from .source_ipv6 import SourceIpv6Converter
+from .source_domain import SourceDomainConverter
+from .destination_domain import DestinationDomainConverter
 
 """
 TODO
 - IPv4 & IPv6: dest_ip, src_ip
 - Domain/Hostname: dest_host, dest_name, src_host, src_name
+- MAC Address: dest_mac, src_mac
 
 # https://docs.splunk.com/Documentation/CIM/5.3.2/User/Malware
 - file_name
@@ -17,6 +20,7 @@ TODO
 CONVERTER_CLASSES = [
     DestinationIpv4Converter, DestinationIpv6Converter,
     SourceIpv4Converter, SourceIpv6Converter,
+    SourceDomainConverter, DestinationDomainConverter
 ]
 
 

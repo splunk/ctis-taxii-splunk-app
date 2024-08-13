@@ -19,6 +19,16 @@ class TestCimToStix:
         pattern = convert_cim_to_stix2_pattern("src_ip", "2001:0db8:85a3:0000:0000:8a2e:0370:7334")
         assert pattern == "[network-traffic:src_ref.type = 'ipv6-addr' AND network-traffic:src_ref.value = '2001:0db8:85a3:0000:0000:8a2e:0370:7334']"
 
+    @pytest.mark.parametrize("field_name", ["src_host", "src_name"])
+    def test_src_domain(self, field_name):
+        pattern = convert_cim_to_stix2_pattern(field_name, "example.com")
+        assert pattern == "[network-traffic:src_ref.type = 'domain-name' AND network-traffic:src_ref.value = 'example.com']"
+
+    @pytest.mark.parametrize("field_name", ["dest_host", "dest_name"])
+    def test_dest_domain(self, field_name):
+        pattern = convert_cim_to_stix2_pattern(field_name, "example.com")
+        assert pattern == "[network-traffic:dst_ref.type = 'domain-name' AND network-traffic:dst_ref.value = 'example.com']"
+
     def test_should_throw_error_if_dest_ip_is_invalid(self):
         with pytest.raises(NotImplementedError):
             convert_cim_to_stix2_pattern("dest_ip", "abc")
