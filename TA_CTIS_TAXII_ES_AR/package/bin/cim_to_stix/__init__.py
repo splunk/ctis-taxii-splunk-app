@@ -1,5 +1,7 @@
 from .destination_ipv4 import DestinationIpv4Converter
 from .destination_ipv6 import DestinationIpv6Converter
+from .source_ipv4 import SourceIpv4Converter
+from .source_ipv6 import SourceIpv6Converter
 
 """
 TODO
@@ -12,7 +14,10 @@ TODO
 - file_path
 
 """
-CONVERTER_CLASSES = [DestinationIpv4Converter, DestinationIpv6Converter]
+CONVERTER_CLASSES = [
+    DestinationIpv4Converter, DestinationIpv6Converter,
+    SourceIpv4Converter, SourceIpv6Converter,
+]
 
 
 def convert_cim_to_stix2_pattern(splunk_field_name: str, splunk_field_value: str) -> str:
