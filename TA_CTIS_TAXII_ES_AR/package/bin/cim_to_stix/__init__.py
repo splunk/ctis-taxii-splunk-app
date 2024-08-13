@@ -4,6 +4,9 @@ from .source_ipv4 import SourceIpv4Converter
 from .source_ipv6 import SourceIpv6Converter
 from .source_domain import SourceDomainConverter
 from .destination_domain import DestinationDomainConverter
+from .destination_mac import DestinationMacAddressConverter
+from .source_mac import SourceMacAddressConverter
+
 
 """
 TODO
@@ -16,11 +19,14 @@ TODO
 - file_hash
 - file_path
 
+Sample of STIX patterns:
+https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_alhyho8zsnmv
 """
 CONVERTER_CLASSES = [
     DestinationIpv4Converter, DestinationIpv6Converter,
     SourceIpv4Converter, SourceIpv6Converter,
-    SourceDomainConverter, DestinationDomainConverter
+    SourceDomainConverter, DestinationDomainConverter,
+    SourceMacAddressConverter, DestinationMacAddressConverter,
 ]
 
 

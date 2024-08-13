@@ -33,6 +33,14 @@ class TestCimToStix:
         with pytest.raises(NotImplementedError):
             convert_cim_to_stix2_pattern("dest_ip", "abc")
 
+    def test_dest_mac_address(self):
+        pattern = convert_cim_to_stix2_pattern("dest_mac", "06:10:9f:eb:8f:14")
+        assert pattern == "[network-traffic:dst_ref.type = 'mac-addr' AND network-traffic:dst_ref.value = '06:10:9f:eb:8f:14']"
+
+    def test_source_mac_address(self):
+        pattern = convert_cim_to_stix2_pattern("src_mac", "06:10:9f:eb:8f:14")
+        assert pattern == "[network-traffic:src_ref.type = 'mac-addr' AND network-traffic:src_ref.value = '06:10:9f:eb:8f:14']"
+
     def test_should_throw_error_if_field_name_not_supported(self):
         with pytest.raises(NotImplementedError):
             convert_cim_to_stix2_pattern("random_field", "")

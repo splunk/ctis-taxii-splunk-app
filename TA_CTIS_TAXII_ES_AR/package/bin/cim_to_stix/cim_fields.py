@@ -3,6 +3,9 @@ SOURCE_IP = 'src_ip'
 
 SOURCE_DOMAIN_NAME = 'src_name'
 SOURCE_HOST_NAME = 'src_host'
+SOURCE_MAC_ADDRESS = 'src_mac'
 
 DESTINATION_DOMAIN_NAME = 'dest_name'
 DESTINATION_HOST_NAME = 'dest_host'
+DESTINATION_MAC_ADDRESS = 'dest_mac'
+
