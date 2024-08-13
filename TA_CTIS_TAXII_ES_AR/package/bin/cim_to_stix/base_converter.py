@@ -11,5 +11,5 @@ class CIMToSTIXConverter(abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def supports(splunk_field_name: str) -> bool:
+    def supports(splunk_field_name: str, splunk_field_value: str) -> bool:
         pass
