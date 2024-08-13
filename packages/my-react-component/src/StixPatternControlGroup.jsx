@@ -4,7 +4,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Link from "@splunk/react-ui/Link";
 import styled from "styled-components";
-import { variables } from '@splunk/themes';
+import {variables} from '@splunk/themes';
 
 const LinkContainer = styled.div`
     padding: ${variables.spacingXSmall} 0 0;
@@ -16,9 +16,8 @@ const StixPatternControlGroup = ({
                                      onChange,
                                      help,
                                      error,
-                                     hasSuggestedPattern,
                                      useSuggestedPattern,
-                                     valueIsDifferentToSuggestedPattern,
+                                     suggestedPattern,
                                      ...rest
                                  }) => {
     const onClick = (e) => {
@@ -31,11 +30,14 @@ const StixPatternControlGroup = ({
             Use suggested pattern
         </Link>
     </LinkContainer>);
+    const valueIsDiff = value !== suggestedPattern;
+    const patternExists = !!suggestedPattern;
+
     return (
         <ControlGroup controlsLayout='stack' label={label} help={help} error={error} {...rest}>
             <TextArea value={value} onChange={onChange} error={error}/>
             {
-                (!value || valueIsDifferentToSuggestedPattern(value)) && hasSuggestedPattern() && suggestionText
+                (!value || valueIsDiff) && patternExists && suggestionText
             }
         </ControlGroup>
     );

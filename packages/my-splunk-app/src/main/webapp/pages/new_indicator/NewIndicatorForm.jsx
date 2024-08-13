@@ -151,9 +151,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             <TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />
             <StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}
                                      useSuggestedPattern={() => setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true})}
-                                     // TODO: change this to just accept suggestedPattern as prop
-                                     hasSuggestedPattern={() => !!suggestedPattern}
-                                     valueIsDifferentToSuggestedPattern={(value) => value !== suggestedPattern}
+                                     suggestedPattern={suggestedPattern}
             />
 
             <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
