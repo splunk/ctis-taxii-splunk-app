@@ -19,7 +19,8 @@ import SelectControlGroup from "./SelectControlGroup";
 import DatetimeControlGroup from "./DateTimeControlGroup";
 import SubmitButton from "./SubmitButton";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
-import {getStixPatternSuggestion} from "@splunk/my-react-component/src/ApiClient";
+import {useDebounce} from "./debounce";
+import {suggestPattern} from "./patternSuggester";
 
 const GROUPING_ID = "grouping_id";
 const INDICATOR_ID = "indicator_id";
@@ -128,38 +129,14 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         }
     }
 
-    // https://stackoverflow.com/a/77124113/23523267
-    const useDebounce = (cb, delay) => {
-        const [debounceValue, setDebounceValue] = useState(cb);
-        useEffect(() => {
-            const handler = setTimeout(() => {
-                setDebounceValue(cb);
-            }, delay);
-
-            return () => {
-                clearTimeout(handler);
-            };
-        }, [cb, delay]);
-        return debounceValue;
-    }
+    const [suggestedPattern, setSuggestedPattern] = useState(null);
     const debounceSplunkFieldName = useDebounce(splunkFieldName, 300);
     const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 300);
-    const [suggestedPattern, setSuggestedPattern] = useState(null);
 
     useEffect(() => {
-        console.log("Debounced:", splunkFieldName, splunkFieldValue);
-        if(!!splunkFieldName && !!splunkFieldValue){
-            getStixPatternSuggestion(splunkFieldName, splunkFieldValue, (resp) => {
-                console.log("Response json:", resp);
-                setSuggestedPattern(resp?.pattern);
-            }, (error) => {
-                console.error(error);
-                setSuggestedPattern(null);
-            });
-        }else{
-            setSuggestedPattern(null);
-        }
+        suggestPattern(splunkFieldName, splunkFieldValue, setSuggestedPattern);
     }, [debounceSplunkFieldName, debounceSplunkFieldValue]);
+
 
     return (
         <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
@@ -174,6 +151,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             <TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />
             <StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}
                                      useSuggestedPattern={() => setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true})}
+                                     // TODO: change this to just accept suggestedPattern as prop
                                      hasSuggestedPattern={() => !!suggestedPattern}
                                      valueIsDifferentToSuggestedPattern={(value) => value !== suggestedPattern}
             />
