@@ -32,7 +32,7 @@ const NAME = "name";
 const DESCRIPTION = "description";
 const STIX_PATTERN = "stix_pattern";
 const CONFIDENCE = "confidence";
-const TLP_RATING = "tlp_rating";
+const TLP_RATING = "tlp_v1_rating";
 const VALID_FROM = "valid_from";
 
 
@@ -161,7 +161,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             />
 
             <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
-            <SelectControlGroup label="TLP Rating" {...formInputProps(TLP_RATING)} options={[
+            <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
                 {label: "RED", value: "RED"},
                 {label: "AMBER", value: "AMBER"},
                 {label: "GREEN", value: "GREEN"},
