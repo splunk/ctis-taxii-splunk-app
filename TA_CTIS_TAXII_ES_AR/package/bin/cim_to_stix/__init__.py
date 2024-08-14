@@ -6,6 +6,7 @@ from .source_domain import SourceDomainConverter
 from .destination_domain import DestinationDomainConverter
 from .destination_mac import DestinationMacAddressConverter
 from .source_mac import SourceMacAddressConverter
+from .file_hash import FileHashConverter
 
 
 """
@@ -27,6 +28,7 @@ CONVERTER_CLASSES = [
     SourceIpv4Converter, SourceIpv6Converter,
     SourceDomainConverter, DestinationDomainConverter,
     SourceMacAddressConverter, DestinationMacAddressConverter,
+    FileHashConverter
 ]
 
 
