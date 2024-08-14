@@ -7,6 +7,12 @@ class TestOther:
         with pytest.raises(NotImplementedError):
             convert_cim_to_stix2_pattern("random_field", "")
 
+class TestFileName:
+    @pytest.mark.parametrize("field_name", ["file_name", "filename"])
+    def test_filename(self, field_name):
+        pattern = convert_cim_to_stix2_pattern(field_name, "hello.exe")
+        assert pattern == "[file:name = 'hello.exe']"
+
 
 class TestFileHashes:
     def test_invalid_hash(self):

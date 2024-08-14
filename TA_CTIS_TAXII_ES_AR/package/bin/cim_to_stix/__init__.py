@@ -7,18 +7,20 @@ from .destination_domain import DestinationDomainConverter
 from .destination_mac import DestinationMacAddressConverter
 from .source_mac import SourceMacAddressConverter
 from .file_hash import FileHashConverter
-
+from .file_name import FileNameConverter
 
 """
 TODO
+# https://docs.splunk.com/Documentation/CIM/5.3.2/User/Malware
+- file_name
+- file_path
+
+DONE
 - IPv4 & IPv6: dest_ip, src_ip
 - Domain/Hostname: dest_host, dest_name, src_host, src_name
 - MAC Address: dest_mac, src_mac
-
-# https://docs.splunk.com/Documentation/CIM/5.3.2/User/Malware
-- file_name
 - file_hash
-- file_path
+
 
 Sample of STIX patterns:
 https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_alhyho8zsnmv
@@ -28,7 +30,7 @@ CONVERTER_CLASSES = [
     SourceIpv4Converter, SourceIpv6Converter,
     SourceDomainConverter, DestinationDomainConverter,
     SourceMacAddressConverter, DestinationMacAddressConverter,
-    FileHashConverter
+    FileHashConverter, FileNameConverter
 ]
 
 

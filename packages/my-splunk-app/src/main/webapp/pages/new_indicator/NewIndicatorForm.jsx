@@ -43,6 +43,7 @@ function GotoGroupingPageButton({groupingId}) {
     return (<Button to={`#${groupingId}`} appearance="primary" label={`Go to Grouping ${groupingId}`}/>);
 }
 
+// TODO: form width should be max-width 1000px
 export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, initialSplunkFieldValue}) {
     const {watch, handleSubmit, setValue, getValues, trigger, register, formState, reset} = useForm({
         mode: 'all',
@@ -165,6 +166,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             <ControlGroup label="">
                 <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
             </ControlGroup>
+            // TODO: Move Modal to a separate component
             <Modal open={submitSuccess}>
                 <Modal.Header
                     title="Successfully Created New Indicator"
