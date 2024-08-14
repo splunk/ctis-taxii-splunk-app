@@ -85,10 +85,6 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     register(SPLUNK_FIELD_VALUE, {required: "Splunk Field Value is required."});
     const splunkFieldValue = watch(SPLUNK_FIELD_VALUE);
 
-    // useEffect(() => {
-    //     console.log("Watching splunk key/value:", formState)
-    // }, [formState])
-
     register(NAME, {required: "Name is required."});
     register(DESCRIPTION, {required: "Description is required."});
     register(STIX_PATTERN, {required: "STIX Pattern is required."});
@@ -111,27 +107,25 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         }
     }
 
-    function generateSetValueHandler(fieldName, setValueHook) {
+    function generateSetValueHandler(fieldName) {
         return (e, extra) => {
             // In vanilla JS change events only a single event parameter is passed
             // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event#examples
             // However for Splunk UI onChange events two values are passed: (event, {name, value})
             // See code in the examples: https://splunkui.splunk.com/Packages/react-ui/Select?section=examples
-            const value = extra?.value || e.target.value;
+            const extraValue = extra?.value;
+            const value = extraValue !== null && extraValue !== undefined ? extraValue : e.target.value;
             console.log(e, extra, value)
             setValue(fieldName, value, {shouldValidate: true})
-            if(setValueHook){
-                setValueHook(value);
-            }
         };
     }
 
-    const formInputProps = (fieldName, setValueHook) => {
+    const formInputProps = (fieldName) => {
         const {errors} = formState;
         return {
             help: errors?.[fieldName]?.message,
             error: !!errors?.[fieldName],
-            onChange: generateSetValueHandler(fieldName, setValueHook),
+            onChange: generateSetValueHandler(fieldName),
             value: watch(fieldName)
         }
     }
@@ -159,7 +153,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             <TextControlGroup label="Indicator ID" {...formInputProps(INDICATOR_ID)} />
             <TextControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} />
             <TextControlGroup label="Splunk Field Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />
-            <TextControlGroup label="Name" {...formInputProps(NAME)} />
+            <TextControlGroup label="Indicator Name" {...formInputProps(NAME)} />
             <TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />
             <StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}
                                      useSuggestedPattern={() => setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true})}

@@ -36,8 +36,9 @@
 ## Frontend
 - New Indicator Form
     - [X] Autopopulate STIX pattern upon Splunk field name/value change (if text field is blank)
-    - [ ] Fix bug, clearing a text field with the 'x' doesn't clear the value
+    - [X] Fix bug, clearing a text field with the 'x' doesn't clear the value
     - [X] Use TLP version 1: https://www.first.org/tlp/v1/
       - make sure form field says that it expecting TLPv1
       - seems to be just RED, AMBER, GREEN, WHITE
+    - [ ] Populate Groupings dropdown from REST endpoint
 
