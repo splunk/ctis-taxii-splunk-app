@@ -92,6 +92,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     register(NAME, {required: "Name is required."});
     register(DESCRIPTION, {required: "Description is required."});
     register(STIX_PATTERN, {required: "STIX Pattern is required."});
+    const stixPattern = watch(STIX_PATTERN);
     register(TLP_RATING, {required: "TLP Rating is required."});
     register(CONFIDENCE, {required: "Confidence is required."});
     register(VALID_FROM, {required: "Valid from is required."});
@@ -143,7 +144,12 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         suggestPattern(splunkFieldName, splunkFieldValue, setSuggestedPattern);
     }, [debounceSplunkFieldName, debounceSplunkFieldValue]);
 
-    // TODO: fix bug, clearing a text field with the 'x' doesnt clear the value
+    useEffect(() => {
+        if(stixPattern === "" && suggestedPattern){
+            setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true});
+        }
+    }, [suggestedPattern]);
+
     return (
         <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
             <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
