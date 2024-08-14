@@ -1,9 +1,10 @@
-import ControlGroup from "@splunk/react-ui/ControlGroup";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
 import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {useForm} from "react-hook-form";
+import styled from "styled-components";
 
 import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
@@ -12,13 +13,14 @@ import P from '@splunk/react-ui/Paragraph';
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 
-import TextControlGroup from "./TextControlGroup";
+import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
-import NumberControlGroup from "./NumberControlGroup";
-import SelectControlGroup from "./SelectControlGroup";
-import DatetimeControlGroup from "./DateTimeControlGroup";
-import SubmitButton from "./SubmitButton";
+import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGroup";
+import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
+import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
+
+import SubmitButton from "./SubmitButton";
 import {useDebounce} from "./debounce";
 import {suggestPattern} from "./patternSuggester";
 
@@ -43,7 +45,10 @@ function GotoGroupingPageButton({groupingId}) {
     return (<Button to={`#${groupingId}`} appearance="primary" label={`Go to Grouping ${groupingId}`}/>);
 }
 
-// TODO: form width should be max-width 1000px
+const MyForm = styled.form`
+    max-width: 1000px;
+`
+
 export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, initialSplunkFieldValue}) {
     const {watch, handleSubmit, setValue, getValues, trigger, register, formState, reset} = useForm({
         mode: 'all',
@@ -140,7 +145,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
 
     // TODO: fix bug, clearing a text field with the 'x' doesnt clear the value
     return (
-        <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
+        <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
             <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
@@ -163,9 +168,9 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                 {label: "WHITE", value: "WHITE"}
             ]}/>
             <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
-            <ControlGroup label="">
+            <CustomControlGroup label="">
                 <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
-            </ControlGroup>
+            </CustomControlGroup>
             {/*// TODO: Move Modal to a separate component*/}
             <Modal open={submitSuccess}>
                 <Modal.Header
@@ -177,7 +182,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                     <GotoGroupingPageButton groupingId={groupingId}/>
                 </Modal.Body>
             </Modal>
-        </form>
+        </MyForm>
     );
 }
 

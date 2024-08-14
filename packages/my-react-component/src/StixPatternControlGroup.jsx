@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import Link from "@splunk/react-ui/Link";
 import styled from "styled-components";
 import {variables} from '@splunk/themes';
+import {CustomControlGroup} from "./CustomControlGroup";
 
 const LinkContainer = styled.div`
     padding: ${variables.spacingXSmall} 0 0;
@@ -34,12 +35,12 @@ const StixPatternControlGroup = ({
     const patternExists = !!suggestedPattern;
 
     return (
-        <ControlGroup controlsLayout='stack' label={label} help={help} error={error} {...rest}>
+        <CustomControlGroup controlsLayout='stack' label={label} help={help} error={error} {...rest}>
             <TextArea value={value} onChange={onChange} error={error}/>
             {
                 (!value || valueIsDiff) && patternExists && suggestionText
             }
-        </ControlGroup>
+        </CustomControlGroup>
     );
 
 }
