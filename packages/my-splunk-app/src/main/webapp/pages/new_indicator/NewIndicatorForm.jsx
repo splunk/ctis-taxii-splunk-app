@@ -138,7 +138,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         suggestPattern(splunkFieldName, splunkFieldValue, setSuggestedPattern);
     }, [debounceSplunkFieldName, debounceSplunkFieldValue]);
 
-
+    // TODO: fix bug, clearing a text field with the 'x' doesnt clear the value
     return (
         <form name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
             <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
@@ -166,7 +166,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
             <ControlGroup label="">
                 <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
             </ControlGroup>
-            // TODO: Move Modal to a separate component
+            {/*// TODO: Move Modal to a separate component*/}
             <Modal open={submitSuccess}>
                 <Modal.Header
                     title="Successfully Created New Indicator"

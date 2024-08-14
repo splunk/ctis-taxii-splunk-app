@@ -8,18 +8,20 @@ from .destination_mac import DestinationMacAddressConverter
 from .source_mac import SourceMacAddressConverter
 from .file_hash import FileHashConverter
 from .file_name import FileNameConverter
-
+from .file_path import FilePathConverter
 """
 TODO
-# https://docs.splunk.com/Documentation/CIM/5.3.2/User/Malware
-- file_name
-- file_path
+- Command line invocation? E.g. cmd.exe /C regsvr32.exe /s /u /i
 
 DONE
 - IPv4 & IPv6: dest_ip, src_ip
 - Domain/Hostname: dest_host, dest_name, src_host, src_name
 - MAC Address: dest_mac, src_mac
+# https://docs.splunk.com/Documentation/CIM/5.3.2/User/Malware
 - file_hash
+- file_name
+- file_path
+
 
 
 Sample of STIX patterns:
@@ -30,7 +32,7 @@ CONVERTER_CLASSES = [
     SourceIpv4Converter, SourceIpv6Converter,
     SourceDomainConverter, DestinationDomainConverter,
     SourceMacAddressConverter, DestinationMacAddressConverter,
-    FileHashConverter, FileNameConverter
+    FileHashConverter, FileNameConverter, FilePathConverter
 ]
 
 

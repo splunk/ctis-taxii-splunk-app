@@ -30,9 +30,8 @@ FILE_HASH_TYPE_TO_REGEX = {k: generate_filehash_regex(v) for k, v in HASH_TYPE_T
 
 
 def file_hash_looks_like(filehash: str) -> str:
-    flags = re.IGNORECASE
     for hash_type, regex in FILE_HASH_TYPE_TO_REGEX.items():
-        if re.match(regex, filehash, flags=flags):
+        if re.match(regex, filehash, flags=re.IGNORECASE):
             return hash_type
 
 
@@ -47,4 +46,4 @@ class FileHashConverter(CIMToSTIXConverter):
 
     @staticmethod
     def supports(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name == "file_hash" and file_hash_looks_like(splunk_field_value) is not None
+        return splunk_field_name in ("filehash", "file_hash") and file_hash_looks_like(splunk_field_value) is not None
