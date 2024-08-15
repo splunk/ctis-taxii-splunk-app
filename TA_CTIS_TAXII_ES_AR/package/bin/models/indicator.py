@@ -8,10 +8,12 @@ from stix2 import Indicator as StixIndicator
 from .base import BaseModel
 from .tlp_v1 import TLPv1
 
-def validate_stix_pattern(pattern:str):
+
+def validate_stix_pattern(pattern: str):
     _, errors = stix_validate(pattern, ret_errs=True)
     if errors:
         raise ValidationError(f"Invalid STIX pattern: {errors}")
+
 
 def validate_indicator_id(indicator_id: str):
     try:
@@ -19,9 +21,13 @@ def validate_indicator_id(indicator_id: str):
     except Exception as e:
         raise ValidationError(f"Invalid indicator_id: {e}")
 
+
 @dataclass_json
 @dataclass
-class Indicator(BaseModel):
+class IndicatorV1(BaseModel):
+    """
+    Indicator model to be stored in KVStore Collection record
+    """
     indicator_id: str = field(
         metadata=config(
             mm_field=fields.String(validate=validate_indicator_id)
@@ -52,5 +58,11 @@ class Indicator(BaseModel):
             encoder=datetime.isoformat,
             decoder=datetime.fromisoformat,
             mm_field=fields.DateTime(format='iso')
+        )
+    )
+    schema_version: int = field(
+        default=1,
+        metadata=config(
+            mm_field=fields.Integer(validate=validate.Equal(1))
         )
     )

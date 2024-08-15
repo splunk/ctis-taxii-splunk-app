@@ -3,16 +3,16 @@ from datetime import datetime
 import pytest
 from marshmallow.exceptions import ValidationError
 
-from TA_CTIS_TAXII_ES_AR.package.bin.models.indicator import Indicator
+from TA_CTIS_TAXII_ES_AR.package.bin.models.indicator import IndicatorV1
 
 
 def test_from_invalid_dict():
     with pytest.raises(ValidationError):
         # Missing required fields
-        _ = Indicator.schema().load({"something": "else"})
+        _ = IndicatorV1.schema().load({"something": "else"})
 
 
-SAMPLE_INDICATOR_INSTANCE = Indicator(
+SAMPLE_INDICATOR_INSTANCE = IndicatorV1(
     grouping_id="A",
     indicator_id="indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59",
     splunk_field_name="src_ip",
@@ -27,6 +27,7 @@ SAMPLE_INDICATOR_INSTANCE = Indicator(
     _key="66bd393930444c60800ab750")
 
 SAMPLE_INDICATOR_JSON = {
+    "schema_version" : 1,
     "grouping_id": "A",
     "indicator_id": "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59",
     "splunk_field_name": "src_ip",
@@ -44,7 +45,7 @@ SAMPLE_INDICATOR_JSON = {
 
 def test_from_valid_dict():
     as_dict = SAMPLE_INDICATOR_JSON
-    indicator = Indicator.schema().load(as_dict)
+    indicator = IndicatorV1.schema().load(as_dict)
     assert indicator.grouping_id == "A"
     assert indicator.indicator_id == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
     assert indicator.splunk_field_name == "src_ip"
@@ -55,6 +56,7 @@ def test_from_valid_dict():
 def test_to_dict():
     indicator = SAMPLE_INDICATOR_INSTANCE
     as_dict = indicator.to_dict()
+    assert as_dict["schema_version"] == 1
     assert as_dict["grouping_id"] == "A"
     assert as_dict["indicator_id"] == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
     assert as_dict["splunk_field_name"] == "src_ip"
@@ -62,12 +64,19 @@ def test_to_dict():
     assert as_dict["valid_from"] == "2024-08-14T23:09:21.123456"
 
 
+def test_validate_schema_version():
+    indicator_json = SAMPLE_INDICATOR_JSON
+    indicator_json["schema_version"] = 2
+    with pytest.raises(ValidationError) as exc_info:
+        _ = IndicatorV1.schema().load(indicator_json)
+    assert "schema_version" in str(exc_info.value)
+
 @pytest.mark.parametrize("confidence", [-1, 101])
 def test_validate_confidence_in_range_0_to_100(confidence):
     indicator_json = SAMPLE_INDICATOR_JSON
     indicator_json["confidence"] = confidence
     with pytest.raises(ValidationError) as exc_info:
-        _ = Indicator.schema().load(indicator_json)
+        _ = IndicatorV1.schema().load(indicator_json)
     assert "confidence" in str(exc_info.value)
 
 
@@ -75,7 +84,7 @@ def test_validate_tlp_v1_rating():
     indicator_json = SAMPLE_INDICATOR_JSON
     indicator_json["tlp_v1_rating"] = "INVALID"
     with pytest.raises(ValidationError) as exc_info:
-        _ = Indicator.schema().load(indicator_json)
+        _ = IndicatorV1.schema().load(indicator_json)
 
     assert "tlp_v1_rating" in str(exc_info.value)
 
@@ -84,7 +93,7 @@ def test_validate_stix_pattern():
     indicator_json = SAMPLE_INDICATOR_JSON
     indicator_json["stix_pattern"] = "[abc]"
     with pytest.raises(ValidationError) as exc_info:
-        _ = Indicator.schema().load(indicator_json)
+        _ = IndicatorV1.schema().load(indicator_json)
 
     assert "stix_pattern" in str(exc_info.value)
 
@@ -94,6 +103,6 @@ def test_validate_indicator_id(indicator_id):
     indicator_json = SAMPLE_INDICATOR_JSON
     indicator_json["indicator_id"] = indicator_id
     with pytest.raises(ValidationError) as exc_info:
-        _ = Indicator.schema().load(indicator_json)
+        _ = IndicatorV1.schema().load(indicator_json)
 
     assert "indicator_id" in str(exc_info.value)
