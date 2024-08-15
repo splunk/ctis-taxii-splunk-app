@@ -4,7 +4,7 @@ from datetime import datetime
 from dataclasses_json import config, dataclass_json
 from marshmallow import fields, validate, ValidationError
 from stix2patterns.validator import validate as stix_validate
-
+from stix2 import Indicator as StixIndicator
 from .base import BaseModel
 from .tlp_v1 import TLPv1
 
@@ -13,11 +13,20 @@ def validate_stix_pattern(pattern:str):
     if errors:
         raise ValidationError(f"Invalid STIX pattern: {errors}")
 
+def validate_indicator_id(indicator_id: str):
+    try:
+        StixIndicator(id=indicator_id, pattern_type="stix2", pattern="")
+    except Exception as e:
+        raise ValidationError(f"Invalid indicator_id: {e}")
 
 @dataclass_json
 @dataclass
 class Indicator(BaseModel):
-    indicator_id: str
+    indicator_id: str = field(
+        metadata=config(
+            mm_field=fields.String(validate=validate_indicator_id)
+        )
+    )
     grouping_id: str
     splunk_field_name: str
     splunk_field_value: str

@@ -79,6 +79,7 @@ def test_validate_tlp_v1_rating():
 
     assert "tlp_v1_rating" in str(exc_info.value)
 
+
 def test_validate_stix_pattern():
     indicator_json = SAMPLE_INDICATOR_JSON
     indicator_json["stix_pattern"] = "[abc]"
@@ -86,3 +87,13 @@ def test_validate_stix_pattern():
         _ = Indicator.schema().load(indicator_json)
 
     assert "stix_pattern" in str(exc_info.value)
+
+
+@pytest.mark.parametrize("indicator_id", ["aaa", "indicator--invalid"])
+def test_validate_indicator_id(indicator_id):
+    indicator_json = SAMPLE_INDICATOR_JSON
+    indicator_json["indicator_id"] = indicator_id
+    with pytest.raises(ValidationError) as exc_info:
+        _ = Indicator.schema().load(indicator_json)
+
+    assert "indicator_id" in str(exc_info.value)

@@ -10,7 +10,8 @@
   - [ ] Handle CIDR slash range for IPv4: e.g. 10.2.4.5/24 
 - [ ] Indicator Model
     - [ ] Create
-        - [ ] Find a good library to handle JSON schema validation & maybe Dataclass compatibility 
+        - [X] Find a good library to handle JSON schema validation & maybe Dataclass compatibility
+          - Using dataclasses-json which uses marshmallow under the hood for schema validation
         - [ ] Schema versioning: to handle updates/breaking changes to the app
         - [ ] https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/kvstore/usetherestapitomanagekv/ 
     - [ ] Read One
