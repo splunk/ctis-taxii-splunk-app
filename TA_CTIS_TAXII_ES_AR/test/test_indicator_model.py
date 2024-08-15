@@ -78,3 +78,11 @@ def test_validate_tlp_v1_rating():
         _ = Indicator.schema().load(indicator_json)
 
     assert "tlp_v1_rating" in str(exc_info.value)
+
+def test_validate_stix_pattern():
+    indicator_json = SAMPLE_INDICATOR_JSON
+    indicator_json["stix_pattern"] = "[abc]"
+    with pytest.raises(ValidationError) as exc_info:
+        _ = Indicator.schema().load(indicator_json)
+
+    assert "stix_pattern" in str(exc_info.value)
