@@ -1,0 +1,2034 @@
+[
+  {
+    "field": "access_count",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "access_time",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "action",
+    "category": "Authentication, Change, Data Access, Data Loss Prevention, Email, Endpoint, Intrusion Detection, Malware, Network Sessions, Network Traffic, Performance, Web"
+  },
+  {
+    "field": "action_mode",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "action_name",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "action_status",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "additional_answer_count",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "affect_dest",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "answer",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "answer_count",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "app",
+    "category": "Alerts, Authentication, Data Access, Data Loss Prevention, Network Traffic, Splunk Audit Logs, Web"
+  },
+  {
+    "field": "app_id",
+    "category": "Data Access"
+  },
+  {
+    "field": "array",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "authentication_method",
+    "category": "Authentication"
+  },
+  {
+    "field": "authentication_service",
+    "category": "Authentication"
+  },
+  {
+    "field": "authority_answer_count",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "availability",
+    "category": "Databases"
+  },
+  {
+    "field": "avg_executions",
+    "category": "Databases"
+  },
+  {
+    "field": "blocksize",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "body",
+    "category": "Alerts Deprecated in favor of description."
+  },
+  {
+    "field": "buckets",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "buckets_size",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "buffer_cache_hit_ratio",
+    "category": "Databases"
+  },
+  {
+    "field": "bugtraq",
+    "category": "Vulnerabilities"
+  },
+  {
+    "field": "bytes",
+    "category": "Network Traffic, Web"
+  },
+  {
+    "field": "bytes_in",
+    "category": "Network Traffic, Web"
+  },
+  {
+    "field": "bytes_out",
+    "category": "Network Traffic, Web"
+  },
+  {
+    "field": "cached",
+    "category": "Web"
+  },
+  {
+    "field": "category",
+    "category": "Data Loss Prevention, Intrusion Detection, Malware, Vulnerabilities, Web"
+  },
+  {
+    "field": "cert",
+    "category": "Vulnerabilities"
+  },
+  {
+    "field": "change",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "change_type",
+    "category": "Change"
+  },
+  {
+    "field": "channel",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "cluster",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "cm_enabled",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "cm_supported",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "command",
+    "category": "Change"
+  },
+  {
+    "field": "comments",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "commits",
+    "category": "Databases"
+  },
+  {
+    "field": "committed_memory",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "compilation_time",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "complete",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "component",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "cookie",
+    "category": "Web"
+  },
+  {
+    "field": "cpu_cores",
+    "category": "Inventory"
+  },
+  {
+    "field": "cpu_count",
+    "category": "Inventory"
+  },
+  {
+    "field": "cpu_load_mhz",
+    "category": "Performance"
+  },
+  {
+    "field": "cpu_load_percent",
+    "category": "Endpoint, Performance"
+  },
+  {
+    "field": "cpu_mhz",
+    "category": "Inventory"
+  },
+  {
+    "field": "cpu_time",
+    "category": "Java Virtual Machines (JVM), Performance"
+  },
+  {
+    "field": "cpu_time_enabled",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "cpu_time_supported",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "cpu_used",
+    "category": "Databases"
+  },
+  {
+    "field": "cpu_user_percent",
+    "category": "Performance"
+  },
+  {
+    "field": "creation_time",
+    "category": "Endpoint"
+  },
+  {
+    "field": "cron",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "current_cpu_time",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "current_loaded",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "current_user_time",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "cursor",
+    "category": "Databases"
+  },
+  {
+    "field": "cve",
+    "category": "Vulnerabilities"
+  },
+  {
+    "field": "cvss",
+    "category": "Vulnerabilities"
+  },
+  {
+    "field": "daemon_thread_count",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "datamodel",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "date",
+    "category": "Malware"
+  },
+  {
+    "field": "delay",
+    "category": "Email"
+  },
+  {
+    "field": "description",
+    "category": "Alerts, Endpoint, Inventory, TicketManagement"
+  },
+  {
+    "field": "dest",
+    "category": "Alerts, Authentication, Certificates, Change, Data Access, Data Loss Prevention, Databases, Email, Endpoint, Event Signatures, Interprocess Messaging, Intrusion Detection, Inventory, Malware, Network Resolution (DNS), Network Traffic, Performance, TicketManagement, Updates, Vulnerabilities, Web"
+  },
+  {
+    "field": "dest_bunit",
+    "category": "Alerts, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Endpoint, Event Signatures, Interprocess Messaging, Intrusion Detection, Inventory, Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Performance, TicketManagement, Updates, Vulnerabilities, Web"
+  },
+  {
+    "field": "dest_category",
+    "category": "Alerts, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Endpoint, Event Signatures, Interprocess Messaging, Intrusion Detection, Inventory, Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Performance, TicketManagement, Updates, Vulnerabilities, Web"
+  },
+  {
+    "field": "dest_dns",
+    "category": "Network Sessions"
+  },
+  {
+    "field": "dest_interface",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "dest_ip",
+    "category": "Inventory, Network Sessions, Network Traffic"
+  },
+  {
+    "field": "dest_ip_range",
+    "category": "Change"
+  },
+  {
+    "field": "dest_is_expected",
+    "category": "Endpoint"
+  },
+  {
+    "field": "dest_mac",
+    "category": "Network Sessions, Network Traffic"
+  },
+  {
+    "field": "dest_name",
+    "category": "Data Access"
+  },
+  {
+    "field": "dest_nt_domain",
+    "category": "Authentication, Change, Malware"
+  },
+  {
+    "field": "dest_nt_host",
+    "category": "Network Sessions"
+  },
+  {
+    "field": "dest_port",
+    "category": "Certificates, Endpoint, Intrusion Detection, Network Resolution (DNS), Network Traffic, Web"
+  },
+  {
+    "field": "dest_port_range",
+    "category": "Change"
+  },
+  {
+    "field": "dest_priority",
+    "category": "Alerts, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Endpoint, Event Signatures, Interprocess Messaging, Intrusion Detection, Inventory, Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Performance, TicketManagement, Updates, Vulnerabilities, Web"
+  },
+  {
+    "field": "dest_requires_av",
+    "category": "Endpoint, Malware"
+  },
+  {
+    "field": "dest_should_timesync",
+    "category": "Endpoint, Performance"
+  },
+  {
+    "field": "dest_should_update",
+    "category": "Endpoint, Performance, Updates"
+  },
+  {
+    "field": "dest_translated_ip",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "dest_translated_port",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "dest_type",
+    "category": "Alerts"
+  },
+  {
+    "field": "dest_url",
+    "category": "Data Access"
+  },
+  {
+    "field": "dest_zone",
+    "category": "Data Loss Prevention, Network Traffic"
+  },
+  {
+    "field": "digest",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "direction",
+    "category": "Change, Network Traffic"
+  },
+  {
+    "field": "dlp_type",
+    "category": "Data Loss Prevention"
+  },
+  {
+    "field": "dns",
+    "category": "Inventory"
+  },
+  {
+    "field": "dump_area_used",
+    "category": "Databases"
+  },
+  {
+    "field": "duration",
+    "category": "Authentication, Certificates, Databases, Email, Interprocess Messaging, Network Resolution (DNS), Network Sessions, Network Traffic, Splunk Audit Logs, Web"
+  },
+  {
+    "field": "dvc",
+    "category": "Change, Data Access, Data Loss Prevention, Intrusion Detection, Network Traffic, Updates, Vulnerabilities"
+  },
+  {
+    "field": "dvc_bunit",
+    "category": "Data Loss Prevention, Intrusion Detection, Network Traffic, Vulnerabilities"
+  },
+  {
+    "field": "dvc_category",
+    "category": "Data Loss Prevention, Intrusion Detection, Network Traffic, Vulnerabilities"
+  },
+  {
+    "field": "dvc_ip",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "dvc_mac",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "dvc_priority",
+    "category": "Data Loss Prevention, Intrusion Detection, Network Traffic, Vulnerabilities"
+  },
+  {
+    "field": "dvc_zone",
+    "category": "Data Loss Prevention, Network Traffic"
+  },
+  {
+    "field": "earliest",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "elapsed_time",
+    "category": "Databases"
+  },
+  {
+    "field": "email",
+    "category": "Data Access"
+  },
+  {
+    "field": "enabled",
+    "category": "Inventory"
+  },
+  {
+    "field": "endpoint",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "endpoint_version",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "error_code",
+    "category": "Web"
+  },
+  {
+    "field": "event_id",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "family",
+    "category": "Inventory"
+  },
+  {
+    "field": "fan_speed",
+    "category": "Performance"
+  },
+  {
+    "field": "fd_max",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "fd_used",
+    "category": "Performance"
+  },
+  {
+    "field": "file_access_time",
+    "category": "Endpoint"
+  },
+  {
+    "field": "file_acl",
+    "category": "Endpoint"
+  },
+  {
+    "field": "file_create_time",
+    "category": "Endpoint"
+  },
+  {
+    "field": "file_hash",
+    "category": "Email, Endpoint, Intrusion Detection, Malware, Updates"
+  },
+  {
+    "field": "file_modify_time",
+    "category": "Endpoint"
+  },
+  {
+    "field": "file_name",
+    "category": "Email, Endpoint, Intrusion Detection, Malware, Updates"
+  },
+  {
+    "field": "file_path",
+    "category": "Endpoint, Intrusion Detection, Malware"
+  },
+  {
+    "field": "file_size",
+    "category": "Email, Endpoint"
+  },
+  {
+    "field": "filter_action",
+    "category": "Email"
+  },
+  {
+    "field": "filter_score",
+    "category": "Email"
+  },
+  {
+    "field": "flow_id",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "free_bytes",
+    "category": "Databases"
+  },
+  {
+    "field": "free_physical_memory",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "free_swap",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "heap_committed",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "heap_initial",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "heap_max",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "heap_used",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "host",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "http_content_type",
+    "category": "Web"
+  },
+  {
+    "field": "http_method",
+    "category": "Web"
+  },
+  {
+    "field": "http_referrer",
+    "category": "Web"
+  },
+  {
+    "field": "http_referrer_domain",
+    "category": "Web"
+  },
+  {
+    "field": "http_user_agent",
+    "category": "Web"
+  },
+  {
+    "field": "http_user_agent_length",
+    "category": "Web"
+  },
+  {
+    "field": "hypervisor",
+    "category": "Inventory"
+  },
+  {
+    "field": "hypervisor_id",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "icmp_code",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "icmp_type",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "id",
+    "category": "Alerts"
+  },
+  {
+    "field": "ids_type",
+    "category": "Intrusion Detection"
+  },
+  {
+    "field": "image_id",
+    "category": "Change"
+  },
+  {
+    "field": "incident",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "indexes_hit",
+    "category": "Databases"
+  },
+  {
+    "field": "info",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "inline_nat",
+    "category": "Inventory"
+  },
+  {
+    "field": "instance_name",
+    "category": "Databases"
+  },
+  {
+    "field": "instance_reads",
+    "category": "Databases"
+  },
+  {
+    "field": "instance_type",
+    "category": "Change"
+  },
+  {
+    "field": "instance_version",
+    "category": "Databases"
+  },
+  {
+    "field": "instance_writes",
+    "category": "Databases"
+  },
+  {
+    "field": "interactive",
+    "category": "Inventory"
+  },
+  {
+    "field": "interface",
+    "category": "Inventory"
+  },
+  {
+    "field": "internal_message_id",
+    "category": "Email"
+  },
+  {
+    "field": "ip",
+    "category": "Inventory"
+  },
+  {
+    "field": "is_inprogress",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "jvm_description",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "last_call_minute",
+    "category": "Databases"
+  },
+  {
+    "field": "last_error",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "last_sid",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "latency",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "latest",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "lb_method",
+    "category": "Inventory"
+  },
+  {
+    "field": "lease_duration",
+    "category": "Network Sessions"
+  },
+  {
+    "field": "lease_scope",
+    "category": "Network Sessions"
+  },
+  {
+    "field": "lock_mode",
+    "category": "Databases"
+  },
+  {
+    "field": "lock_session_id",
+    "category": "Databases"
+  },
+  {
+    "field": "logical_reads",
+    "category": "Databases"
+  },
+  {
+    "field": "logon_time",
+    "category": "Databases"
+  },
+  {
+    "field": "mac",
+    "category": "Inventory"
+  },
+  {
+    "field": "machine",
+    "category": "Databases"
+  },
+  {
+    "field": "max_file_descriptors",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "mem",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "mem_committed",
+    "category": "Performance"
+  },
+  {
+    "field": "mem_free",
+    "category": "Performance"
+  },
+  {
+    "field": "mem_used",
+    "category": "Endpoint, Performance"
+  },
+  {
+    "field": "memory_sorts",
+    "category": "Databases"
+  },
+  {
+    "field": "message",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_consumed_time",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_correlation_id",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_delivered_time",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_delivery_mode",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_expiration_time",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_id",
+    "category": "Email, Interprocess Messaging"
+  },
+  {
+    "field": "message_info",
+    "category": "Email"
+  },
+  {
+    "field": "message_priority",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_properties",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_received_time",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_redelivered",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_reply_dest",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "message_type",
+    "category": "Interprocess Messaging, Network Resolution (DNS)"
+  },
+  {
+    "field": "mitre_technique_id",
+    "category": "Alerts"
+  },
+  {
+    "field": "mod_time",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "mount",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "msft",
+    "category": "Vulnerabilities"
+  },
+  {
+    "field": "mskb",
+    "category": "Vulnerabilities"
+  },
+  {
+    "field": "name",
+    "category": "Inventory, Network Resolution (DNS)"
+  },
+  {
+    "field": "node",
+    "category": "Inventory"
+  },
+  {
+    "field": "node_port",
+    "category": "Inventory"
+  },
+  {
+    "field": "non_heap_committed",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "non_heap_initial",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "non_heap_max",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "non_heap_used",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "number_of_users",
+    "category": "Databases"
+  },
+  {
+    "field": "obj_name",
+    "category": "Databases"
+  },
+  {
+    "field": "object",
+    "category": "Change, Data Access, Data Loss Prevention, Databases"
+  },
+  {
+    "field": "object_attrs",
+    "category": "Change"
+  },
+  {
+    "field": "object_category",
+    "category": "Change, Data Access, Data Loss Prevention"
+  },
+  {
+    "field": "object_id",
+    "category": "Change, Data Access"
+  },
+  {
+    "field": "object_path",
+    "category": "Change, Data Access, Data Loss Prevention"
+  },
+  {
+    "field": "object_size",
+    "category": "Data Access"
+  },
+  {
+    "field": "objects_pending",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "omu_supported",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "open_file_descriptors",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "operation",
+    "category": "Web"
+  },
+  {
+    "field": "orig_dest",
+    "category": "Email"
+  },
+  {
+    "field": "orig_recipient",
+    "category": "Email"
+  },
+  {
+    "field": "orig_rid",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "orig_sid",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "orig_src",
+    "category": "Email"
+  },
+  {
+    "field": "original_file_name",
+    "category": "Endpoint"
+  },
+  {
+    "field": "os",
+    "category": "Endpoint, Inventory, Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "os_architecture",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "os_pid",
+    "category": "Databases"
+  },
+  {
+    "field": "os_version",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "owner",
+    "category": "Data Access"
+  },
+  {
+    "field": "owner_email",
+    "category": "Data Access"
+  },
+  {
+    "field": "owner_id",
+    "category": "Data Access"
+  },
+  {
+    "field": "packets",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "packets_in",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "packets_out",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "parameters",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "parent",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "parent_object",
+    "category": "Data Access"
+  },
+  {
+    "field": "parent_object_category",
+    "category": "Data Access"
+  },
+  {
+    "field": "parent_object_id",
+    "category": "Data Access"
+  },
+  {
+    "field": "parent_process",
+    "category": "Endpoint"
+  },
+  {
+    "field": "parent_process_exec",
+    "category": "Endpoint"
+  },
+  {
+    "field": "parent_process_guid",
+    "category": "Endpoint"
+  },
+  {
+    "field": "parent_process_id",
+    "category": "Endpoint"
+  },
+  {
+    "field": "parent_process_name",
+    "category": "Endpoint"
+  },
+  {
+    "field": "parent_process_path",
+    "category": "Endpoint"
+  },
+  {
+    "field": "password",
+    "category": "Inventory"
+  },
+  {
+    "field": "payload",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "payload_type",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "peak_thread_count",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "physical_memory",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "physical_reads",
+    "category": "Databases"
+  },
+  {
+    "field": "power",
+    "category": "Performance"
+  },
+  {
+    "field": "priority",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "problem",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "process",
+    "category": "Email, Endpoint"
+  },
+  {
+    "field": "process_current_directory",
+    "category": "Endpoint"
+  },
+  {
+    "field": "process_exec",
+    "category": "Endpoint"
+  },
+  {
+    "field": "process_guid",
+    "category": "Endpoint"
+  },
+  {
+    "field": "process_hash",
+    "category": "Endpoint"
+  },
+  {
+    "field": "process_id",
+    "category": "Email, Endpoint, Network Traffic"
+  },
+  {
+    "field": "process_integrity_level",
+    "category": "Endpoint"
+  },
+  {
+    "field": "process_limit",
+    "category": "Databases"
+  },
+  {
+    "field": "process_name",
+    "category": "Endpoint, Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "process_path",
+    "category": "Endpoint"
+  },
+  {
+    "field": "processes",
+    "category": "Databases"
+  },
+  {
+    "field": "product_version",
+    "category": "Malware"
+  },
+  {
+    "field": "protocol",
+    "category": "Change, Email, Network Traffic"
+  },
+  {
+    "field": "protocol_version",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "query",
+    "category": "Databases, Network Resolution (DNS)"
+  },
+  {
+    "field": "query_count",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "query_id",
+    "category": "Databases"
+  },
+  {
+    "field": "query_plan_hit",
+    "category": "Databases"
+  },
+  {
+    "field": "query_time",
+    "category": "Databases"
+  },
+  {
+    "field": "query_type",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "read_blocks",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "read_latency",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "read_ops",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "reason",
+    "category": "Authentication"
+  },
+  {
+    "field": "recipient",
+    "category": "Email"
+  },
+  {
+    "field": "recipient_count",
+    "category": "Email"
+  },
+  {
+    "field": "recipient_domain",
+    "category": "Email"
+  },
+  {
+    "field": "recipient_status",
+    "category": "Email"
+  },
+  {
+    "field": "record_type",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "records_affected",
+    "category": "Databases"
+  },
+  {
+    "field": "registry_hive",
+    "category": "Endpoint"
+  },
+  {
+    "field": "registry_key_name",
+    "category": "Endpoint"
+  },
+  {
+    "field": "registry_path",
+    "category": "Endpoint"
+  },
+  {
+    "field": "registry_value_data",
+    "category": "Endpoint"
+  },
+  {
+    "field": "registry_value_name",
+    "category": "Endpoint"
+  },
+  {
+    "field": "registry_value_text",
+    "category": "Endpoint"
+  },
+  {
+    "field": "registry_value_type",
+    "category": "Endpoint"
+  },
+  {
+    "field": "reply_code",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "reply_code_id",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "request_payload",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "request_payload_type",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "request_sent_time",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "resource_type",
+    "category": "Performance"
+  },
+  {
+    "field": "response_code",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "response_payload_type",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "response_received_time",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "response_time",
+    "category": "Authentication, Certificates, Databases, Email, Interprocess Messaging, Network Resolution (DNS), Network Sessions, Network Traffic, Web"
+  },
+  {
+    "field": "result",
+    "category": "Change"
+  },
+  {
+    "field": "result_id",
+    "category": "Change"
+  },
+  {
+    "field": "retention",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "retries",
+    "category": "Email"
+  },
+  {
+    "field": "return_addr",
+    "category": "Email"
+  },
+  {
+    "field": "return_message",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "rid",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "rpc_protocol",
+    "category": "Interprocess Messaging"
+  },
+  {
+    "field": "rule",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "rule_action",
+    "category": "Change"
+  },
+  {
+    "field": "savedsearch_name",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "search",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "search_et",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "search_lt",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "search_name",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "search_type",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "seconds_in_wait",
+    "category": "Databases"
+  },
+  {
+    "field": "sender",
+    "category": "Malware"
+  },
+  {
+    "field": "serial",
+    "category": "Inventory"
+  },
+  {
+    "field": "serial_num",
+    "category": "Databases"
+  },
+  {
+    "field": "service",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_dll",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_dll_hash",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_dll_path",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_dll_signature_exists",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_dll_signature_verified",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_exec",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_hash",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_id",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_name",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_path",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_signature_exists",
+    "category": "Endpoint"
+  },
+  {
+    "field": "service_signature_verified",
+    "category": "Endpoint"
+  },
+  {
+    "field": "session_id",
+    "category": "Databases, Network Traffic"
+  },
+  {
+    "field": "session_limit",
+    "category": "Databases"
+  },
+  {
+    "field": "session_status",
+    "category": "Databases"
+  },
+  {
+    "field": "sessions",
+    "category": "Databases"
+  },
+  {
+    "field": "severity",
+    "category": "Alerts, Data Loss Prevention, Intrusion Detection, TicketManagement, Updates, Vulnerabilities"
+  },
+  {
+    "field": "severity_id",
+    "category": "Alerts, Data Loss Prevention, Intrusion Detection, Malware, TicketManagement, Updates,Vulnerabilities"
+  },
+  {
+    "field": "sga_buffer_cache_size",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_buffer_hit_limit",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_data_dict_hit_ratio",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_fixed_area_size",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_free_memory",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_library_cache_size",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_redo_log_buffer_size",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_shared_pool_size",
+    "category": "Databases"
+  },
+  {
+    "field": "sga_sql_area_size",
+    "category": "Databases"
+  },
+  {
+    "field": "shell",
+    "category": "Inventory"
+  },
+  {
+    "field": "sid",
+    "category": "Splunk Audit Logs, Splunk Audit Logs"
+  },
+  {
+    "field": "signature",
+    "category": "Alerts, Authentication, Data Loss Prevention, Email, Event Signatures, Intrusion Detection, Malware, Network Sessions, Performance, Splunk Audit Logs, Updates, Vulnerabilities"
+  },
+  {
+    "field": "signature_extra",
+    "category": "Email"
+  },
+  {
+    "field": "signature_id",
+    "category": "Alerts, Authentication, Email, Event Signatures, Data Loss Prevention, Intrusion Detection, Malware, Network Sessions, Performance, Updates, Vulnerabilities"
+  },
+  {
+    "field": "signature_version",
+    "category": "Malware"
+  },
+  {
+    "field": "site",
+    "category": "Web"
+  },
+  {
+    "field": "size",
+    "category": "Email, Inventory, Splunk Audit Logs"
+  },
+  {
+    "field": "snapshot",
+    "category": "Inventory"
+  },
+  {
+    "field": "source",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "sourcetype",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "spent",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "splunk_id",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "splunk_realm",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "splunk_server",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "src",
+    "category": "Alerts, Authentication, Certificates, Change, Data Access, Data Loss Prevention, Databases, Email, Endpoint, Intrusion Detection, Malware, Network Resolution (DNS), Network Traffic, Web"
+  },
+  {
+    "field": "src_bunit",
+    "category": "Alerts, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Intrusion Detection, Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Web"
+  },
+  {
+    "field": "src_category",
+    "category": "Alerts, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Endpoint, Intrusion Detection, Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Web"
+  },
+  {
+    "field": "src_dns",
+    "category": "Network Sessions"
+  },
+  {
+    "field": "src_interface",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "src_ip",
+    "category": "Inventory, Network Sessions, Network Traffic"
+  },
+  {
+    "field": "src_ip_range",
+    "category": "Change"
+  },
+  {
+    "field": "src_mac",
+    "category": "Network Sessions, Network Traffic"
+  },
+  {
+    "field": "src_nt_domain",
+    "category": "Authentication, Change"
+  },
+  {
+    "field": "src_nt_host",
+    "category": "Network Sessions"
+  },
+  {
+    "field": "src_port",
+    "category": "Certificates, Endpoint, Network Resolution (DNS), Network Traffic"
+  },
+  {
+    "field": "src_port_range",
+    "category": "Change"
+  },
+  {
+    "field": "src_priority",
+    "category": "Alerts, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Endpoint, Intrusion Detection, Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Web"
+  },
+  {
+    "field": "src_requires_av",
+    "category": "Endpoint"
+  },
+  {
+    "field": "src_should_timesync",
+    "category": "Endpoint"
+  },
+  {
+    "field": "src_should_update",
+    "category": "Endpoint"
+  },
+  {
+    "field": "src_translated_ip",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "src_translated_port",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "src_type",
+    "category": "Alerts"
+  },
+  {
+    "field": "src_user",
+    "category": "Authentication, Change, Data Loss Prevention, Email, TicketManagement"
+  },
+  {
+    "field": "src_user_bunit",
+    "category": "Authentication, Change, Data Loss Prevention, Email, TicketManagement"
+  },
+  {
+    "field": "src_user_category",
+    "category": "Authentication, Change, Data Loss Prevention, Email, TicketManagement"
+  },
+  {
+    "field": "src_user_domain",
+    "category": "Email"
+  },
+  {
+    "field": "src_user_id",
+    "category": "Authentication"
+  },
+  {
+    "field": "src_user_name",
+    "category": "Change"
+  },
+  {
+    "field": "src_user_priority",
+    "category": "Authentication, Change, Data Loss Prevention, Email, TicketManagement"
+  },
+  {
+    "field": "src_user_role",
+    "category": "Authentication"
+  },
+  {
+    "field": "src_user_type",
+    "category": "Authentication, Change"
+  },
+  {
+    "field": "src_zone",
+    "category": "Data Loss Prevention, Network Traffic"
+  },
+  {
+    "field": "ssid",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "ssl_end_time",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_engine",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_hash",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_is_valid",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_common_name",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_email",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_email_domain",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_locality",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_organization",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_state",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_street",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_issuer_unit",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_name",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_policies",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_publickey",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_publickey_algorithm",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_serial",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_session_id",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_signature_algorithm",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_start_time",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_common_name",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_email",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_email_domain",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_locality",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_organization",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_state",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_street",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_subject_unit",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_validity_window",
+    "category": "Certificates"
+  },
+  {
+    "field": "ssl_version",
+    "category": "Certificates"
+  },
+  {
+    "field": "start_mode",
+    "category": "Endpoint"
+  },
+  {
+    "field": "start_time",
+    "category": "Databases, Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "state",
+    "category": "Endpoint"
+  },
+  {
+    "field": "status",
+    "category": "Change, Endpoint, Interprocess Messaging, Inventory, Splunk Audit Logs, TicketManagement, Updates, Web"
+  },
+  {
+    "field": "status_code",
+    "category": "Email"
+  },
+  {
+    "field": "storage",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "storage_free",
+    "category": "Performance"
+  },
+  {
+    "field": "storage_free_percent",
+    "category": "Performance"
+  },
+  {
+    "field": "storage_name",
+    "category": "Web"
+  },
+  {
+    "field": "storage_used",
+    "category": "Performance"
+  },
+  {
+    "field": "storage_used_percent",
+    "category": "Performance"
+  },
+  {
+    "field": "stored_procedures_called",
+    "category": "Databases"
+  },
+  {
+    "field": "subject",
+    "category": "Alerts Deprecated in favor of signature, Email"
+  },
+  {
+    "field": "summary_id",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "swap",
+    "category": "Performance"
+  },
+  {
+    "field": "swap_free",
+    "category": "Performance"
+  },
+  {
+    "field": "swap_space",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "swap_used",
+    "category": "Performance"
+  },
+  {
+    "field": "synch_supported",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "system_load",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "table_scans",
+    "category": "Databases"
+  },
+  {
+    "field": "tables_hit",
+    "category": "Databases"
+  },
+  {
+    "field": "tablespace_name",
+    "category": "Databases"
+  },
+  {
+    "field": "tablespace_reads",
+    "category": "Databases"
+  },
+  {
+    "field": "tablespace_status",
+    "category": "Databases"
+  },
+  {
+    "field": "tablespace_used",
+    "category": "Databases"
+  },
+  {
+    "field": "tablespace_writes",
+    "category": "Databases"
+  },
+  {
+    "field": "tag",
+    "category": "Alerts, Authentication, Certificates, Change, Data Loss Prevention, Databases, Email, Endpoint, Event Signatures, Interprocess Messaging, Intrusion Detection, Inventory, Java Virtual Machines (JVM), Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Performance, TicketManagement, Updates, Vulnerabilities, Web"
+  },
+  {
+    "field": "tcp_flag",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "temperature",
+    "category": "Performance"
+  },
+  {
+    "field": "thread_count",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "threads_started",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "thruput",
+    "category": "Performance"
+  },
+  {
+    "field": "thruput_max",
+    "category": "Performance"
+  },
+  {
+    "field": "ticket_id",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "time",
+    "category": "Inventory"
+  },
+  {
+    "field": "time_submitted",
+    "category": "TicketManagement"
+  },
+  {
+    "field": "tos",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "total_loaded",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "total_processors",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "total_unloaded",
+    "category": "Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "transaction_id",
+    "category": "Network Resolution (DNS)"
+  },
+  {
+    "field": "transport",
+    "category": "Certificates, Endpoint, Intrusion Detection, Network Resolution (DNS), Network Traffic"
+  },
+  {
+    "field": "transport_dest_port",
+    "category": "Endpoint"
+  },
+  {
+    "field": "ttl",
+    "category": "Network Resolution (DNS), Network Traffic"
+  },
+  {
+    "field": "type",
+    "category": "Alerts"
+  },
+  {
+    "field": "uptime",
+    "category": "Java Virtual Machines (JVM), Performance"
+  },
+  {
+    "field": "uri",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "uri_path",
+    "category": "Web"
+  },
+  {
+    "field": "uri_query",
+    "category": "Web"
+  },
+  {
+    "field": "url",
+    "category": "Email, Malware, Vulnerabilities, Web"
+  },
+  {
+    "field": "url_domain",
+    "category": "Web"
+  },
+  {
+    "field": "url_length",
+    "category": "Web"
+  },
+  {
+    "field": "user",
+    "category": "Alerts, Authentication, Change, Data Access, Data Loss Prevention, Databases, Email, Endpoint, Intrusion Detection, Inventory, Malware, Network Sessions, Network Traffic, Splunk Audit Logs, TicketManagement, Vulnerabilities, Web"
+  },
+  {
+    "field": "user_agent",
+    "category": "Authentication, Change, Data Access"
+  },
+  {
+    "field": "user_bunit",
+    "category": "Alerts, Authentication, Data Loss Prevention, Databases, Email, Endpoint, Intrusion Detection, Inventory, Malware, Network Sessions, Network Traffic, Splunk Audit Logs, TicketManagement, Vulnerabilities, Web"
+  },
+  {
+    "field": "user_category",
+    "category": "Alerts, Authentication, Data Loss Prevention, Databases, Email, Endpoint, Intrusion Detection, Inventory, Malware, Network Sessions, Network Traffic, Splunk Audit Logs, TicketManagement, Vulnerabilities, Web"
+  },
+  {
+    "field": "user_group",
+    "category": "Data Access"
+  },
+  {
+    "field": "user_id",
+    "category": "Authentication, Endpoint, Inventory"
+  },
+  {
+    "field": "user_name",
+    "category": "Alerts, Change"
+  },
+  {
+    "field": "user_priority",
+    "category": "Alerts, Authentication, Data Loss Prevention, Databases, Email, Endpoint, Intrusion Detection, Inventory, Malware, Network Sessions, Network Traffic, Splunk Audit Logs, TicketManagement, Vulnerabilities, Web"
+  },
+  {
+    "field": "user_role",
+    "category": "Authentication, Data Access"
+  },
+  {
+    "field": "user_type",
+    "category": "Authentication, Change"
+  },
+  {
+    "field": "vendor_account",
+    "category": "Alerts, Authentication, Change, Data Access, Network Traffic"
+  },
+  {
+    "field": "vendor_product",
+    "category": "Authentication, Change, Data Access, Data Loss Prevention, Databases, Email, Endpoint, Event Signatures, Intrusion Detection, Inventory, Java Virtual Machines (JVM), Malware, Network Resolution (DNS), Network Sessions, Network Traffic, Updates, Vulnerabilities, Web"
+  },
+  {
+    "field": "vendor_product_id",
+    "category": "Alerts, Change"
+  },
+  {
+    "field": "vendor_region",
+    "category": "Alerts, Change"
+  },
+  {
+    "field": "version",
+    "category": "Inventory, Java Virtual Machines (JVM)"
+  },
+  {
+    "field": "view",
+    "category": "Splunk Audit Logs"
+  },
+  {
+    "field": "vip_port",
+    "category": "Inventory"
+  },
+  {
+    "field": "vlan",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "wait_state",
+    "category": "Databases"
+  },
+  {
+    "field": "wait_time",
+    "category": "Databases"
+  },
+  {
+    "field": "wifi",
+    "category": "Network Traffic"
+  },
+  {
+    "field": "write_blocks",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "write_latency",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "write_ops",
+    "category": "Inventory, Performance"
+  },
+  {
+    "field": "xdelay",
+    "category": "Email"
+  },
+  {
+    "field": "xref",
+    "category": "Email"
+  },
+  {
+    "field": "xref",
+    "category": "Vulnerabilities"
+  }
+]
