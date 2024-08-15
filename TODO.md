@@ -10,10 +10,15 @@
   - [ ] Handle CIDR slash range for IPv4: e.g. 10.2.4.5/24 
 - [ ] Indicator Model
     - [ ] Create
-          - [ ] Find a good library to handle JSON schema validation & maybe Dataclass compatibility 
-          - [ ] Schema versioning: to handle updates/breaking changes to the app
+        - [ ] Find a good library to handle JSON schema validation & maybe Dataclass compatibility 
+        - [ ] Schema versioning: to handle updates/breaking changes to the app
+        - [ ] https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/kvstore/usetherestapitomanagekv/ 
     - [ ] Read One
+      - [ ] Query by _key=indicator_id?
     - [ ] List
+      - [ ] Query by keyword / regex on one or more fields
+        - Use mongodb query format: e.g. for substring search: `{"field": {"$regex": "substring"}}`
+      - [ ] Pagination
     - [ ] Update
     - [ ] Delete
 - [ ] Grouping Model
@@ -41,4 +46,5 @@
       - make sure form field says that it expecting TLPv1
       - seems to be just RED, AMBER, GREEN, WHITE
     - [ ] Populate Groupings dropdown from REST endpoint
+- [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
 
