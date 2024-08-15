@@ -27,7 +27,7 @@ SAMPLE_INDICATOR_INSTANCE = IndicatorV1(
     _key="66bd393930444c60800ab750")
 
 SAMPLE_INDICATOR_JSON = {
-    "schema_version" : 1,
+    "schema_version": 1,
     "grouping_id": "A",
     "indicator_id": "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59",
     "splunk_field_name": "src_ip",
@@ -43,7 +43,7 @@ SAMPLE_INDICATOR_JSON = {
 }
 
 
-def test_from_valid_dict():
+def test_from_valid_dict_with_splunk_reserved_fields():
     as_dict = SAMPLE_INDICATOR_JSON
     indicator = IndicatorV1.schema().load(as_dict)
     assert indicator.grouping_id == "A"
@@ -51,6 +51,16 @@ def test_from_valid_dict():
     assert indicator.splunk_field_name == "src_ip"
     assert indicator.splunk_field_value == "100.2.3.4"
     assert indicator.valid_from == datetime(2024, 8, 14, 23, 9, 21, 290000)
+
+
+def test_from_valid_dict_without_splunk_reserved_fields():
+    as_dict = SAMPLE_INDICATOR_JSON
+    del as_dict["_user"]
+    del as_dict["_key"]
+    indicator = IndicatorV1.schema().load(as_dict)
+    assert indicator.indicator_id == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
+    assert indicator._key is None
+    assert indicator._user is None
 
 
 def test_to_dict():
@@ -70,6 +80,7 @@ def test_validate_schema_version():
     with pytest.raises(ValidationError) as exc_info:
         _ = IndicatorV1.schema().load(indicator_json)
     assert "schema_version" in str(exc_info.value)
+
 
 @pytest.mark.parametrize("confidence", [-1, 101])
 def test_validate_confidence_in_range_0_to_100(confidence):

@@ -1,3 +1,5 @@
+cattrs
+attrs
 dataclasses-json
 stix2
 stix2-patterns
