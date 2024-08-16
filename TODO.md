@@ -21,7 +21,7 @@
     - [ ] Create
         - [X] Find a good library to handle JSON schema validation & maybe Dataclass compatibility
           - Using dataclasses-json which uses marshmallow under the hood for schema validation
-        - [ ] Schema versioning: to handle updates/breaking changes to the app
+        - [X] Schema versioning: to handle updates/breaking changes to the app
         - [ ] https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/kvstore/usetherestapitomanagekv/ 
         - [ ] Nicely convert the ClassValidationError to a human-readable error message -> form submission errors
         - [ ] New POST endpoint to validate a STIX pattern (realtime form validation)
@@ -49,6 +49,3 @@
     - [ ] Delete/Cancel
 - [ ] Submit grouping to TAXII
 - [ ] Schedule submission of grouping to TAXII
-- 
-## Frontend
-

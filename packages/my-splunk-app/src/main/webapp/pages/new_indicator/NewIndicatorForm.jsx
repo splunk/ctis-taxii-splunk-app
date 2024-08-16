@@ -14,6 +14,7 @@ import Message from '@splunk/react-ui/Message';
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 
+import {useDebounce} from "@splunk/my-react-component/src/debounce";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGroup";
@@ -22,7 +23,6 @@ import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControl
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 
 import SubmitButton from "./SubmitButton";
-import {useDebounce} from "./debounce";
 import {suggestPattern} from "./patternSuggester";
 
 const GROUPING_ID = "grouping_id";
