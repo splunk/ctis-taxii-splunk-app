@@ -1,4 +1,4 @@
-from attrs import define
+from attrs import define, field
 from cattr.gen import make_dict_structure_fn, make_dict_unstructure_fn
 from cattrs import Converter
 
@@ -10,9 +10,14 @@ class BaseModel:
     schema_version: int = None
 
 
+def validate_schema_version_is_1(instance, attribute, value: int):
+    if value != 1:
+        raise ValueError("schema_version must be 1")
+
+
 @define(slots=False, kw_only=True)
 class BaseModelV1(BaseModel):
-    schema_version: int = 1
+    schema_version: int = field(default=1, validator=[validate_schema_version_is_1])
 
 
 def make_base_converter():

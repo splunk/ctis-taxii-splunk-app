@@ -27,7 +27,7 @@ def validate_indicator_id(instance, attribute, value):
 
 def validate_confidence(instance, attribute, value: int):
     if not 0 <= value <= 100:
-        raise ValueError("Confidence must be between 0 and 100")
+        raise ValueError("confidence must be between 0 and 100")
 
 
 @define(slots=False, kw_only=True)
@@ -47,6 +47,7 @@ class IndicatorModelV1(BaseModelV1):
 indicator_converter = make_base_converter()
 
 
+# TODO: These could probably be moved to base model class?
 def unstructure_datetime_hook(val: datetime) -> str:
     """This hook will be registered for `datetime`s."""
     return val.isoformat()
