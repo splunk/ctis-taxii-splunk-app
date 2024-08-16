@@ -9,6 +9,7 @@ import styled from "styled-components";
 import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
+import Message from '@splunk/react-ui/Message';
 
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
@@ -68,6 +69,7 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
+    const [submissionError, setSubmissionError] = useState(null);
 
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
@@ -87,8 +89,10 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
 
     register(NAME, {required: "Name is required."});
     register(DESCRIPTION, {required: "Description is required."});
+
     register(STIX_PATTERN, {required: "STIX Pattern is required."});
     const stixPattern = watch(STIX_PATTERN);
+
     register(TLP_RATING, {required: "TLP Rating is required."});
     register(CONFIDENCE, {required: "Confidence is required."});
     register(VALID_FROM, {required: "Valid from is required."});
@@ -96,12 +100,17 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     const onSubmit = async (data) => {
         console.log(data);
         const formIsValid = await trigger();
+        setSubmissionError(null);
         if (formIsValid) {
-            // TODO: error handling
             await postCreateIndicator(data, (resp) => {
                 console.log(resp);
                 setSubmitSuccess(true);
-            }, (error) => console.error(error));
+                setSubmissionError(null);
+            }, async (error) => {
+                const error_json = await error.json();
+                console.error("Error creating indicator", error_json);
+                setSubmissionError(error_json.error);
+            });
         } else {
             console.error(formState.errors);
         }
@@ -146,6 +155,9 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
 
     return (
         <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
+            {submissionError && <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
+                {submissionError}
+            </Message>}
             <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}

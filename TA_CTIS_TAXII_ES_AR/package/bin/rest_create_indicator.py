@@ -33,8 +33,6 @@ class Handler(AbstractRestHandler):
         """
         TODO:
         - Validation on payload JSON
-            - required fields
-            - validate STIX pattern
             - Check if indicator ID exists already
         """
 

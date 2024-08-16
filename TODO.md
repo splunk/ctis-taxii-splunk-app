@@ -1,19 +1,30 @@
 # CTIS TAXII ES Integration - TODO
-## Backend
 ### Unknowns
 - [X] Logging: https://dev.splunk.com/enterprise/docs/developapps/addsupport/logging/loggingsplunkextensions
 - [X] Read from kvstore collection
 - [X] Write to kvstore collection
 - [ ] Read config saved by UCC
-### Endpoints
+### Features
 - [X] Suggest a conversion from splunk_field=value => STIX2 Pattern
-  - [ ] Handle CIDR slash range for IPv4: e.g. 10.2.4.5/24 
+  - [X] Handle CIDR slash range for IPv4: e.g. 10.2.4.5/24 
+- New Indicator Form
+    - [X] Autopopulate STIX pattern upon Splunk field name/value change (if text field is blank)
+    - [X] Fix bug, clearing a text field with the 'x' doesn't clear the value
+    - [X] Use TLP version 1: https://www.first.org/tlp/v1/
+        - make sure form field says that it expecting TLPv1
+        - seems to be just RED, AMBER, GREEN, WHITE
+    - [X] Show form submission error as a red banner message
+    - [ ] Populate Groupings dropdown from REST endpoint
+    - [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
+      - [ ] Modify form to accept one or more splunk key=value pairs which generate a STIX pattern
 - [ ] Indicator Model
     - [ ] Create
         - [X] Find a good library to handle JSON schema validation & maybe Dataclass compatibility
           - Using dataclasses-json which uses marshmallow under the hood for schema validation
         - [ ] Schema versioning: to handle updates/breaking changes to the app
         - [ ] https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/kvstore/usetherestapitomanagekv/ 
+        - [ ] Nicely convert the ClassValidationError to a human-readable error message -> form submission errors
+        - [ ] New POST endpoint to validate a STIX pattern (realtime form validation)
     - [ ] Read One
       - [ ] Query by _key=indicator_id?
     - [ ] List
@@ -40,12 +51,4 @@
 - [ ] Schedule submission of grouping to TAXII
 - 
 ## Frontend
-- New Indicator Form
-    - [X] Autopopulate STIX pattern upon Splunk field name/value change (if text field is blank)
-    - [X] Fix bug, clearing a text field with the 'x' doesn't clear the value
-    - [X] Use TLP version 1: https://www.first.org/tlp/v1/
-      - make sure form field says that it expecting TLPv1
-      - seems to be just RED, AMBER, GREEN, WHITE
-    - [ ] Populate Groupings dropdown from REST endpoint
-- [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
 
