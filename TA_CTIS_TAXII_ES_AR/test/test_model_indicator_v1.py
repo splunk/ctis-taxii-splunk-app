@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import attrs
 import pytest
 from cattrs import ClassValidationError, transform_error
 
@@ -90,6 +90,16 @@ def test_from_valid_dict_without_schema_version():
     assert indicator.splunk_field_value == "100.2.3.4"
 
 
+def test_to_dict_without_splunk_reserved_fields():
+    indicator = attrs.evolve(SAMPLE_INDICATOR_INSTANCE, key=None, user=None)
+    as_dict = indicator_converter.unstructure(indicator)
+    assert "key" not in as_dict
+    assert "_key" not in as_dict, "Should not serialize key if it is None"
+    assert "user" not in as_dict
+    assert "_user" not in as_dict, "Should not serialize user if it is None"
+
+
+
 def test_to_dict():
     indicator = SAMPLE_INDICATOR_INSTANCE
     as_dict = indicator_converter.unstructure(indicator)
@@ -97,8 +107,10 @@ def test_to_dict():
 
     # 'key' should be serialized as '_key'
     assert as_dict["_key"] == "66bd393930444c60800ab750"
+    assert "key" not in as_dict
     # 'user' should be serialized as '_user'
     assert as_dict["_user"] == "nobody"
+    assert "user" not in as_dict
 
     assert as_dict["name"] == "name"
     assert as_dict["description"] == "desc"

@@ -3,7 +3,8 @@ import logging
 import os
 import sys
 import abc
-
+from typing import Optional, Dict, List
+from collections import defaultdict
 # Local imports
 import remote_pdb
 
@@ -25,7 +26,7 @@ class AbstractRestHandler(abc.ABC):
         self.logger = logger
 
     @abc.abstractmethod
-    def handle(self, input_json: dict, session_key:str) -> dict:
+    def handle(self, input_json: Optional[dict], query_params:Dict[str, List], session_key:str) -> dict:
         """
         Return any dict response or throw an exception.
         This will be wrapped by a common wrapper method.
@@ -48,14 +49,22 @@ class AbstractRestHandler(abc.ABC):
     def exception_response(e: Exception, status_code: int) -> dict:
         return {"payload": {"error": str(e)}, "status": status_code}
 
+    @staticmethod
+    def parse_query_params(query: list) -> dict:
+        params = defaultdict(list)
+        for a,b in query:
+            params[a].append(b)
+        return params
+
     def generate_response(self, in_string: str) -> dict:
         try:
             self.logger.info(f"Handling request with input: {in_string}")
             in_string_dict = json.loads(in_string)
-            input_json = json.loads(in_string_dict["payload"])
+            input_json = json.loads(in_string_dict["payload"]) if "payload" in in_string_dict else None
             session_key = in_string_dict["session"]["authtoken"]
             # remote_pdb.RemotePdb(host="0.0.0.0", port=4444).set_trace()
-            payload = self.handle(input_json=input_json, session_key=session_key)
+            query_params_dict = self.parse_query_params(in_string_dict["query"])
+            payload = self.handle(input_json=input_json, query_params=query_params_dict, session_key=session_key)
             return {"payload": payload, "status": 200}
         except AssertionError as e:
             self.logger.exception("Client error")

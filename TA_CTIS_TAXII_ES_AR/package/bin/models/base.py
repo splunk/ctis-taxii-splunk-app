@@ -46,10 +46,14 @@ def make_base_converter():
 
         def custom(obj):
             result = default_unstructure(obj)
-            if result.get("key") is not None:
-                result["_key"] = result.pop("key")
-            if result.get("user") is not None:
-                result["_user"] = result.pop("user")
+            if "key" in result:
+                key = result.pop("key")
+                if key is not None:
+                    result["_key"] = key
+            if "user" in result:
+                user = result.pop("user")
+                if user is not None:
+                    result["_user"] = user
 
             return result
 
