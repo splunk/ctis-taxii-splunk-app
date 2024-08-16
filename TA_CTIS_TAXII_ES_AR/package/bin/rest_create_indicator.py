@@ -8,6 +8,7 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
     from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
+    from models import IndicatorModelV1, indicator_converter
     from solnlib._utils import get_collection_data
     import remote_pdb
 except ImportError as e:
@@ -37,8 +38,16 @@ class Handler(AbstractRestHandler):
             - Check if indicator ID exists already
         """
 
-        # Optionally set a "_key" as partition key
-        collection.insert(input_json)
+        # TODO: Utility to nicely convert the ClassValidationError to a human-readable error message
+        try:
+            indicator = indicator_converter.structure(input_json, IndicatorModelV1)
+        except Exception as exc:
+            self.logger.exception(f"Failed to convert input JSON to IndicatorModelV1")
+            raise ValueError(repr(exc))
+
+        indicator_dict = indicator_converter.unstructure(indicator)
+        self.logger.info(f"Inserting indicator: {indicator_dict}")
+        collection.insert(indicator_dict)
 
         response = {
             "status": "success",
