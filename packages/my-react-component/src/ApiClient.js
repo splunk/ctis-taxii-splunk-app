@@ -22,6 +22,23 @@ function postData(endpoint, data, successHandler, errorHandler) {
         })
         .catch(errorHandler)
 }
+function getData(endpoint, successHandler, errorHandler) {
+    fetch(createRESTURL(endpoint, {app}),
+        {
+            method: 'GET',
+            headers: {
+
+            }
+        })
+        .then(resp => {
+            if (!resp.ok) {
+                errorHandler(resp);
+            } else {
+                resp.json().then(successHandler);
+            }
+        })
+        .catch(errorHandler)
+}
 
 export function getStixPatternSuggestion(splunkFieldName, splunkFieldValue, successHandler, errorHandler) {
     const endpoint = `suggest-stix-pattern`;
@@ -38,4 +55,8 @@ export function getStixPatternSuggestion(splunkFieldName, splunkFieldValue, succ
 
 export function postCreateIndicator(data, successHandler, errorHandler) {
     postData('create-indicator', data, successHandler, errorHandler)
+}
+
+export function getIndicators(successHandler, errorHandler) {
+    getData('list-indicators', successHandler, errorHandler)
 }

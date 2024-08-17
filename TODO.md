@@ -4,9 +4,17 @@
 - [X] Read from kvstore collection
 - [X] Write to kvstore collection
 - [ ] Read config saved by UCC
+### Misc
+- [ ] Rename app package (without the '2')
+
+
 ### Features
 - [X] Suggest a conversion from splunk_field=value => STIX2 Pattern
   - [X] Handle CIDR slash range for IPv4: e.g. 10.2.4.5/24 
+- Test Automation
+  - [ ] Splunk Docker
+    - [ ] Selenium for form interaction
+    - [ ] Python / pytest for hitting API endpoints
 - New Indicator Form
     - [X] Autopopulate STIX pattern upon Splunk field name/value change (if text field is blank)
     - [X] Fix bug, clearing a text field with the 'x' doesn't clear the value
@@ -17,13 +25,15 @@
     - [ ] Populate Groupings dropdown from REST endpoint
     - [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
       - [ ] Modify form to accept one or more splunk key=value pairs which generate a STIX pattern
-- [ ] Indicator Model
+- [ ] Indicator Model - REST API
     - [ ] Create
         - [X] Find a good library to handle JSON schema validation & maybe Dataclass compatibility
           - Using dataclasses-json which uses marshmallow under the hood for schema validation
         - [X] Schema versioning: to handle updates/breaking changes to the app
         - [ ] https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/kvstore/usetherestapitomanagekv/ 
         - [ ] Nicely convert the ClassValidationError to a human-readable error message -> form submission errors
+        - [ ] Validate indicator_id is unique & does not already exist
+        - [ ] Validate grouping_id exists
         - [ ] New POST endpoint to validate a STIX pattern (realtime form validation)
     - [ ] Read One
       - [ ] Query by _key=indicator_id?

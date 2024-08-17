@@ -22,7 +22,7 @@ function ExpandedDataRecord({mapping}) {
     return (<MyTable>
         <TableHead>
             <TableHeadCell width={200}></TableHeadCell>
-            <TableHeadCell width={500}></TableHeadCell>
+            <TableHeadCell width={1000}></TableHeadCell>
         </TableHead>
         <Table.Body>
             {Object.entries(mapping).map(([term, description]) => (
@@ -58,7 +58,7 @@ function ExpandableDataTable({data, rowKeyFunction, mappingOfColumnNameToCellVal
                 ))}
             </Table.Head>
             <Table.Body>
-                {data.map((row) => (
+                {data && data.map((row) => (
                     <Table.Row key={rowKeyFunction(row)} expansionRow={
                         getExpansionRow(row, rowKeyFunction, expansionRowFieldNameToCellValue, mappingOfColumnNameToCellValue.length)
                     }>
