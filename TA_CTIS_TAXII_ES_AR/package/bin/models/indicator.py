@@ -3,7 +3,7 @@ from datetime import datetime
 from attrs import define, field
 from stix2 import Indicator as StixIndicator
 from stix2patterns.validator import validate as stix_validate
-
+from uuid import uuid4
 from .base import BaseModelV1, make_base_converter
 from .tlp_v1 import TLPv1
 
@@ -33,6 +33,10 @@ def validate_confidence(instance, attribute, value: int):
 @define(slots=False, kw_only=True)
 class IndicatorModelV1(BaseModelV1):
     indicator_id: str = field(validator=[validate_indicator_id])
+    @indicator_id.default
+    def _indicator_id_default(self):
+        return f"indicator--{uuid4()}"
+
     grouping_id: str = field()
     splunk_field_name: str = field()
     splunk_field_value: str = field()

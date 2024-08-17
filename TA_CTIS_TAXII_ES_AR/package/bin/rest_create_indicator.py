@@ -48,7 +48,8 @@ class Handler(AbstractRestHandler):
         collection.insert(indicator_dict)
 
         response = {
-            "status": "success",
+            "status" : "success",
+            "indicator": indicator_dict,
         }
         return response
 

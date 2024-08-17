@@ -52,6 +52,14 @@ def test_from_dict_missing_required_fields():
     assert all(['required field missing' in x for x in error_strings])
 
 
+def test_from_valid_dict_without_indicator_id():
+    # Autogenerate indicator_id if not provided
+    as_dict = get_sample_dict()
+    del as_dict["indicator_id"]
+    indicator = indicator_converter.structure(as_dict, IndicatorModelV1)
+    assert indicator.indicator_id.startswith("indicator--")
+
+
 def test_from_valid_dict_with_splunk_reserved_fields():
     as_dict = get_sample_dict()
     indicator = indicator_converter.structure(as_dict, IndicatorModelV1)
@@ -97,7 +105,6 @@ def test_to_dict_without_splunk_reserved_fields():
     assert "_key" not in as_dict, "Should not serialize key if it is None"
     assert "user" not in as_dict
     assert "_user" not in as_dict, "Should not serialize user if it is None"
-
 
 
 def test_to_dict():
