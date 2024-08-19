@@ -3,9 +3,6 @@ import Paginator from '@splunk/react-ui/Paginator';
 
 function SearchPaginator({totalPages, pageNum, onChangePage}) {
     const handleChange = (event, { page }) => {
-        // setPageNum(page);
-        // setSkip((page - 1) * resultsPerPage);
-        // setLimit(resultsPerPage);
         onChangePage(page);
     };
     return (

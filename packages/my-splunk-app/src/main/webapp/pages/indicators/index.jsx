@@ -12,11 +12,12 @@ import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import {app} from '@splunk/splunk-utils/config';
 import {createURL} from '@splunk/splunk-utils/url';
 import SearchPaginator from "./paginator";
-import {StyledContainer, StyledGreeting} from './styles';
+import {StyledGreeting} from './styles';
 import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
-import Message from '@splunk/react-ui/Message';
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
+import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
+
 
 
 const SEARCH_FIELD_OPTIONS = [
@@ -67,8 +68,10 @@ function useIndicatorsData({skip, limit, onError}) {
     const [records, setRecords] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     useEffect(() => {
         setLoading(true);
+        setError(null);
         // TODO: handle cancel? E.g. if pagination changes before data loads
         getIndicators(skip, limit, (data) => {
             console.log(data)
@@ -77,46 +80,47 @@ function useIndicatorsData({skip, limit, onError}) {
             setLoading(false);
         }, (error) => {
             setLoading(false);
+            setError(error);
             onError(error);
         });
     }, [skip, limit]);
-    return {records, totalRecords, loading};
+    return {records, totalRecords, loading, error};
 }
 
 function PaginatedDataTable({renderData, fetchData, onError}) {
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
-    const {records, totalRecords, loading} = fetchData({skip, limit: resultsPerPage, onError});
+    const {records, totalRecords, loading, error} = fetchData({skip, limit: resultsPerPage, onError});
     const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
     // TODO: results per page dropdown / input
     return (
         <>
-            {renderData({records, loading})}
+            {renderData({records, loading, error})}
             <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
             <SearchPaginator totalPages={numPages} pageNum={pageNum} onChangePage={setPageNum}/>
+
         </>
     );
 
 }
 
-function renderDataTable({records, loading}) {
+function renderDataTable({records, loading, error}) {
     // TODO: pass in isLoading, error?
     const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
-    return (
-        loading ? loadingElement :
-        <ExpandableDataTable data={records}
+    const errorElement = <P>{`Error: ${error}`}</P>
+    const table = <ExpandableDataTable data={records}
                              rowKeyFunction={(row) => row.indicator_id}
                              expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
                              mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
+    return (
+        error ? errorElement : (loading ? loadingElement : table)
     );
 }
 
-
 function MyStyledContainer() {
-    const [error, setError] = useState(null);
     return (
-        <StyledContainer>
+        <AppContainer>
             <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
             <div>
                 {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
@@ -125,13 +129,11 @@ function MyStyledContainer() {
             <SearchBar handleChange={(e) => {
             }} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
 
-            {/*// TODO: Replace with Toast Error message. Make it reusable*/}
-            {error && <Message appearance="fill" type="error" onRequestRemove={() => {}}>
-                <P><strong>Something went wrong!</strong></P>
-                <P>{error}</P>
-            </Message> }
-            <PaginatedDataTable renderData={renderDataTable} fetchData={useIndicatorsData} onError={(e) => setError(`${e}`)}/>
-        </StyledContainer>
+            <PaginatedDataTable renderData={renderDataTable} fetchData={useIndicatorsData} onError={(e) => {
+                console.log(e);
+                createErrorToast(e);
+            }}/>
+        </AppContainer>
     );
 }
 
