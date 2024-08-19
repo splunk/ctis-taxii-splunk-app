@@ -4,7 +4,8 @@ import {app, getCSRFToken} from '@splunk/splunk-utils/config';
 function postData(endpoint, data, successHandler, errorHandler) {
     // Custom CSRF headers set for POST requests to custom endpoints
     // See https://docs.splunk.com/Documentation/StreamApp/7.1.3/DeployStreamApp/SplunkAppforStreamRESTAPI
-    fetch(createRESTURL(endpoint, {app}),
+    const url = createRESTURL(endpoint, {app});
+    fetch(url,
         {
             method: 'POST',
             body: JSON.stringify(data),
@@ -22,13 +23,18 @@ function postData(endpoint, data, successHandler, errorHandler) {
         })
         .catch(errorHandler)
 }
-function getData(endpoint, successHandler, errorHandler) {
-    fetch(createRESTURL(endpoint, {app}),
+
+function getData({endpoint, queryParams}, successHandler, errorHandler) {
+    const url = createRESTURL(endpoint, {app});
+    let finalUrl = url;
+    if(queryParams){
+        const urlSearchParams = new URLSearchParams(queryParams);
+        finalUrl = `${url}?${urlSearchParams.toString()}`;
+    }
+    fetch(finalUrl,
         {
             method: 'GET',
-            headers: {
-
-            }
+            headers: {}
         })
         .then(resp => {
             if (!resp.ok) {
@@ -57,6 +63,11 @@ export function postCreateIndicator(data, successHandler, errorHandler) {
     postData('create-indicator', data, successHandler, errorHandler)
 }
 
-export function getIndicators(successHandler, errorHandler) {
-    getData('list-indicators', successHandler, errorHandler)
+export function getIndicators(skip, limit, successHandler, errorHandler) {
+    getData({
+        endpoint: 'list-indicators',
+        queryParams: {
+            skip, limit
+        }
+    }, successHandler, errorHandler)
 }

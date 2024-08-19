@@ -62,16 +62,22 @@ const expansionFieldNameToCellValue = {
     "TLP Rating": (row) => row.tlp_v1_rating,
 }
 
-function IndicatorsDataTable() {
+function useIndicatorsData(skip, limit) {
     const [data, setData] = useState({});
     useEffect(() => {
-        getIndicators((data) => {
+        // TODO: handle cancel? E.g. if pagination changes before data loads
+        getIndicators(skip, limit, (data) => {
             console.log(data)
             setData(data);
         }, (error) => {
             console.error(error);
         });
-    }, []);
+    }, [skip, limit]);
+    return data;
+}
+
+function IndicatorsDataTable({skip, limit}) {
+    const data = useIndicatorsData(skip, limit);
     return (
         <ExpandableDataTable data={data?.records}
                              rowKeyFunction={(row) => row.indicator_id}
@@ -79,23 +85,33 @@ function IndicatorsDataTable() {
                              mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
     );
 }
-
+function MyStyledContainer() {
+    const resultsPerPage = 3;
+    const [pageNum, setPageNum] = useState(1);
+    const [skip, setSkip] = useState(0);
+    const [limit, setLimit] = useState(resultsPerPage);
+    const handleChange = (event, { page }) => {
+        setPageNum(page);
+        setSkip((page - 1) * resultsPerPage);
+        setLimit(resultsPerPage);
+    };
+    return (
+        <StyledContainer>
+            <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
+            <div>
+                {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
+                <Button icon={<Plus/>} label="New Indicator" appearance="primary"/>
+            </div>
+            <SearchBar handleChange={handleChange} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
+            <IndicatorsDataTable skip={skip} limit={limit}/>
+            <SearchPaginator pageNum={pageNum} handleChange={handleChange}/>
+        </StyledContainer>
+    );
+}
 getUserTheme()
     .then((theme) => {
-        layout(
-            <StyledContainer>
-                <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
-                <div>
-                    {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
-                    <Button icon={<Plus/>} label="New Indicator" appearance="primary"/>
-                </div>
-                <SearchBar handleChange={handleChange} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
-                <IndicatorsDataTable/>
-                <SearchPaginator/>
-            </StyledContainer>,
-            {
-                theme,
-            }
+        layout(<MyStyledContainer />,
+            { theme, }
         );
     })
     .catch((e) => {
