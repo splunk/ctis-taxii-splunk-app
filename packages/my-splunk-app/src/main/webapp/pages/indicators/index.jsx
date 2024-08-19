@@ -16,6 +16,8 @@ import {StyledContainer, StyledGreeting} from './styles';
 import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import Message from '@splunk/react-ui/Message';
+import WaitSpinner from '@splunk/react-ui/WaitSpinner';
+
 
 const SEARCH_FIELD_OPTIONS = [
     {label: 'Any Field', value: '1'},
@@ -63,29 +65,34 @@ const expansionFieldNameToCellValue = {
 
 function useIndicatorsData({skip, limit, onError}) {
     const [records, setRecords] = useState([]);
-    const [total, setTotal] = useState(0);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
+        setLoading(true);
         // TODO: handle cancel? E.g. if pagination changes before data loads
         getIndicators(skip, limit, (data) => {
             console.log(data)
             setRecords(data.records);
-            setTotal(data.total);
+            setTotalRecords(data.total);
+            setLoading(false);
         }, (error) => {
+            setLoading(false);
             onError(error);
         });
     }, [skip, limit]);
-    return [records, total];
+    return {records, totalRecords, loading};
 }
 
 function PaginatedDataTable({renderData, fetchData, onError}) {
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
-    const [records, totalRecords] = fetchData({skip, limit: resultsPerPage, onError});
+    const {records, totalRecords, loading} = fetchData({skip, limit: resultsPerPage, onError});
     const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
+    // TODO: results per page dropdown / input
     return (
         <>
-            {renderData(records)}
+            {renderData({records, loading})}
             <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
             <SearchPaginator totalPages={numPages} pageNum={pageNum} onChangePage={setPageNum}/>
         </>
@@ -93,9 +100,12 @@ function PaginatedDataTable({renderData, fetchData, onError}) {
 
 }
 
-function renderDataTable(data) {
+function renderDataTable({records, loading}) {
+    // TODO: pass in isLoading, error?
+    const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
     return (
-        <ExpandableDataTable data={data}
+        loading ? loadingElement :
+        <ExpandableDataTable data={records}
                              rowKeyFunction={(row) => row.indicator_id}
                              expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
                              mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
