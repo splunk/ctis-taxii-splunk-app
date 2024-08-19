@@ -21,6 +21,7 @@ import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGrou
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
+import IndicatorIdControlGroup from "@splunk/my-react-component/src/IndicatorIdControlGroup";
 
 import SubmitButton from "./SubmitButton";
 import {suggestPattern} from "./patternSuggester";
@@ -153,6 +154,8 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
         }
     }, [suggestedPattern]);
 
+    const [useCustomIndicatorId, setUseCustomIndicatorId] = useState(false);
+
     return (
         <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
             {submissionError && <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
@@ -162,7 +165,10 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
             ]}/>
-            <TextControlGroup label="Indicator ID" {...formInputProps(INDICATOR_ID)} />
+            <IndicatorIdControlGroup label="Indicator ID (new)" {...formInputProps(INDICATOR_ID)}
+                                     useCustomIndicatorId={useCustomIndicatorId}
+                                     setUseCustomIndicatorId={setUseCustomIndicatorId}/>
+            {/*<TextControlGroup label="Indicator ID" {...formInputProps(INDICATOR_ID)} />*/}
             <TextControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} />
             <TextControlGroup label="Splunk Field Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />
             <TextControlGroup label="Indicator Name" {...formInputProps(NAME)} />

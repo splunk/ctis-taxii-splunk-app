@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import Paginator from '@splunk/react-ui/Paginator';
 
-function SearchPaginator({pageNum, handleChange}) {
+function SearchPaginator({totalPages, pageNum, onChangePage}) {
+    const handleChange = (event, { page }) => {
+        // setPageNum(page);
+        // setSkip((page - 1) * resultsPerPage);
+        // setLimit(resultsPerPage);
+        onChangePage(page);
+    };
     return (
         <Paginator
             onChange={handleChange}
             current={pageNum}
             alwaysShowLastPageLink
-            totalPages={10}
+            totalPages={totalPages}
          />
     );
 }

@@ -41,6 +41,7 @@
       - [ ] Query by keyword / regex on one or more fields
         - Use mongodb query format: e.g. for substring search: `{"field": {"$regex": "substring"}}`
       - [ ] Pagination
+        - [X] Backend to support return number of total results
     - [ ] Update
     - [ ] Delete
 - [ ] Grouping Model

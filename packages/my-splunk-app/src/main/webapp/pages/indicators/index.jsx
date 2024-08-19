@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import layout from '@splunk/react-page';
 import {getUserTheme} from '@splunk/splunk-utils/themes';
@@ -14,6 +14,7 @@ import {createURL} from '@splunk/splunk-utils/url';
 import SearchPaginator from "./paginator";
 import {StyledContainer, StyledGreeting} from './styles';
 import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
+import P from "@splunk/react-ui/Paragraph";
 
 const handleChange = (e, {value: searchValue}) => {
     console.log(searchValue);
@@ -62,39 +63,49 @@ const expansionFieldNameToCellValue = {
     "TLP Rating": (row) => row.tlp_v1_rating,
 }
 
-function useIndicatorsData(skip, limit) {
-    const [data, setData] = useState({});
+function useIndicatorsData({skip, limit}) {
+    const [records, setRecords] = useState([]);
+    const [total, setTotal] = useState(0);
     useEffect(() => {
         // TODO: handle cancel? E.g. if pagination changes before data loads
         getIndicators(skip, limit, (data) => {
             console.log(data)
-            setData(data);
+            setRecords(data.records);
+            setTotal(data.total);
         }, (error) => {
             console.error(error);
         });
     }, [skip, limit]);
-    return data;
+    return [records, total];
 }
 
-function IndicatorsDataTable({skip, limit}) {
-    const data = useIndicatorsData(skip, limit);
+function PaginatedDataTable({renderData, fetchData}) {
+    const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [pageNum, setPageNum] = useState(1);
+    const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
+    const [records, totalRecords] = fetchData({skip, limit: resultsPerPage});
+    const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
     return (
-        <ExpandableDataTable data={data?.records}
+        <>
+            {renderData(records)}
+            <SearchPaginator totalPages={numPages} pageNum={pageNum} onChangePage={setPageNum}/>
+            <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}.`}</P>
+        </>
+    );
+
+}
+
+function renderDataTable(data) {
+    return (
+        <ExpandableDataTable data={data}
                              rowKeyFunction={(row) => row.indicator_id}
                              expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
                              mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
     );
 }
+
+
 function MyStyledContainer() {
-    const resultsPerPage = 3;
-    const [pageNum, setPageNum] = useState(1);
-    const [skip, setSkip] = useState(0);
-    const [limit, setLimit] = useState(resultsPerPage);
-    const handleChange = (event, { page }) => {
-        setPageNum(page);
-        setSkip((page - 1) * resultsPerPage);
-        setLimit(resultsPerPage);
-    };
     return (
         <StyledContainer>
             <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
@@ -102,16 +113,17 @@ function MyStyledContainer() {
                 {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
                 <Button icon={<Plus/>} label="New Indicator" appearance="primary"/>
             </div>
-            <SearchBar handleChange={handleChange} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
-            <IndicatorsDataTable skip={skip} limit={limit}/>
-            <SearchPaginator pageNum={pageNum} handleChange={handleChange}/>
+            <SearchBar handleChange={(e) => {
+            }} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
+            <PaginatedDataTable renderData={renderDataTable} fetchData={useIndicatorsData}/>
         </StyledContainer>
     );
 }
+
 getUserTheme()
     .then((theme) => {
-        layout(<MyStyledContainer />,
-            { theme, }
+        layout(<MyStyledContainer/>,
+            {theme,}
         );
     })
     .catch((e) => {

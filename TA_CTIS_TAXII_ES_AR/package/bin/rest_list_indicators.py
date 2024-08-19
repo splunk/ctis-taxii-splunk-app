@@ -17,6 +17,11 @@ except ImportError as e:
 
 logger = get_logger_for_script(__file__)
 
+def get_collection_size(collection) -> int:
+    # TODO: add filter query once this is needed
+    #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
+    records = collection.query(fields="_key", limit=0)
+    return len(records)
 
 class Handler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
@@ -41,6 +46,7 @@ class Handler(AbstractRestHandler):
 
         response = {
             "records": records,
+            "total" : get_collection_size(collection)
         }
         return response
 
