@@ -15,10 +15,8 @@ import SearchPaginator from "./paginator";
 import {StyledContainer, StyledGreeting} from './styles';
 import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
+import Message from '@splunk/react-ui/Message';
 
-const handleChange = (e, {value: searchValue}) => {
-    console.log(searchValue);
-};
 const SEARCH_FIELD_OPTIONS = [
     {label: 'Any Field', value: '1'},
     {label: 'Indicator ID', value: '2'},
@@ -63,7 +61,7 @@ const expansionFieldNameToCellValue = {
     "TLP Rating": (row) => row.tlp_v1_rating,
 }
 
-function useIndicatorsData({skip, limit}) {
+function useIndicatorsData({skip, limit, onError}) {
     const [records, setRecords] = useState([]);
     const [total, setTotal] = useState(0);
     useEffect(() => {
@@ -73,23 +71,23 @@ function useIndicatorsData({skip, limit}) {
             setRecords(data.records);
             setTotal(data.total);
         }, (error) => {
-            console.error(error);
+            onError(error);
         });
     }, [skip, limit]);
     return [records, total];
 }
 
-function PaginatedDataTable({renderData, fetchData}) {
+function PaginatedDataTable({renderData, fetchData, onError}) {
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
-    const [records, totalRecords] = fetchData({skip, limit: resultsPerPage});
+    const [records, totalRecords] = fetchData({skip, limit: resultsPerPage, onError});
     const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
     return (
         <>
             {renderData(records)}
+            <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
             <SearchPaginator totalPages={numPages} pageNum={pageNum} onChangePage={setPageNum}/>
-            <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}.`}</P>
         </>
     );
 
@@ -106,6 +104,7 @@ function renderDataTable(data) {
 
 
 function MyStyledContainer() {
+    const [error, setError] = useState(null);
     return (
         <StyledContainer>
             <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
@@ -115,7 +114,13 @@ function MyStyledContainer() {
             </div>
             <SearchBar handleChange={(e) => {
             }} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
-            <PaginatedDataTable renderData={renderDataTable} fetchData={useIndicatorsData}/>
+
+            {/*// TODO: Replace with Toast Error message. Make it reusable*/}
+            {error && <Message appearance="fill" type="error" onRequestRemove={() => {}}>
+                <P><strong>Something went wrong!</strong></P>
+                <P>{error}</P>
+            </Message> }
+            <PaginatedDataTable renderData={renderDataTable} fetchData={useIndicatorsData} onError={(e) => setError(`${e}`)}/>
         </StyledContainer>
     );
 }
