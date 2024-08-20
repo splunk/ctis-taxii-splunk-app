@@ -1,5 +1,4 @@
-import React, {useEffect} from 'react';
-import {useState, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from 'react';
 import SearchPaginator from "./paginator";
 import P from '@splunk/react-ui/Paragraph';
 
@@ -13,6 +12,7 @@ import P from '@splunk/react-ui/Paragraph';
  * @param {int} limit - Number of records to return
  * @param {onError} onError - Error callback
  */
+
 /**
  * @callback renderData
  * @param {Object} props - Props
@@ -52,6 +52,7 @@ function usePaginatedData(getDataPaginated, skip, limit, onError) {
     }, [skip, limit]);
     return {records, totalRecords, loading, error};
 }
+
 /**
  * Render Paginated Data Table
  *
@@ -61,18 +62,24 @@ function usePaginatedData(getDataPaginated, skip, limit, onError) {
  * @param {onError} props.onError - Callback to handle error. Accepts a single error argument.
  *
  */
+const OPTIONS_RESULTS_PER_PAGE = [20, 50, 100, 200];
+
 export default function PaginatedDataTable({renderData, fetchData, onError}) {
-    const [resultsPerPage, setResultsPerPage] = useState(10);
+    const [resultsPerPage, setResultsPerPage] = useState(OPTIONS_RESULTS_PER_PAGE[0]);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
     const {records, totalRecords, loading, error} = usePaginatedData(fetchData, skip, resultsPerPage, onError);
     const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
-    // TODO: results per page dropdown / input
     return (
         <>
             {renderData({records, loading, error})}
             <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
-            <SearchPaginator totalPages={numPages} pageNum={pageNum} onChangePage={setPageNum}/>
+            <SearchPaginator totalPages={numPages}
+                             pageNum={pageNum}
+                             onChangePage={setPageNum}
+                             resultsPerPage={resultsPerPage}
+                             setResultsPerPage={setResultsPerPage}
+                             optionsResultsPerPage={OPTIONS_RESULTS_PER_PAGE}/>
 
         </>
     );
