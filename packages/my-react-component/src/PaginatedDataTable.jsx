@@ -62,7 +62,7 @@ function usePaginatedData(getDataPaginated, skip, limit, onError) {
  * @param {onError} props.onError - Callback to handle error. Accepts a single error argument.
  *
  */
-const OPTIONS_RESULTS_PER_PAGE = [20, 50, 100, 200];
+const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
 
 export default function PaginatedDataTable({renderData, fetchData, onError}) {
     const [resultsPerPage, setResultsPerPage] = useState(OPTIONS_RESULTS_PER_PAGE[0]);

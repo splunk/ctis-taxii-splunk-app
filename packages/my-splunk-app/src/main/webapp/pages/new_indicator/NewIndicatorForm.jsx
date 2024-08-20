@@ -145,7 +145,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }
     }, [suggestedPattern]);
 
-    const [useCustomIndicatorId, setUseCustomIndicatorId] = useState(false);
 
     return (
         <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
