@@ -3,8 +3,9 @@ import React from 'react';
 import layout from '@splunk/react-page';
 import {getUserTheme} from '@splunk/splunk-utils/themes';
 import {v4 as uuidv4} from 'uuid';
-import {StyledContainer, StyledGreeting} from './styles';
 import {NewIndicatorForm} from "./NewIndicatorForm";
+import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
+import Heading from "@splunk/react-ui/Heading";
 
 
 function getUrlQueryParams() {
@@ -18,14 +19,14 @@ getUserTheme()
     .then((theme) => {
         const {splunkFieldName, splunkFieldValue} = getUrlQueryParams();
         layout(
-            <StyledContainer>
-                <StyledGreeting>New Indicator of Compromise (IoC)</StyledGreeting>
-                <NewIndicatorForm initialIndicatorId={`indicator--${uuidv4()}`}
+            <AppContainer>
+                <Heading level={1}>New Indicator of Compromise (IoC)</Heading>
+                <NewIndicatorForm
                         initialSplunkFieldName={splunkFieldName}
                         initialSplunkFieldValue={splunkFieldValue}
                 />
 
-            </StyledContainer>,
+            </AppContainer>,
             {
                 theme,
             }

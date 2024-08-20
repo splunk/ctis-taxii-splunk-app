@@ -21,13 +21,11 @@ import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGrou
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
-import IndicatorIdControlGroup from "@splunk/my-react-component/src/IndicatorIdControlGroup";
 
 import SubmitButton from "./SubmitButton";
 import {suggestPattern} from "./patternSuggester";
 
 const GROUPING_ID = "grouping_id";
-const INDICATOR_ID = "indicator_id";
 const SPLUNK_FIELD_NAME = "splunk_field_name";
 const SPLUNK_FIELD_VALUE = "splunk_field_value";
 const NAME = "name";
@@ -51,12 +49,11 @@ const MyForm = styled.form`
     max-width: 1000px;
 `
 
-export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, initialSplunkFieldValue}) {
+export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue}) {
     const {watch, handleSubmit, setValue, getValues, trigger, register, formState, reset} = useForm({
         mode: 'all',
         defaultValues: {
             [GROUPING_ID]: null,
-            [INDICATOR_ID]: initialIndicatorId,
             [SPLUNK_FIELD_NAME]: initialSplunkFieldName,
             [SPLUNK_FIELD_VALUE]: initialSplunkFieldValue,
             [NAME]: "",
@@ -76,12 +73,6 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
     register(GROUPING_ID, {required: "Grouping ID is required."});
     const groupingId = watch(GROUPING_ID);
 
-    register(INDICATOR_ID, {
-        required: "Indicator ID is required.", pattern: {
-            value: /indicator--.{36,}/,
-            message: "Indicator ID must be 'indicator--' followed by a UUID."
-        }
-    });
     register(SPLUNK_FIELD_NAME, {required: "Splunk Field Name is required."});
     const splunkFieldName = watch(SPLUNK_FIELD_NAME);
 
@@ -165,10 +156,6 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
             ]}/>
-            <IndicatorIdControlGroup label="Indicator ID (new)" {...formInputProps(INDICATOR_ID)}
-                                     useCustomIndicatorId={useCustomIndicatorId}
-                                     setUseCustomIndicatorId={setUseCustomIndicatorId}/>
-            {/*<TextControlGroup label="Indicator ID" {...formInputProps(INDICATOR_ID)} />*/}
             <TextControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} />
             <TextControlGroup label="Splunk Field Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />
             <TextControlGroup label="Indicator Name" {...formInputProps(NAME)} />
@@ -205,7 +192,6 @@ export function NewIndicatorForm({initialIndicatorId, initialSplunkFieldName, in
 }
 
 NewIndicatorForm.propTypes = {
-    initialIndicatorId: PropTypes.string,
     initialSplunkFieldName: PropTypes.string,
     initialSplunkFieldValue: PropTypes.string,
 };

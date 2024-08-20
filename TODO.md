@@ -35,12 +35,15 @@
         - [ ] Validate indicator_id is unique & does not already exist
         - [ ] Validate grouping_id exists
         - [ ] New POST endpoint to validate a STIX pattern (realtime form validation)
+        - [ ] Handle create multiple indicators in one submission
+          - [ ] Accept a list of objects as payload
+          - [ ] Validation -> nice error messages
     - [ ] Read One
       - [ ] Query by _key=indicator_id?
     - [ ] List
       - [ ] Query by keyword / regex on one or more fields
         - Use mongodb query format: e.g. for substring search: `{"field": {"$regex": "substring"}}`
-      - [ ] Pagination
+      - [X] Pagination
         - [X] Backend to support return number of total results
     - [ ] Update
     - [ ] Delete
