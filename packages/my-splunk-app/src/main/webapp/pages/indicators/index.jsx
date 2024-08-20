@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React from 'react';
 
 import layout from '@splunk/react-page';
 import {getUserTheme} from '@splunk/splunk-utils/themes';
@@ -11,13 +11,12 @@ import Pencil from '@splunk/react-icons/Pencil';
 import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import {app} from '@splunk/splunk-utils/config';
 import {createURL} from '@splunk/splunk-utils/url';
-import SearchPaginator from "./paginator";
 import {StyledGreeting} from './styles';
 import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
-
+import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 
 
 const SEARCH_FIELD_OPTIONS = [
@@ -64,55 +63,15 @@ const expansionFieldNameToCellValue = {
     "TLP Rating": (row) => row.tlp_v1_rating,
 }
 
-function useIndicatorsData({skip, limit, onError}) {
-    const [records, setRecords] = useState([]);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    useEffect(() => {
-        setLoading(true);
-        setError(null);
-        // TODO: handle cancel? E.g. if pagination changes before data loads
-        getIndicators(skip, limit, (data) => {
-            console.log(data)
-            setRecords(data.records);
-            setTotalRecords(data.total);
-            setLoading(false);
-        }, (error) => {
-            setLoading(false);
-            setError(error);
-            onError(error);
-        });
-    }, [skip, limit]);
-    return {records, totalRecords, loading, error};
-}
-
-function PaginatedDataTable({renderData, fetchData, onError}) {
-    const [resultsPerPage, setResultsPerPage] = useState(10);
-    const [pageNum, setPageNum] = useState(1);
-    const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
-    const {records, totalRecords, loading, error} = fetchData({skip, limit: resultsPerPage, onError});
-    const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
-    // TODO: results per page dropdown / input
-    return (
-        <>
-            {renderData({records, loading, error})}
-            <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
-            <SearchPaginator totalPages={numPages} pageNum={pageNum} onChangePage={setPageNum}/>
-
-        </>
-    );
-
-}
 
 function renderDataTable({records, loading, error}) {
     // TODO: pass in isLoading, error?
     const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
     const errorElement = <P>{`Error: ${error}`}</P>
     const table = <ExpandableDataTable data={records}
-                             rowKeyFunction={(row) => row.indicator_id}
-                             expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                             mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
+                                       rowKeyFunction={(row) => row.indicator_id}
+                                       expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
+                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
     return (
         error ? errorElement : (loading ? loadingElement : table)
     );
@@ -129,8 +88,7 @@ function MyStyledContainer() {
             <SearchBar handleChange={(e) => {
             }} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
 
-            <PaginatedDataTable renderData={renderDataTable} fetchData={useIndicatorsData} onError={(e) => {
-                console.log(e);
+            <PaginatedDataTable renderData={renderDataTable} fetchData={getIndicators} onError={(e) => {
                 createErrorToast(e);
             }}/>
         </AppContainer>
