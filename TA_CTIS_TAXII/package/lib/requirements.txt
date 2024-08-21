@@ -1,0 +1,7 @@
+cattrs
+attrs
+stix2
+stix2-patterns
+splunktaucclib
+splunk-sdk
+solnlib

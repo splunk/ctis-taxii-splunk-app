@@ -1,6 +1,6 @@
 node_modules/
 
-TA_CTIS_TAXII_ES_AR/output
+TA_CTIS_TAXII/output
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

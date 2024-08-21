@@ -1,0 +1,6 @@
+[alert_actions]
+export = system
+
+[workflow_actions/ctis_taxii_submit_workflow]
+export = system
+access = read : [ * ], write : [ * ]

@@ -9,7 +9,7 @@ echo "Cleaning existing apps"
 rm ./*.tar.gz
 
 # Package the UCC app
-ucc-gen package --path ../TA_CTIS_TAXII_ES_AR/output/TA_CTIS_TAXII
+ucc-gen package --path ../TA_CTIS_TAXII/output/TA_CTIS_TAXII
 path_to_app=$(find . -type f -name "TA_CTIS*.tar.gz")
 num_apps=$(echo $path_to_app | wc -l | sed 's/^[[:space:]]*//g')
 echo "Found $num_apps apps"
