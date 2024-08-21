@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -xe
+set -e
 
 # Assume this script is run from inside integration_test directory
 # TODO: check this?
@@ -31,10 +31,11 @@ docker ps -aq --filter "name=$container_name" | xargs -r docker rm
 # Run splunk docker with the app installed
 DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --hostname splunk-ctis \
   -p 8002:8000 \
+  -p 8099:8089 \
   -e 'SPLUNK_PASSWORD=helloWorld1!' \
   -e 'SPLUNK_START_ARGS=--accept-license' \
-  -v "$(pwd):/tmp" \
-  -e 'SPLUNK_APPS_URL=/tmp/ctis.tar.gz' \
+  -v "$(pwd):/tmp/test" \
+  -e 'SPLUNK_APPS_URL=/tmp/test/ctis.tar.gz' \
   -it splunk/splunk:latest
 
 # Wait for splunk to be up
@@ -45,10 +46,5 @@ while true; do
         break
     fi
     echo "Waiting for splunk to be up..."
-    sleep 5
+    sleep 3
 done
-
-# TODO: Check app is installed
-app_name="TA_CTIS_TAXII"
-
-# Run the integration tests (pytest)

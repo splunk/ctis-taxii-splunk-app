@@ -1,3 +1,4 @@
+.docker.env
 node_modules/
 
 TA_CTIS_TAXII/output
