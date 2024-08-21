@@ -34,11 +34,11 @@ Alternatively can try:
 
 ## Custom REST endpoints
 Endpoints exposed on web port require Splunk cookies to access via `web.conf`.
-E.g. `http://localhost:8001/en-GB/splunkd/__raw/servicesNS/nobody/TA_CTIS_TAXII_ES_AR_2/say-hello?output_mode=json`
+E.g. `http://localhost:8001/en-GB/splunkd/__raw/servicesNS/nobody/TA_CTIS_TAXII/say-hello?output_mode=json`
 You can test this after logging into Splunk and using devtools console.
 E.g.
 ```javascript
-const resp = await fetch('http://localhost:8001/en-GB/splunkd/__raw/servicesNS/nobody/TA_CTIS_TAXII_ES_AR_2/say-hello?output_mode=json')
+const resp = await fetch('http://localhost:8001/en-GB/splunkd/__raw/servicesNS/nobody/TA_CTIS_TAXII/say-hello?output_mode=json')
 const json = await resp.json()
 console.log(resp, json)
 ```

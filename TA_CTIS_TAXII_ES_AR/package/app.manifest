@@ -4,8 +4,8 @@
         "title": "CTIS TAXII ES Add-on",
         "id": {
             "group": null,
-            "name": "TA_CTIS_TAXII_ES_AR_2",
-            "version": "0.0.2"
+            "name": "TA_CTIS_TAXII",
+            "version": "1.0.0"
         },
         "author": [
             {

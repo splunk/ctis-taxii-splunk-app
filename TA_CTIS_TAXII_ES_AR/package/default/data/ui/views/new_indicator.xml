@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
-<view template="TA_CTIS_TAXII_ES_AR_2:/templates/new_indicator.html" type="html">
+<view template="TA_CTIS_TAXII:/templates/new_indicator.html" type="html">
 	<label>New Indicator</label>
 </view>

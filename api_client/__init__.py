@@ -17,7 +17,7 @@ def create_indicator():
         "valid_from": "2024-08-16T23:00:22",
         "confidence": 50
     }
-    resp = requests.post('https://localhost:8089/servicesNS/-/TA_CTIS_TAXII_ES_AR_2/create-indicator?output_mode=json',
+    resp = requests.post('https://localhost:8089/servicesNS/-/TA_CTIS_TAXII/create-indicator?output_mode=json',
                          auth=(splunk_username, splunk_password), verify=False,
                          json=payload)
     resp.raise_for_status()

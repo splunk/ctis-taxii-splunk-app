@@ -9,7 +9,7 @@ echo "Cleaning existing apps"
 rm ./*.tar.gz
 
 # Package the UCC app
-ucc-gen package --path ../TA_CTIS_TAXII_ES_AR/output/TA_CTIS_TAXII_ES_AR_2
+ucc-gen package --path ../TA_CTIS_TAXII_ES_AR/output/TA_CTIS_TAXII
 path_to_app=$(find . -type f -name "TA_CTIS*.tar.gz")
 num_apps=$(echo $path_to_app | wc -l | sed 's/^[[:space:]]*//g')
 echo "Found $num_apps apps"
@@ -38,15 +38,17 @@ DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --host
   -it splunk/splunk:latest
 
 # Wait for splunk to be up
+echo "Time is now $(date)"
 while true; do
     if curl -f http://localhost:8002; then
-        echo "Splunk is up"
+        echo "$(date) Splunk is up"
         break
     fi
     echo "Waiting for splunk to be up..."
     sleep 5
 done
 
-# Do we need to check if app is installed?
+# TODO: Check app is installed
+app_name="TA_CTIS_TAXII"
 
 # Run the integration tests (pytest)

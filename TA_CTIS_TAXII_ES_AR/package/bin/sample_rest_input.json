@@ -36,7 +36,7 @@
   "rest_path": "/suggest-stix-pattern",
   "method": "POST",
   "ns": {
-    "app": "TA_CTIS_TAXII_ES_AR_2"
+    "app": "TA_CTIS_TAXII"
   },
   "form": [
   ],
