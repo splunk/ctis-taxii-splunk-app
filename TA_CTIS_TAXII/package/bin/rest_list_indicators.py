@@ -20,23 +20,8 @@ logger = get_logger_for_script(__file__)
 
 class Handler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        self.logger.info(f"input_json: {input_json}")
-        self.logger.info(f"query_params: {query_params}")
-
-        collection_query_kwargs = self.extract_collection_query_kwargs(query_params)
-
-        collection = self.get_collection(collection_name="indicators", session_key=session_key)
-        self.logger.info(f"Collection: {collection}")
-        self.logger.info(f"Collection query kwargs: {collection_query_kwargs}")
-        records = collection.query(**collection_query_kwargs)
-        self.logger.info(f"Records found: {len(records)}")
-
-        total_records = self.get_collection_size(collection, query=collection_query_kwargs.get("query"))
-        response = {
-            "records": records,
-            "total": total_records,
-        }
-        return response
+        return self.handle_query_collection(input_json=input_json, query_params=query_params, session_key=session_key,
+                                            collection_name="indicators")
 
 
 ListIndicatorsHandler = Handler(logger=logger).generate_splunk_server_class()

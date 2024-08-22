@@ -86,14 +86,22 @@ def create_new_indicator(session, payload: dict) -> dict:
 def create_new_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="create-identity", session=session, payload=payload)
 
-def list_indicators(session, skip: int, limit: int, query: dict = None) -> dict:
+
+def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query: dict = None) -> dict:
     query_params = {**DEFAULT_REQUEST_PARAMS, "skip": skip, "limit": limit}
     if query is not None:
-        query_params["query"]: json.dumps(query)
-    resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/list-indicators',
+        query_params["query"] = json.dumps(query)
+    resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                        params=query_params)
     resp.raise_for_status()
     return resp.json()
+
+
+def list_indicators(session, skip: int, limit: int, query: dict = None) -> dict:
+    return query_collection_endpoint(endpoint="list-indicators", session=session, skip=skip, limit=limit, query=query)
+
+def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
+    return query_collection_endpoint(endpoint="list-identities", session=session, skip=skip, limit=limit, query=query)
 
 
 def new_indicator_payload() -> dict:

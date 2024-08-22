@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -e
+echo "WARNING: This script only packages the UCC app. It does not build it."
+echo "To build the app, run ./full-build.sh in project root."
 
 # Assume this script is run from inside integration_test directory
 # TODO: check this?

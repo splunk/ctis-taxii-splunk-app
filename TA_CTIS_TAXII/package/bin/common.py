@@ -45,6 +45,25 @@ class AbstractRestHandler(abc.ABC):
         input_payload = json.loads(payload_json)
         return input_payload
 
+    def handle_query_collection(self, input_json: Optional[dict], query_params:Dict[str, List], session_key:str, collection_name:str) -> dict:
+        self.logger.info(f"input_json: {input_json}")
+        self.logger.info(f"query_params: {query_params}")
+
+        collection_query_kwargs = self.extract_collection_query_kwargs(query_params)
+
+        collection = self.get_collection(collection_name=collection_name, session_key=session_key)
+        self.logger.info(f"Collection: {collection}")
+        self.logger.info(f"Collection query kwargs: {collection_query_kwargs}")
+        records = collection.query(**collection_query_kwargs)
+        self.logger.info(f"Records found: {len(records)}")
+
+        total_records = self.get_collection_size(collection, query=collection_query_kwargs.get("query"))
+        response = {
+            "records": records,
+            "total": total_records,
+        }
+        return response
+
     @staticmethod
     def exception_response(e: Exception, status_code: int) -> dict:
         return {"payload": {"error": str(e)}, "status": status_code}
@@ -58,7 +77,6 @@ class AbstractRestHandler(abc.ABC):
 
     def get_collection_size(self, collection, query=None) -> int:
         #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
-        # TODO: do we need to handle pagination here?
         collection_query_kwargs = {}
         if query:
             collection_query_kwargs["query"] = query
