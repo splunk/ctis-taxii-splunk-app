@@ -4,6 +4,8 @@ from cattrs import Converter
 from datetime import datetime
 
 
+# TODO: created and modified datetime required fields
+#  Populate with default value of now
 @define(slots=False, kw_only=True)
 class BaseModel:
     key: str = None
@@ -21,7 +23,6 @@ class BaseModelV1(BaseModel):
     schema_version: int = field(default=1, validator=[validate_schema_version_is_1])
 
 
-# TODO: These could probably be moved to base model class?
 def unstructure_datetime_hook(val: datetime) -> str:
     """This hook will be registered for `datetime`s."""
     return val.isoformat()
