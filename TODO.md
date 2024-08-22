@@ -25,6 +25,7 @@
     - [ ] Populate Groupings dropdown from REST endpoint
     - [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
       - [ ] Modify form to accept one or more splunk key=value pairs which generate a STIX pattern
+      - https://react-hook-form.com/docs/usefieldarray
 - [ ] Indicator Model - REST API
     - [ ] Create
         - [X] Find a good library to handle JSON schema validation & maybe Dataclass compatibility

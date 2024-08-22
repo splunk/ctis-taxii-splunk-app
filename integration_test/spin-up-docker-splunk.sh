@@ -29,6 +29,8 @@ docker ps -aq --filter "name=$container_name" | xargs -r docker rm
 
 
 # Run splunk docker with the app installed
+# Web port exposed on localhost:8002
+# Admin port exposed on localhost:8099
 DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --hostname splunk-ctis \
   -p 8002:8000 \
   -p 8099:8089 \
@@ -40,11 +42,15 @@ DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --host
 
 # Wait for splunk to be up
 echo "Time is now $(date)"
+printf "Waiting for Splunk to be up..."
+# TODO: wait for app to be installed and ready, because the docker image initially starts with no apps installed
 while true; do
-    if curl -f http://localhost:8002; then
-        echo "$(date) Splunk is up"
+    if curl -f http://localhost:8002 &> /dev/null; then
+        echo
+        date
+        echo "Splunk is up"
         break
     fi
-    echo "Waiting for splunk to be up..."
-    sleep 3
+    printf '.'
+    sleep 5
 done

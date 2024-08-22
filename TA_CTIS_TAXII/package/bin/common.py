@@ -5,8 +5,8 @@ import sys
 import abc
 from typing import Optional, Dict, List
 from collections import defaultdict
-# Local imports
-import remote_pdb
+
+from solnlib._utils import get_collection_data
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
@@ -55,6 +55,42 @@ class AbstractRestHandler(abc.ABC):
         for a,b in query:
             params[a].append(b)
         return params
+
+    def get_collection_size(self, collection, query=None) -> int:
+        #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
+        # TODO: do we need to handle pagination here?
+        collection_query_kwargs = {}
+        if query:
+            collection_query_kwargs["query"] = query
+        records = []
+        offset = 0
+        page_size = 50000
+        while True:
+            page_of_records = collection.query(fields="_key", limit=page_size, skip=offset, **collection_query_kwargs)
+            records.extend(page_of_records)
+            if len(page_of_records) == 0:
+                break
+            offset += page_size
+        total_records = len(records)
+        self.logger.info(f"Total records found: {total_records}")
+        return total_records
+
+    @staticmethod
+    def extract_collection_query_kwargs(query_params: dict) -> dict:
+        collection_query_kwargs = {}
+        if "sort" in query_params:
+            collection_query_kwargs["sort"] = query_params["sort"][0]
+        if "limit" in query_params:
+            collection_query_kwargs["limit"] = int(query_params["limit"][0])
+        if "skip" in query_params:
+            collection_query_kwargs["skip"] = int(query_params["skip"][0])
+        if "query" in query_params:
+            collection_query_kwargs["query"] = query_params["query"][0]
+        return collection_query_kwargs
+
+    @staticmethod
+    def get_collection(collection_name: str, session_key: str):
+        return get_collection_data(collection_name=collection_name, session_key=session_key, app=NAMESPACE)
 
     def generate_response(self, in_string: str) -> dict:
         try:
