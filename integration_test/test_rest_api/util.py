@@ -29,13 +29,18 @@ DEFAULT_REQUEST_PARAMS = {
 
 
 def get_indicators_collection(session) -> list:
-    # TODO: Handle pagination, max 50000 records per page?
-    # limits.conf: max_rows_per_query = 50000
+    return get_collection(session, "indicators")
+
+def get_identities_collection(session) -> list:
+    return get_collection(session, "identities")
+
+def get_collection(session, collection_name: str) -> list:
+    # Handle pagination, limits.conf: max_rows_per_query = 50000
     records = []
     offset = 0
     page_size = 20000
     while True:
-        resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/indicators',
+        resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/{collection_name}',
                            params={**DEFAULT_REQUEST_PARAMS, "limit": page_size, "skip": offset})
         resp.raise_for_status()
         j = resp.json()
@@ -47,10 +52,16 @@ def get_indicators_collection(session) -> list:
     return records
 
 
-def clear_indicators_collection(session):
-    resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/indicators',
+def clear_collection(session, collection_name: str):
+    resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/{collection_name}',
                           params=DEFAULT_REQUEST_PARAMS)
     resp.raise_for_status()
+
+def clear_indicators_collection(session):
+    clear_collection(session, "indicators")
+
+def clear_identities_collection(session):
+    clear_collection(session, "identities")
 
 
 def bulk_insert_indicators(session, indicators: list):
@@ -63,12 +74,17 @@ def bulk_insert_indicators(session, indicators: list):
         resp.raise_for_status()
 
 
-def create_new_indicator(session, payload: dict) -> dict:
-    resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/create-indicator',
+def post_endpoint(endpoint:str, session, payload: dict) -> dict:
+    resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params=DEFAULT_REQUEST_PARAMS, json=payload)
     resp.raise_for_status()
     return resp.json()
 
+def create_new_indicator(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="create-indicator", session=session, payload=payload)
+
+def create_new_identity(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="create-identity", session=session, payload=payload)
 
 def list_indicators(session, skip: int, limit: int, query: dict = None) -> dict:
     query_params = {**DEFAULT_REQUEST_PARAMS, "skip": skip, "limit": limit}

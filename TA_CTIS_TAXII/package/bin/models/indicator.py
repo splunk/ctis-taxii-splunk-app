@@ -33,6 +33,7 @@ def validate_confidence(instance, attribute, value: int):
 @define(slots=False, kw_only=True)
 class IndicatorModelV1(BaseModelV1):
     indicator_id: str = field(validator=[validate_indicator_id])
+
     @indicator_id.default
     def _indicator_id_default(self):
         return f"indicator--{uuid4()}"
@@ -49,18 +50,3 @@ class IndicatorModelV1(BaseModelV1):
 
 
 indicator_converter = make_base_converter()
-
-
-# TODO: These could probably be moved to base model class?
-def unstructure_datetime_hook(val: datetime) -> str:
-    """This hook will be registered for `datetime`s."""
-    return val.isoformat()
-
-
-def structure_datetime_hook(value, type) -> datetime:
-    """This hook will be registered for `datetime`s."""
-    return datetime.fromisoformat(value)
-
-
-indicator_converter.register_structure_hook(datetime, structure_datetime_hook)
-indicator_converter.register_unstructure_hook(datetime, unstructure_datetime_hook)

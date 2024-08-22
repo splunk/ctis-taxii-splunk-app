@@ -1,7 +1,7 @@
 import pytest
 import requests
 import os
-from .util import clear_indicators_collection
+from .util import clear_indicators_collection, clear_identities_collection
 
 SPLUNK_USERNAME = os.environ['SPLUNK_USERNAME']
 SPLUNK_PASSWORD = os.environ['SPLUNK_PASSWORD']
@@ -11,6 +11,12 @@ def cleanup_indicators_collection(session):
     clear_indicators_collection(session)
     yield
     clear_indicators_collection(session)
+
+@pytest.fixture
+def cleanup_identities_collection(session):
+    clear_identities_collection(session)
+    yield
+    clear_identities_collection(session)
 
 @pytest.fixture
 def session():

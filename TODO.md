@@ -15,7 +15,7 @@
   - [ ] Splunk Docker
     - [ ] Selenium for form interaction
     - [ ] Python / pytest for hitting API endpoints
-- New Indicator Form
+- [ ] New Indicator Form
     - [X] Autopopulate STIX pattern upon Splunk field name/value change (if text field is blank)
     - [X] Fix bug, clearing a text field with the 'x' doesn't clear the value
     - [X] Use TLP version 1: https://www.first.org/tlp/v1/
@@ -39,13 +39,21 @@
         - [ ] Handle create multiple indicators in one submission
           - [ ] Accept a list of objects as payload
           - [ ] Validation -> nice error messages
-    - [ ] Read One
-      - [ ] Query by _key=indicator_id?
-    - [ ] List
-      - [ ] Query by keyword / regex on one or more fields
+    - [X] Read One
+      - [X] Handled by list indicators endpoint, just use query set to {"indicator_id" :"XXX"}
+          - [X] Consideration: Performance impact - reads entire collection to get total records
+    - [X] List
+      - [X] Query by keyword / regex on one or more fields
         - Use mongodb query format: e.g. for substring search: `{"field": {"$regex": "substring"}}`
+        - Passthrough of JSON encoded "query" query parameter
       - [X] Pagination
         - [X] Backend to support return number of total results
+    - [ ] Update
+    - [ ] Delete
+- [ ] Identity Model
+    - [X] Create
+    - [ ] Read One
+    - [ ] List
     - [ ] Update
     - [ ] Delete
 - [ ] Grouping Model
@@ -54,13 +62,18 @@
     - [ ] List
     - [ ] Update
     - [ ] Delete
-- Submissions
+- [ ] Submissions
     - [ ] Read One
     - [ ] List
-- Scheduled Submissions
+- [ ] Scheduled Submissions
     - [ ] Read One
     - [ ] List
       - [ ] Filter by status (submitted, pending, failed)
     - [ ] Delete/Cancel
 - [ ] Submit grouping to TAXII
 - [ ] Schedule submission of grouping to TAXII
+- [ ] Schema Migration between app versions
+  - [ ] R&D how to handle this
+    - I'm thinking that we use a scheduled search that runs frequently to check for records using old schema version
+    - Have some script to convert the old schema to the new schema (if possible)
+    - What about breaking changes?

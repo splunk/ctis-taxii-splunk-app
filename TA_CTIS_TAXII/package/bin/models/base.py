@@ -1,6 +1,7 @@
 from attrs import define, field
 from cattr.gen import make_dict_structure_fn, make_dict_unstructure_fn
 from cattrs import Converter
+from datetime import datetime
 
 
 @define(slots=False, kw_only=True)
@@ -18,6 +19,17 @@ def validate_schema_version_is_1(instance, attribute, value: int):
 @define(slots=False, kw_only=True)
 class BaseModelV1(BaseModel):
     schema_version: int = field(default=1, validator=[validate_schema_version_is_1])
+
+
+# TODO: These could probably be moved to base model class?
+def unstructure_datetime_hook(val: datetime) -> str:
+    """This hook will be registered for `datetime`s."""
+    return val.isoformat()
+
+
+def structure_datetime_hook(value, type) -> datetime:
+    """This hook will be registered for `datetime`s."""
+    return datetime.fromisoformat(value)
 
 
 def make_base_converter():
@@ -60,4 +72,9 @@ def make_base_converter():
         return custom
 
     base_converter.register_unstructure_hook_factory(lambda cls: issubclass(cls, BaseModel), make_unstructure)
+
+    # Hooks to correctly serialize/deserialize datetime objects
+    base_converter.register_structure_hook(datetime, structure_datetime_hook)
+    base_converter.register_unstructure_hook(datetime, unstructure_datetime_hook)
+
     return base_converter
