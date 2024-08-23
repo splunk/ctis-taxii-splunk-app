@@ -1,32 +1,38 @@
 # CTIS TAXII ES Integration - TODO
+
 ### Unknowns
 - [X] Logging: https://dev.splunk.com/enterprise/docs/developapps/addsupport/logging/loggingsplunkextensions
 - [X] Read from kvstore collection
 - [X] Write to kvstore collection
 - [ ] Read config saved by UCC
+
 ### Misc
-- [ ] Rename app package (without the '2')
+- [X] Rename app package (without the '2')
 
 
 ### Features
 - [X] Suggest a conversion from splunk_field=value => STIX2 Pattern
   - [X] Handle CIDR slash range for IPv4: e.g. 10.2.4.5/24 
 - Test Automation
-  - [ ] Splunk Docker
+  - [X] Splunk Docker
     - [ ] Selenium for form interaction
-    - [ ] Python / pytest for hitting API endpoints
+    - [X] Python / pytest for hitting API endpoints
 - [ ] New Indicator Form
     - [X] Autopopulate STIX pattern upon Splunk field name/value change (if text field is blank)
     - [X] Fix bug, clearing a text field with the 'x' doesn't clear the value
     - [X] Use TLP version 1: https://www.first.org/tlp/v1/
-        - make sure form field says that it expecting TLPv1
+        - make sure form field says that it's expecting TLPv1
         - seems to be just RED, AMBER, GREEN, WHITE
     - [X] Show form submission error as a red banner message
     - [ ] Ethan's suggestion: Dropdown of supported Indicator types. E.g. "Source IP", "Destination IP", "File Hash", etc.
       - instead of splunk field name use this dropdown
       - this would also help with the STIX pattern generation
-      - Endpoint 1: Suggest IOC Category for Splunk field name
-      - Endpoint 2: Suggest pattern given (IOC Category, value)
+      - [X] Endpoint 1: Suggest IOC Category for Splunk field name & value
+        - accept optional params Splunk field name & value
+        - return:
+          - list of all IOC Categories
+          - list of suggested IOC Categories based on Splunk field name & value if given
+      - [X] Endpoint 2: Suggest pattern given (IOC Category, value)
     - [ ] Populate Groupings dropdown from REST endpoint
     - [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
       - [ ] Modify form to accept one or more splunk key=value pairs which generate a STIX pattern

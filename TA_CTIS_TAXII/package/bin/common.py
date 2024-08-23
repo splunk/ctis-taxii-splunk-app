@@ -75,6 +75,15 @@ class AbstractRestHandler(abc.ABC):
             params[a].append(b)
         return params
 
+    @staticmethod
+    def get_first_query_param_value(query_params: dict, key: str) -> Optional[str]:
+        if key in query_params:
+            value = query_params.get(key)
+            if type(value) == list:
+                return query_params[key][0]
+            else:
+                return value
+
     def get_collection_size(self, collection, query=None) -> int:
         #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
         collection_query_kwargs = {}

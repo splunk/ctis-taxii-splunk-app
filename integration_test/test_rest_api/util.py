@@ -80,6 +80,12 @@ def post_endpoint(endpoint:str, session, payload: dict) -> dict:
     resp.raise_for_status()
     return resp.json()
 
+def get_endpoint(endpoint:str, session, **query_params) -> dict:
+    resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
+                        params={**DEFAULT_REQUEST_PARAMS, **query_params})
+    resp.raise_for_status()
+    return resp.json()
+
 def create_new_indicator(session, payload: dict) -> dict:
     return post_endpoint(endpoint="create-indicator", session=session, payload=payload)
 
