@@ -11,7 +11,8 @@ class BaseModel:
     key: str = None
     user: str = None
     schema_version: int = None
-
+    created: datetime = field(factory=datetime.utcnow)
+    modified: datetime = field(factory=datetime.utcnow)
 
 def validate_schema_version_is_1(instance, attribute, value: int):
     if value != 1:

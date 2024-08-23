@@ -52,12 +52,26 @@ def test_from_dict_missing_required_fields():
     assert all(['required field missing' in x for x in error_strings])
 
 
-def test_from_valid_dict_without_indicator_id():
+def test_from_valid_dict_scenario_creation():
     # Autogenerate indicator_id if not provided
     as_dict = get_sample_dict()
     del as_dict["indicator_id"]
+    assert "created" not in as_dict
+    assert "modified" not in as_dict
+
     indicator = indicator_converter.structure(as_dict, IndicatorModelV1)
     assert indicator.indicator_id.startswith("indicator--")
+    assert type(indicator.created) is datetime
+    assert type(indicator.modified) is datetime
+
+def test_from_valid_dict_scenario_update():
+    as_dict = get_sample_dict()
+    as_dict["created"] = "2024-01-23T23:40:33"
+    as_dict["modified"] = "2024-08-01T11:22:33"
+    indicator = indicator_converter.structure(as_dict, IndicatorModelV1)
+    assert indicator.indicator_id == as_dict["indicator_id"]
+    assert indicator.created == datetime(2024, 1, 23, 23, 40, 33)
+    assert indicator.modified == datetime(2024, 8, 1, 11, 22, 33)
 
 
 def test_from_valid_dict_with_splunk_reserved_fields():
