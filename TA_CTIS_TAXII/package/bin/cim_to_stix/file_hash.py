@@ -1,9 +1,11 @@
 import re
 from enum import Enum
+from typing import Optional
 
 from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpression
 from stix2.patterns import _PatternExpression
 
+from .ioc_category import IoCCategory
 from .base_converter import CIMToSTIXConverter
 
 
@@ -45,5 +47,18 @@ class FileHashConverter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name in ("filehash", "file_hash") and file_hash_looks_like(splunk_field_value) is not None
+    def supports(ioc_category: str, value: str) -> bool:
+        return ioc_category in ("filehash", "file_hash") and file_hash_looks_like(value) is not None
+
+    @staticmethod
+    def suggest_category(splunk_field_name: str, splunk_field_value: str) -> Optional[IoCCategory]:
+        hash_type = file_hash_looks_like(splunk_field_value)
+        if hash_type == "MD5":
+            return IoCCategory.FILE_HASH_MD5
+        elif hash_type == "SHA-1":
+            return IoCCategory.FILE_HASH_SHA1
+        elif hash_type == "SHA-256":
+            return IoCCategory.FILE_HASH_SHA256
+        elif hash_type == "SHA-512":
+            return IoCCategory.FILE_HASH_SHA512
+        return None

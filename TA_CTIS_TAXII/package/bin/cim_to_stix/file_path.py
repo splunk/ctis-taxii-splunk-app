@@ -1,6 +1,9 @@
+from typing import Optional
+
 from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpression
 from stix2.patterns import StringConstant, _PatternExpression
 
+from .ioc_category import IoCCategory
 from .base_converter import CIMToSTIXConverter
 
 
@@ -14,5 +17,10 @@ class FilePathConverter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name in ("file_path", "filepath")
+    def supports(ioc_category: str, value: str) -> bool:
+        return ioc_category in ("file_path", "filepath")
+
+    @staticmethod
+    def suggest_category(splunk_field_name: str, splunk_field_value: str) -> Optional[IoCCategory]:
+        if splunk_field_name in ("file_path", "filepath"):
+            return IoCCategory.FILE_PATH

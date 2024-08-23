@@ -1,4 +1,5 @@
 from TA_CTIS_TAXII.package.bin.cim_to_stix import convert_cim_to_stix2_pattern
+from TA_CTIS_TAXII.package.bin.cim_to_stix import IoCCategory
 import pytest
 
 
@@ -46,6 +47,7 @@ class TestFileHashes:
         assert pattern == "[file:hashes.'SHA-512' = '401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429080fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1']"
 
 
+
 class TestNetworkTraffic:
     def test_dest_ipv6(self):
         pattern = convert_cim_to_stix2_pattern("dest_ip", "2001:0db8:85a3:0000:0000:8a2e:0370:7334")
@@ -76,8 +78,9 @@ class TestNetworkTraffic:
         pattern = convert_cim_to_stix2_pattern(field_name, "example.com")
         assert pattern == "[network-traffic:src_ref.type = 'domain-name' AND network-traffic:src_ref.value = 'example.com']"
 
-    @pytest.mark.parametrize("field_name", ["dest_host", "dest_name"])
-    def test_dest_domain(self, field_name):
+
+    @pytest.mark.parametrize("category", ["dest_host", "dest_name"])
+    def test_dest_domain(self, category):
         pattern = convert_cim_to_stix2_pattern(field_name, "example.com")
         assert pattern == "[network-traffic:dst_ref.type = 'domain-name' AND network-traffic:dst_ref.value = 'example.com']"
 

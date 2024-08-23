@@ -22,6 +22,11 @@
         - make sure form field says that it expecting TLPv1
         - seems to be just RED, AMBER, GREEN, WHITE
     - [X] Show form submission error as a red banner message
+    - [ ] Ethan's suggestion: Dropdown of supported Indicator types. E.g. "Source IP", "Destination IP", "File Hash", etc.
+      - instead of splunk field name use this dropdown
+      - this would also help with the STIX pattern generation
+      - Endpoint 1: Suggest IOC Category for Splunk field name
+      - Endpoint 2: Suggest pattern given (IOC Category, value)
     - [ ] Populate Groupings dropdown from REST endpoint
     - [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
       - [ ] Modify form to accept one or more splunk key=value pairs which generate a STIX pattern

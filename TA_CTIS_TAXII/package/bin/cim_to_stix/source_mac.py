@@ -3,6 +3,8 @@ from stix2.patterns import _PatternExpression
 from .base_converter import CIMToSTIXConverter
 from .cim_fields import SOURCE_MAC_ADDRESS as CIM_SOURCE_MAC_ADDRESS
 from .stix_constants import NETWORK_TRAFFIC, MAC_ADDRESS
+from typing import Optional
+from .ioc_category import IoCCategory
 
 
 class SourceMacAddressConverter(CIMToSTIXConverter):
@@ -15,5 +17,11 @@ class SourceMacAddressConverter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name == CIM_SOURCE_MAC_ADDRESS
+    def supports(ioc_category: str, value: str) -> bool:
+        return False
+        # return ioc_category == CIM_SOURCE_MAC_ADDRESS
+
+    @staticmethod
+    def suggest_category(splunk_field_name: str, splunk_field_value: str) -> Optional[IoCCategory]:
+        if splunk_field_name == CIM_SOURCE_MAC_ADDRESS:
+            return IoCCategory.SOURCE_MAC_ADDRESS

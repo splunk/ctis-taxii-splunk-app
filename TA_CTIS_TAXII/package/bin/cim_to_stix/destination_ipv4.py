@@ -1,5 +1,9 @@
+from typing import Optional
+
 from stix2 import AndBooleanExpression, EqualityComparisonExpression, ObjectPath, ObservationExpression
 from stix2.patterns import _PatternExpression
+
+from .ioc_category import IoCCategory
 from .base_converter import CIMToSTIXConverter
 from .util import ip_is_ipv4
 from .cim_fields import DESTINATION_IP
@@ -16,5 +20,10 @@ class DestinationIpv4Converter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name == DESTINATION_IP and ip_is_ipv4(splunk_field_value)
+    def supports(ioc_category: str, value: str) -> bool:
+        return ioc_category == DESTINATION_IP and ip_is_ipv4(value)
+
+    @staticmethod
+    def suggest_category(splunk_field_name:str, splunk_field_value:str) -> Optional[IoCCategory]:
+        if splunk_field_name == DESTINATION_IP and ip_is_ipv4(splunk_field_value):
+            return IoCCategory.DESTINATION_IPV4
