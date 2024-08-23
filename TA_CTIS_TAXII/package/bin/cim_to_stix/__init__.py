@@ -37,12 +37,28 @@ CONVERTER_CLASSES = [
     FileHashConverter, FileNameConverter, FilePathConverter
 ]
 
+CATEGORY_TO_CONVERTER = {
+    IoCCategory.DESTINATION_IPV4: DestinationIpv4Converter,
+    IoCCategory.DESTINATION_IPV6: DestinationIpv6Converter,
+    IoCCategory.SOURCE_IPV4: SourceIpv4Converter,
+    IoCCategory.SOURCE_IPV6: SourceIpv6Converter,
+    IoCCategory.SOURCE_DOMAIN: SourceDomainConverter,
+    IoCCategory.DESTINATION_DOMAIN: DestinationDomainConverter,
+    IoCCategory.DESTINATION_MAC_ADDRESS: DestinationMacAddressConverter,
+    IoCCategory.SOURCE_MAC_ADDRESS: SourceMacAddressConverter,
+    IoCCategory.FILE_HASH_MD5: FileHashConverter,
+    IoCCategory.FILE_HASH_SHA1: FileHashConverter,
+    IoCCategory.FILE_HASH_SHA256: FileHashConverter,
+    IoCCategory.FILE_HASH_SHA512: FileHashConverter,
+    IoCCategory.FILE_NAME: FileNameConverter,
+    IoCCategory.FILE_PATH: FilePathConverter
+}
+
 def convert_to_stix_pattern(category: IoCCategory, value: str) -> str:
-    for converter in CONVERTER_CLASSES:
-        if converter.supports(category, value):
-            return str(converter.convert(value))
-    else:
-        raise NotImplementedError(f"Field name/value {category}={value} is not supported")
+    converter = CATEGORY_TO_CONVERTER.get(category)
+    if converter is None:
+        raise NotImplementedError(f"Category {category} is not supported")
+    return str(converter.convert(value))
 
 def convert_splunk_field_to_category(splunk_field_name: str, splunk_field_value:str) -> IoCCategory:
     for converter in CONVERTER_CLASSES:

@@ -12,9 +12,9 @@ from .ioc_category import IoCCategory
 class DestinationIpv6Converter(CIMToSTIXConverter):
 
     @staticmethod
-    def convert(splunk_field_name: str, splunk_field_value: str) -> _PatternExpression:
+    def convert(value: str) -> _PatternExpression:
         ece1 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["dst_ref", "type"]), "ipv6-addr")
-        ece2 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["dst_ref", "value"]), splunk_field_value)
+        ece2 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["dst_ref", "value"]), value)
         observation = ObservationExpression(AndBooleanExpression([ece1, ece2]))
         return observation
 

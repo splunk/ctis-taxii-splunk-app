@@ -1,17 +1,15 @@
-from typing import Optional
-
 from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpression
 from stix2.patterns import _PatternExpression
 
-from .ioc_category import IoCCategory
 from .base_converter import CIMToSTIXConverter
+from .ioc_category import IoCCategory
 
 
 class FileNameConverter(CIMToSTIXConverter):
 
     @staticmethod
-    def convert(splunk_field_name: str, splunk_field_value: str) -> _PatternExpression:
-        ece = EqualityComparisonExpression(ObjectPath("file", ["name"]), splunk_field_value)
+    def convert(value: str) -> _PatternExpression:
+        ece = EqualityComparisonExpression(ObjectPath("file", ["name"]), value)
         observation = ObservationExpression(ece)
         return observation
 

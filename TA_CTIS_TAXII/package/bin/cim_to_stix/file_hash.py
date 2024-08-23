@@ -40,9 +40,11 @@ def file_hash_looks_like(filehash: str) -> str:
 class FileHashConverter(CIMToSTIXConverter):
 
     @staticmethod
-    def convert(splunk_field_name: str, splunk_field_value: str) -> _PatternExpression:
-        hash_type = file_hash_looks_like(splunk_field_value)
-        ece = EqualityComparisonExpression(ObjectPath("file", ["hashes", hash_type]), splunk_field_value)
+    def convert(value: str) -> _PatternExpression:
+        hash_type = file_hash_looks_like(value)
+        if hash_type is None:
+            raise ValueError(f"Invalid/unsupported file hash: {value}")
+        ece = EqualityComparisonExpression(ObjectPath("file", ["hashes", hash_type]), value)
         observation = ObservationExpression(ece)
         return observation
 

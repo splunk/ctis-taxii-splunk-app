@@ -12,9 +12,9 @@ from .stix_constants import DOMAIN_NAME, NETWORK_TRAFFIC
 class SourceDomainConverter(CIMToSTIXConverter):
 
     @staticmethod
-    def convert(splunk_field_name: str, splunk_field_value: str) -> _PatternExpression:
+    def convert(value: str) -> _PatternExpression:
         ece1 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["src_ref", "type"]), DOMAIN_NAME)
-        ece2 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["src_ref", "value"]), splunk_field_value)
+        ece2 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["src_ref", "value"]), value)
         observation = ObservationExpression(AndBooleanExpression([ece1, ece2]))
         return observation
 
