@@ -20,10 +20,9 @@ class SourceIpv4Converter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(ioc_category: str, value: str) -> bool:
-        return ioc_category == SOURCE_IP and ip_is_ipv4(value)
+    def category(value: str) -> IoCCategory:
+        return IoCCategory.SOURCE_IPV4
 
     @staticmethod
-    def suggest_category(splunk_field_name:str, splunk_field_value:str) -> Optional[IoCCategory]:
-        if splunk_field_name == SOURCE_IP and ip_is_ipv4(splunk_field_value):
-            return IoCCategory.SOURCE_IPV4
+    def supports_field(splunk_field_name:str, splunk_field_value:str) -> bool:
+        return splunk_field_name == SOURCE_IP and ip_is_ipv4(splunk_field_value)

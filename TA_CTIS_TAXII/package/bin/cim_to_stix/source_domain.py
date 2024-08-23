@@ -19,10 +19,9 @@ class SourceDomainConverter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(ioc_category: str, value: str) -> bool:
-        return ioc_category in (SOURCE_HOST_NAME, SOURCE_DOMAIN_NAME)
+    def category(value: str) -> IoCCategory:
+        return IoCCategory.SOURCE_DOMAIN
 
     @staticmethod
-    def suggest_category(splunk_field_name:str, splunk_field_value:str) -> Optional[IoCCategory]:
-        if splunk_field_name in [SOURCE_DOMAIN_NAME, SOURCE_HOST_NAME]:
-            return IoCCategory.SOURCE_DOMAIN
+    def supports_field(splunk_field_name:str, splunk_field_value:str) -> bool:
+        return splunk_field_name in [SOURCE_DOMAIN_NAME, SOURCE_HOST_NAME]

@@ -16,12 +16,11 @@ class SourceMacAddressConverter(CIMToSTIXConverter):
         observation = ObservationExpression(AndBooleanExpression([ece1, ece2]))
         return observation
 
-    @staticmethod
-    def supports(ioc_category: str, value: str) -> bool:
-        return False
-        # return ioc_category == CIM_SOURCE_MAC_ADDRESS
 
     @staticmethod
-    def suggest_category(splunk_field_name: str, splunk_field_value: str) -> Optional[IoCCategory]:
-        if splunk_field_name == CIM_SOURCE_MAC_ADDRESS:
-            return IoCCategory.SOURCE_MAC_ADDRESS
+    def category(value: str) -> IoCCategory:
+        return IoCCategory.SOURCE_MAC_ADDRESS
+
+    @staticmethod
+    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
+        return splunk_field_name == CIM_SOURCE_MAC_ADDRESS

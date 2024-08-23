@@ -51,8 +51,8 @@ class FileHashConverter(CIMToSTIXConverter):
         return ioc_category in ("filehash", "file_hash") and file_hash_looks_like(value) is not None
 
     @staticmethod
-    def suggest_category(splunk_field_name: str, splunk_field_value: str) -> Optional[IoCCategory]:
-        hash_type = file_hash_looks_like(splunk_field_value)
+    def category(value: str) -> IoCCategory:
+        hash_type = file_hash_looks_like(value)
         if hash_type == "MD5":
             return IoCCategory.FILE_HASH_MD5
         elif hash_type == "SHA-1":
@@ -61,4 +61,9 @@ class FileHashConverter(CIMToSTIXConverter):
             return IoCCategory.FILE_HASH_SHA256
         elif hash_type == "SHA-512":
             return IoCCategory.FILE_HASH_SHA512
-        return None
+        else:
+            raise ValueError(f"Invalid file hash: {value}")
+
+    @staticmethod
+    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
+        return file_hash_looks_like(splunk_field_value) is not None

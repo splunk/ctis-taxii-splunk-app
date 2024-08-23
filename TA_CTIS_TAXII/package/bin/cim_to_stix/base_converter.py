@@ -1,8 +1,9 @@
 import abc
 
 from stix2.patterns import _PatternExpression
+
 from .ioc_category import IoCCategory
-from typing import Optional
+
 
 class CIMToSTIXConverter(abc.ABC):
     @staticmethod
@@ -12,10 +13,10 @@ class CIMToSTIXConverter(abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def supports(ioc_category: IoCCategory) -> bool:
+    def category(value: str) -> IoCCategory:
         pass
 
     @staticmethod
     @abc.abstractmethod
-    def suggest_category(splunk_field_name:str, splunk_field_value:str) -> Optional[IoCCategory]:
+    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
         pass

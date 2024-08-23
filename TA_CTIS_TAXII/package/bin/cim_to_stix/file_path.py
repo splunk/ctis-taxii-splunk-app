@@ -17,10 +17,9 @@ class FilePathConverter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(ioc_category: str, value: str) -> bool:
-        return ioc_category in ("file_path", "filepath")
+    def category(value:str) -> IoCCategory:
+        return IoCCategory.FILE_PATH
 
     @staticmethod
-    def suggest_category(splunk_field_name: str, splunk_field_value: str) -> Optional[IoCCategory]:
-        if splunk_field_name in ("file_path", "filepath"):
-            return IoCCategory.FILE_PATH
+    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
+        return splunk_field_name in ("file_path", "filepath")

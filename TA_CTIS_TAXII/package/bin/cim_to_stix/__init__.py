@@ -37,20 +37,16 @@ CONVERTER_CLASSES = [
     FileHashConverter, FileNameConverter, FilePathConverter
 ]
 
-# TODO: Map splunk_field_name to IOC category
-# converter to accept (category, value) instead of (field_name, field_value)
-
-def convert_cim_to_stix2_pattern(splunk_field_name: str, splunk_field_value: str) -> str:
+def convert_to_stix_pattern(category: IoCCategory, value: str) -> str:
     for converter in CONVERTER_CLASSES:
-        if converter.supports(splunk_field_name, splunk_field_value):
-            return str(converter.convert(splunk_field_name, splunk_field_value))
+        if converter.supports(category, value):
+            return str(converter.convert(value))
     else:
-        raise NotImplementedError(f"Field name/value {splunk_field_name}={splunk_field_value} is not supported")
+        raise NotImplementedError(f"Field name/value {category}={value} is not supported")
 
-def convert_splunk_field_name_to_category(splunk_field_name: str, splunk_field_value:str) -> IoCCategory:
+def convert_splunk_field_to_category(splunk_field_name: str, splunk_field_value:str) -> IoCCategory:
     for converter in CONVERTER_CLASSES:
-        suggested_category = converter.suggest_category(splunk_field_name, splunk_field_value)
-        if suggested_category:
-            return suggested_category
+        if converter.supports_field(splunk_field_name, splunk_field_value):
+            return converter.category(value=splunk_field_value)
     else:
         raise ValueError(f"Category conversion for {repr(splunk_field_name)}={repr(splunk_field_value)} is not supported.")

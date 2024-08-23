@@ -8,7 +8,7 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
     from common import get_logger_for_script, AbstractRestHandler
-    from cim_to_stix import convert_cim_to_stix2_pattern
+    from cim_to_stix import convert_to_stix_pattern
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
@@ -24,7 +24,7 @@ class Handler(AbstractRestHandler):
         field_value = input_json.get("splunk_field_value")
         assert field_value, "splunk_field_value is required"
 
-        generated_pattern = convert_cim_to_stix2_pattern(field_name, field_value)
+        generated_pattern = convert_to_stix_pattern(field_name, field_value)
         response = {
             "pattern": generated_pattern
         }

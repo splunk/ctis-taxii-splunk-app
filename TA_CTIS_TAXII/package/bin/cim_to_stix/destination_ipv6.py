@@ -8,6 +8,7 @@ from .cim_fields import DESTINATION_IP
 from .stix_constants import NETWORK_TRAFFIC
 from .ioc_category import IoCCategory
 
+
 class DestinationIpv6Converter(CIMToSTIXConverter):
 
     @staticmethod
@@ -18,10 +19,9 @@ class DestinationIpv6Converter(CIMToSTIXConverter):
         return observation
 
     @staticmethod
-    def supports(ioc_category: str, value: str) -> bool:
-        return ioc_category == DESTINATION_IP and ip_is_ipv6(value)
+    def category(value: str) -> IoCCategory:
+        return IoCCategory.DESTINATION_IPV6
 
     @staticmethod
-    def suggest_category(splunk_field_name:str, splunk_field_value:str) -> Optional[IoCCategory]:
-        if splunk_field_name == DESTINATION_IP and ip_is_ipv6(splunk_field_value):
-            return IoCCategory.DESTINATION_IPV6
+    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
+        return splunk_field_name == DESTINATION_IP and ip_is_ipv6(splunk_field_value)
