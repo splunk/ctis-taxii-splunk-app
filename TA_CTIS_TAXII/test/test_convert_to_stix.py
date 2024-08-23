@@ -2,6 +2,10 @@ import pytest
 
 from TA_CTIS_TAXII.package.bin.cim_to_stix import IoCCategory, convert_to_stix_pattern
 
+class TestLookupConverterByCategory:
+    def test_lookup(self):
+        category = IoCCategory('destination_domain')
+        assert category == IoCCategory.DESTINATION_DOMAIN
 
 class TestOther:
     def test_should_throw_error_if_field_name_not_supported(self):

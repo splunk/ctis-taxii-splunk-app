@@ -8,7 +8,7 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
     from common import get_logger_for_script, AbstractRestHandler
-    from cim_to_stix import convert_to_stix_pattern
+    from cim_to_stix import convert_to_stix_pattern, IoCCategory
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
@@ -18,17 +18,19 @@ logger = get_logger_for_script(__file__)
 
 class Handler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params:dict, session_key: str) -> dict:
-        field_name = input_json.get("splunk_field_name")
-        assert field_name, "splunk_field_name is required"
+        category = input_json.get("indicator_category")
+        assert category, "indicator_category is required"
 
-        field_value = input_json.get("splunk_field_value")
-        assert field_value, "splunk_field_value is required"
+        value = input_json.get("indicator_value")
+        assert value, "indicator_value is required"
 
-        generated_pattern = convert_to_stix_pattern(field_name, field_value)
+        category_enum = IoCCategory(category)
+        generated_pattern = convert_to_stix_pattern(category=category_enum, value=value)
         response = {
             "pattern": generated_pattern
         }
         return response
+
 
 
 SuggestStixPatternHandler = Handler(logger=logger).generate_splunk_server_class()
