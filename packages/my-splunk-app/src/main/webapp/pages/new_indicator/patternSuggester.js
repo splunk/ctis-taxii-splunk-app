@@ -1,8 +1,8 @@
 import {getStixPatternSuggestion} from "@splunk/my-react-component/src/ApiClient";
 
-export const suggestPattern = (splunkFieldName, splunkFieldValue, setSuggestedPattern) => {
-    if (!!splunkFieldName && !!splunkFieldValue) {
-        getStixPatternSuggestion(splunkFieldName, splunkFieldValue, (resp) => {
+export const suggestPattern = (indicatorCategory, indicatorValue, setSuggestedPattern) => {
+    if (!!indicatorCategory && !!indicatorValue) {
+        getStixPatternSuggestion(indicatorCategory, indicatorValue, (resp) => {
             console.log("Response json:", resp);
             setSuggestedPattern(resp?.pattern);
         }, (error) => {

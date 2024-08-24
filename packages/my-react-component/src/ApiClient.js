@@ -27,7 +27,7 @@ function postData(endpoint, data, successHandler, errorHandler) {
 function getData({endpoint, queryParams}, successHandler, errorHandler) {
     const url = createRESTURL(endpoint, {app});
     let finalUrl = url;
-    if(queryParams){
+    if (queryParams) {
         const urlSearchParams = new URLSearchParams(queryParams);
         finalUrl = `${url}?${urlSearchParams.toString()}`;
     }
@@ -46,11 +46,11 @@ function getData({endpoint, queryParams}, successHandler, errorHandler) {
         .catch(errorHandler)
 }
 
-export function getStixPatternSuggestion(splunkFieldName, splunkFieldValue, successHandler, errorHandler) {
+export function getStixPatternSuggestion(indicatorCategory, indicatorValue, successHandler, errorHandler) {
     const endpoint = `suggest-stix-pattern`;
     const payload = {
-        splunk_field_name: splunkFieldName,
-        splunk_field_value: splunkFieldValue
+        indicator_value: indicatorValue,
+        indicator_category: indicatorCategory,
     }
     postData(endpoint, payload, (resp) => {
         console.log(resp);
@@ -68,6 +68,16 @@ export function getIndicators(skip, limit, successHandler, errorHandler) {
         endpoint: 'list-indicators',
         queryParams: {
             skip, limit
+        }
+    }, successHandler, errorHandler)
+}
+
+export function listIndicatorCategories(splunkFieldName, indicatorValue, successHandler, errorHandler) {
+    getData({
+        endpoint: 'list-ioc-categories',
+        queryParams: {
+            "splunk_field_name": splunkFieldName,
+            "indicator_value": indicatorValue,
         }
     }, successHandler, errorHandler)
 }

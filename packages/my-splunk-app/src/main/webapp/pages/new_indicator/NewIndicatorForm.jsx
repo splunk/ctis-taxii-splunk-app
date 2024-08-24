@@ -1,5 +1,5 @@
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
+import {postCreateIndicator, listIndicatorCategories} from "@splunk/my-react-component/src/ApiClient";
 
 import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
@@ -26,6 +26,7 @@ import SubmitButton from "./SubmitButton";
 import {suggestPattern} from "./patternSuggester";
 
 const GROUPING_ID = "grouping_id";
+const INDICATOR_CATEGORY = "indicator_category";
 const SPLUNK_FIELD_NAME = "splunk_field_name";
 const SPLUNK_FIELD_VALUE = "splunk_field_value";
 const NAME = "name";
@@ -54,6 +55,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         mode: 'all',
         defaultValues: {
             [GROUPING_ID]: null,
+            [INDICATOR_CATEGORY]: "",
             [SPLUNK_FIELD_NAME]: initialSplunkFieldName,
             [SPLUNK_FIELD_VALUE]: initialSplunkFieldValue,
             [NAME]: "",
@@ -72,6 +74,9 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
     const groupingId = watch(GROUPING_ID);
+
+    register(INDICATOR_CATEGORY, {required: "Indicator Category is required."});
+    const indicatorCategory = watch(INDICATOR_CATEGORY);
 
     register(SPLUNK_FIELD_NAME, {required: "Splunk Field Name is required."});
     const splunkFieldName = watch(SPLUNK_FIELD_NAME);
@@ -132,18 +137,28 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     }
 
     const [suggestedPattern, setSuggestedPattern] = useState(null);
+    const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 1000);
+
+    // TODO: use this for suggesting the Indicator category
     const debounceSplunkFieldName = useDebounce(splunkFieldName, 300);
-    const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 300);
 
     useEffect(() => {
-        suggestPattern(splunkFieldName, splunkFieldValue, setSuggestedPattern);
-    }, [debounceSplunkFieldName, debounceSplunkFieldValue]);
+        suggestPattern(indicatorCategory, splunkFieldValue, setSuggestedPattern);
+    }, [indicatorCategory, debounceSplunkFieldValue]);
 
     useEffect(() => {
         if(stixPattern === "" && suggestedPattern){
             setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true});
         }
     }, [suggestedPattern]);
+
+    const [indicatorCategories, setIndicatorCategories] = useState([]);
+    useEffect(() => {
+        listIndicatorCategories(splunkFieldName, splunkFieldValue, (resp) => {
+            console.log(resp);
+            setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
+        }, console.error);
+    }, [splunkFieldName, splunkFieldValue]);
 
 
     return (
@@ -155,6 +170,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
             ]}/>
+            <SelectControlGroup label="Indicator Category" {...formInputProps(INDICATOR_CATEGORY)} options={indicatorCategories}/>
             <TextControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} />
             <TextControlGroup label="Splunk Field Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />
             <TextControlGroup label="Indicator Name" {...formInputProps(NAME)} />
