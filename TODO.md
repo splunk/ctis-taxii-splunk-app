@@ -33,6 +33,7 @@
           - list of all IOC Categories
           - list of suggested IOC Categories based on Splunk field name & value if given
       - [X] Endpoint 2: Suggest pattern given (IOC Category, value)
+      - [ ] UI changes
     - [ ] Populate Groupings dropdown from REST endpoint
     - [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
       - [ ] Modify form to accept one or more splunk key=value pairs which generate a STIX pattern
@@ -46,9 +47,8 @@
         - [X] Schema versioning: to handle updates/breaking changes to the app
         - [ ] https://dev.splunk.com/enterprise/docs/developapps/manageknowledge/kvstore/usetherestapitomanagekv/ 
         - [ ] Nicely convert the ClassValidationError to a human-readable error message -> form submission errors
-        - [ ] Validate indicator_id is unique & does not already exist
         - [ ] Validate grouping_id exists
-        - [ ] New POST endpoint to validate a STIX pattern (realtime form validation)
+        - [ ] Stretch: New POST endpoint to validate a STIX pattern (realtime form validation)
         - [ ] Handle create multiple indicators in one submission
           - [ ] Accept a list of objects as payload
           - [ ] Validation -> nice error messages

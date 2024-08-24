@@ -11,7 +11,8 @@ SAMPLE_DICT = {
     "grouping_id": "A",
     "indicator_id": "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59",
     "splunk_field_name": "src_ip",
-    "splunk_field_value": "100.2.3.4",
+    "indicator_value": "100.2.3.4",
+    "indicator_category": "source_ipv4",
     "name": "name",
     "description": "desc",
     "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '100.2.3.4']",
@@ -33,7 +34,8 @@ SAMPLE_INDICATOR_INSTANCE = IndicatorModelV1(
     grouping_id="A",
     indicator_id="indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59",
     splunk_field_name="src_ip",
-    splunk_field_value="1.2.3.4",
+    indicator_value="1.2.3.4",
+    indicator_category="source_ipv4",
     name="name",
     description="desc",
     stix_pattern="[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '1.2.3.4']",
@@ -73,6 +75,12 @@ def test_from_valid_dict_scenario_update():
     assert indicator.created == datetime(2024, 1, 23, 23, 40, 33)
     assert indicator.modified == datetime(2024, 8, 1, 11, 22, 33)
 
+def test_from_valid_dict_without_splunk_field_name():
+    as_dict = get_sample_dict()
+    del as_dict["splunk_field_name"]
+    indicator = indicator_converter.structure(as_dict, IndicatorModelV1)
+    assert indicator.splunk_field_name is None, "Optional field"
+
 
 def test_from_valid_dict_with_splunk_reserved_fields():
     as_dict = get_sample_dict()
@@ -88,7 +96,7 @@ def test_from_valid_dict_with_splunk_reserved_fields():
     assert indicator.grouping_id == "A"
     assert indicator.indicator_id == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
     assert indicator.splunk_field_name == "src_ip"
-    assert indicator.splunk_field_value == "100.2.3.4"
+    assert indicator.indicator_value == "100.2.3.4"
     assert indicator.valid_from == datetime(2024, 8, 14, 23, 9, 21, 290000)
 
 
@@ -99,7 +107,7 @@ def test_from_valid_dict_without_splunk_reserved_fields():
     assert indicator.user is None
     assert indicator.grouping_id == "A"
     assert indicator.splunk_field_name == "src_ip"
-    assert indicator.splunk_field_value == "100.2.3.4"
+    assert indicator.indicator_value == "100.2.3.4"
 
 
 def test_from_valid_dict_without_schema_version():
@@ -109,7 +117,7 @@ def test_from_valid_dict_without_schema_version():
     assert indicator.schema_version == 1, "Should set default version as 1"
     assert indicator.grouping_id == "A"
     assert indicator.splunk_field_name == "src_ip"
-    assert indicator.splunk_field_value == "100.2.3.4"
+    assert indicator.indicator_value == "100.2.3.4"
 
 
 def test_to_dict_without_splunk_reserved_fields():
@@ -142,7 +150,8 @@ def test_to_dict():
     assert as_dict["grouping_id"] == "A"
     assert as_dict["indicator_id"] == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
     assert as_dict["splunk_field_name"] == "src_ip"
-    assert as_dict["splunk_field_value"] == "1.2.3.4"
+    assert as_dict["indicator_value"] == "1.2.3.4"
+    assert as_dict["indicator_category"] == "source_ipv4"
     assert as_dict["valid_from"] == "2024-08-14T23:09:21.123456"
 
 

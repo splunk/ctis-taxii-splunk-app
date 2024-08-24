@@ -113,7 +113,8 @@ def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
 def new_indicator_payload() -> dict:
     return {
         "splunk_field_name": "dest_ip",
-        "splunk_field_value": "1.2.3.4",
+        "indicator_value": "1.2.3.4",
+        "indicator_category": "destination_ipv4",
         "grouping_id": f"grouping--{uuid.uuid4()}",
         "name": "Name",
         "description": "Description",

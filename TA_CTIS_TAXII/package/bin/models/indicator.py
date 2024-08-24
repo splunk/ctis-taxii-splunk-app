@@ -6,6 +6,7 @@ from stix2patterns.validator import validate as stix_validate
 from uuid import uuid4
 from .base import BaseModelV1, make_base_converter
 from .tlp_v1 import TLPv1
+from typing import Optional
 
 """
 # This Indicator Model represents fields required to generate a STIX 2.1 Indicator object
@@ -39,8 +40,12 @@ class IndicatorModelV1(BaseModelV1):
         return f"indicator--{uuid4()}"
 
     grouping_id: str = field()
-    splunk_field_name: str = field()
-    splunk_field_value: str = field()
+    splunk_field_name: Optional[str] = field(default=None)
+    indicator_value: str = field()
+
+    # For now leave as str, but in future do we need to use the IoCCategory enum?
+    indicator_category: str = field()
+
     name: str = field()
     description: str = field()
     stix_pattern: str = field(validator=[validate_stix_pattern])
