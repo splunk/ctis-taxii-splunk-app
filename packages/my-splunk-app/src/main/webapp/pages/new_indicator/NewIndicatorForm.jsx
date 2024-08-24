@@ -50,7 +50,7 @@ const MyForm = styled.form`
     max-width: 1000px;
 `
 
-export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue}) {
+export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
     const {watch, handleSubmit, setValue, getValues, trigger, register, formState, reset} = useForm({
         mode: 'all',
         defaultValues: {
@@ -137,7 +137,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     }
 
     const [suggestedPattern, setSuggestedPattern] = useState(null);
-    const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 1000);
+    const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 500);
 
     // TODO: use this for suggesting the Indicator category
     const debounceSplunkFieldName = useDebounce(splunkFieldName, 300);
@@ -166,6 +166,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             {submissionError && <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
                 {submissionError}
             </Message>}
+            {event && <code>{JSON.stringify(event)}</code>}
             <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
