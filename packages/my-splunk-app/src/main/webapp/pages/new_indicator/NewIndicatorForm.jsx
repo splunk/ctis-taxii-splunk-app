@@ -46,10 +46,12 @@ const MyForm = styled.form`
 `
 
 const newIndicatorObject = () => ({
-    fieldName : '',
-    indicatorValue: '',
-    indicatorCategory: '',
-    stixPattern: '',
+    field_name : '',
+    indicator_value: '',
+    indicator_category: '',
+    stix_pattern: '',
+    name: '',
+    description: '',
 });
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {

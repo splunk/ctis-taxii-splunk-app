@@ -8,20 +8,26 @@ import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import {IndicatorSection} from "./IndicatorSection";
+import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 
+// TODO: remove generateFormInputProps as prop. This functionality can be done by using the useFormContext hook.
 export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent, indicatorCategories}) => {
     const {register, setValue, watch} = useFormContext();
     const splunkFields = Object.keys(splunkEvent || {});
 
-    const fieldSplunkFieldName = `indicators.${index}.fieldName`;
-    const fieldIndicatorValue = `indicators.${index}.indicatorValue`;
-    const fieldIndicatorCategory = `indicators.${index}.indicatorCategory`;
-    const fieldStixPattern = `indicators.${index}.stixPattern`;
+    const fieldSplunkFieldName = `indicators.${index}.field_name`;
+    const fieldIndicatorValue = `indicators.${index}.indicator_value`;
+    const fieldIndicatorCategory = `indicators.${index}.indicator_category`;
+    const fieldIndicatorName = `indicators.${index}.name`;
+    const fieldIndicatorDescription = `indicators.${index}.description`;
+    const fieldStixPattern = `indicators.${index}.stix_pattern`;
 
     register(fieldSplunkFieldName);
     register(fieldIndicatorValue, {required: "Indicator Value is required."});
     register(fieldIndicatorCategory, {required: "Indicator Category is required."});
     register(fieldStixPattern, {required: "STIX Pattern is required."});
+    register(fieldIndicatorName, {required: "Indicator Name is required."});
+    register(fieldIndicatorDescription, {required: "Indicator Description is required."});
 
     const splunkFieldName = watch(fieldSplunkFieldName);
     const indicatorValue = watch(fieldIndicatorValue);
@@ -42,7 +48,7 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
 
     useEffect(() => {
         if (splunkEvent.hasOwnProperty(splunkFieldName)) {
-            setValue(fieldIndicatorValue, splunkEvent[splunkFieldName]);
+            setValue(fieldIndicatorValue, splunkEvent[splunkFieldName], {shouldValidate: true});
         }
     }, [splunkFieldName]);
 
@@ -56,5 +62,7 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
         <StixPatternControlGroup label="STIX v2 Pattern" {...generateFormInputProps(fieldStixPattern)}
                                  useSuggestedPattern={() => setValue(fieldStixPattern, suggestedPattern, {shouldValidate: true})}
                                  suggestedPattern={suggestedPattern}/>
+        <TextControlGroup label="Indicator Name" {...generateFormInputProps(fieldIndicatorName)} />
+        <TextAreaControlGroup label="Description" {...generateFormInputProps(fieldIndicatorDescription)} />
     </IndicatorSection>
 }
