@@ -6,6 +6,7 @@ import {NewIndicatorForm} from "./NewIndicatorForm";
 import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
 import Heading from "@splunk/react-ui/Heading";
 import {getData} from "@splunk/splunk-utils/search";
+import P from "@splunk/react-ui/Paragraph";
 
 function getUrlQueryParams() {
     return new URLSearchParams(window.location.search);
@@ -47,7 +48,8 @@ function MainComponent() {
     }
     return (
         <AppContainer>
-            <Heading level={1}>New Indicator of Compromise (IoC)</Heading>
+            <Heading level={1}>Add Indicators of Compromise (IoC) to Grouping</Heading>
+            <P>Add related indicators to an existing grouping.</P>
             {indicatorForm}
         </AppContainer>
     )
