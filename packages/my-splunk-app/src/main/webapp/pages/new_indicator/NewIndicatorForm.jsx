@@ -3,7 +3,7 @@ import {postCreateIndicator, listIndicatorCategories} from "@splunk/my-react-com
 
 import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
-import {useForm, useFieldArray} from "react-hook-form";
+import {useForm, useFieldArray, FormProvider, useFormContext} from "react-hook-form";
 import styled from "styled-components";
 
 import Button from "@splunk/react-ui/Button";
@@ -66,7 +66,7 @@ const newIndicatorObject = () => ({
 });
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
-    const {watch, handleSubmit, setValue, trigger, register, formState, control} = useForm({
+    const methods = useForm({
         mode: 'all',
         defaultValues: {
             [GROUPING_ID]: null,
@@ -76,6 +76,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             indicators: [newIndicatorObject()]
         }
     });
+    const {watch, register, setValue, trigger, handleSubmit, formState, control} = methods;
     const {fields, append} = useFieldArray({
         control,
         name: 'indicators'
@@ -216,6 +217,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     // }, [splunkFieldName, splunkFieldValue]);
 
     return (
+        <FormProvider {...methods}>
         <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
             {submissionError && <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
                 {submissionError}
@@ -224,23 +226,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
             ]}/>
-
-            {fields.map((field, index) => {
-                const nameFieldName = `indicators.${index}.fieldName`;
-                const nameIndicatorValue = `indicators.${index}.indicatorValue`;
-                register(nameFieldName, {required: "Field Name is required."});
-                register(nameIndicatorValue, {required: "Indicator Value is required."});
-
-                return <IndicatorSection key={field.id}>
-                    <Heading level={3} >New IoC {`#${index}`}</Heading>
-                    <ComboControlGroup label="Splunk Field Name" {...formInputProps(nameFieldName)} options={eventFieldNames}/>
-                    <TextControlGroup label="Indicator Value" {...formInputProps(nameIndicatorValue)} />
-                </IndicatorSection>
-            })}
-            <CustomControlGroup label="Add another IoC">
-                <Button label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
-            </CustomControlGroup>
-
 
             {/*<SelectControlGroup label="Indicator Category" {...formInputProps(INDICATOR_CATEGORY)} options={indicatorCategories}/>*/}
             {/*// If form triggered via workflow action then show field name dropdown*/}
@@ -261,6 +246,17 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 {label: "WHITE", value: "WHITE"}
             ]}/>
             <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
+
+            {fields.map((field, index) =>
+                <IndicatorSubForm field={field} index={index} register={register}
+                                  generateFormInputProps={formInputProps}
+                                  splunkEvent={event}/>)
+            }
+            <CustomControlGroup label="Add another IoC">
+                <Button label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
+            </CustomControlGroup>
+
+
             <CustomControlGroup label="">
                 <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
                 {/*<SubmitButton submitting={formState.isSubmitting}/>*/}
@@ -285,7 +281,29 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 {event && <code>{JSON.stringify(event)}</code>}
             </div>
         </MyForm>
+        </FormProvider>
     );
+}
+const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent}) => {
+    const {register, setValue, watch} = useFormContext();
+    const splunkFields = Object.keys(splunkEvent || {});
+    const fieldSplunkFieldName = `indicators.${index}.fieldName`;
+    const fieldIndicatorValue = `indicators.${index}.indicatorValue`;
+    register(fieldSplunkFieldName, {required: "Field Name is required."});
+    register(fieldIndicatorValue, {required: "Indicator Value is required."});
+    const splunkFieldName = watch(fieldSplunkFieldName);
+
+    useEffect(() => {
+        if (splunkEvent.hasOwnProperty(splunkFieldName)) {
+            setValue(fieldIndicatorValue, splunkEvent[splunkFieldName]);
+        }
+    }, [splunkFieldName]);
+
+    return <IndicatorSection key={field.id}>
+        <Heading level={3} >New IoC {`#${index}`}</Heading>
+        <ComboControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)} options={splunkFields}/>
+        <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
+    </IndicatorSection>
 }
 
 NewIndicatorForm.propTypes = {
