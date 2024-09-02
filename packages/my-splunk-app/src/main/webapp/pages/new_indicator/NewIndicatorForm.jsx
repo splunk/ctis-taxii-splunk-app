@@ -3,7 +3,7 @@ import {postCreateIndicator, listIndicatorCategories} from "@splunk/my-react-com
 
 import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
-import {useForm} from "react-hook-form";
+import {useForm, useFieldArray} from "react-hook-form";
 import styled from "styled-components";
 
 import Button from "@splunk/react-ui/Button";
@@ -21,9 +21,11 @@ import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGrou
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
+import ComboControlGroup from "@splunk/my-react-component/src/ComboControlGroup";
 
 import SubmitButton from "./SubmitButton";
 import {suggestPattern} from "./patternSuggester";
+import Heading from "@splunk/react-ui/Heading";
 
 const GROUPING_ID = "grouping_id";
 const INDICATOR_CATEGORY = "indicator_category";
@@ -49,23 +51,36 @@ function GotoGroupingPageButton({groupingId}) {
 const MyForm = styled.form`
     max-width: 1000px;
 `
+const IndicatorSection = styled.section`
+    border: 1px solid black;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+`
+
+const newIndicatorObject = () => ({
+    fieldName : '',
+    indicatorValue: '',
+    indicatorCategory: '',
+    stixPattern: '',
+});
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
-    const {watch, handleSubmit, setValue, getValues, trigger, register, formState, reset} = useForm({
+    const {watch, handleSubmit, setValue, trigger, register, formState, control} = useForm({
         mode: 'all',
         defaultValues: {
             [GROUPING_ID]: null,
-            [INDICATOR_CATEGORY]: "",
-            [SPLUNK_FIELD_NAME]: initialSplunkFieldName,
-            [SPLUNK_FIELD_VALUE]: initialSplunkFieldValue,
-            [NAME]: "",
-            [DESCRIPTION]: "",
-            [STIX_PATTERN]: "",
             [CONFIDENCE]: 100,
             [TLP_RATING]: "GREEN",
             [VALID_FROM]: new Date().toISOString().slice(0, -1),
+            indicators: [newIndicatorObject()]
         }
     });
+    const {fields, append} = useFieldArray({
+        control,
+        name: 'indicators'
+    });
+    const eventFieldNames = Object.keys(event || {});
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
@@ -75,26 +90,27 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     register(GROUPING_ID, {required: "Grouping ID is required."});
     const groupingId = watch(GROUPING_ID);
 
-    register(INDICATOR_CATEGORY, {required: "Indicator Category is required."});
-    const indicatorCategory = watch(INDICATOR_CATEGORY);
-
-    register(SPLUNK_FIELD_NAME, {required: "Splunk Field Name is required."});
-    const splunkFieldName = watch(SPLUNK_FIELD_NAME);
-
-    register(SPLUNK_FIELD_VALUE, {required: "Splunk Field Value is required."});
-    const splunkFieldValue = watch(SPLUNK_FIELD_VALUE);
-
-    register(NAME, {required: "Name is required."});
-    register(DESCRIPTION, {required: "Description is required."});
-
-    register(STIX_PATTERN, {required: "STIX Pattern is required."});
-    const stixPattern = watch(STIX_PATTERN);
+    // register(INDICATOR_CATEGORY, {required: "Indicator Category is required."});
+    // const indicatorCategory = watch(INDICATOR_CATEGORY);
+    //
+    // register(SPLUNK_FIELD_NAME, {required: "Splunk Field Name is required."});
+    // const splunkFieldName = watch(SPLUNK_FIELD_NAME);
+    //
+    // register(SPLUNK_FIELD_VALUE, {required: "Splunk Field Value is required."});
+    // const splunkFieldValue = watch(SPLUNK_FIELD_VALUE);
+    //
+    // register(NAME, {required: "Name is required."});
+    // register(DESCRIPTION, {required: "Description is required."});
+    //
+    // register(STIX_PATTERN, {required: "STIX Pattern is required."});
+    // const stixPattern = watch(STIX_PATTERN);
 
     register(TLP_RATING, {required: "TLP Rating is required."});
     register(CONFIDENCE, {required: "Confidence is required."});
     register(VALID_FROM, {required: "Valid from is required."});
 
     const onSubmit = async (data) => {
+        debugger;
         console.log(data);
         const formIsValid = await trigger();
         setSubmissionError(null);
@@ -126,60 +142,116 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         };
     }
 
+    function findErrorMessage(validationObject, refName) {
+        // Iterate over each key in the flat validation object
+        for (let key in validationObject) {
+            const value = validationObject[key];
+
+            // If the value is an object, check its ref
+            if (typeof value === 'object' && !Array.isArray(value)) {
+                if (value.ref && value.ref.name === refName) {
+                    return value.message;
+                }
+            }
+
+            // If the value is an array, iterate through its elements
+            if (Array.isArray(value)) {
+                for (let item of value) {
+                    // Check if the item has a matching ref
+                    for (let subKey in item) {
+                        const subValue = item[subKey];
+                        if (subValue.ref && subValue.ref.name === refName) {
+                            return subValue.message;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Return null if no matching refName is found
+        return null;
+    }
+
     const formInputProps = (fieldName) => {
         const {errors} = formState;
+        const error = findErrorMessage(errors, fieldName);
         return {
-            help: errors?.[fieldName]?.message,
-            error: !!errors?.[fieldName],
+            help: error,
+            error: !!error,
             onChange: generateSetValueHandler(fieldName),
             value: watch(fieldName)
         }
     }
 
-    const [suggestedPattern, setSuggestedPattern] = useState(null);
-    const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 500);
-
-    // TODO: use this for suggesting the Indicator category
-    const debounceSplunkFieldName = useDebounce(splunkFieldName, 300);
-
-    useEffect(() => {
-        suggestPattern(indicatorCategory, splunkFieldValue, setSuggestedPattern);
-    }, [indicatorCategory, debounceSplunkFieldValue]);
-
-    useEffect(() => {
-        if(stixPattern === "" && suggestedPattern){
-            setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true});
-        }
-    }, [suggestedPattern]);
-
-    const [indicatorCategories, setIndicatorCategories] = useState([]);
-    useEffect(() => {
-        listIndicatorCategories(splunkFieldName, splunkFieldValue, (resp) => {
-            console.log(resp);
-            setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
-        }, console.error);
-    }, [splunkFieldName, splunkFieldValue]);
-
+    // const [suggestedPattern, setSuggestedPattern] = useState(null);
+    // const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 500);
+    //
+    // // TODO: use this for suggesting the Indicator category
+    // const debounceSplunkFieldName = useDebounce(splunkFieldName, 300);
+    //
+    // useEffect(() => {
+    //     suggestPattern(indicatorCategory, splunkFieldValue, setSuggestedPattern);
+    // }, [indicatorCategory, debounceSplunkFieldValue]);
+    //
+    // useEffect(() => {
+    //     if(stixPattern === "" && suggestedPattern){
+    //         setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true});
+    //     }
+    // }, [suggestedPattern]);
+    //
+    // const [indicatorCategories, setIndicatorCategories] = useState([]);
+    // useEffect(() => {
+    //     listIndicatorCategories(splunkFieldName, splunkFieldValue, (resp) => {
+    //         console.log(resp);
+    //         setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
+    //     }, console.error);
+    // }, [splunkFieldName, splunkFieldValue]);
+    //
+    // useEffect(() => {
+    //     setValue(SPLUNK_FIELD_VALUE, event[splunkFieldName]);
+    // }, [splunkFieldName]);
+    // useEffect(() => {
+    //     setValue(DESCRIPTION, `Description of ${splunkFieldName}=${splunkFieldValue}`);
+    //     setValue(NAME, `Indicator name of ${splunkFieldName}=${splunkFieldValue}`);
+    // }, [splunkFieldName, splunkFieldValue]);
 
     return (
         <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
             {submissionError && <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
                 {submissionError}
             </Message>}
-            {event && <code>{JSON.stringify(event)}</code>}
             <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
             ]}/>
-            <SelectControlGroup label="Indicator Category" {...formInputProps(INDICATOR_CATEGORY)} options={indicatorCategories}/>
-            <TextControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} />
-            <TextControlGroup label="Splunk Field Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />
-            <TextControlGroup label="Indicator Name" {...formInputProps(NAME)} />
-            <TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />
-            <StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}
-                                     useSuggestedPattern={() => setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true})}
-                                     suggestedPattern={suggestedPattern}
-            />
+
+            {fields.map((field, index) => {
+                const nameFieldName = `indicators.${index}.fieldName`;
+                const nameIndicatorValue = `indicators.${index}.indicatorValue`;
+                register(nameFieldName, {required: "Field Name is required."});
+                register(nameIndicatorValue, {required: "Indicator Value is required."});
+
+                return <IndicatorSection key={field.id}>
+                    <Heading level={3} >New IoC {`#${index}`}</Heading>
+                    <ComboControlGroup label="Splunk Field Name" {...formInputProps(nameFieldName)} options={eventFieldNames}/>
+                    <TextControlGroup label="Indicator Value" {...formInputProps(nameIndicatorValue)} />
+                </IndicatorSection>
+            })}
+            <CustomControlGroup label="Add another IoC">
+                <Button label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
+            </CustomControlGroup>
+
+
+            {/*<SelectControlGroup label="Indicator Category" {...formInputProps(INDICATOR_CATEGORY)} options={indicatorCategories}/>*/}
+            {/*// If form triggered via workflow action then show field name dropdown*/}
+            {/*<ComboControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} options={eventFieldNames}/>*/}
+            {/*<TextControlGroup label="Indicator Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />*/}
+            {/*<TextControlGroup label="Indicator Name" {...formInputProps(NAME)} />*/}
+            {/*<TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />*/}
+            {/*<StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}*/}
+            {/*                         useSuggestedPattern={() => setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true})}*/}
+            {/*                         suggestedPattern={suggestedPattern}*/}
+            {/*/>*/}
 
             <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
             <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
@@ -191,6 +263,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
             <CustomControlGroup label="">
                 <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
+                {/*<SubmitButton submitting={formState.isSubmitting}/>*/}
             </CustomControlGroup>
             {/*// TODO: Move Modal to a separate component*/}
             <Modal open={submitSuccess}>
@@ -203,6 +276,14 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     <GotoGroupingPageButton groupingId={groupingId}/>
                 </Modal.Body>
             </Modal>
+            <div style={{color: 'red'}}>
+                <code>
+                    {JSON.stringify(formState.errors)}
+                </code>
+            </div>
+            <div>
+                {event && <code>{JSON.stringify(event)}</code>}
+            </div>
         </MyForm>
     );
 }

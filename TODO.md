@@ -38,6 +38,9 @@
     - [ ] Stretch feature: Event-level workflow action -> Add Multiple IOCs to Grouping
       - [ ] Modify form to accept one or more splunk key=value pairs which generate a STIX pattern
       - https://react-hook-form.com/docs/usefieldarray
+      - [X] Pass Splunk event to form
+      - [ ] splunk_field_name should be combination dropdown and free text field
+      - [X] Confirmed this is supported in ES 8.0, event workflow actions available when clicking on a finding and using the ellipsis menu.
 - Base Model
   - [X] Add modified and created timestamps
 - [ ] Indicator Model - REST API
