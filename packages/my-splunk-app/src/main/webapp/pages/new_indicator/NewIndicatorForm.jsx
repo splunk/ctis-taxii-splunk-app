@@ -26,6 +26,7 @@ import ComboControlGroup from "@splunk/my-react-component/src/ComboControlGroup"
 import SubmitButton from "./SubmitButton";
 import {suggestPattern} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
+import indicatorIdControlGroup from "@splunk/my-react-component/src/IndicatorIdControlGroup";
 
 const GROUPING_ID = "grouping_id";
 const INDICATOR_CATEGORY = "indicator_category";
@@ -200,13 +201,13 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     //     }
     // }, [suggestedPattern]);
     //
-    // const [indicatorCategories, setIndicatorCategories] = useState([]);
-    // useEffect(() => {
-    //     listIndicatorCategories(splunkFieldName, splunkFieldValue, (resp) => {
-    //         console.log(resp);
-    //         setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
-    //     }, console.error);
-    // }, [splunkFieldName, splunkFieldValue]);
+    const [indicatorCategories, setIndicatorCategories] = useState([]);
+    useEffect(() => {
+        listIndicatorCategories(null, null, (resp) => {
+            console.log(resp);
+            setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
+        }, console.error);
+    }, []);
     //
     // useEffect(() => {
     //     setValue(SPLUNK_FIELD_VALUE, event[splunkFieldName]);
@@ -250,7 +251,8 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             {fields.map((field, index) =>
                 <IndicatorSubForm field={field} index={index} register={register}
                                   generateFormInputProps={formInputProps}
-                                  splunkEvent={event}/>)
+                                  splunkEvent={event}
+                indicatorCategories={indicatorCategories}/>)
             }
             <CustomControlGroup label="Add another IoC">
                 <Button label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
@@ -284,14 +286,36 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         </FormProvider>
     );
 }
-const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent}) => {
+const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent, indicatorCategories}) => {
     const {register, setValue, watch} = useFormContext();
     const splunkFields = Object.keys(splunkEvent || {});
+
     const fieldSplunkFieldName = `indicators.${index}.fieldName`;
     const fieldIndicatorValue = `indicators.${index}.indicatorValue`;
-    register(fieldSplunkFieldName, {required: "Field Name is required."});
+    const fieldIndicatorCategory = `indicators.${index}.indicatorCategory`;
+    const fieldStixPattern = `indicators.${index}.stixPattern`;
+
+    register(fieldSplunkFieldName);
     register(fieldIndicatorValue, {required: "Indicator Value is required."});
+    register(fieldIndicatorCategory, {required: "Indicator Category is required."});
+    register(fieldStixPattern, {required: "STIX Pattern is required."});
+
     const splunkFieldName = watch(fieldSplunkFieldName);
+    const indicatorValue = watch(fieldIndicatorValue);
+    const indicatorCategory = watch(fieldIndicatorCategory);
+    const stixPattern = watch(fieldStixPattern);
+
+    const [suggestedPattern, setSuggestedPattern] = useState(null);
+    const debounceIndicatorValue = useDebounce(indicatorValue, 200);
+    useEffect(() => {
+        suggestPattern(indicatorCategory, indicatorValue, setSuggestedPattern);
+    }, [indicatorCategory, debounceIndicatorValue]);
+
+    useEffect(() => {
+        if(stixPattern === "" && suggestedPattern){
+            setValue(fieldStixPattern, suggestedPattern, {shouldValidate: true});
+        }
+    }, [suggestedPattern]);
 
     useEffect(() => {
         if (splunkEvent.hasOwnProperty(splunkFieldName)) {
@@ -303,6 +327,10 @@ const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent}) =
         <Heading level={3} >New IoC {`#${index}`}</Heading>
         <ComboControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)} options={splunkFields}/>
         <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
+        <SelectControlGroup label="Indicator Category" {...generateFormInputProps(fieldIndicatorCategory)} options={indicatorCategories}/>
+        <StixPatternControlGroup label="STIX v2 Pattern" {...generateFormInputProps(fieldStixPattern)}
+                                 useSuggestedPattern={() => setValue(fieldStixPattern, suggestedPattern, {shouldValidate: true})}
+                                 suggestedPattern={suggestedPattern}/>
     </IndicatorSection>
 }
 

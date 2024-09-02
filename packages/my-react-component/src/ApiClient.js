@@ -73,11 +73,15 @@ export function getIndicators(skip, limit, successHandler, errorHandler) {
 }
 
 export function listIndicatorCategories(splunkFieldName, indicatorValue, successHandler, errorHandler) {
+    const queryParams = {};
+    if (splunkFieldName) {
+        queryParams.splunk_field_name = splunkFieldName;
+    }
+    if (indicatorValue) {
+        queryParams.indicator_value = indicatorValue;
+    }
     getData({
         endpoint: 'list-ioc-categories',
-        queryParams: {
-            "splunk_field_name": splunkFieldName,
-            "indicator_value": indicatorValue,
-        }
+        queryParams: queryParams,
     }, successHandler, errorHandler)
 }
