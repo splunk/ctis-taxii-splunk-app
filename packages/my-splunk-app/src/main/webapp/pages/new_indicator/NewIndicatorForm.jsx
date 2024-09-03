@@ -21,12 +21,6 @@ import SubmitButton from "./SubmitButton";
 import {IndicatorSubForm} from "./IndicatorSubForm";
 
 const GROUPING_ID = "grouping_id";
-const INDICATOR_CATEGORY = "indicator_category";
-const SPLUNK_FIELD_NAME = "splunk_field_name";
-const SPLUNK_FIELD_VALUE = "splunk_field_value";
-const NAME = "name";
-const DESCRIPTION = "description";
-const STIX_PATTERN = "stix_pattern";
 const CONFIDENCE = "confidence";
 const TLP_RATING = "tlp_v1_rating";
 const VALID_FROM = "valid_from";
@@ -79,21 +73,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
     const groupingId = watch(GROUPING_ID);
-
-    // register(INDICATOR_CATEGORY, {required: "Indicator Category is required."});
-    // const indicatorCategory = watch(INDICATOR_CATEGORY);
-    //
-    // register(SPLUNK_FIELD_NAME, {required: "Splunk Field Name is required."});
-    // const splunkFieldName = watch(SPLUNK_FIELD_NAME);
-    //
-    // register(SPLUNK_FIELD_VALUE, {required: "Splunk Field Value is required."});
-    // const splunkFieldValue = watch(SPLUNK_FIELD_VALUE);
-    //
-    // register(NAME, {required: "Name is required."});
-    // register(DESCRIPTION, {required: "Description is required."});
-    //
-    // register(STIX_PATTERN, {required: "STIX Pattern is required."});
-    // const stixPattern = watch(STIX_PATTERN);
 
     register(TLP_RATING, {required: "TLP Rating is required."});
     register(CONFIDENCE, {required: "Confidence is required."});
@@ -173,22 +152,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }
     }
 
-    // const [suggestedPattern, setSuggestedPattern] = useState(null);
-    // const debounceSplunkFieldValue = useDebounce(splunkFieldValue, 500);
-    //
-    // // TODO: use this for suggesting the Indicator category
-    // const debounceSplunkFieldName = useDebounce(splunkFieldName, 300);
-    //
-    // useEffect(() => {
-    //     suggestPattern(indicatorCategory, splunkFieldValue, setSuggestedPattern);
-    // }, [indicatorCategory, debounceSplunkFieldValue]);
-    //
-    // useEffect(() => {
-    //     if(stixPattern === "" && suggestedPattern){
-    //         setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true});
-    //     }
-    // }, [suggestedPattern]);
-    //
     const [indicatorCategories, setIndicatorCategories] = useState([]);
     useEffect(() => {
         listIndicatorCategories(null, null, (resp) => {
@@ -196,14 +159,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
         }, console.error);
     }, []);
-    //
-    // useEffect(() => {
-    //     setValue(SPLUNK_FIELD_VALUE, event[splunkFieldName]);
-    // }, [splunkFieldName]);
-    // useEffect(() => {
-    //     setValue(DESCRIPTION, `Description of ${splunkFieldName}=${splunkFieldValue}`);
-    //     setValue(NAME, `Indicator name of ${splunkFieldName}=${splunkFieldValue}`);
-    // }, [splunkFieldName, splunkFieldValue]);
 
     return (
         <FormProvider {...methods}>
@@ -215,17 +170,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 {label: "Grouping A", value: "A"},
                 {label: "Grouping B", value: "B"}
             ]}/>
-
-            {/*<SelectControlGroup label="Indicator Category" {...formInputProps(INDICATOR_CATEGORY)} options={indicatorCategories}/>*/}
-            {/*// If form triggered via workflow action then show field name dropdown*/}
-            {/*<ComboControlGroup label="Splunk Field Name" {...formInputProps(SPLUNK_FIELD_NAME)} options={eventFieldNames}/>*/}
-            {/*<TextControlGroup label="Indicator Value" {...formInputProps(SPLUNK_FIELD_VALUE)} />*/}
-            {/*<TextControlGroup label="Indicator Name" {...formInputProps(NAME)} />*/}
-            {/*<TextAreaControlGroup label="Description" {...formInputProps(DESCRIPTION)} />*/}
-            {/*<StixPatternControlGroup label="STIX v2 Pattern" {...formInputProps(STIX_PATTERN)}*/}
-            {/*                         useSuggestedPattern={() => setValue(STIX_PATTERN, suggestedPattern, {shouldValidate: true})}*/}
-            {/*                         suggestedPattern={suggestedPattern}*/}
-            {/*/>*/}
 
             <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
             <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
@@ -249,7 +193,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
 
             <CustomControlGroup label="">
                 <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
-                {/*<SubmitButton submitting={formState.isSubmitting}/>*/}
             </CustomControlGroup>
             {/*// TODO: Move Modal to a separate component*/}
             <Modal open={submitSuccess}>
