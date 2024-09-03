@@ -60,10 +60,12 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }
     });
     const {watch, register, setValue, trigger, handleSubmit, formState, control} = methods;
-    const {fields, append} = useFieldArray({
+    const {fields, append, remove} = useFieldArray({
         control,
         name: 'indicators'
     });
+    const indicators = watch('indicators');
+
     const eventFieldNames = Object.keys(event || {});
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
@@ -162,58 +164,62 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
 
     return (
         <FormProvider {...methods}>
-        <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
-            {submissionError && <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
-                {submissionError}
-            </Message>}
-            <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
-                {label: "Grouping A", value: "A"},
-                {label: "Grouping B", value: "B"}
-            ]}/>
+            <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
+                {submissionError &&
+                    <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
+                        {submissionError}
+                    </Message>}
+                <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
+                    {label: "Grouping A", value: "A"},
+                    {label: "Grouping B", value: "B"}
+                ]}/>
 
-            <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
-            <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
-                {label: "RED", value: "RED"},
-                {label: "AMBER", value: "AMBER"},
-                {label: "GREEN", value: "GREEN"},
-                {label: "WHITE", value: "WHITE"}
-            ]}/>
-            <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
+                <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
+                <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
+                    {label: "RED", value: "RED"},
+                    {label: "AMBER", value: "AMBER"},
+                    {label: "GREEN", value: "GREEN"},
+                    {label: "WHITE", value: "WHITE"}
+                ]}/>
+                <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
 
-            {fields.map((field, index) =>
-                <IndicatorSubForm field={field} index={index} register={register}
-                                  generateFormInputProps={formInputProps}
-                                  splunkEvent={event}
-                indicatorCategories={indicatorCategories}/>)
-            }
-            <CustomControlGroup label="Add another IoC">
-                <Button label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
-            </CustomControlGroup>
+                {fields.map((field, index) =>
+                    <IndicatorSubForm field={field} index={index} register={register}
+                                      generateFormInputProps={formInputProps}
+                                      splunkEvent={event}
+                                      removeSelf={() => remove(index)}
+                                      indicatorCategories={indicatorCategories}/>)
+                }
+                <CustomControlGroup label="">
+                    <Button label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
+                </CustomControlGroup>
 
-
-            <CustomControlGroup label="">
-                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
-            </CustomControlGroup>
-            {/*// TODO: Move Modal to a separate component*/}
-            <Modal open={submitSuccess}>
-                <Modal.Header
-                    title="Successfully Created New Indicator"
-                />
-                <Modal.Body>
-                    <P>To submit this IoC to CTIS, proceed to submit the Grouping.</P>
-                    <GotoIndicatorsPageButton/>
-                    <GotoGroupingPageButton groupingId={groupingId}/>
-                </Modal.Body>
-            </Modal>
-            <div style={{color: 'red'}}>
-                <code>
-                    {JSON.stringify(formState.errors)}
-                </code>
-            </div>
-            <div>
-                {event && <code>{JSON.stringify(event)}</code>}
-            </div>
-        </MyForm>
+                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting} numIndicators={indicators.length}/>
+                {/*// TODO: Move Modal to a separate component*/}
+                <Modal open={submitSuccess}>
+                    <Modal.Header
+                        title="Successfully Created New Indicator"
+                    />
+                    <Modal.Body>
+                        <P>To submit this IoC to CTIS, proceed to submit the Grouping.</P>
+                        <GotoIndicatorsPageButton/>
+                        <GotoGroupingPageButton groupingId={groupingId}/>
+                    </Modal.Body>
+                </Modal>
+                <div style={{color: 'green'}}>
+                    <code>
+                        {JSON.stringify(indicators)}
+                    </code>
+                </div>
+                <div style={{color: 'red'}}>
+                    <code>
+                        {JSON.stringify(formState.errors)}
+                    </code>
+                </div>
+                <div>
+                    {event && <code>{JSON.stringify(event)}</code>}
+                </div>
+            </MyForm>
         </FormProvider>
     );
 }

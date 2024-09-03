@@ -9,9 +9,11 @@ import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGrou
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import {IndicatorSection} from "./IndicatorSection";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
+import Button from "@splunk/react-ui/Button";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 
 // TODO: remove generateFormInputProps as prop. This functionality can be done by using the useFormContext hook.
-export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent, indicatorCategories}) => {
+export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent, indicatorCategories, removeSelf}) => {
     const {register, setValue, watch} = useFormContext();
     const splunkFields = Object.keys(splunkEvent || {});
 
@@ -51,9 +53,9 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
             setValue(fieldIndicatorValue, splunkEvent[splunkFieldName], {shouldValidate: true});
         }
     }, [splunkFieldName]);
-
+    const indexStartingAtOne = index + 1;
     return <IndicatorSection key={field.id}>
-        <Heading level={3}>New IoC {`#${index}`}</Heading>
+        <Heading level={3}>New IoC {`#${indexStartingAtOne}`}</Heading>
         <ComboControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
                            options={splunkFields}/>
         <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
@@ -64,5 +66,8 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
                                  suggestedPattern={suggestedPattern}/>
         <TextControlGroup label="Indicator Name" {...generateFormInputProps(fieldIndicatorName)} />
         <TextAreaControlGroup label="Description" {...generateFormInputProps(fieldIndicatorDescription)} />
+        <CustomControlGroup label="">
+            <Button label="Remove" appearance="destructive" onClick={() => removeSelf()}/>
+        </CustomControlGroup>
     </IndicatorSection>
 }
