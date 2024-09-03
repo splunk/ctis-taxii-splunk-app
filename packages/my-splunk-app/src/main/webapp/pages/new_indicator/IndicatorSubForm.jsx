@@ -7,10 +7,29 @@ import ComboControlGroup from "@splunk/my-react-component/src/ComboControlGroup"
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
-import {IndicatorSection} from "./IndicatorSection";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import Button from "@splunk/react-ui/Button";
-import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import Divider from "@splunk/react-ui/Divider";
+import styled from "styled-components";
+import TrashCanCross from '@splunk/react-icons/TrashCanCross';
+
+
+
+const HorizontalLayout = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+`
+const StyledHeading = styled(Heading)`
+    margin: 0;
+    flex-grow: 1;
+`;
+
+const StyledButton = styled(Button)`
+    flex-grow: 0;
+    width: 100px; /* Set the fixed width for the button */
+`;
 
 // TODO: remove generateFormInputProps as prop. This functionality can be done by using the useFormContext hook.
 export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent, indicatorCategories, removeSelf}) => {
@@ -54,8 +73,11 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
         }
     }, [splunkFieldName]);
     const indexStartingAtOne = index + 1;
-    return <IndicatorSection key={field.id}>
-        <Heading level={3}>New IoC {`#${indexStartingAtOne}`}</Heading>
+    return <section key={field.id}>
+        <HorizontalLayout>
+            <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
+            <StyledButton inline icon={<TrashCanCross/>} label="Remove" appearance="destructive" onClick={() => removeSelf()}/>
+        </HorizontalLayout>
         <ComboControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
                            options={splunkFields}/>
         <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
@@ -66,8 +88,6 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
                                  suggestedPattern={suggestedPattern}/>
         <TextControlGroup label="Indicator Name" {...generateFormInputProps(fieldIndicatorName)} />
         <TextAreaControlGroup label="Description" {...generateFormInputProps(fieldIndicatorDescription)} />
-        <CustomControlGroup label="">
-            <Button label="Remove" appearance="destructive" onClick={() => removeSelf()}/>
-        </CustomControlGroup>
-    </IndicatorSection>
+        <Divider />
+    </section>
 }

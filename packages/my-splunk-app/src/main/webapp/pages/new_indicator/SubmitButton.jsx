@@ -5,7 +5,7 @@ import React from "react";
 export default function SubmitButton({disabled, submitting, numIndicators}) {
     const label = numIndicators > 1 ? "Create Indicators" : "Create Indicator";
     return (
-        <Button type="submit" label={`${label} (${numIndicators})`} appearance="primary" disabled={disabled}>
+        <Button inline={false} type="submit" label={`${label} (${numIndicators})`} appearance="primary" disabled={disabled}>
             {submitting && <WaitSpinner/>}
         </Button>
     );

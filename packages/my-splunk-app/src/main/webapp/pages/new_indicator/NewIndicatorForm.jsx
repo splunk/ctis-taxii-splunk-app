@@ -10,6 +10,7 @@ import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
 import Message from '@splunk/react-ui/Message';
+import PlusCircle from '@splunk/react-icons/PlusCircle';
 
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
@@ -19,6 +20,9 @@ import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControl
 
 import SubmitButton from "./SubmitButton";
 import {IndicatorSubForm} from "./IndicatorSubForm";
+import Heading from "@splunk/react-ui/Heading";
+import Divider from "@splunk/react-ui/Divider";
+import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
 
 const GROUPING_ID = "grouping_id";
 const CONFIDENCE = "confidence";
@@ -37,6 +41,13 @@ function GotoGroupingPageButton({groupingId}) {
 
 const MyForm = styled.form`
     max-width: 1000px;
+`
+const HorizontalButtonLayout = styled.div`
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 `
 
 const newIndicatorObject = () => ({
@@ -165,24 +176,24 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     return (
         <FormProvider {...methods}>
             <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
-                {submissionError &&
-                    <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
-                        {submissionError}
-                    </Message>}
-                <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
-                    {label: "Grouping A", value: "A"},
-                    {label: "Grouping B", value: "B"}
-                ]}/>
+                <section>
+                    <Heading level={2}>Common Properties</Heading>
+                    <P>These properties will be shared by all indicators created on this form.</P>
+                    <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
+                        {label: "Grouping A", value: "A"},
+                        {label: "Grouping B", value: "B"}
+                    ]}/>
 
-                <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
-                <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
-                    {label: "RED", value: "RED"},
-                    {label: "AMBER", value: "AMBER"},
-                    {label: "GREEN", value: "GREEN"},
-                    {label: "WHITE", value: "WHITE"}
-                ]}/>
-                <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
-
+                    <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
+                    <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
+                        {label: "RED", value: "RED"},
+                        {label: "AMBER", value: "AMBER"},
+                        {label: "GREEN", value: "GREEN"},
+                        {label: "WHITE", value: "WHITE"}
+                    ]}/>
+                    <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
+                </section>
+                <Divider />
                 {fields.map((field, index) =>
                     <IndicatorSubForm field={field} index={index} register={register}
                                       generateFormInputProps={formInputProps}
@@ -190,11 +201,34 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                                       removeSelf={() => remove(index)}
                                       indicatorCategories={indicatorCategories}/>)
                 }
-                <CustomControlGroup label="">
-                    <Button label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
-                </CustomControlGroup>
+                <HorizontalButtonLayout>
+                    <Button icon={<PlusCircle/>} inline={false} label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
+                    <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
+                                  numIndicators={indicators.length}/>
+                </HorizontalButtonLayout>
 
-                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting} numIndicators={indicators.length}/>
+                {submissionError &&
+                    <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
+                        {submissionError}
+                    </Message>}
+
+                <CollapsiblePanel title="Debug info">
+                    <div style={{color: 'green'}}>
+                        <code>
+                            {JSON.stringify(indicators)}
+                        </code>
+                    </div>
+                    <div style={{color: 'red'}}>
+                        <code>
+                            {JSON.stringify(formState.errors)}
+                        </code>
+                    </div>
+                    <div>
+                        {event && <code>{JSON.stringify(event)}</code>}
+                    </div>
+                </CollapsiblePanel>
+
+
                 {/*// TODO: Move Modal to a separate component*/}
                 <Modal open={submitSuccess}>
                     <Modal.Header
@@ -206,19 +240,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                         <GotoGroupingPageButton groupingId={groupingId}/>
                     </Modal.Body>
                 </Modal>
-                <div style={{color: 'green'}}>
-                    <code>
-                        {JSON.stringify(indicators)}
-                    </code>
-                </div>
-                <div style={{color: 'red'}}>
-                    <code>
-                        {JSON.stringify(formState.errors)}
-                    </code>
-                </div>
-                <div>
-                    {event && <code>{JSON.stringify(event)}</code>}
-                </div>
             </MyForm>
         </FormProvider>
     );
