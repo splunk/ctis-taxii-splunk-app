@@ -7,7 +7,7 @@ import Toaster, {makeCreateToast} from "@splunk/react-toast-notifications/Toaste
 const StyledContainer = styled.div`
     ${mixins.reset('inline')};
     display: grid;
-    gap: 20px;
+    //gap: 10px;
     flex-direction: column;
     font-size: ${variables.fontSizeLarge};
     line-height: 200%;

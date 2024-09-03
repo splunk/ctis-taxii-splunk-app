@@ -38,9 +38,10 @@ function MainComponent() {
     const urlParams = getUrlQueryParams();
     let splunkFieldName, splunkFieldValue;
     let indicatorForm;
+    let splunkEvent;
     if(urlParams.has("sid")){
         const {sid, offset} = parseInEventMode(urlParams);
-        const {splunkEvent} = useSplunkSearchResults({sid, offset, count: 1});
+        ({splunkEvent} = useSplunkSearchResults({sid, offset, count: 1}));
         indicatorForm = <NewIndicatorForm event={splunkEvent} />;
     }else{
         ({splunkFieldName, splunkFieldValue} = parseQueryParamsSingleIndicatorMode(urlParams));
@@ -49,7 +50,8 @@ function MainComponent() {
     return (
         <AppContainer>
             <Heading level={1}>Add Indicators of Compromise (IoC) to Grouping</Heading>
-            <P>Add related indicators to an existing grouping.</P>
+            <P>Add one or more related indicators to an existing grouping.</P>
+            {splunkEvent && <P>This form has been triggered via a workflow action. Splunk event fields are available in the "Splunk Field Name" dropdown.</P>}
             {indicatorForm}
         </AppContainer>
     )
