@@ -9,6 +9,8 @@ from .source_mac import SourceMacAddressConverter
 from .file_hash import FileHashConverter
 from .file_name import FileNameConverter
 from .file_path import FilePathConverter
+from .url import UrlConverter
+
 from .ioc_category import IoCCategory
 
 """
@@ -36,10 +38,10 @@ From Austin Harvey (Deloitte)
 The top 5 IOC types we currently receive from Partners are:
 
 Domains
-URLs
-IP addresses (IPv4 most common)
-File Hashes (MD5 and SHA256 most common)
-Source email addresses
+- [X] URLs
+- [X] IP addresses (IPv4 most common)
+- [X] File Hashes (MD5 and SHA256 most common)
+- [ ] Source email addresses
 """
 
 CONVERTER_CLASSES = [
@@ -47,7 +49,8 @@ CONVERTER_CLASSES = [
     SourceIpv4Converter, SourceIpv6Converter,
     SourceDomainConverter, DestinationDomainConverter,
     SourceMacAddressConverter, DestinationMacAddressConverter,
-    FileHashConverter, FileNameConverter, FilePathConverter
+    FileHashConverter, FileNameConverter, FilePathConverter,
+    UrlConverter
 ]
 
 CATEGORY_TO_CONVERTER = {
@@ -64,7 +67,8 @@ CATEGORY_TO_CONVERTER = {
     IoCCategory.FILE_HASH_SHA256: FileHashConverter,
     IoCCategory.FILE_HASH_SHA512: FileHashConverter,
     IoCCategory.FILE_NAME: FileNameConverter,
-    IoCCategory.FILE_PATH: FilePathConverter
+    IoCCategory.FILE_PATH: FilePathConverter,
+    IoCCategory.URL: UrlConverter
 }
 
 def convert_to_stix_pattern(category: IoCCategory, value: str) -> str:

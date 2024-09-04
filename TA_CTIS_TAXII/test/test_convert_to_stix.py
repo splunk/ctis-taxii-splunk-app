@@ -92,3 +92,7 @@ class TestNetworkTraffic:
     def test_source_mac_address(self):
         pattern = convert_to_stix_pattern(category=IoCCategory.SOURCE_MAC_ADDRESS, value="06:10:9f:eb:8f:14")
         assert pattern == "[network-traffic:src_ref.type = 'mac-addr' AND network-traffic:src_ref.value = '06:10:9f:eb:8f:14']"
+
+    def test_url(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.URL, value="https://example.com")
+        assert pattern == "[url:value = 'https://example.com']"

@@ -4,6 +4,8 @@ class IoCCategory(Enum):
     """
     IoC Category
     """
+    URL = "url"
+
     # Domain names and hostnames
     DESTINATION_DOMAIN = "destination_domain"
     SOURCE_DOMAIN = "source_domain"
