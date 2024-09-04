@@ -6,7 +6,7 @@ from stix2patterns.validator import validate as stix_validate
 from uuid import uuid4
 from .base import BaseModelV1, make_base_converter
 from .tlp_v1 import TLPv1
-from typing import Optional
+from typing import List, Optional, Tuple
 
 """
 # This Indicator Model represents fields required to generate a STIX 2.1 Indicator object
@@ -53,5 +53,40 @@ class IndicatorModelV1(BaseModelV1):
     valid_from: datetime = field()
     confidence: int = field(validator=[validate_confidence])
 
+"""
+Example form payload:
+{
+    "grouping_id": "A",
+    "confidence": 100,
+    "tlp_v1_rating": "GREEN",
+    "valid_from": "2024-09-03T22:51:44.361",
+    "indicators": [
+        {
+            "field_name": "",
+            "indicator_value": "123.456.1.2",
+            "indicator_category": "source_ipv4",
+            "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '123.456.1.2']",
+            "name": "asdf",
+            "description": "adsf"
+        }
+    ]
+}
+"""
+
 
 indicator_converter = make_base_converter()
+
+def form_payload_to_indicators(form_payload: dict) -> Tuple[list, List[IndicatorModelV1]]:
+    indicators = form_payload["indicators"]
+    common_fields = form_payload.copy()
+    del common_fields["indicators"]
+    indicator_models = []
+    errors = []
+    for index, indicator_dict in enumerate(indicators):
+        try:
+            indicator_dict = {**indicator_dict, **common_fields}
+            indicator_model = indicator_converter.structure(indicator_dict, IndicatorModelV1)
+            indicator_models.append(indicator_model)
+        except Exception as e:
+            errors.append({"index": index, "error": str(e)})
+    return errors, indicator_models

@@ -8,6 +8,8 @@ from collections import defaultdict
 
 from solnlib._utils import get_collection_data
 
+from server_exception import ServerException
+
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 
@@ -132,6 +134,9 @@ class AbstractRestHandler(abc.ABC):
         except AssertionError as e:
             self.logger.exception("Client error")
             return self.exception_response(e, 400)
+        except ServerException as e:
+            self.logger.exception(e)
+            return {"payload": {"error" : str(e), "errors": e.errors}, "status": 400}
         except Exception as e:
             self.logger.exception("Server error")
             return self.exception_response(e, 500)

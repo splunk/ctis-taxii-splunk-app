@@ -51,7 +51,7 @@ const HorizontalButtonLayout = styled.div`
 `
 
 const newIndicatorObject = () => ({
-    field_name : '',
+    splunk_field_name : '',
     indicator_value: '',
     indicator_category: '',
     stix_pattern: '',
@@ -202,7 +202,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                                       indicatorCategories={indicatorCategories}/>)
                 }
                 <HorizontalButtonLayout>
-                    <Button icon={<PlusCircle/>} inline={false} label='Add another IoC' onClick={() => append(newIndicatorObject())}/>
+                    <Button icon={<PlusCircle/>} inline={false} label='Add Another Indicator' onClick={() => append(newIndicatorObject())}/>
                     <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
                                   numIndicators={indicators.length}/>
                 </HorizontalButtonLayout>

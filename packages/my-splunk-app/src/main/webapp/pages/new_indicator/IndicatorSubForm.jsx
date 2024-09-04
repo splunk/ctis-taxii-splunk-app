@@ -36,7 +36,7 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
     const {register, setValue, watch} = useFormContext();
     const splunkFields = Object.keys(splunkEvent || {});
 
-    const fieldSplunkFieldName = `indicators.${index}.field_name`;
+    const fieldSplunkFieldName = `indicators.${index}.splunk_field_name`;
     const fieldIndicatorValue = `indicators.${index}.indicator_value`;
     const fieldIndicatorCategory = `indicators.${index}.indicator_category`;
     const fieldIndicatorName = `indicators.${index}.name`;

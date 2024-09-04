@@ -8,7 +8,8 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
     from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
-    from models import IndicatorModelV1, indicator_converter
+    from server_exception import ServerException
+    from models import IndicatorModelV1, indicator_converter, form_payload_to_indicators
     from solnlib._utils import get_collection_data
     import remote_pdb
 except ImportError as e:
@@ -25,20 +26,26 @@ class Handler(AbstractRestHandler):
 
         # TODO: Utility to nicely convert the ClassValidationError to a human-readable error message
         try:
-            indicator = indicator_converter.structure(input_json, IndicatorModelV1)
+            errors, models = form_payload_to_indicators(input_json)
         except Exception as exc:
-            self.logger.exception(f"Failed to convert input JSON to IndicatorModelV1")
+            self.logger.exception(f"Failed to deserialize input JSON to IndicatorModelV1 instances")
             raise ValueError(repr(exc))
 
-        indicator_dict = indicator_converter.unstructure(indicator)
-        self.logger.info(f"Inserting indicator: {indicator_dict}")
-        collection.insert(indicator_dict)
+        if errors:
+            raise ServerException(message="Validation failed deserializing indicators payload", errors=errors)
+        serialized = []
+        for model in models:
+            indicator_dict = indicator_converter.unstructure(model)
+            self.logger.info(f"Inserting indicator: {indicator_dict}")
+            collection.insert(indicator_dict)
+            serialized.append(indicator_dict)
 
         response = {
-            "status" : "success",
-            "indicator": indicator_dict,
+            "status": "success",
+            "indicators": serialized,
         }
         return response
+
 
 
 CreateIndicatorHandler = Handler(logger=logger).generate_splunk_server_class()
