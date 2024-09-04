@@ -29,6 +29,19 @@ DONE
 Sample of STIX patterns:
 https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_alhyho8zsnmv
 """
+
+"""
+From Austin Harvey (Deloitte)
+
+The top 5 IOC types we currently receive from Partners are:
+
+Domains
+URLs
+IP addresses (IPv4 most common)
+File Hashes (MD5 and SHA256 most common)
+Source email addresses
+"""
+
 CONVERTER_CLASSES = [
     DestinationIpv4Converter, DestinationIpv6Converter,
     SourceIpv4Converter, SourceIpv6Converter,

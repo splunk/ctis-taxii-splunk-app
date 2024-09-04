@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from attrs import define, field
+from cattrs import ClassValidationError
 from stix2 import Indicator as StixIndicator
 from stix2patterns.validator import validate as stix_validate
 from uuid import uuid4
@@ -87,6 +88,6 @@ def form_payload_to_indicators(form_payload: dict) -> Tuple[list, List[Indicator
             indicator_dict = {**indicator_dict, **common_fields}
             indicator_model = indicator_converter.structure(indicator_dict, IndicatorModelV1)
             indicator_models.append(indicator_model)
-        except Exception as e:
-            errors.append({"index": index, "error": str(e)})
+        except ClassValidationError as e:
+            errors.append({"index": index, "errors": [str(x) for x in e.exceptions]})
     return errors, indicator_models

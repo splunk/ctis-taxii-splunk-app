@@ -3,7 +3,7 @@ import attrs
 import pytest
 from cattrs import ClassValidationError, transform_error
 
-from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter
+from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators
 from TA_CTIS_TAXII.package.bin.models.tlp_v1 import TLPv1
 
 SAMPLE_DICT = {
@@ -198,3 +198,46 @@ def test_validate_stix_pattern():
         _ = indicator_converter.structure(indicator_json, IndicatorModelV1)
 
     assert "Invalid STIX pattern" in repr(exc_info.value)
+
+class TestHandleFormPayload:
+    def test_should_handle_indicators_list(self):
+        payload = {
+            "grouping_id": "A",
+            "confidence": 100,
+            "tlp_v1_rating": "WHITE",
+            "valid_from": "2024-08-14T23:09:21.290",
+            "indicators" : [
+                {
+                    "splunk_field_name": "src_ip",
+                    "indicator_value": "123.456.1.2",
+                    "indicator_category": "source_ipv4",
+                    "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '123.456.1.2']",
+                    "name": "asdf",
+                    "description": "adsf"
+                }
+            ]
+        }
+        errors, models = form_payload_to_indicators(payload)
+        assert not errors
+        assert len(models) == 1
+    def test_should_produce_detailed_errors(self):
+        payload = {
+            "grouping_id": "A",
+            "confidence": 100,
+            "tlp_v1_rating": "WHITE",
+            "valid_from": "2024-08-14T23:09:21.290",
+            "indicators" : [
+                {
+                    "splunk_field_name": "src_ip",
+                    "indicator_value": "123.456.1.2",
+                    "indicator_category": "source_ipv4",
+                    "stix_pattern": "[invalid]",
+                    "name": "asdf",
+                    "description": "adsf"
+                }
+            ]
+        }
+        errors, models = form_payload_to_indicators(payload)
+        first_error = errors[0]
+        assert first_error["index"] == 0
+        assert "Invalid STIX pattern" in first_error["errors"][0]

@@ -12,7 +12,8 @@ import Button from "@splunk/react-ui/Button";
 import Divider from "@splunk/react-ui/Divider";
 import styled from "styled-components";
 import TrashCanCross from '@splunk/react-icons/TrashCanCross';
-
+import Message from "@splunk/react-ui/Message";
+import P from "@splunk/react-ui/Paragraph";
 
 
 const HorizontalLayout = styled.div`
@@ -32,7 +33,15 @@ const StyledButton = styled(Button)`
 `;
 
 // TODO: remove generateFormInputProps as prop. This functionality can be done by using the useFormContext hook.
-export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEvent, indicatorCategories, removeSelf}) => {
+export const IndicatorSubForm = ({
+                                     field,
+                                     index,
+                                     generateFormInputProps,
+                                     splunkEvent,
+                                     indicatorCategories,
+                                     removeSelf,
+                                     submissionErrors
+                                 }) => {
     const {register, setValue, watch} = useFormContext();
     const splunkFields = Object.keys(splunkEvent || {});
 
@@ -68,7 +77,7 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
     }, [suggestedPattern]);
 
     useEffect(() => {
-        if (splunkEvent.hasOwnProperty(splunkFieldName)) {
+        if (splunkEvent?.hasOwnProperty(splunkFieldName)) {
             setValue(fieldIndicatorValue, splunkEvent[splunkFieldName], {shouldValidate: true});
         }
     }, [splunkFieldName]);
@@ -76,8 +85,13 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
     return <section key={field.id}>
         <HorizontalLayout>
             <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
-            <StyledButton inline icon={<TrashCanCross/>} label="Remove" appearance="destructive" onClick={() => removeSelf()}/>
+            <StyledButton inline icon={<TrashCanCross/>} label="Remove" appearance="destructive"
+                          onClick={() => removeSelf()}/>
         </HorizontalLayout>
+        {submissionErrors && <Message appearance="fill" type="error">
+            {submissionErrors.map(error => <P>{error}</P>)}
+        </Message>}
+        {/*// TODO: Field name dropdown should be hidden if splunkEvent is null (not given)*/}
         <ComboControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
                            options={splunkFields}/>
         <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
@@ -88,6 +102,6 @@ export const IndicatorSubForm = ({field, index, generateFormInputProps, splunkEv
                                  suggestedPattern={suggestedPattern}/>
         <TextControlGroup label="Indicator Name" {...generateFormInputProps(fieldIndicatorName)} />
         <TextAreaControlGroup label="Description" {...generateFormInputProps(fieldIndicatorDescription)} />
-        <Divider />
+        <Divider/>
     </section>
 }

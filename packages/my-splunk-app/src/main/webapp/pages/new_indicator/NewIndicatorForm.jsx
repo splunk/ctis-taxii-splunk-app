@@ -1,4 +1,3 @@
-import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {listIndicatorCategories, postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
 import React, {useEffect, useMemo, useState} from "react";
@@ -51,13 +50,28 @@ const HorizontalButtonLayout = styled.div`
 `
 
 const newIndicatorObject = () => ({
-    splunk_field_name : '',
+    splunk_field_name: '',
     indicator_value: '',
     indicator_category: '',
     stix_pattern: '',
     name: '',
     description: '',
 });
+
+function getErrorsByIndex(errorsArray, index) {
+    if(!errorsArray) return null;
+
+    // Find the error object that matches the given index
+    const errorForIndex = errorsArray.find(error => error.index === index);
+
+    // Check if the error object for the specified index exists
+    if (!errorForIndex) {
+        return null;
+    }
+
+    // Return the errors array for the specified index
+    return [...errorForIndex.errors];
+}
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
     const methods = useForm({
@@ -81,7 +95,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
-    const [submissionError, setSubmissionError] = useState(null);
+    const [submissionErrors, setSubmissionErrors] = useState(null);
 
 
     register(GROUPING_ID, {required: "Grouping ID is required."});
@@ -92,19 +106,18 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     register(VALID_FROM, {required: "Valid from is required."});
 
     const onSubmit = async (data) => {
-        debugger;
         console.log(data);
         const formIsValid = await trigger();
-        setSubmissionError(null);
+        setSubmissionErrors(null);
         if (formIsValid) {
             await postCreateIndicator(data, (resp) => {
                 console.log(resp);
                 setSubmitSuccess(true);
-                setSubmissionError(null);
+                setSubmissionErrors(null);
             }, async (error) => {
                 const error_json = await error.json();
                 console.error("Error creating indicator", error_json);
-                setSubmissionError(error_json.error);
+                setSubmissionErrors(error_json.errors);
             });
         } else {
             console.error(formState.errors);
@@ -193,24 +206,22 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     ]}/>
                     <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
                 </section>
-                <Divider />
-                {fields.map((field, index) =>
-                    <IndicatorSubForm field={field} index={index} register={register}
-                                      generateFormInputProps={formInputProps}
-                                      splunkEvent={event}
-                                      removeSelf={() => remove(index)}
-                                      indicatorCategories={indicatorCategories}/>)
+                <Divider/>
+                {fields.map((field, index) => {
+                    return <IndicatorSubForm field={field} index={index} register={register}
+                                             generateFormInputProps={formInputProps}
+                                             splunkEvent={event}
+                                             removeSelf={() => remove(index)}
+                                             indicatorCategories={indicatorCategories}
+                                             submissionErrors={getErrorsByIndex(submissionErrors, index)}/>
+                })
                 }
                 <HorizontalButtonLayout>
-                    <Button icon={<PlusCircle/>} inline={false} label='Add Another Indicator' onClick={() => append(newIndicatorObject())}/>
+                    <Button icon={<PlusCircle/>} inline={false} label='Add Another Indicator'
+                            onClick={() => append(newIndicatorObject())}/>
                     <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
                                   numIndicators={indicators.length}/>
                 </HorizontalButtonLayout>
-
-                {submissionError &&
-                    <Message appearance="fill" type="error" onRequestRemove={() => setSubmissionError(null)}>
-                        {submissionError}
-                    </Message>}
 
                 <CollapsiblePanel title="Debug info">
                     <div style={{color: 'green'}}>
@@ -232,10 +243,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 {/*// TODO: Move Modal to a separate component*/}
                 <Modal open={submitSuccess}>
                     <Modal.Header
-                        title="Successfully Created New Indicator"
+                        title={"Successfully Created New Indicator" + (indicators.length > 1 ? "s" : "")}
                     />
                     <Modal.Body>
-                        <P>To submit this IoC to CTIS, proceed to submit the Grouping.</P>
+                        <P>To submit to CTIS, proceed to submit the Grouping.</P>
                         <GotoIndicatorsPageButton/>
                         <GotoGroupingPageButton groupingId={groupingId}/>
                     </Modal.Body>
