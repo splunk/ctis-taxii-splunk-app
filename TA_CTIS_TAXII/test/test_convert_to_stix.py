@@ -96,3 +96,7 @@ class TestNetworkTraffic:
     def test_url(self):
         pattern = convert_to_stix_pattern(category=IoCCategory.URL, value="https://example.com")
         assert pattern == "[url:value = 'https://example.com']"
+
+    def test_email_sender(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.EMAIL_SENDER, value="abc@email.com")
+        assert pattern == "[email-message:sender_ref.value = 'abc@email.com']"

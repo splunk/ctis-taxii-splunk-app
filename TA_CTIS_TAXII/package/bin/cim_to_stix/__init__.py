@@ -10,6 +10,7 @@ from .file_hash import FileHashConverter
 from .file_name import FileNameConverter
 from .file_path import FilePathConverter
 from .url import UrlConverter
+from .email_sender import EmailSenderConverter
 
 from .ioc_category import IoCCategory
 
@@ -50,7 +51,8 @@ CONVERTER_CLASSES = [
     SourceDomainConverter, DestinationDomainConverter,
     SourceMacAddressConverter, DestinationMacAddressConverter,
     FileHashConverter, FileNameConverter, FilePathConverter,
-    UrlConverter
+    UrlConverter,
+    EmailSenderConverter
 ]
 
 CATEGORY_TO_CONVERTER = {
@@ -68,7 +70,8 @@ CATEGORY_TO_CONVERTER = {
     IoCCategory.FILE_HASH_SHA512: FileHashConverter,
     IoCCategory.FILE_NAME: FileNameConverter,
     IoCCategory.FILE_PATH: FilePathConverter,
-    IoCCategory.URL: UrlConverter
+    IoCCategory.URL: UrlConverter,
+    IoCCategory.EMAIL_SENDER: EmailSenderConverter
 }
 
 def convert_to_stix_pattern(category: IoCCategory, value: str) -> str:
