@@ -8,8 +8,8 @@ import styled from "styled-components";
 import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
-import Message from '@splunk/react-ui/Message';
 import PlusCircle from '@splunk/react-icons/PlusCircle';
+import {variables} from '@splunk/themes';
 
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
@@ -42,11 +42,11 @@ const MyForm = styled.form`
     max-width: 1000px;
 `
 const HorizontalButtonLayout = styled.div`
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: ${variables.spacingMedium};
+    margin-bottom: ${variables.spacingMedium};
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: ${variables.spacingMedium};
 `
 
 const newIndicatorObject = () => ({
@@ -59,7 +59,7 @@ const newIndicatorObject = () => ({
 });
 
 function getErrorsByIndex(errorsArray, index) {
-    if(!errorsArray) return null;
+    if (!errorsArray) return null;
 
     // Find the error object that matches the given index
     const errorForIndex = errorsArray.find(error => error.index === index);

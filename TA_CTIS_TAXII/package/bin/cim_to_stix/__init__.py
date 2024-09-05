@@ -39,10 +39,11 @@ From Austin Harvey (Deloitte)
 The top 5 IOC types we currently receive from Partners are:
 
 Domains
+- [X] Domains
 - [X] URLs
 - [X] IP addresses (IPv4 most common)
 - [X] File Hashes (MD5 and SHA256 most common)
-- [ ] Source email addresses
+- [X] Source email addresses
 """
 
 CONVERTER_CLASSES = [

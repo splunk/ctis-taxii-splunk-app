@@ -3,7 +3,6 @@ import React, {useEffect, useState} from "react";
 import {useDebounce} from "@splunk/my-react-component/src/debounce";
 import {suggestPattern} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
-import ComboControlGroup from "@splunk/my-react-component/src/ComboControlGroup";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
@@ -14,13 +13,14 @@ import styled from "styled-components";
 import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
+import { variables } from '@splunk/themes';
 
 
 const HorizontalLayout = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 0;
+    padding: ${variables.spacingLarge} 0;
 `
 const StyledHeading = styled(Heading)`
     margin: 0;
@@ -29,7 +29,7 @@ const StyledHeading = styled(Heading)`
 
 const StyledButton = styled(Button)`
     flex-grow: 0;
-    width: 100px; /* Set the fixed width for the button */
+    width: 100px;
 `;
 
 // TODO: remove generateFormInputProps as prop. This functionality can be done by using the useFormContext hook.
@@ -82,6 +82,7 @@ export const IndicatorSubForm = ({
         }
     }, [splunkFieldName]);
     const indexStartingAtOne = index + 1;
+    const splunkFieldDropdownOptions = splunkFields.map(field => ({label: field, value: field}));
     return <section key={field.id}>
         <HorizontalLayout>
             <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
@@ -92,8 +93,8 @@ export const IndicatorSubForm = ({
             {submissionErrors.map(error => <P>{error}</P>)}
         </Message>}
         {/*// TODO: Field name dropdown should be hidden if splunkEvent is null (not given)*/}
-        <ComboControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
-                           options={splunkFields}/>
+        <SelectControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
+                            options={splunkFieldDropdownOptions}/>
         <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
         <SelectControlGroup label="Indicator Category" {...generateFormInputProps(fieldIndicatorCategory)}
                             options={indicatorCategories}/>
