@@ -13,7 +13,7 @@ import styled from "styled-components";
 import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
-import { variables } from '@splunk/themes';
+import {variables} from '@splunk/themes';
 
 
 const HorizontalLayout = styled.div`
@@ -92,9 +92,10 @@ export const IndicatorSubForm = ({
         {submissionErrors && <Message appearance="fill" type="error">
             {submissionErrors.map(error => <P>{error}</P>)}
         </Message>}
-        {/*// TODO: Field name dropdown should be hidden if splunkEvent is null (not given)*/}
-        <SelectControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
-                            options={splunkFieldDropdownOptions}/>
+        {splunkEvent &&
+            <SelectControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
+                                options={splunkFieldDropdownOptions}/>
+        }
         <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
         <SelectControlGroup label="Indicator Category" {...generateFormInputProps(fieldIndicatorCategory)}
                             options={indicatorCategories}/>
