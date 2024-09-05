@@ -14,6 +14,8 @@ import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
 import {variables} from '@splunk/themes';
+import Switch from "@splunk/react-ui/Switch";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 
 
 const HorizontalLayout = styled.div`
@@ -83,6 +85,7 @@ export const IndicatorSubForm = ({
     }, [splunkFieldName]);
     const indexStartingAtOne = index + 1;
     const splunkFieldDropdownOptions = splunkFields.map(field => ({label: field, value: field}));
+    const [toggleShowSplunkFieldDropdown, setToggleShowSplunkFieldDropdown] = useState(true);
     return <section key={field.id}>
         <HorizontalLayout>
             <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
@@ -93,6 +96,17 @@ export const IndicatorSubForm = ({
             {submissionErrors.map(error => <P>{error}</P>)}
         </Message>}
         {splunkEvent &&
+            <CustomControlGroup label="Use Splunk Field?">
+                <Switch
+                    key="toggleShowSplunkFieldDropdown"
+                    value={"Hello"}
+                    onClick={() => setToggleShowSplunkFieldDropdown(!toggleShowSplunkFieldDropdown)}
+                    selected={toggleShowSplunkFieldDropdown}
+                    appearance="toggle"
+                />
+            </CustomControlGroup>
+        }
+        {splunkEvent && toggleShowSplunkFieldDropdown &&
             <SelectControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
                                 options={splunkFieldDropdownOptions}/>
         }
