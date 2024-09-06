@@ -87,7 +87,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const {watch, register, setValue, trigger, handleSubmit, formState, control} = methods;
     const {fields, append, remove} = useFieldArray({
         control,
-        name: 'indicators'
+        name: 'indicators',
+        rules: {
+            required: "At least one indicator is required."
+        }
     });
     const indicators = watch('indicators');
 
