@@ -28,7 +28,6 @@ const IDENTITY_CLASSES = [
     {label: 'Group', value: 'group'},
     {label: 'Class', value: 'class'},
     {label: 'Unknown', value: 'unknown'},
-    {label: 'Trigger error', value: 'this should be invalid'},
 ];
 
 function GotoIdentitiesPageButton() {
