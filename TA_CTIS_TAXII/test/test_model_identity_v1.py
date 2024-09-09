@@ -27,9 +27,16 @@ def test_to_stix():
     assert stix_identity.id.startswith("identity--")
     assert stix_identity.name == "Org ABC"
     assert stix_identity.identity_class == "organization"
+    assert stix_identity.created == identity.created
+    assert stix_identity.modified == identity.modified
 
 
 def test_validate_identity_id():
     with pytest.raises(ValueError) as exc_info:
         IdentityModelV1(identity_id="not valid id", name="name", identity_class="organization")
     assert "Invalid identity_id" in str(exc_info.value)
+
+def test_validate_identity_class():
+    with pytest.raises(ValueError) as exc_info:
+        IdentityModelV1(name="name", identity_class="invalid class")
+    assert "Invalid identity_class" in str(exc_info.value)

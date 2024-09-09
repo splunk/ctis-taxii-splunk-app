@@ -44,6 +44,19 @@ Domains
 - [X] IP addresses (IPv4 most common)
 - [X] File Hashes (MD5 and SHA256 most common)
 - [X] Source email addresses
+- [ ] Email
+    - [ ] Sender address
+    - [ ] Email body
+    - [ ] Email subject
+    - [ ] Email attachment filename
+"""
+
+"""
+Matching on an Email Message with specific Sender and Subject
+[email-message:sender_ref.value = 'jdoe@example.com' AND email-message:subject = 'Conference Info']
+
+Matching an Email Message with a particular From Email Address and Attachment File Name Using a Regular Expression
+[email-message:from_ref.value MATCHES '.+\\@example\\.com$' AND email-message:body_multipart[*].body_raw_ref.name MATCHES '^Final Report.+\\.exe$']
 """
 
 CONVERTER_CLASSES = [
