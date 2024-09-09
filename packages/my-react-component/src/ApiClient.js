@@ -52,7 +52,7 @@ export function getStixPatternSuggestion(indicatorCategory, indicatorValue, succ
         indicator_value: indicatorValue,
         indicator_category: indicatorCategory,
     }
-    postData(endpoint, payload, (resp) => {
+    return postData(endpoint, payload, (resp) => {
         console.log(resp);
         successHandler(resp);
     }, errorHandler);
@@ -60,11 +60,11 @@ export function getStixPatternSuggestion(indicatorCategory, indicatorValue, succ
 }
 
 export function postCreateIndicator(data, successHandler, errorHandler) {
-    postData('create-indicator', data, successHandler, errorHandler)
+    return postData('create-indicator', data, successHandler, errorHandler)
 }
 
 export function postCreateIdentity(data, successHandler, errorHandler) {
-    postData('create-identity', data, successHandler, errorHandler)
+    return postData('create-identity', data, successHandler, errorHandler)
 }
 
 export function getIndicators(skip, limit, successHandler, errorHandler) {

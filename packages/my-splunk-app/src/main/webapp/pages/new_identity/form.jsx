@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, {useState, useMemo} from "react";
+import React from "react";
 import {useForm} from "react-hook-form";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import {useFormInputProps} from "../../common/formInputProps";
@@ -8,12 +8,14 @@ import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import {postCreateIdentity} from "@splunk/my-react-component/src/ApiClient";
 import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
-import P from "@splunk/react-ui/Paragraph";
 import Button from "@splunk/react-ui/Button";
 import {VIEW_IDENTITIES_PAGE} from "@splunk/my-react-component/src/urls";
 import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
+import {useOnFormSubmit} from "../../common/formSubmit";
+import {variables} from "@splunk/themes";
 
 const MyForm = styled.form`
+    margin-top: ${variables.spacingMedium};
     max-width: 500px;
 `
 
@@ -41,42 +43,33 @@ export function NewIdentityForm() {
             [FORM_FIELD_NAME]: '',
         }
     });
-    const {watch, register, trigger, handleSubmit, formState, control, setError} = methods;
+    const {register, handleSubmit, formState} = methods;
 
     register(FORM_FIELD_NAME, {required: "Name is required."});
     register(FORM_FIELD_IDENTITY_CLASS, {required: "Identity Class is required."});
 
-    const [submissionError, setSubmissionError] = useState(null);
-    const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
-    const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || isSubmitSuccessful,
-        [formState, isSubmitSuccessful]);
-    const onSubmit = async (data) => {
-        console.log(data);
-        const formIsValid = await trigger();
-        if(formIsValid){
-            console.log("Form is valid");
-            await postCreateIdentity(data, (resp) => {
-                console.log(resp);
-                setIsSubmitSuccessful(true);
-            }, (error) => {
-                console.error("Error creating identity", error);
-                setSubmissionError(error);
-                setError("root.server", {message: `Server error: ${error}`});
-            });
-        }
-    }
+    const {submitSuccess, submissionError, onSubmit, submitButtonDisabled} = useOnFormSubmit({
+        formMethods: methods,
+        callbackPostEndpoint: postCreateIdentity,
+        submissionSuccessCallback: (resp) => console.log(resp),
+        submissionErrorCallback: (error) => {
+            console.error(error)
+        },
+    })
     return (
         <MyForm onSubmit={handleSubmit(onSubmit)}>
             <section>
                 {submissionError && <Message appearance="fill" type="error">
-                    {JSON.stringify(submissionError)}
+                    {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
+                    {submissionError?.error && <code>{submissionError.error.toString()}</code>}
                 </Message>}
                 <TextControlGroup label="Name" {...useFormInputProps(methods, FORM_FIELD_NAME)}/>
                 <SelectControlGroup label="Identity Class" {...useFormInputProps(methods, FORM_FIELD_IDENTITY_CLASS)}
-                options={IDENTITY_CLASSES}/>
-                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting} label="Create Identity"/>
+                                    options={IDENTITY_CLASSES}/>
+                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
+                              label="Create Identity"/>
             </section>
-            <Modal open={isSubmitSuccessful}>
+            <Modal open={submitSuccess}>
                 <Modal.Header
                     title={"Successfully Created New Identity"}
                 />
