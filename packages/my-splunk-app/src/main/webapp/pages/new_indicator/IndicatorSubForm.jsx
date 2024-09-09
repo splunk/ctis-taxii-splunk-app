@@ -16,7 +16,7 @@ import P from "@splunk/react-ui/Paragraph";
 import {variables} from '@splunk/themes';
 import Switch from "@splunk/react-ui/Switch";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-
+import {useFormInputProps} from "../../common/formInputProps";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -34,17 +34,16 @@ const StyledButton = styled(Button)`
     width: 100px;
 `;
 
-// TODO: remove generateFormInputProps as prop. This functionality can be done by using the useFormContext hook.
 export const IndicatorSubForm = ({
                                      field,
                                      index,
-                                     generateFormInputProps,
                                      splunkEvent,
                                      indicatorCategories,
                                      removeSelf,
                                      submissionErrors
                                  }) => {
-    const {register, setValue, watch} = useFormContext();
+    const formMethods = useFormContext();
+    const {register, setValue, watch} = formMethods;
     const splunkFields = Object.keys(splunkEvent || {});
 
     const fieldSplunkFieldName = `indicators.${index}.splunk_field_name`;
@@ -107,17 +106,17 @@ export const IndicatorSubForm = ({
             </CustomControlGroup>
         }
         {splunkEvent && toggleShowSplunkFieldDropdown &&
-            <SelectControlGroup label="Splunk Field Name" {...generateFormInputProps(fieldSplunkFieldName)}
+            <SelectControlGroup label="Splunk Field Name" {...useFormInputProps(formMethods, fieldSplunkFieldName)}
                                 options={splunkFieldDropdownOptions}/>
         }
-        <TextControlGroup label="Indicator Value" {...generateFormInputProps(fieldIndicatorValue)} />
-        <SelectControlGroup label="Indicator Category" {...generateFormInputProps(fieldIndicatorCategory)}
+        <TextControlGroup label="Indicator Value" {...useFormInputProps(formMethods, fieldIndicatorValue)} />
+        <SelectControlGroup label="Indicator Category" {...useFormInputProps(formMethods, fieldIndicatorCategory)}
                             options={indicatorCategories}/>
-        <StixPatternControlGroup label="STIX v2 Pattern" {...generateFormInputProps(fieldStixPattern)}
+        <StixPatternControlGroup label="STIX v2 Pattern" {...useFormInputProps(formMethods, fieldStixPattern)}
                                  useSuggestedPattern={() => setValue(fieldStixPattern, suggestedPattern, {shouldValidate: true})}
                                  suggestedPattern={suggestedPattern}/>
-        <TextControlGroup label="Indicator Name" {...generateFormInputProps(fieldIndicatorName)} />
-        <TextAreaControlGroup label="Description" {...generateFormInputProps(fieldIndicatorDescription)} />
+        <TextControlGroup label="Indicator Name" {...useFormInputProps(formMethods, fieldIndicatorName)} />
+        <TextAreaControlGroup label="Description" {...useFormInputProps(formMethods, fieldIndicatorDescription)} />
         <Divider/>
     </section>
 }

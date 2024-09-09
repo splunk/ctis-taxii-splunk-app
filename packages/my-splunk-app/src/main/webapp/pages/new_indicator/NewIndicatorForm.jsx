@@ -17,6 +17,8 @@ import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGrou
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 
+import {useFormInputProps} from "../../common/formInputProps";
+
 import SubmitButton from "./SubmitButton";
 import {IndicatorSubForm} from "./IndicatorSubForm";
 import Heading from "@splunk/react-ui/Heading";
@@ -84,7 +86,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             indicators: [newIndicatorObject()]
         }
     });
-    const {watch, register, setValue, trigger, handleSubmit, formState, control} = methods;
+    const {watch, register, trigger, handleSubmit, formState, control} = methods;
     const {fields, append, remove} = useFieldArray({
         control,
         name: 'indicators',
@@ -93,8 +95,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }
     });
     const indicators = watch('indicators');
-
-    const eventFieldNames = Object.keys(event || {});
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
@@ -127,60 +127,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }
     }
 
-    function generateSetValueHandler(fieldName) {
-        return (e, extra) => {
-            // In vanilla JS change events only a single event parameter is passed
-            // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event#examples
-            // However for Splunk UI onChange events two values are passed: (event, {name, value})
-            // See code in the examples: https://splunkui.splunk.com/Packages/react-ui/Select?section=examples
-            const extraValue = extra?.value;
-            const value = extraValue !== null && extraValue !== undefined ? extraValue : e.target.value;
-            console.log(e, extra, value)
-            setValue(fieldName, value, {shouldValidate: true})
-        };
-    }
-
-    function findErrorMessage(validationObject, refName) {
-        // Iterate over each key in the flat validation object
-        for (let key in validationObject) {
-            const value = validationObject[key];
-
-            // If the value is an object, check its ref
-            if (typeof value === 'object' && !Array.isArray(value)) {
-                if (value.ref && value.ref.name === refName) {
-                    return value.message;
-                }
-            }
-
-            // If the value is an array, iterate through its elements
-            if (Array.isArray(value)) {
-                for (let item of value) {
-                    // Check if the item has a matching ref
-                    for (let subKey in item) {
-                        const subValue = item[subKey];
-                        if (subValue.ref && subValue.ref.name === refName) {
-                            return subValue.message;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Return null if no matching refName is found
-        return null;
-    }
-
-    const formInputProps = (fieldName) => {
-        const {errors} = formState;
-        const error = findErrorMessage(errors, fieldName);
-        return {
-            help: error,
-            error: !!error,
-            onChange: generateSetValueHandler(fieldName),
-            value: watch(fieldName)
-        }
-    }
-
     const [indicatorCategories, setIndicatorCategories] = useState([]);
     useEffect(() => {
         listIndicatorCategories(null, null, (resp) => {
@@ -195,24 +141,24 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
-                    <SelectControlGroup label="Grouping ID" {...formInputProps(GROUPING_ID)} options={[
+                    <SelectControlGroup label="Grouping ID" {...useFormInputProps(methods, GROUPING_ID)} options={[
                         {label: "Grouping A", value: "A"},
                         {label: "Grouping B", value: "B"}
                     ]}/>
 
-                    <NumberControlGroup label="Confidence" {...formInputProps(CONFIDENCE)} max={100} min={0} step={1}/>
-                    <SelectControlGroup label="TLP v1.0 Rating" {...formInputProps(TLP_RATING)} options={[
+                    <NumberControlGroup label="Confidence" {...useFormInputProps(methods, CONFIDENCE)} max={100} min={0}
+                                        step={1}/>
+                    <SelectControlGroup label="TLP v1.0 Rating" {...useFormInputProps(methods, TLP_RATING)} options={[
                         {label: "RED", value: "RED"},
                         {label: "AMBER", value: "AMBER"},
                         {label: "GREEN", value: "GREEN"},
                         {label: "WHITE", value: "WHITE"}
                     ]}/>
-                    <DatetimeControlGroup label="Valid From (UTC)" {...formInputProps(VALID_FROM)}/>
+                    <DatetimeControlGroup label="Valid From (UTC)" {...useFormInputProps(methods, VALID_FROM)}/>
                 </section>
                 <Divider/>
                 {fields.map((field, index) => {
                     return <IndicatorSubForm field={field} index={index} register={register}
-                                             generateFormInputProps={formInputProps}
                                              splunkEvent={event}
                                              removeSelf={() => remove(index)}
                                              indicatorCategories={indicatorCategories}
