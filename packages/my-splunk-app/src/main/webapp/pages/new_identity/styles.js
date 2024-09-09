@@ -1,0 +1,20 @@
+import styled from 'styled-components';
+import { variables, mixins } from '@splunk/themes';
+
+const StyledContainer = styled.div`
+    ${mixins.reset('inline')};
+    display: grid;
+    gap: 20px;
+    flex-direction: column;
+    font-size: ${variables.fontSizeLarge};
+    line-height: 200%;
+    margin: ${variables.spacingXXLarge} ${variables.spacingXXLarge};
+`;
+
+const StyledGreeting = styled.div`
+    font-weight: bold;
+    color: ${variables.statusColorInfo};
+    font-size: ${variables.fontSizeXXLarge};
+`;
+
+export { StyledContainer, StyledGreeting };

@@ -9,4 +9,8 @@
     </collection>
     <view name="groupings"/>
     <view name="submissions"/>
+    <collection label="Identities">
+        <view name="identities"/>
+        <view name="new_identity"/>
+    </collection>
 </nav>

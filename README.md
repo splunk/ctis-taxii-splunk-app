@@ -31,6 +31,7 @@ Alternatively can try:
 - Update the `default.xml` in the UCC app: `TA_CTIS_TAXII/package/default/data/ui/nav/default.xml`
 - rebuild with the full build script
 - restart Splunk
+- Troubleshoot: May need to delete existing UCC output folder and rerun build script
 
 ## Custom REST endpoints
 Endpoints exposed on web port require Splunk cookies to access via `web.conf`.
