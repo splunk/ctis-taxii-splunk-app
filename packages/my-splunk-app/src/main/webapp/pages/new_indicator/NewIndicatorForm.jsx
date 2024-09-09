@@ -19,7 +19,7 @@ import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControl
 
 import {useFormInputProps} from "../../common/formInputProps";
 
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import {IndicatorSubForm} from "./IndicatorSubForm";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
@@ -169,7 +169,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     <Button icon={<PlusCircle/>} inline={false} label='Add Another Indicator'
                             onClick={() => append(newIndicatorObject())}/>
                     <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                  numIndicators={indicators.length}/>
+                                  label={`Create Indicators (${indicators.length})`} />
                 </HorizontalButtonLayout>
 
                 <CollapsiblePanel title="Debug info">

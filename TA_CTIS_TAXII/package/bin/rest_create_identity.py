@@ -41,7 +41,7 @@ class Handler(AbstractRestHandler):
 
         response = {
             "status" : "success",
-            "indicator": identity_dict,
+            "identity": identity_dict,
         }
         return response
 

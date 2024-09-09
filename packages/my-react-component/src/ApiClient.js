@@ -5,7 +5,7 @@ function postData(endpoint, data, successHandler, errorHandler) {
     // Custom CSRF headers set for POST requests to custom endpoints
     // See https://docs.splunk.com/Documentation/StreamApp/7.1.3/DeployStreamApp/SplunkAppforStreamRESTAPI
     const url = createRESTURL(endpoint, {app});
-    fetch(url,
+    return fetch(url,
         {
             method: 'POST',
             body: JSON.stringify(data),
@@ -61,6 +61,10 @@ export function getStixPatternSuggestion(indicatorCategory, indicatorValue, succ
 
 export function postCreateIndicator(data, successHandler, errorHandler) {
     postData('create-indicator', data, successHandler, errorHandler)
+}
+
+export function postCreateIdentity(data, successHandler, errorHandler) {
+    postData('create-identity', data, successHandler, errorHandler)
 }
 
 export function getIndicators(skip, limit, successHandler, errorHandler) {
