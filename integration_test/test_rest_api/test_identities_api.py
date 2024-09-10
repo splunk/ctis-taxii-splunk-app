@@ -30,3 +30,8 @@ class TestScenarios:
         assert resp2["total"] == 2
         assert len(resp2["records"]) == 2
 
+        # Test pagination
+        resp3 = list_identities(session, skip=0, limit=2)
+        assert resp3["total"] == 3
+        assert len(resp3["records"]) == 2
+

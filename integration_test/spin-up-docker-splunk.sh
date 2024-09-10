@@ -45,17 +45,36 @@ DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --host
   -e 'SPLUNK_APPS_URL=/tmp/test/ctis.tar.gz' \
   -it splunk/splunk:latest
 
+
+function checkIfSplunkIsUp() {
+    if curl -k -u "admin:$SPLUNK_PASSWORD" 'https://localhost:8099/services/apps/local?output_mode=json' 2> /dev/null | jq ".entry[].name" | grep TA_CTIS_TAXII; then
+        echo "App is installed"
+        return 0
+    else
+        echo "App is not installed"
+        return 1
+    fi
+}
+
 # Wait for splunk to be up
 echo "Time is now $(date)"
 printf "Waiting for Splunk to be up..."
 # TODO: wait for app to be installed and ready, because the docker image initially starts with no apps installed
 while true; do
-    if curl -u "admin:$SPLUNK_PASSWORD" -k https://localhost:8099/services/apps/local/TA_CTIS_TAXII &> /dev/null; then
-        echo
-        date
-        echo "Splunk is up and app is installed"
+    for i in {1..10}; do
+        if checkIfSplunkIsUp; then
+            echo
+            date
+            echo "Splunk is up and app is installed (Attempt $i)"
+            sleep 1
+        else
+            echo "Splunk is not up yet."
+            break
+        fi
+    done
+    if [ "$i" -eq 5 ]; then
+        echo "Splunk is confirmed up after $i attempts"
         break
     fi
-    printf '.'
     sleep 5
 done
