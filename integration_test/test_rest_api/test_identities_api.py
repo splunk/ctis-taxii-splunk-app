@@ -41,11 +41,12 @@ class TestScenarios:
         assert len(identities_1) == 1
         saved_identity_1 = identities_1[0]
 
-        edit_identity(session, {"identity_id": saved_identity_1["identity_id"], "name": "user2"})
+        resp = edit_identity(session, {"identity_id": saved_identity_1["identity_id"], "name": "user2"})
 
         identities_2 = get_identities_collection(session)
         assert len(identities_2) == 1
         saved_identity_2 = identities_2[0]
         assert saved_identity_2["name"] == "user2"
         assert saved_identity_2["identity_class"] == "individual"
+        assert saved_identity_2["modified"] != saved_identity_1["modified"]
 

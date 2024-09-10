@@ -14,6 +14,9 @@ class BaseModel:
     created: datetime = field(factory=datetime.utcnow)
     modified: datetime = field(factory=datetime.utcnow)
 
+    def set_modified_to_now(self):
+        self.modified = datetime.utcnow()
+
 def validate_schema_version_is_1(instance, attribute, value: int):
     if value != 1:
         raise ValueError("schema_version must be 1")

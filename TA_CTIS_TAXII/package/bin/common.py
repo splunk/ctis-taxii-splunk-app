@@ -67,6 +67,33 @@ class AbstractRestHandler(abc.ABC):
         return response
 
     @staticmethod
+    def prepare_merged_model_instance(saved_record: dict, input_json: dict, converter, model_class):
+        merged = {**saved_record, **input_json}
+        structured = converter.structure(merged, model_class)
+        return structured
+
+    def query_exactly_one_record(self, collection, query: dict) -> dict:
+        results = collection.query(query=query)
+        self.logger.info(f"Results: {results}")
+        assert len(results) > 0, f"No records found for query: {query}"
+        assert len(results) == 1, f"More than one record found for query: {query}"
+        return results[0]
+
+    def update_record(self, collection, query_for_one_record: dict, input_json: dict, converter, model_class) -> dict:
+        saved_record = self.query_exactly_one_record(collection, query=query_for_one_record)
+        structured = self.prepare_merged_model_instance(saved_record=saved_record, input_json=input_json,
+                                                   converter=converter, model_class=model_class)
+        structured.set_modified_to_now()
+
+        updated_record_as_dict = converter.unstructure(structured)
+
+        self.logger.info(f"Updating record: {updated_record_as_dict}")
+
+        collection.update(id=structured.key, data=updated_record_as_dict)
+
+        return updated_record_as_dict
+
+    @staticmethod
     def exception_response(e: Exception, status_code: int) -> dict:
         return {"payload": {"error": str(e)}, "status": status_code}
 
