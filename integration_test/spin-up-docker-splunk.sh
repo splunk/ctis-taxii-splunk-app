@@ -60,8 +60,9 @@ function checkIfSplunkIsUp() {
 echo "Time is now $(date)"
 printf "Waiting for Splunk to be up..."
 # TODO: wait for app to be installed and ready, because the docker image initially starts with no apps installed
+NUM_ATTEMPTS=10
 while true; do
-    for i in {1..10}; do
+    for i in $(seq 1 $NUM_ATTEMPTS); do
         if checkIfSplunkIsUp; then
             echo
             date
@@ -72,7 +73,7 @@ while true; do
             break
         fi
     done
-    if [ "$i" -eq 5 ]; then
+    if [ "$i" -eq "$NUM_ATTEMPTS" ]; then
         echo "Splunk is confirmed up after $i attempts"
         break
     fi

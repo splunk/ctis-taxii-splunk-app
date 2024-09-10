@@ -1,4 +1,4 @@
-from .util import create_new_identity, get_identities_collection, list_identities
+from .util import create_new_identity, get_identities_collection, list_identities, edit_identity
 
 
 class TestScenarios:
@@ -34,4 +34,18 @@ class TestScenarios:
         resp3 = list_identities(session, skip=0, limit=2)
         assert resp3["total"] == 3
         assert len(resp3["records"]) == 2
+
+    def test_edit_identity(self, session, cleanup_identities_collection):
+        create_new_identity(session, {"name": "user1", "identity_class" : "individual"})
+        identities_1 = get_identities_collection(session)
+        assert len(identities_1) == 1
+        saved_identity_1 = identities_1[0]
+
+        edit_identity(session, {"identity_id": saved_identity_1["identity_id"], "name": "user2"})
+
+        identities_2 = get_identities_collection(session)
+        assert len(identities_2) == 1
+        saved_identity_2 = identities_2[0]
+        assert saved_identity_2["name"] == "user2"
+        assert saved_identity_2["identity_class"] == "individual"
 

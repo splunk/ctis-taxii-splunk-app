@@ -92,6 +92,8 @@ def create_new_indicator(session, payload: dict) -> dict:
 def create_new_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="create-identity", session=session, payload=payload)
 
+def edit_identity(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="edit-identity", session=session, payload=payload)
 
 def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query: dict = None) -> dict:
     query_params = {**DEFAULT_REQUEST_PARAMS, "skip": skip, "limit": limit}
