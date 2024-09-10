@@ -63,9 +63,10 @@ function usePaginatedData(getDataPaginated, skip, limit, onError) {
  *
  */
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
+const DEFAULT_RESULTS_PER_PAGE = 20;
 
 export default function PaginatedDataTable({renderData, fetchData, onError}) {
-    const [resultsPerPage, setResultsPerPage] = useState(OPTIONS_RESULTS_PER_PAGE[0]);
+    const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
     const {records, totalRecords, loading, error} = usePaginatedData(fetchData, skip, resultsPerPage, onError);

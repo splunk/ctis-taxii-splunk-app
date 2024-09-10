@@ -76,6 +76,15 @@ export function getIndicators(skip, limit, successHandler, errorHandler) {
     }, successHandler, errorHandler)
 }
 
+export function getIdentities(skip, limit, successHandler, errorHandler) {
+    getData({
+        endpoint: 'list-identities',
+        queryParams: {
+            skip, limit
+        }
+    }, successHandler, errorHandler)
+}
+
 export function listIndicatorCategories(splunkFieldName, indicatorValue, successHandler, errorHandler) {
     const queryParams = {};
     if (splunkFieldName) {
