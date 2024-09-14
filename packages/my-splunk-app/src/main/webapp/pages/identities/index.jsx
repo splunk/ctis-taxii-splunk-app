@@ -13,7 +13,7 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
-
+import EditIdentityForm from "./EditIdentityForm";
 
 function IndicatorActionButtons() {
     return (<div>
@@ -51,7 +51,7 @@ function renderDataTable({records, loading, error}) {
     );
 }
 
-function MyStyledContainer() {
+function ListIdentities() {
     return (
         <AppContainer>
             <StyledGreeting>List of identities</StyledGreeting>
@@ -62,9 +62,25 @@ function MyStyledContainer() {
     );
 }
 
+function getUrlQueryParams() {
+    return new URLSearchParams(window.location.search);
+}
+
+function Router() {
+    const queryParams = getUrlQueryParams();
+    if (queryParams.has('action', 'edit') && queryParams.has('identity_id')) {
+        const identityId = queryParams.get('identity_id');
+        return <EditIdentityForm identityId={identityId}/>
+    } else {
+        return (
+            <ListIdentities/>
+        );
+    }
+}
+
 getUserTheme()
     .then((theme) => {
-        layout(<MyStyledContainer/>,
+        layout(<Router/>,
             {theme,}
         );
     })

@@ -1603,7 +1603,6 @@
     "@splunk/react-toast-notifications" "^0.11.3"
     "@splunk/react-ui" "^4.30.0"
     "@splunk/themes" "^0.18.0"
-    react-hook-form "^7.53.0"
 
 "@splunk/my-splunk-app@file:/Users/bliew/dev/ctis-taxii-es-ar/packages/my-splunk-app":
   version "0.0.1"
@@ -1614,6 +1613,7 @@
     prop-types "^15.8.1"
     react-hook-form "^7.52.1"
     uuid "^10.0.0"
+    wouter "^3.3.5"
 
 "@splunk/react-icons@^4.2.0", "@splunk/react-icons@^4.6.0":
   version "4.6.0"
