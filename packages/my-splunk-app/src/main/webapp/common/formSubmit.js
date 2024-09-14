@@ -1,6 +1,6 @@
 import React, {useState, useMemo} from "react";
 
-export const useOnFormSubmit = ({formMethods, callbackPostEndpoint, submissionSuccessCallback, submissionErrorCallback}) => {
+export const useOnFormSubmit = ({formMethods, submitToPostEndpoint, submissionSuccessCallback, submissionErrorCallback}) => {
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const [submissionError, setSubmissionError] = useState(null);
 
@@ -14,7 +14,7 @@ export const useOnFormSubmit = ({formMethods, callbackPostEndpoint, submissionSu
         const formIsValid = await trigger();
         if (formIsValid) {
             console.log("Form is valid");
-            await callbackPostEndpoint(data, (resp) => {
+            await submitToPostEndpoint(data, (resp) => {
                 console.log(resp);
                 setSubmitSuccess(true);
                 if(submissionSuccessCallback){

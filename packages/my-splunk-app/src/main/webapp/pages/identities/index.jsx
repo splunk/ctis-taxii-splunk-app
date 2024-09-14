@@ -7,17 +7,18 @@ import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTa
 import Button from "@splunk/react-ui/Button";
 import Pencil from '@splunk/react-icons/Pencil';
 import TrashCanCross from '@splunk/react-icons/TrashCanCross';
-import {StyledGreeting} from './styles';
 import {getIdentities} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
-import EditIdentityForm from "./EditIdentityForm";
+import IdentityForm from "../../common/IdentityForm";
+import {editIdentityPage} from "@splunk/my-react-component/src/urls";
+import Heading from "@splunk/react-ui/Heading";
 
-function IndicatorActionButtons() {
+function IndicatorActionButtons({row}) {
     return (<div>
-        <Button icon={<Pencil/>} label="Edit" appearance="secondary"/>
+        <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editIdentityPage(row.identity_id)}/>
         <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive"/>
     </div>)
 }
@@ -33,8 +34,8 @@ const expansionFieldNameToCellValue = {
     "Name": (row) => row.name,
     "Identity Class": (row) => row.identity_class,
     "Identity ID": (row) => row.identity_id,
-    "Created At": (row) => row.created,
-    "Modified At": (row) => row.modified,
+    "Created At (UTC)": (row) => row.created,
+    "Modified At (UTC)": (row) => row.modified,
 }
 
 
@@ -53,12 +54,12 @@ function renderDataTable({records, loading, error}) {
 
 function ListIdentities() {
     return (
-        <AppContainer>
-            <StyledGreeting>List of identities</StyledGreeting>
+        <>
+            <Heading level={1}>Identities</Heading>
             <PaginatedDataTable renderData={renderDataTable} fetchData={getIdentities} onError={(e) => {
                 createErrorToast(e);
             }}/>
-        </AppContainer>
+        </>
     );
 }
 
@@ -70,7 +71,7 @@ function Router() {
     const queryParams = getUrlQueryParams();
     if (queryParams.has('action', 'edit') && queryParams.has('identity_id')) {
         const identityId = queryParams.get('identity_id');
-        return <EditIdentityForm identityId={identityId}/>
+        return <IdentityForm editMode={true} identityId={identityId}/>
     } else {
         return (
             <ListIdentities/>
@@ -80,7 +81,7 @@ function Router() {
 
 getUserTheme()
     .then((theme) => {
-        layout(<Router/>,
+        layout(<AppContainer><Router/></AppContainer>,
             {theme,}
         );
     })

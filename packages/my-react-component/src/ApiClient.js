@@ -67,6 +67,10 @@ export function postCreateIdentity(data, successHandler, errorHandler) {
     return postData('create-identity', data, successHandler, errorHandler)
 }
 
+export function postEditIdentity(data, successHandler, errorHandler) {
+    return postData('edit-identity', data, successHandler, errorHandler)
+}
+
 export function getIndicators(skip, limit, successHandler, errorHandler) {
     getData({
         endpoint: 'list-indicators',
@@ -83,6 +87,24 @@ export function getIdentities(skip, limit, successHandler, errorHandler) {
             skip, limit
         }
     }, successHandler, errorHandler)
+}
+export function getIdentity(identityId, successHandler, errorHandler) {
+    getData({
+        endpoint: 'list-identities',
+        queryParams: {
+            query: JSON.stringify({
+                "identity_id": identityId
+            })
+        }
+    }, (resp) => {
+        if(resp?.records.length === 1){
+            successHandler(resp.records[0]);
+        }else if(resp?.records.length === 0){
+            errorHandler(new Error(`Identity with identity_id=${identityId} not found: ${JSON.stringify(resp)}`));
+        }else{
+            errorHandler(new Error(`Something went wrong: ${JSON.stringify(resp)}`));
+        }
+    }, errorHandler)
 }
 
 export function listIndicatorCategories(splunkFieldName, indicatorValue, successHandler, errorHandler) {

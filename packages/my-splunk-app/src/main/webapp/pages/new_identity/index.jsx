@@ -3,14 +3,12 @@ import React from 'react';
 import layout from '@splunk/react-page';
 import {getUserTheme} from '@splunk/splunk-utils/themes';
 import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
-import Heading from "@splunk/react-ui/Heading";
-import {NewIdentityForm} from "./form";
+import IdentityForm from "../../common/IdentityForm";
 
 function MainComponent() {
     return (
         <AppContainer>
-            <Heading level={1}>New Identity</Heading>
-            <NewIdentityForm/>
+            <IdentityForm/>
         </AppContainer>
     )
 }
