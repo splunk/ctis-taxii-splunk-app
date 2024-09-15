@@ -1,11 +1,16 @@
 import styled from "styled-components";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import {useFormInputProps} from "./formInputProps";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
-import {getIdentity, postCreateIdentity, postEditIdentity} from "@splunk/my-react-component/src/ApiClient";
+import {
+    getIdentity,
+    postCreateIdentity,
+    postEditIdentity,
+    useGetRecord
+} from "@splunk/my-react-component/src/ApiClient";
 import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
@@ -14,8 +19,7 @@ import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
 import {useOnFormSubmit} from "./formSubmit";
 import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
-import WaitSpinner from "@splunk/react-ui/WaitSpinner";
-import P from "@splunk/react-ui/Paragraph";
+import Loader from "@splunk/my-react-component/src/Loader";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};
@@ -37,11 +41,6 @@ const IDENTITY_CLASSES = [
 
 function GotoIdentitiesPageButton() {
     return (<Button to={VIEW_IDENTITIES_PAGE} appearance="primary" label="Go to Identities"/>);
-}
-
-function LoadingForEditMode() {
-    return (<Heading>Loading...<WaitSpinner size="large"/></Heading>);
-
 }
 
 export function Form({existingIdentity}) {
@@ -113,52 +112,19 @@ export function Form({existingIdentity}) {
         </MyForm>
     )
 }
-const MessageContent = styled.div`
-    flex-direction: column;
-    display: flex;
-`;
 
-// TODO: extract this to a common component which loads a single record in preparation for editing
-export default function IdentityForm({editMode, identityId}) {
-    const [identity, setIdentity] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        if (editMode && identityId) {
-            getIdentity(identityId, (resp) => {
-                console.log("Existing identity:", resp);
-                setIdentity(resp);
-                setLoading(false);
-            }, (error) => {
-                console.error(error);
-                if(error instanceof Error) {
-                    setError(error.toString());
-                }else{
-                    setError(JSON.stringify(error));
-                }
-            });
-        }
-    }, [identityId, editMode]);
+function EditModeForm({identityId}) {
+    const {record: identity, loading, error} = useGetRecord({
+        restGetFunction: getIdentity,
+        restFunctionQueryArgs: {identityId}
+    });
     return (
-        <>
-            {error && <Message appearance="fill" type="error">
-                <MessageContent>
-                    <div>
-                        <Message.Title><strong>Something went wrong</strong></Message.Title>
-                    </div>
-                    <div>
-                        <P>{error}</P>
-                    </div>
-                </MessageContent>
-            </Message>}
-                {!error &&
-                <>
-                    {editMode && loading && <LoadingForEditMode/>}
-                    {editMode && !loading && <Form existingIdentity={identity}/>}
-                    {!editMode && <Form/>}
-                </>
-            }
-        </>
+        <Loader error={error} loading={loading}>
+            <Form existingIdentity={identity}/>
+        </Loader>
     );
+}
+
+export default function IdentityForm({editMode, identityId}) {
+    return editMode ? <EditModeForm identityId={identityId}/> : <Form/>;
 }

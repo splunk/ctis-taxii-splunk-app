@@ -1,5 +1,6 @@
 import {createRESTURL} from '@splunk/splunk-utils/url';
 import {app, getCSRFToken} from '@splunk/splunk-utils/config';
+import {useEffect, useState} from "react";
 
 function postData(endpoint, data, successHandler, errorHandler) {
     // Custom CSRF headers set for POST requests to custom endpoints
@@ -31,7 +32,7 @@ function getData({endpoint, queryParams}, successHandler, errorHandler) {
         const urlSearchParams = new URLSearchParams(queryParams);
         finalUrl = `${url}?${urlSearchParams.toString()}`;
     }
-    fetch(finalUrl,
+    return fetch(finalUrl,
         {
             method: 'GET',
             headers: {}
@@ -88,23 +89,72 @@ export function getIdentities(skip, limit, successHandler, errorHandler) {
         }
     }, successHandler, errorHandler)
 }
-export function getIdentity(identityId, successHandler, errorHandler) {
-    getData({
-        endpoint: 'list-identities',
+export function getExactlyOneRecord({query, endpoint, successHandler, errorHandler}) {
+    if(!query){
+        throw new Error('query is required');
+    }
+    if(!endpoint){
+        throw new Error('endpoint is required');
+    }
+    if(!successHandler){
+        throw new Error('successHandler is required');
+    }
+    if(!errorHandler){
+        throw new Error('errorHandler is required');
+    }
+
+    return getData({
+        endpoint,
         queryParams: {
-            query: JSON.stringify({
-                "identity_id": identityId
-            })
+            query: JSON.stringify(query)
         }
     }, (resp) => {
-        if(resp?.records.length === 1){
+        // Assumption that JSON response will have a top-level array called "records"
+        if (resp.records.length === 1) {
             successHandler(resp.records[0]);
-        }else if(resp?.records.length === 0){
-            errorHandler(new Error(`Identity with identity_id=${identityId} not found: ${JSON.stringify(resp)}`));
-        }else{
-            errorHandler(new Error(`Something went wrong: ${JSON.stringify(resp)}`));
+        } else if (resp.records.length === 0) {
+            errorHandler(new Error(`No records found for query: ${JSON.stringify(query)}`));
+        } else {
+            errorHandler(new Error(`Unexpected response: ${JSON.stringify(query)}`));
         }
     }, errorHandler)
+}
+
+export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
+    const [record, setRecord] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        restGetFunction({...restFunctionQueryArgs,
+            successHandler: (resp) => {
+                console.log("Response:", resp);
+                setRecord(resp);
+                setLoading(false);
+            },
+            errorHandler: (error) => {
+                setLoading(false);
+                console.error(error);
+                if(error instanceof Error) {
+                    setError(error.toString());
+                }else{
+                    setError(JSON.stringify(error));
+                }
+            }});
+    }, []);
+    return {record, loading, error};
+}
+
+// TODO: extract and refactor this function to be more generic for reuse
+export function getIdentity({identityId, successHandler, errorHandler}) {
+    return getExactlyOneRecord({
+        query: {
+            "identity_id": identityId
+        },
+        endpoint: 'list-identities',
+        successHandler,
+        errorHandler
+    })
 }
 
 export function listIndicatorCategories(splunkFieldName, indicatorValue, successHandler, errorHandler) {
