@@ -79,6 +79,11 @@ class AbstractRestHandler(abc.ABC):
         assert len(results) == 1, f"More than one record found for query: {query}"
         return results[0]
 
+    def delete_record(self, collection, query: dict):
+        saved_record = self.query_exactly_one_record(collection, query=query)
+        self.logger.info(f"Deleting record: {saved_record}")
+        collection.delete_by_id(id=saved_record["_key"])
+
     def update_record(self, collection, query_for_one_record: dict, input_json: dict, converter, model_class) -> dict:
         saved_record = self.query_exactly_one_record(collection, query=query_for_one_record)
         structured = self.prepare_merged_model_instance(saved_record=saved_record, input_json=input_json,

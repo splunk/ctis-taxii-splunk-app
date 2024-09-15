@@ -8,7 +8,7 @@ import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import {
     getIdentity,
     postCreateIdentity,
-    postEditIdentity,
+    editIdentity,
     useGetRecord
 } from "@splunk/my-react-component/src/ApiClient";
 import Message from "@splunk/react-ui/Message";
@@ -65,7 +65,7 @@ export function Form({existingIdentity}) {
         }
     }, [existingIdentity, setValue]);
 
-    const postEndpointFunction = existingIdentity ? postEditIdentity : postCreateIdentity;
+    const postEndpointFunction = existingIdentity ? editIdentity : postCreateIdentity;
     const {submitSuccess, submissionError, onSubmit, submitButtonDisabled} = useOnFormSubmit({
         formMethods: methods,
         submitToPostEndpoint: postEndpointFunction,

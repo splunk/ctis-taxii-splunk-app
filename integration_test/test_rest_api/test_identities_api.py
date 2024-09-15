@@ -1,4 +1,4 @@
-from .util import create_new_identity, get_identities_collection, list_identities, edit_identity
+from .util import create_new_identity, get_identities_collection, list_identities, edit_identity, delete_identity
 
 
 class TestScenarios:
@@ -49,4 +49,16 @@ class TestScenarios:
         assert saved_identity_2["name"] == "user2"
         assert saved_identity_2["identity_class"] == "individual"
         assert saved_identity_2["modified"] != saved_identity_1["modified"]
+
+    def test_delete_identity(self, session, cleanup_identities_collection):
+        create_new_identity(session, {"name": "user1", "identity_class" : "individual"})
+        identities_1 = get_identities_collection(session)
+        assert len(identities_1) == 1
+        identity = identities_1[0]
+
+        delete_identity(session, identity["identity_id"])
+
+        identities_2 = get_identities_collection(session)
+        assert len(identities_2) == 0
+
 

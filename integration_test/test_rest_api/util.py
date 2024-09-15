@@ -74,6 +74,12 @@ def bulk_insert_indicators(session, indicators: list):
         resp.raise_for_status()
 
 
+def delete_endpoint(endpoint:str, session, payload: dict) -> dict:
+    resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
+                        params=DEFAULT_REQUEST_PARAMS, json=payload)
+    resp.raise_for_status()
+    return resp.json()
+
 def post_endpoint(endpoint:str, session, payload: dict) -> dict:
     resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params=DEFAULT_REQUEST_PARAMS, json=payload)
@@ -94,6 +100,11 @@ def create_new_identity(session, payload: dict) -> dict:
 
 def edit_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-identity", session=session, payload=payload)
+
+def delete_identity(session, identity_id: str) -> dict:
+    return delete_endpoint(endpoint="delete-identity", session=session, payload={
+        "identity_id": identity_id
+    })
 
 def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query: dict = None) -> dict:
     query_params = {**DEFAULT_REQUEST_PARAMS, "skip": skip, "limit": limit}

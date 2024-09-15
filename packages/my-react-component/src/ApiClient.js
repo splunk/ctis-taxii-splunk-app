@@ -3,12 +3,20 @@ import {app, getCSRFToken} from '@splunk/splunk-utils/config';
 import {useEffect, useState} from "react";
 
 function postData(endpoint, data, successHandler, errorHandler) {
+    return submitToEndpoint('POST', endpoint, data, successHandler, errorHandler);
+}
+
+function deleteData(endpoint, data, successHandler, errorHandler) {
+    return submitToEndpoint('DELETE', endpoint, data, successHandler, errorHandler);
+}
+
+function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) {
     // Custom CSRF headers set for POST requests to custom endpoints
     // See https://docs.splunk.com/Documentation/StreamApp/7.1.3/DeployStreamApp/SplunkAppforStreamRESTAPI
     const url = createRESTURL(endpoint, {app});
     return fetch(url,
         {
-            method: 'POST',
+            method: method,
             body: JSON.stringify(data),
             headers: {
                 'X-Splunk-Form-Key': getCSRFToken(),
@@ -68,12 +76,16 @@ export function postCreateIdentity(data, successHandler, errorHandler) {
     return postData('create-identity', data, successHandler, errorHandler)
 }
 
-export function postEditIdentity(data, successHandler, errorHandler) {
+export function editIdentity(data, successHandler, errorHandler) {
     return postData('edit-identity', data, successHandler, errorHandler)
 }
 
+export function deleteIdentity(identityId, successHandler, errorHandler) {
+    return deleteData('delete-identity', {identity_id: identityId}, successHandler, errorHandler)
+}
+
 export function getIndicators(skip, limit, successHandler, errorHandler) {
-    getData({
+    return getData({
         endpoint: 'list-indicators',
         queryParams: {
             skip, limit
@@ -82,7 +94,7 @@ export function getIndicators(skip, limit, successHandler, errorHandler) {
 }
 
 export function getIdentities(skip, limit, successHandler, errorHandler) {
-    getData({
+    return getData({
         endpoint: 'list-identities',
         queryParams: {
             skip, limit
@@ -165,7 +177,7 @@ export function listIndicatorCategories(splunkFieldName, indicatorValue, success
     if (indicatorValue) {
         queryParams.indicator_value = indicatorValue;
     }
-    getData({
+    return getData({
         endpoint: 'list-ioc-categories',
         queryParams: queryParams,
     }, successHandler, errorHandler)
