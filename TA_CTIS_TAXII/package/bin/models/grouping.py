@@ -18,6 +18,11 @@ def validate_created_by(instance, attribute, value):
     if not value.startswith("identity--"):
         raise ValueError("Invalid created_by")
 
+def validate_grouping_context(instance, attribute, value):
+    # https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_6g420oc42vbo
+    if value not in ["suspicious-activity", "malicious-activity", "unspecified"]:
+        raise ValueError("Invalid context")
+
 """
 Sample STIX grouping: https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_6w1q1wewd5t4
 {
@@ -46,8 +51,9 @@ class GroupingModelV1(BaseModelV1):
     def _grouping_id_default(self):
         return f"grouping--{uuid4()}"
 
-    created_by_ref: str = field(validator=[validate_created_by])  # identity_id
-    context: str = field()
+    # REST handler should validate that this identity exists in DB
+    created_by_ref: str = field(validator=[validate_created_by])  # An Identity ID
+    context: str = field(validator=[validate_grouping_context])
     name: str = field()
     description: str = field()
 
@@ -60,7 +66,8 @@ class GroupingModelV1(BaseModelV1):
         # then the identity id should be included in the object_refs.
         grouping = Grouping(id=self.grouping_id, created_by_ref=self.created_by_ref, context=self.context, name=self.name,
                             description=self.description,
-                            object_refs=object_refs)
+                            object_refs=object_refs,
+                            created=self.created, modified=self.modified)
         return grouping
 
 
