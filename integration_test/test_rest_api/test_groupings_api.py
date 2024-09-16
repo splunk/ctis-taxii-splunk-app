@@ -1,7 +1,8 @@
 import pytest
 import requests
 
-from .util import create_new_grouping, get_groupings_collection, create_new_identity, get_identities_collection, list_groupings
+from .util import create_new_grouping, edit_grouping, get_groupings_collection, create_new_identity, \
+    get_identities_collection, list_groupings
 
 
 class TestScenarios:
@@ -78,3 +79,30 @@ class TestScenarios:
         assert len(listed_groupings_3['records']) == 1
         assert listed_groupings_3['total'] == 2
 
+    def test_edit_grouping(self, session, cleanup_groupings_collection, cleanup_identities_collection):
+        assert len(get_groupings_collection(session)) == 0
+        resp = create_new_identity(session, {
+            "name": "identity-1",
+            "identity_class": "organization",
+        })
+        identity = resp["identity"]
+        assert identity["name"] == "identity-1"
+        create_new_grouping(session, {
+            "created_by_ref": identity["identity_id"],
+            "name": "grouping-1",
+            "description": "description-1",
+            "context": "unspecified",
+        })
+        groupings_1 = get_groupings_collection(session)
+        assert len(groupings_1) == 1
+        assert groupings_1[0]["created_by_ref"] == identity["identity_id"]
+        assert groupings_1[0]["name"] == "grouping-1"
+
+        edit_grouping(session, {
+            "grouping_id": groupings_1[0]["grouping_id"],
+            "name": "grouping-a",
+        })
+
+        groupings_2 = get_groupings_collection(session)
+        assert len(groupings_2) == 1
+        assert groupings_2[0]["name"] == "grouping-a"

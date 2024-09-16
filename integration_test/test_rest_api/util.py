@@ -110,6 +110,9 @@ def create_new_grouping(session, payload: dict) -> dict:
 def edit_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-identity", session=session, payload=payload)
 
+def edit_grouping(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="edit-grouping", session=session, payload=payload)
+
 def delete_identity(session, identity_id: str) -> dict:
     return delete_endpoint(endpoint="delete-identity", session=session, payload={
         "identity_id": identity_id
