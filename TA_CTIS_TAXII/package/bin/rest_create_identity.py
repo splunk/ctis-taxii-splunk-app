@@ -36,7 +36,7 @@ class Handler(AbstractRestHandler):
             raise ValueError(repr(exc))
 
         identity_dict = identity_converter.unstructure(identity)
-        self.logger.info(f"Inserting indicator: {identity_dict}")
+        self.logger.info(f"Inserting identity: {identity_dict}")
         collection.insert(identity_dict)
 
         response = {

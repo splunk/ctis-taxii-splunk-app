@@ -84,6 +84,19 @@ class AbstractRestHandler(abc.ABC):
         self.logger.info(f"Deleting record: {saved_record}")
         collection.delete_by_id(id=saved_record["_key"])
 
+    def insert_record(self, collection, input_json: dict, converter, model_class) -> dict:
+        try:
+            structured = converter.structure(input_json, model_class)
+        except Exception as exc:
+            self.logger.exception(f"Failed to convert input JSON to Model")
+            raise ValueError(repr(exc))
+
+        record_as_dict = converter.unstructure(structured)
+        self.logger.info(f"Inserting record into collection {collection}: {record_as_dict}")
+        collection.insert(record_as_dict)
+
+        return record_as_dict
+
     def update_record(self, collection, query_for_one_record: dict, input_json: dict, converter, model_class) -> dict:
         saved_record = self.query_exactly_one_record(collection, query=query_for_one_record)
         structured = self.prepare_merged_model_instance(saved_record=saved_record, input_json=input_json,
@@ -163,7 +176,7 @@ class AbstractRestHandler(abc.ABC):
             query_params_dict = self.parse_query_params(in_string_dict["query"])
             payload = self.handle(input_json=input_json, query_params=query_params_dict, session_key=session_key)
             return {"payload": payload, "status": 200}
-        except AssertionError as e:
+        except (ValueError, AssertionError) as e:
             self.logger.exception("Client error")
             return self.exception_response(e, 400)
         except ServerException as e:

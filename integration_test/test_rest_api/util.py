@@ -34,6 +34,10 @@ def get_indicators_collection(session) -> list:
 def get_identities_collection(session) -> list:
     return get_collection(session, "identities")
 
+def get_groupings_collection(session) -> list:
+    return get_collection(session, "groupings")
+
+
 def get_collection(session, collection_name: str) -> list:
     # Handle pagination, limits.conf: max_rows_per_query = 50000
     records = []
@@ -63,6 +67,8 @@ def clear_indicators_collection(session):
 def clear_identities_collection(session):
     clear_collection(session, "identities")
 
+def clear_groupings_collection(session):
+    clear_collection(session, "groupings")
 
 def bulk_insert_indicators(session, indicators: list):
     # do it in batches of 1000
@@ -97,6 +103,9 @@ def create_new_indicator(session, payload: dict) -> dict:
 
 def create_new_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="create-identity", session=session, payload=payload)
+
+def create_new_grouping(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="create-grouping", session=session, payload=payload)
 
 def edit_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-identity", session=session, payload=payload)
