@@ -131,6 +131,9 @@ def list_indicators(session, skip: int, limit: int, query: dict = None) -> dict:
 def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-identities", session=session, skip=skip, limit=limit, query=query)
 
+def list_groupings(session, skip: int, limit: int, query: dict = None) -> dict:
+    return query_collection_endpoint(endpoint="list-groupings", session=session, skip=skip, limit=limit, query=query)
+
 
 def new_indicator_payload() -> dict:
     return {

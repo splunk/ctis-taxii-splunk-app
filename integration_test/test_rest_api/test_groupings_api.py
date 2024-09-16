@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from .util import create_new_grouping, get_groupings_collection, create_new_identity, get_identities_collection
+from .util import create_new_grouping, get_groupings_collection, create_new_identity, get_identities_collection, list_groupings
 
 
 class TestScenarios:
@@ -43,3 +43,38 @@ class TestScenarios:
                 "context" : "unspecified",
             })
         assert excinfo.value.response.status_code == 400
+
+    def test_list_groupings(self, session, cleanup_groupings_collection, cleanup_identities_collection):
+        assert len(get_groupings_collection(session)) == 0
+        listed_groupings = list_groupings(session=session, skip=0, limit=0)
+        assert len(listed_groupings['records']) == 0
+
+        resp = create_new_identity(session, {
+            "name" : "identity-1",
+            "identity_class" : "organization",
+        })
+        identity = resp["identity"]
+        assert identity["name"] == "identity-1"
+
+        create_new_grouping(session, {
+            "created_by_ref": identity["identity_id"],
+            "name": "grouping-1",
+            "description": "description-1",
+            "context" : "unspecified",
+        })
+
+        create_new_grouping(session, {
+            "created_by_ref": identity["identity_id"],
+            "name": "grouping-2",
+            "description": "description-2",
+            "context" : "unspecified",
+        })
+
+        listed_groupings_2 = list_groupings(session=session, skip=0, limit=0)
+        assert len(listed_groupings_2['records']) == 2
+        assert set([x["name"] for x in listed_groupings_2['records']]) == {"grouping-1", "grouping-2"}
+
+        listed_groupings_3 = list_groupings(session=session, skip=0, limit=1)
+        assert len(listed_groupings_3['records']) == 1
+        assert listed_groupings_3['total'] == 2
+
