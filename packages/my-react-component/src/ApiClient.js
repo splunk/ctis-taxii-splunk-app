@@ -6,7 +6,7 @@ function postData(endpoint, data, successHandler, errorHandler) {
     return submitToEndpoint('POST', endpoint, data, successHandler, errorHandler);
 }
 
-function deleteData(endpoint, data, successHandler, errorHandler) {
+function deleteData({endpoint, data, successHandler, errorHandler}) {
     return submitToEndpoint('DELETE', endpoint, data, successHandler, errorHandler);
 }
 
@@ -80,8 +80,14 @@ export function editIdentity(data, successHandler, errorHandler) {
     return postData('edit-identity', data, successHandler, errorHandler)
 }
 
-export function deleteIdentity(identityId, successHandler, errorHandler) {
-    return deleteData('delete-identity', {identity_id: identityId}, successHandler, errorHandler)
+export function deleteIdentity({identityId, successHandler, errorHandler}) {
+    console.log('Deleting identity:', identityId);
+    return deleteData({
+        endpoint: 'delete-identity',
+        data: {identity_id: identityId},
+        successHandler,
+        errorHandler
+    })
 }
 
 export function getIndicators(skip, limit, successHandler, errorHandler) {
@@ -101,17 +107,18 @@ export function getIdentities(skip, limit, successHandler, errorHandler) {
         }
     }, successHandler, errorHandler)
 }
+
 export function getExactlyOneRecord({query, endpoint, successHandler, errorHandler}) {
-    if(!query){
+    if (!query) {
         throw new Error('query is required');
     }
-    if(!endpoint){
+    if (!endpoint) {
         throw new Error('endpoint is required');
     }
-    if(!successHandler){
+    if (!successHandler) {
         throw new Error('successHandler is required');
     }
-    if(!errorHandler){
+    if (!errorHandler) {
         throw new Error('errorHandler is required');
     }
 
@@ -138,7 +145,8 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        restGetFunction({...restFunctionQueryArgs,
+        restGetFunction({
+            ...restFunctionQueryArgs,
             successHandler: (resp) => {
                 console.log("Response:", resp);
                 setRecord(resp);
@@ -147,12 +155,13 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
             errorHandler: (error) => {
                 setLoading(false);
                 console.error(error);
-                if(error instanceof Error) {
+                if (error instanceof Error) {
                     setError(error.toString());
-                }else{
+                } else {
                     setError(JSON.stringify(error));
                 }
-            }});
+            }
+        });
     }, []);
     return {record, loading, error};
 }

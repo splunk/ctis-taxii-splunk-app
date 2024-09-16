@@ -66,12 +66,12 @@
         - [X] Backend to support return number of total results
     - [ ] Update
     - [ ] Delete
-- [ ] Identity Model
+- [X] Identity Model
     - [X] Create
-    - [ ] Read One
-    - [ ] List
-    - [ ] Update
-    - [ ] Delete
+    - [X] Read One
+    - [X] List
+    - [X] Update
+    - [X] Delete
 - [ ] Grouping Model
     - [ ] Create
     - [ ] Read One
