@@ -2,15 +2,18 @@
 <nav>
     <view name="configuration"/>
 <!--    <view name="dashboard"/>-->
-    <view name="search"/>
-    <collection label="Indicators">
-        <view default="true" name="indicators"/>
-        <view name="new_indicator"/>
-    </collection>
-    <view name="groupings"/>
-    <view name="submissions"/>
     <collection label="Identities">
         <view name="identities"/>
         <view name="new_identity"/>
     </collection>
+    <collection label="Groupings">
+        <view name="groupings"/>
+        <view name="new_grouping"/>
+    </collection>
+    <collection label="Indicators">
+        <view default="true" name="indicators"/>
+        <view name="new_indicator"/>
+    </collection>
+    <view name="submissions"/>
+    <view name="search"/>
 </nav>

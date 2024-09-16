@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="TA_CTIS_TAXII:/templates/new_grouping.html" type="html">
+	<label>New Grouping</label>
+</view>

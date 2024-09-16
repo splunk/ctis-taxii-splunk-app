@@ -16,6 +16,7 @@ import {editIdentityPage} from "@splunk/my-react-component/src/urls";
 import Heading from "@splunk/react-ui/Heading";
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
+import {getUrlQueryParams} from "../../common/queryParams";
 
 
 function Actions({row}) {
@@ -74,10 +75,6 @@ function ListIdentities() {
             }}/>
         </>
     );
-}
-
-function getUrlQueryParams() {
-    return new URLSearchParams(window.location.search);
 }
 
 function Router() {

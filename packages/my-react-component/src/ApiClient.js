@@ -76,8 +76,16 @@ export function postCreateIdentity(data, successHandler, errorHandler) {
     return postData('create-identity', data, successHandler, errorHandler)
 }
 
+export function postCreateGrouping(data, successHandler, errorHandler) {
+    return postData('create-grouping', data, successHandler, errorHandler)
+}
+
 export function editIdentity(data, successHandler, errorHandler) {
     return postData('edit-identity', data, successHandler, errorHandler)
+}
+
+export function editGrouping(data, successHandler, errorHandler) {
+    return postData('edit-grouping', data, successHandler, errorHandler)
 }
 
 export function deleteIdentity({identityId, successHandler, errorHandler}) {
@@ -93,6 +101,15 @@ export function deleteIdentity({identityId, successHandler, errorHandler}) {
 export function getIndicators(skip, limit, successHandler, errorHandler) {
     return getData({
         endpoint: 'list-indicators',
+        queryParams: {
+            skip, limit
+        }
+    }, successHandler, errorHandler)
+}
+
+export function getGroupings(skip, limit, successHandler, errorHandler) {
+    return getData({
+        endpoint: 'list-groupings',
         queryParams: {
             skip, limit
         }
@@ -155,10 +172,11 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
             errorHandler: (error) => {
                 setLoading(false);
                 console.error(error);
-                if (error instanceof Error) {
-                    setError(error.toString());
-                } else {
+                const objectKeys = Object.keys(error);
+                if (error === {} || objectKeys.length > 0) {
                     setError(JSON.stringify(error));
+                } else {
+                    setError(String(error));
                 }
             }
         });
@@ -166,13 +184,23 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
     return {record, loading, error};
 }
 
-// TODO: extract and refactor this function to be more generic for reuse
 export function getIdentity({identityId, successHandler, errorHandler}) {
     return getExactlyOneRecord({
         query: {
             "identity_id": identityId
         },
         endpoint: 'list-identities',
+        successHandler,
+        errorHandler
+    })
+}
+
+export function getGrouping({groupingId, successHandler, errorHandler}) {
+    return getExactlyOneRecord({
+        query: {
+            "grouping_id": groupingId
+        },
+        endpoint: 'list-groupings',
         successHandler,
         errorHandler
     })

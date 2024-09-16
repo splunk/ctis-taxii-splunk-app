@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="my-splunk-app:/templates/new_grouping.html" type="html">
+	<label>New Grouping</label>
+</view>
