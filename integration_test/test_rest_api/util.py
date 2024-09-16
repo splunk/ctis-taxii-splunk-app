@@ -118,6 +118,11 @@ def delete_identity(session, identity_id: str) -> dict:
         "identity_id": identity_id
     })
 
+def delete_grouping(session, grouping_id: str) -> dict:
+    return delete_endpoint(endpoint="delete-grouping", session=session, payload={
+        "grouping_id": grouping_id
+    })
+
 def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query: dict = None) -> dict:
     query_params = {**DEFAULT_REQUEST_PARAMS, "skip": skip, "limit": limit}
     if query is not None:
