@@ -12,8 +12,9 @@ import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import IdentityForm from "../../common/IdentityForm";
-import {editIdentityPage} from "@splunk/my-react-component/src/urls";
+import {editIdentityPage, NEW_IDENTITY_PAGE} from "@splunk/my-react-component/src/urls";
 import Heading from "@splunk/react-ui/Heading";
+import Plus from '@splunk/react-icons/Plus';
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -70,6 +71,9 @@ function ListIdentities() {
     return (
         <>
             <Heading level={1}>Identities</Heading>
+            <div>
+                <Button icon={<Plus/>} label="New Identity" appearance="primary" to={NEW_IDENTITY_PAGE}/>
+            </div>
             <PaginatedDataTable renderData={renderDataTable} fetchData={getIdentities} onError={(e) => {
                 createErrorToast(e);
             }}/>

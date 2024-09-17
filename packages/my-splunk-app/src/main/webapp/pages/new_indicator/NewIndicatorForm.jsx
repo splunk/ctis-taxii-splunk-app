@@ -1,4 +1,9 @@
-import {listIndicatorCategories, postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
+import {
+    getGroupings,
+    getIdentities,
+    listIndicatorCategories,
+    postCreateIndicator
+} from "@splunk/my-react-component/src/ApiClient";
 
 import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
@@ -51,9 +56,10 @@ const HorizontalButtonLayout = styled.div`
     gap: ${variables.spacingMedium};
 `
 
-const newIndicatorObject = () => ({
-    splunk_field_name: '',
-    indicator_value: '',
+// TODO: change this to use a single object with keys as param
+const newIndicatorObject = ({ splunk_field_name = '', indicator_value = '' } = {}) => ({
+    splunk_field_name: splunk_field_name,
+    indicator_value: indicator_value,
     indicator_category: '',
     stix_pattern: '',
     name: '',
@@ -76,6 +82,10 @@ function getErrorsByIndex(errorsArray, index) {
 }
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
+    const firstIndicator = newIndicatorObject({
+        splunk_field_name: initialSplunkFieldName,
+        indicator_value: initialSplunkFieldValue
+    })
     const methods = useForm({
         mode: 'all',
         defaultValues: {
@@ -83,7 +93,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             [CONFIDENCE]: 100,
             [TLP_RATING]: "GREEN",
             [VALID_FROM]: new Date().toISOString().slice(0, -1),
-            indicators: [newIndicatorObject()]
+            indicators: [firstIndicator]
         }
     });
     const {watch, register, trigger, handleSubmit, formState, control} = methods;
@@ -135,17 +145,26 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }, console.error);
     }, []);
 
+    const [groupings, setGroupings] = useState([]);
+    const optionsGroupings = useMemo(() => groupings.map((grouping) => ({
+        label: `${grouping.name} (${grouping.grouping_id})`,
+        value: grouping.grouping_id
+    })), [groupings]);
+    useEffect( () => {
+        getGroupings(0, 0, (resp) => {
+            setGroupings(resp.records);
+        }, (error) => {
+            console.error(error);
+        }).then();
+    }, []);
+
     return (
         <FormProvider {...methods}>
             <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
-                    <SelectControlGroup label="Grouping ID" {...useFormInputProps(methods, GROUPING_ID)} options={[
-                        {label: "Grouping A", value: "A"},
-                        {label: "Grouping B", value: "B"}
-                    ]}/>
-
+                    <SelectControlGroup label="Grouping ID" {...useFormInputProps(methods, GROUPING_ID)} options={optionsGroupings}/>
                     <NumberControlGroup label="Confidence" {...useFormInputProps(methods, CONFIDENCE)} max={100} min={0}
                                         step={1}/>
                     <SelectControlGroup label="TLP v1.0 Rating" {...useFormInputProps(methods, TLP_RATING)} options={[

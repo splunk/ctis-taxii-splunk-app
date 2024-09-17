@@ -17,6 +17,7 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
+import {NEW_INDICATOR_PAGE} from "@splunk/my-react-component/src/urls";
 
 
 const SEARCH_FIELD_OPTIONS = [
@@ -38,8 +39,7 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Indicator ID", getCellContent: (row) => row.indicator_id},
     {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
     {columnName: "Name", getCellContent: (row) => row.name},
-    {columnName: "Splunk Field", getCellContent: (row) => `${row.splunk_field_name}=${row.splunk_field_value}`},
-    {columnName: "Valid From (UTC)", getCellContent: (row) => row.valid_from},
+    {columnName: "STIX Pattern", getCellContent: (row) => row.stix_pattern},
     {columnName: "Actions", getCellContent: (row) => <IndicatorActionButtons row={row}/>},
 ]
 
@@ -55,11 +55,11 @@ const expansionFieldNameToCellValue = {
     "Grouping ID": (row) => row.grouping_id,
     "Name": (row) => row.name,
     "Description": (row) => row?.description || "No description provided",
-    "STIX v2.1 Pattern": (row) => row.stix_pattern,
+    "STIX Pattern": (row) => row.stix_pattern,
     "Valid From (UTC)": (row) => row.valid_from,
     // "Groupings": (row) => <ListOfLinks titleToUrl={groupingIdsToMappingOfTitleToUrl(row.referenced_in_groupings)}/>,
-    "Splunk Field Name": (row) => row.splunk_field_name,
-    "Splunk Field Value": (row) => row.splunk_field_value,
+    "Indicator Category": (row) => row.indicator_category,
+    "Indicator Value": (row) => row.indicator_value,
     "TLP Rating": (row) => row.tlp_v1_rating,
 }
 
@@ -83,7 +83,7 @@ function MyStyledContainer() {
             <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
             <div>
                 {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
-                <Button icon={<Plus/>} label="New Indicator" appearance="primary"/>
+                <Button icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
             </div>
             <SearchBar handleChange={(e) => {
             }} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>

@@ -12,7 +12,7 @@ function getUrlQueryParams() {
     return new URLSearchParams(window.location.search);
 }
 
-function parseQueryParamsSingleIndicatorMode(urlParams){
+function queryParamsForFieldWorkflowAction(urlParams){
     const splunkFieldName = urlParams.get('splunkFieldName');
     const splunkFieldValue = urlParams.get('splunkFieldValue');
     return {splunkFieldName, splunkFieldValue}
@@ -42,10 +42,11 @@ function MainComponent() {
     if(urlParams.has("sid")){
         const {sid, offset} = parseInEventMode(urlParams);
         ({splunkEvent} = useSplunkSearchResults({sid, offset, count: 1}));
-        indicatorForm = <NewIndicatorForm event={splunkEvent} />;
+        ({splunkFieldName, splunkFieldValue} = queryParamsForFieldWorkflowAction(urlParams));
+        console.log("Form props:", {splunkEvent, splunkFieldName, splunkFieldValue});
+        indicatorForm = <NewIndicatorForm event={splunkEvent} initialSplunkFieldName={splunkFieldName} initialSplunkFieldValue={splunkFieldValue}/>;
     }else{
-        ({splunkFieldName, splunkFieldValue} = parseQueryParamsSingleIndicatorMode(urlParams));
-        indicatorForm = <NewIndicatorForm initialSplunkFieldName={splunkFieldName} initialSplunkFieldValue={splunkFieldValue} />;
+        indicatorForm = <NewIndicatorForm />
     }
     return (
         <AppContainer>

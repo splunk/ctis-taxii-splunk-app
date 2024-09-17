@@ -19,7 +19,18 @@ logger = get_logger_for_script(__file__)
 
 class ListGroupingsHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-       return self.handle_query_collection(input_json=input_json, query_params=query_params, session_key=session_key, collection_name="groupings")
+        # Gather all indicators and group by grouping_id
+        resp = self.handle_query_collection(input_json=input_json, query_params=query_params, session_key=session_key, collection_name="groupings")
+        grouping_ids = list(set([x["grouping_id"] for x in resp["records"]]))
+        self.logger.info(f"grouping_ids: {grouping_ids}")
+        indicators_collection = self.get_collection(collection_name="indicators", session_key=session_key)
+        indicators = indicators_collection.query(fields=["grouping_id", "indicator_id"], query={
+            "grouping_id" : {"$in" : grouping_ids}
+        }, limit=0, offset=0)
+        self.logger.info(f"indicators: {indicators}")
+
+        # TODO: Insert indicators array field on each grouping
+        return resp
 
 
 Handler = ListGroupingsHandler(logger=logger).generate_splunk_server_class()

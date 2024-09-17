@@ -18,8 +18,9 @@ import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTabl
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
+import Plus from '@splunk/react-icons/Plus';
 import {getGroupings} from "@splunk/my-react-component/src/ApiClient";
-import {editGroupingPage} from "@splunk/my-react-component/src/urls";
+import {editGroupingPage, NEW_GROUPING_PAGE} from "@splunk/my-react-component/src/urls";
 
 
 function GroupingActionButtons({row}) {
@@ -72,6 +73,9 @@ function ListGroupings() {
     return (
         <>
             <Heading level={1}>Groupings</Heading>
+            <div>
+                <Button icon={<Plus/>} label="New Grouping" appearance="primary" to={NEW_GROUPING_PAGE}/>
+            </div>
             <PaginatedDataTable renderData={renderDataTable} fetchData={getGroupings} onError={(e) => {
                 createErrorToast(e);
             }}/>
