@@ -37,7 +37,7 @@ const FORM_FIELD_CREATED_BY_REF = "created_by_ref";
 const FORM_FIELD_GROUPING_ID = "grouping_id";
 
 const GROUPING_CONTEXTS = [
-    {label: 'unknown', value: 'unknown'},
+    {label: 'unspecified', value: 'unspecified'},
     {label: 'suspicious-activity', value: 'suspicious-activity'},
     {label: 'malicious-activity', value: 'malicious-activity'},
 ];

@@ -2,7 +2,7 @@ import pytest
 import requests
 
 from .util import create_new_grouping, edit_grouping, get_groupings_collection, create_new_identity, \
-    get_identities_collection, list_groupings, delete_grouping
+    get_identities_collection, list_groupings, delete_grouping, create_new_indicator, get_indicators_collection
 
 
 class TestScenarios:
@@ -132,3 +132,46 @@ class TestScenarios:
 
         groupings_2 = get_groupings_collection(session)
         assert len(groupings_2) == 0
+
+    def test_list_groupings_should_include_indicators(self, session, cleanup_groupings_collection, cleanup_identities_collection, cleanup_indicators_collection):
+        assert len(get_groupings_collection(session)) == 0
+        assert len(get_identities_collection(session)) == 0
+        assert len(get_indicators_collection(session)) == 0
+
+        identity = create_new_identity(session, {
+            "name": "identity-1",
+            "identity_class": "organization",
+        })["identity"]
+
+        grouping = create_new_grouping(session, {
+            "created_by_ref": identity["identity_id"],
+            "name": "grouping-1",
+            "description": "description-1",
+            "context": "unspecified",
+        })["grouping"]
+        assert grouping["grouping_id"] is not None
+
+        indicators_resp = create_new_indicator(session, {
+            "grouping_id": grouping["grouping_id"],
+            "confidence": 100,
+            "tlp_v1_rating": "GREEN",
+            "valid_from": "2024-09-03T22:51:44.361",
+            "indicators": [
+                {
+                    "field_name": "",
+                    "indicator_value": "123.456.1.2",
+                    "indicator_category": "source_ipv4",
+                    "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '123.456.1.2']",
+                    "name": "asdf",
+                    "description": "adsf"
+                }
+            ]
+        })
+        indicator = indicators_resp["indicators"][0]
+        assert indicator["indicator_id"] is not None
+        assert indicator["grouping_id"] == grouping["grouping_id"]
+
+        groupings = list_groupings(session=session, skip=0, limit=0)
+        assert len(groupings['records']) == 1
+        first_grouping = groupings['records'][0]
+        assert first_grouping["indicators"] == [indicator["indicator_id"]]
