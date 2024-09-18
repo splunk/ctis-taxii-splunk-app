@@ -29,7 +29,6 @@ const SEARCH_FIELD_OPTIONS = [
 
 function IndicatorActionButtons() {
     return (<div>
-        <Button icon={<Plus/>} label="Add to Grouping" appearance="primary"/>
         <Button icon={<Pencil/>} label="Edit" appearance="secondary"/>
         <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive"/>
     </div>)

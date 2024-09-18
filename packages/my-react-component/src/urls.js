@@ -10,6 +10,10 @@ export const NEW_IDENTITY_PAGE = createURL(`/app/${app}/new_identity`);
 export const VIEW_GROUPINGS_PAGE = createURL(`/app/${app}/groupings`);
 export const NEW_GROUPING_PAGE = createURL(`/app/${app}/new_grouping`);
 
+export const viewIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
+    search: indicatorId,
+});
+
 export const editIdentityPage = (identityId) => createURL(`/app/${app}/identities`, {
     identity_id: identityId,
     action: 'edit',

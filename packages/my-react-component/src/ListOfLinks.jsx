@@ -9,9 +9,9 @@ const StyledList = styled(List)`
     padding: 0;
 `;
 
-export function ListOfLinks({titleToUrl}) {
+export function ListOfLinks({links}) {
     return (<div><StyledList ordered>
-        {Object.entries(titleToUrl).map(([title, url]) => (
+        {links.map(({title, url}) => (
             <List.Item>
                 <a key={title} href={url}>{title}</a>
             </List.Item>

@@ -8,8 +8,6 @@ import Button from "@splunk/react-ui/Button";
 import Pencil from '@splunk/react-icons/Pencil';
 import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import PaperPlane from '@splunk/react-icons/PaperPlane';
-import {createURL} from "@splunk/splunk-utils/url";
-import {app} from "@splunk/splunk-utils/config";
 import {ListOfLinks} from "@splunk/my-react-component/src/ListOfLinks";
 import {getUrlQueryParams} from "../../common/queryParams";
 import GroupingForm from "../../common/GroupingForm";
@@ -20,7 +18,7 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import Plus from '@splunk/react-icons/Plus';
 import {getGroupings} from "@splunk/my-react-component/src/ApiClient";
-import {editGroupingPage, NEW_GROUPING_PAGE} from "@splunk/my-react-component/src/urls";
+import {editGroupingPage, NEW_GROUPING_PAGE, viewIndicator} from "@splunk/my-react-component/src/urls";
 
 
 function GroupingActionButtons({row}) {
@@ -38,12 +36,6 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Actions", getCellContent: (row) => <GroupingActionButtons row={row}/>},
 ]
 
-function indicatorIdsToMappingOfTitleToUrl(indicatorIds) {
-    return indicatorIds.reduce((acc, groupingId) => {
-        acc[groupingId] = createURL(`app/${app}/indicators`, {id: groupingId});
-        return acc;
-    }, {})
-}
 
 const expansionFieldNameToCellValue = {
     "Grouping ID": (row) => row.grouping_id,
@@ -53,7 +45,11 @@ const expansionFieldNameToCellValue = {
     "Created At (UTC)": (row) => row.created,
     "Modified At (UTC)": (row) => row.modified,
     "Created By": (row) => row.created_by_ref,
-    "Object Refs": (row) => <ListOfLinks titleToUrl={indicatorIdsToMappingOfTitleToUrl([])}/>,
+    "Indicators": (row) => <ListOfLinks links={row.indicators.map(x => ({
+        title: x,
+        url: viewIndicator(x)
+    }))
+    }/>,
 }
 
 function renderDataTable({records, loading, error}) {
