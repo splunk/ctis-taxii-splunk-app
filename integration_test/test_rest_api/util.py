@@ -142,6 +142,24 @@ def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
 def list_groupings(session, skip: int, limit: int, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-groupings", session=session, skip=skip, limit=limit, query=query)
 
+def create_indicator_form_payload(grouping_id:str, indicators: list) -> dict:
+    return {
+        "grouping_id": grouping_id,
+        "confidence": 100,
+        "tlp_v1_rating": "GREEN",
+        "valid_from": "2024-09-03T22:51:44.361",
+        "indicators": indicators
+    }
+
+def example_indicator() -> dict:
+    return {
+        "splunk_field_name": "src_ip",
+        "indicator_value": "123.456.1.2",
+        "indicator_category": "source_ipv4",
+        "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '123.456.1.2']",
+        "name": "Source IPv4",
+        "description": "Source IPv4 - Description",
+    }
 
 def new_indicator_payload() -> dict:
     return {

@@ -29,6 +29,7 @@ function GroupingActionButtons({row}) {
         <Button icon={<PaperPlane/>} label="Submit to CTIS" appearance="primary"/>
         <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editGroupingPage(row.grouping_id)}/>
         <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive" onClick={handleRequestOpen}/>
+        // TODO: Check if any indicators are associated with this grouping. If so, disable the delete button.
         <DeleteModal open={open} onRequestClose={handleRequestClose}
                         deleteEndpointFunction={deleteGrouping}
                         deleteEndpointArgs={{groupingId: row.grouping_id}}

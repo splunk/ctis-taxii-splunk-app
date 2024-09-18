@@ -63,7 +63,7 @@ Example form payload:
     "valid_from": "2024-09-03T22:51:44.361",
     "indicators": [
         {
-            "field_name": "",
+            "splunk_field_name": "",
             "indicator_value": "123.456.1.2",
             "indicator_category": "source_ipv4",
             "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '123.456.1.2']",
