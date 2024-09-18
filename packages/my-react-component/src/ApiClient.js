@@ -98,6 +98,16 @@ export function deleteIdentity({identityId, successHandler, errorHandler}) {
     })
 }
 
+export function deleteGrouping({groupingId, successHandler, errorHandler}) {
+    console.log('Deleting grouping:', groupingId);
+    return deleteData({
+        endpoint: 'delete-grouping',
+        data: {grouping_id: groupingId},
+        successHandler,
+        errorHandler
+    })
+}
+
 export function getIndicators(skip, limit, successHandler, errorHandler) {
     return getData({
         endpoint: 'list-indicators',

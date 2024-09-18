@@ -17,15 +17,23 @@ import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/App
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import Plus from '@splunk/react-icons/Plus';
-import {getGroupings} from "@splunk/my-react-component/src/ApiClient";
+import {deleteGrouping, getGroupings} from "@splunk/my-react-component/src/ApiClient";
 import {editGroupingPage, NEW_GROUPING_PAGE, viewIndicator} from "@splunk/my-react-component/src/urls";
+import useModal from "@splunk/my-react-component/src/useModal";
+import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 
 
 function GroupingActionButtons({row}) {
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
     return (<div>
         <Button icon={<PaperPlane/>} label="Submit to CTIS" appearance="primary"/>
         <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editGroupingPage(row.grouping_id)}/>
-        <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive"/>
+        <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive" onClick={handleRequestOpen}/>
+        <DeleteModal open={open} onRequestClose={handleRequestClose}
+                        deleteEndpointFunction={deleteGrouping}
+                        deleteEndpointArgs={{groupingId: row.grouping_id}}
+                        modalBodyContent={<P>Are you sure you want to delete this
+                            grouping: <strong>{row.name} ({row.grouping_id})</strong>?</P>} />
     </div>)
 }
 
@@ -33,6 +41,7 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
     {columnName: "Name", getCellContent: (row) => row.name},
     {columnName: "Description", getCellContent: (row) => row.description},
+    {columnName: "No. Indicators", getCellContent: (row) => row.indicators.length},
     {columnName: "Actions", getCellContent: (row) => <GroupingActionButtons row={row}/>},
 ]
 

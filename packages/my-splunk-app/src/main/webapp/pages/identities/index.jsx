@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import layout from '@splunk/react-page';
 import {getUserTheme} from '@splunk/splunk-utils/themes';
@@ -18,21 +18,18 @@ import Plus from '@splunk/react-icons/Plus';
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import {getUrlQueryParams} from "../../common/queryParams";
+import useModal from "@splunk/my-react-component/src/useModal";
 
 
 function Actions({row}) {
-    const [open, setOpen] = useState(false);
-
-    const handleRequestClose = () => setOpen(false);
-    const handleRequestOpen = () => setOpen(true);
-
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
     return (<div>
         <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editIdentityPage(row.identity_id)}/>
         <DeleteButton onClick={handleRequestOpen}/>
         <DeleteModal open={open} onRequestClose={handleRequestClose}
                      deleteEndpointFunction={deleteIdentity}
                      deleteEndpointArgs={{identityId: row.identity_id}}
-                     modalBodyContent={<P>Are you really sure you want to delete this
+                     modalBodyContent={<P>Are you sure you want to delete this
                          identity: <strong>{row.name} ({row.identity_id})</strong>?</P>}
         />
     </div>)
