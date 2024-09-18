@@ -25,16 +25,20 @@ import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 
 function GroupingActionButtons({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
+    const disableDeleteButton = row.indicators.length > 0;
     return (<div>
         <Button icon={<PaperPlane/>} label="Submit to CTIS" appearance="primary"/>
         <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editGroupingPage(row.grouping_id)}/>
         <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive" onClick={handleRequestOpen}/>
-        // TODO: Check if any indicators are associated with this grouping. If so, disable the delete button.
         <DeleteModal open={open} onRequestClose={handleRequestClose}
-                        deleteEndpointFunction={deleteGrouping}
-                        deleteEndpointArgs={{groupingId: row.grouping_id}}
-                        modalBodyContent={<P>Are you sure you want to delete this
-                            grouping: <strong>{row.name} ({row.grouping_id})</strong>?</P>} />
+                     disabled={disableDeleteButton}
+                     disabledReason={<P>There is/are {row.indicators.length} indicators associated with this grouping.
+                         <br/>
+                         Delete them or associate them with another grouping before deleting this grouping.</P>}
+                     deleteEndpointFunction={deleteGrouping}
+                     deleteEndpointArgs={{groupingId: row.grouping_id}}
+                     modalBodyContent={<P>Are you sure you want to delete this
+                         grouping: <strong>{row.name} ({row.grouping_id})</strong>?</P>}/>
     </div>)
 }
 
