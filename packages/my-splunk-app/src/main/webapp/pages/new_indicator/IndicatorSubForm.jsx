@@ -1,10 +1,8 @@
 import {useFormContext} from "react-hook-form";
 import React, {useEffect, useState} from "react";
-import {usePatternSuggester} from "./patternSuggester";
+import {usePatternSuggester, useFieldWatchesStateValue} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
-import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import Button from "@splunk/react-ui/Button";
 import Divider from "@splunk/react-ui/Divider";
 import styled from "styled-components";
@@ -16,7 +14,8 @@ import Switch from "@splunk/react-ui/Switch";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {useFormInputProps} from "../../common/formInputProps";
 import {
-    IndicatorCategoryField, IndicatorDescriptionField,
+    IndicatorCategoryField,
+    IndicatorDescriptionField,
     IndicatorNameField,
     IndicatorValueField,
     StixPatternField
@@ -69,12 +68,7 @@ export const IndicatorSubForm = ({
     const indicatorCategory = watch(fieldIndicatorCategory);
 
     const {suggestedPattern} = usePatternSuggester(indicatorCategory, indicatorValue);
-
-    useEffect(() => {
-        if (suggestedPattern) {
-            setValue(fieldStixPattern, suggestedPattern, {shouldValidate: true});
-        }
-    }, [suggestedPattern]);
+    useFieldWatchesStateValue({formMethods, fieldName: fieldStixPattern, stateValue: suggestedPattern});
 
     useEffect(() => {
         if (splunkEvent?.hasOwnProperty(splunkFieldName)) {

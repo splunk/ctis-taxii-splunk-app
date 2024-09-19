@@ -47,10 +47,10 @@ export function StixPatternField({suggestedPattern, formMethods, fieldName}) {
                                     useSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
     />
 }
-export function IndicatorNameField({...props, fieldName, formMethods}) {
+export function IndicatorNameField({fieldName, formMethods, ...props}) {
     return <TextControlGroup label="Indicator Name" {...props} {...useFormInputProps(formMethods, fieldName)}/>
 }
-export function IndicatorDescriptionField({...props, fieldName, formMethods}) {
+export function IndicatorDescriptionField({fieldName, formMethods, ...props}) {
     return <TextAreaControlGroup label="Indicator Description" {...props} {...useFormInputProps(formMethods, fieldName)}/>
 }
 
