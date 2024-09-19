@@ -107,6 +107,15 @@ export function deleteGrouping({groupingId, successHandler, errorHandler}) {
         errorHandler
     })
 }
+export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
+    console.log('Deleting indicator:', indicatorId);
+    return deleteData({
+        endpoint: 'delete-indicator',
+        data: {indicator_id: indicatorId},
+        successHandler,
+        errorHandler
+    })
+}
 
 export function getIndicators(skip, limit, successHandler, errorHandler) {
     return getData({

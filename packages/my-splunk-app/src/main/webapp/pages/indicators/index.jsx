@@ -8,16 +8,18 @@ import {SearchBar} from "@splunk/my-react-component/src/SearchBar";
 import Button from "@splunk/react-ui/Button";
 import Plus from '@splunk/react-icons/Plus';
 import Pencil from '@splunk/react-icons/Pencil';
-import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import {app} from '@splunk/splunk-utils/config';
 import {createURL} from '@splunk/splunk-utils/url';
 import {StyledGreeting} from './styles';
-import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
+import {deleteIndicator, getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {NEW_INDICATOR_PAGE} from "@splunk/my-react-component/src/urls";
+import useModal from "@splunk/my-react-component/src/useModal";
+import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
+import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 
 
 const SEARCH_FIELD_OPTIONS = [
@@ -27,10 +29,16 @@ const SEARCH_FIELD_OPTIONS = [
     {label: 'TLP Rating', value: '4'},
 ];
 
-function IndicatorActionButtons() {
+function IndicatorActionButtons({row}) {
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
     return (<div>
         <Button icon={<Pencil/>} label="Edit" appearance="secondary"/>
-        <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive"/>
+        <DeleteButton onClick={handleRequestOpen}/>
+        <DeleteModal open={open} onRequestClose={handleRequestClose}
+                     deleteEndpointFunction={deleteIndicator}
+                     deleteEndpointArgs={{indicatorId: row.indicator_id}}
+                     modalBodyContent={<P>Are you sure you want to delete this
+                         indicator: <strong>{row.name} ({row.indicator_id})</strong>?</P>}/>
     </div>)
 }
 
