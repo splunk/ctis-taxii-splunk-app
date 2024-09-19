@@ -2,6 +2,10 @@ import React from 'react';
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
+import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
+import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
+import {useFormInputProps} from "../formInputProps";
+import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 
 export function GroupingIdField({...props}) {
     return <SelectControlGroup label="Grouping ID" {...props}/>
@@ -12,16 +16,41 @@ export function ConfidenceField({...props}) {
 }
 
 export function TLPv1RatingField({...props}) {
-    return <SelectControlGroup label="TLP v1.0 Rating" options={[
+    return <SelectControlGroup label="TLP v1.0 Rating" {...props} options={[
         {label: "RED", value: "RED"},
         {label: "AMBER", value: "AMBER"},
         {label: "GREEN", value: "GREEN"},
         {label: "WHITE", value: "WHITE"}
     ]}
-        {...props}
     />
 }
+
 export function ValidFromField({...props}) {
     return <DatetimeControlGroup label="Valid From (UTC)" {...props}/>
+}
+
+export function IndicatorValueField({...props}) {
+    return <TextControlGroup label="Indicator Value" {...props} />
+}
+
+export function IndicatorCategoryField({options, ...props}) {
+    return <SelectControlGroup label="Indicator Category"
+                               options={options}
+                               {...props}/>
+}
+
+export function StixPatternField({suggestedPattern, formMethods, fieldName}) {
+    const {setValue} = formMethods;
+    return <StixPatternControlGroup label="STIX Pattern"
+                                    {...useFormInputProps(formMethods, fieldName)}
+                                    suggestedPattern={suggestedPattern}
+                                    useSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
+    />
+}
+export function IndicatorNameField({...props, fieldName, formMethods}) {
+    return <TextControlGroup label="Indicator Name" {...props} {...useFormInputProps(formMethods, fieldName)}/>
+}
+export function IndicatorDescriptionField({...props, fieldName, formMethods}) {
+    return <TextAreaControlGroup label="Indicator Description" {...props} {...useFormInputProps(formMethods, fieldName)}/>
 }
 

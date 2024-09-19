@@ -1,11 +1,9 @@
 import {useFormContext} from "react-hook-form";
 import React, {useEffect, useState} from "react";
-import {useDebounce} from "@splunk/my-react-component/src/debounce";
-import {suggestPattern} from "./patternSuggester";
+import {usePatternSuggester} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import Button from "@splunk/react-ui/Button";
 import Divider from "@splunk/react-ui/Divider";
@@ -17,6 +15,12 @@ import {variables} from '@splunk/themes';
 import Switch from "@splunk/react-ui/Switch";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {useFormInputProps} from "../../common/formInputProps";
+import {
+    IndicatorCategoryField, IndicatorDescriptionField,
+    IndicatorNameField,
+    IndicatorValueField,
+    StixPatternField
+} from "../../common/indicator_form/fields";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -63,13 +67,8 @@ export const IndicatorSubForm = ({
     const splunkFieldName = watch(fieldSplunkFieldName);
     const indicatorValue = watch(fieldIndicatorValue);
     const indicatorCategory = watch(fieldIndicatorCategory);
-    const stixPattern = watch(fieldStixPattern);
 
-    const [suggestedPattern, setSuggestedPattern] = useState(null);
-    const debounceIndicatorValue = useDebounce(indicatorValue, 200);
-    useEffect(() => {
-        suggestPattern(indicatorCategory, indicatorValue, setSuggestedPattern);
-    }, [indicatorCategory, debounceIndicatorValue]);
+    const {suggestedPattern} = usePatternSuggester(indicatorCategory, indicatorValue);
 
     useEffect(() => {
         if (suggestedPattern) {
@@ -108,14 +107,12 @@ export const IndicatorSubForm = ({
             <SelectControlGroup label="Splunk Field Name" {...useFormInputProps(formMethods, fieldSplunkFieldName)}
                                 options={splunkFieldDropdownOptions}/>
         }
-        <TextControlGroup label="Indicator Value" {...useFormInputProps(formMethods, fieldIndicatorValue)} />
-        <SelectControlGroup label="Indicator Category" {...useFormInputProps(formMethods, fieldIndicatorCategory)}
-                            options={indicatorCategories}/>
-        <StixPatternControlGroup label="STIX v2 Pattern" {...useFormInputProps(formMethods, fieldStixPattern)}
-                                 useSuggestedPattern={() => setValue(fieldStixPattern, suggestedPattern, {shouldValidate: true})}
-                                 suggestedPattern={suggestedPattern}/>
-        <TextControlGroup label="Indicator Name" {...useFormInputProps(formMethods, fieldIndicatorName)} />
-        <TextAreaControlGroup label="Description" {...useFormInputProps(formMethods, fieldIndicatorDescription)} />
+        <IndicatorValueField {...useFormInputProps(formMethods, fieldIndicatorValue)} />
+        <IndicatorCategoryField
+            options={indicatorCategories} {...useFormInputProps(formMethods, fieldIndicatorCategory)}/>
+        <StixPatternField suggestedPattern={suggestedPattern} fieldName={fieldStixPattern} formMethods={formMethods}/>
+        <IndicatorNameField fieldName={fieldIndicatorName} formMethods={formMethods}/>
+        <IndicatorDescriptionField fieldName={fieldIndicatorDescription} formMethods={formMethods}/>
         <Divider/>
     </section>
 }
