@@ -72,7 +72,7 @@ export const IndicatorSubForm = ({
     }, [indicatorCategory, debounceIndicatorValue]);
 
     useEffect(() => {
-        if (stixPattern === "" && suggestedPattern) {
+        if (suggestedPattern) {
             setValue(fieldStixPattern, suggestedPattern, {shouldValidate: true});
         }
     }, [suggestedPattern]);
@@ -98,7 +98,6 @@ export const IndicatorSubForm = ({
             <CustomControlGroup label="Use Splunk Field?">
                 <Switch
                     key="toggleShowSplunkFieldDropdown"
-                    value={"Hello"}
                     onClick={() => setToggleShowSplunkFieldDropdown(!toggleShowSplunkFieldDropdown)}
                     selected={toggleShowSplunkFieldDropdown}
                     appearance="toggle"
