@@ -113,6 +113,9 @@ def edit_identity(session, payload: dict) -> dict:
 def edit_grouping(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-grouping", session=session, payload=payload)
 
+def edit_indicator(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="edit-indicator", session=session, payload=payload)
+
 def delete_identity(session, identity_id: str) -> dict:
     return delete_endpoint(endpoint="delete-identity", session=session, payload={
         "identity_id": identity_id
@@ -121,6 +124,11 @@ def delete_identity(session, identity_id: str) -> dict:
 def delete_grouping(session, grouping_id: str) -> dict:
     return delete_endpoint(endpoint="delete-grouping", session=session, payload={
         "grouping_id": grouping_id
+    })
+
+def delete_indicator(session, indicator_id: str) -> dict:
+    return delete_endpoint(endpoint="delete-indicator", session=session, payload={
+        "indicator_id": indicator_id
     })
 
 def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query: dict = None) -> dict:

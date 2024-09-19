@@ -1,5 +1,6 @@
-from .util import get_indicators_collection, new_indicator_payload, \
-    create_new_indicator, list_indicators, bulk_insert_indicators, create_indicator_form_payload, example_indicator
+from .util import edit_indicator, get_indicators_collection, new_indicator_payload, \
+    create_new_indicator, list_indicators, bulk_insert_indicators, create_indicator_form_payload, example_indicator, \
+    delete_indicator
 
 
 class TestScenarios:
@@ -46,7 +47,7 @@ class TestScenarios:
         assert resp_with_filter["total"] == 3
 
         resp_with_filter_2 = list_indicators(session, skip=0, limit=100, query={
-            "grouping_id": { "$in": ["A", "B"] }
+            "grouping_id": {"$in": ["A", "B"]}
         })
         indicators_with_filter_2 = resp_with_filter_2["records"]
         assert len(indicators_with_filter_2) == 5
@@ -64,3 +65,34 @@ class TestScenarios:
         resp = list_indicators(session=session, skip=0, limit=10)
         assert resp["total"] == 60000
         assert len(resp["records"]) == 10
+
+    def test_edit_indicator(self, session, cleanup_indicators_collection):
+        payload = create_indicator_form_payload(grouping_id="A", indicators=[example_indicator()])
+        create_new_indicator(session, payload=payload)
+        indicators = get_indicators_collection(session)
+        assert len(indicators) == 1
+        indicator = indicators[0]
+        assert indicator["indicator_value"] == "123.456.1.2"
+
+        new_payload = {
+            "indicator_id": indicator["indicator_id"],
+            "indicator_value": "1.2.3.4",
+        }
+        edit_indicator(session, payload=new_payload)
+        indicators_2 = list_indicators(session, skip=0, limit=100)
+        assert len(indicators_2["records"]) == 1
+        edited_indicator = indicators_2["records"][0]
+        assert edited_indicator["indicator_value"] == "1.2.3.4"
+
+    def test_delete_indicator(self, session, cleanup_indicators_collection):
+        payload = create_indicator_form_payload(grouping_id="A", indicators=[example_indicator()])
+        create_new_indicator(session, payload=payload)
+
+        indicators = get_indicators_collection(session)
+        assert len(indicators) == 1
+        indicator = indicators[0]
+
+        delete_indicator(session, indicator_id=indicator["indicator_id"])
+        indicators_2 = list_indicators(session, skip=0, limit=100)
+        assert len(indicators_2["records"]) == 0
+        assert indicators_2["total"] == 0
