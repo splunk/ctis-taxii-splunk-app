@@ -1613,14 +1613,13 @@
     prop-types "^15.8.1"
     react-hook-form "^7.52.1"
     uuid "^10.0.0"
-    wouter "^3.3.5"
 
-"@splunk/react-icons@^4.2.0", "@splunk/react-icons@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.npmjs.org/@splunk/react-icons/-/react-icons-4.6.0.tgz"
-  integrity sha512-BE09UwENIHC9yH7t2ixEnW5TBkhFU/y9816f4+SQoLBLSVm4gns2ga98mK50k00kiwyvmz4IS+ah1peZn3aEaw==
+"@splunk/react-icons@^4.2.0", "@splunk/react-icons@^4.6.0", "@splunk/react-icons@^4.7.0":
+  version "4.7.0"
+  resolved "https://registry.npmjs.org/@splunk/react-icons/-/react-icons-4.7.0.tgz"
+  integrity sha512-8ZdavfLCZMLjuA0mDQYaB5JzkIqE5S1GbwxF0WNhcJh//0CdV6kCp9MfSQUEX9rlD8ajOqlj4uW+roTT6tQe/w==
   dependencies:
-    "@splunk/ui-utils" "^1.6.0"
+    "@splunk/ui-utils" "^1.7.0"
     lodash "^4.17.14"
     prop-types "^15.6.2"
 
@@ -1722,10 +1721,10 @@
     lodash "^4.17.14"
     tinycolor2 "^1.4.1"
 
-"@splunk/ui-utils@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.npmjs.org/@splunk/ui-utils/-/ui-utils-1.6.0.tgz"
-  integrity sha512-6uMStGhXno5LluvKZtO34K1LO50T6m9hgoC2FvQ5KEtFLz1MID8XkW3vLjh4zcxU/7ntgQBAlteBLRqi38AF7A==
+"@splunk/ui-utils@^1.6.0", "@splunk/ui-utils@^1.7.0":
+  version "1.7.1"
+  resolved "https://registry.npmjs.org/@splunk/ui-utils/-/ui-utils-1.7.1.tgz"
+  integrity sha512-LSnlKMzUa2RlAZecGm9V8e+OtcceDU4ofxjrUjKMEfL5wp4AmgJrkB7LVepjOEmmrXLOHlEzJeoiAOacN4sJbQ==
   dependencies:
     keycode "^2.1.9"
     lodash "^4.17.21"
