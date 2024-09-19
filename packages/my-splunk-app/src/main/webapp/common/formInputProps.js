@@ -35,7 +35,7 @@ function generateSetValueHandler(setValue, fieldName) {
         // However for Splunk UI onChange events two values are passed: (event, {name, value})
         // See code in the examples: https://splunkui.splunk.com/Packages/react-ui/Select?section=examples
         const extraValue = extra?.value;
-        const value = extraValue !== null && extraValue !== undefined ? extraValue : e.target.value;
+        const value = (extraValue !== null && extraValue !== undefined) ? extraValue : e?.target?.value;
         console.log(e, extra, value)
         setValue(fieldName, value, {shouldValidate: true})
     };
