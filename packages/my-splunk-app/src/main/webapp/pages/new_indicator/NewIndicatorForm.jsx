@@ -29,6 +29,7 @@ import {IndicatorSubForm} from "./IndicatorSubForm";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
 import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
+import {ConfidenceField, GroupingIdField, TLPv1RatingField, ValidFromField} from "../../common/indicator_form/fields";
 
 const GROUPING_ID = "grouping_id";
 const CONFIDENCE = "confidence";
@@ -164,16 +165,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
-                    <SelectControlGroup label="Grouping ID" {...useFormInputProps(methods, GROUPING_ID)} options={optionsGroupings}/>
-                    <NumberControlGroup label="Confidence" {...useFormInputProps(methods, CONFIDENCE)} max={100} min={0}
-                                        step={1}/>
-                    <SelectControlGroup label="TLP v1.0 Rating" {...useFormInputProps(methods, TLP_RATING)} options={[
-                        {label: "RED", value: "RED"},
-                        {label: "AMBER", value: "AMBER"},
-                        {label: "GREEN", value: "GREEN"},
-                        {label: "WHITE", value: "WHITE"}
-                    ]}/>
-                    <DatetimeControlGroup label="Valid From (UTC)" {...useFormInputProps(methods, VALID_FROM)}/>
+                    <GroupingIdField {...useFormInputProps(methods, GROUPING_ID)} options={optionsGroupings}/>
+                    <ConfidenceField {...useFormInputProps(methods, CONFIDENCE)}/>
+                    <TLPv1RatingField {...useFormInputProps(methods, TLP_RATING)}/>
+                    <ValidFromField {...useFormInputProps(methods, VALID_FROM)}/>
                 </section>
                 <Divider/>
                 {fields.map((field, index) => {
