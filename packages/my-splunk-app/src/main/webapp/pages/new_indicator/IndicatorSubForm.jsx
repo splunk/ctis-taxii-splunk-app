@@ -2,7 +2,6 @@ import {useFormContext} from "react-hook-form";
 import React, {useEffect, useState} from "react";
 import {usePatternSuggester} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
-import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import Button from "@splunk/react-ui/Button";
 import Divider from "@splunk/react-ui/Divider";
 import styled from "styled-components";
@@ -12,12 +11,12 @@ import P from "@splunk/react-ui/Paragraph";
 import {variables} from '@splunk/themes';
 import Switch from "@splunk/react-ui/Switch";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-import {useFormInputProps} from "../../common/formInputProps";
 import {
     IndicatorCategoryField,
     IndicatorDescriptionField,
     IndicatorNameField,
     IndicatorValueField,
+    SplunkFieldNameDropdown,
     StixPatternField
 } from "../../common/indicator_form/fields";
 import {useFieldWatchesStateValue} from "../../common/utils";
@@ -46,6 +45,7 @@ export const IndicatorSubForm = ({
                                      removeSelf,
                                      submissionErrors
                                  }) => {
+    // It is assumed that this subform is used within a FormProvider
     const formMethods = useFormContext();
     const {register, setValue, watch} = formMethods;
     const splunkFields = Object.keys(splunkEvent || {});
@@ -99,14 +99,14 @@ export const IndicatorSubForm = ({
             </CustomControlGroup>
         }
         {splunkEvent && toggleShowSplunkFieldDropdown &&
-            <SelectControlGroup label="Splunk Field Name" {...useFormInputProps(formMethods, fieldSplunkFieldName)}
-                                options={splunkFieldDropdownOptions}/>
+            <SplunkFieldNameDropdown fieldName={fieldSplunkFieldName} options={splunkFieldDropdownOptions}/>
         }
-        <IndicatorValueField fieldName={fieldIndicatorValue} formMethods={formMethods}/>
-        <IndicatorCategoryField options={indicatorCategories} fieldName={fieldIndicatorCategory} formMethods={formMethods}/>
-        <StixPatternField suggestedPattern={suggestedPattern} fieldName={fieldStixPattern} formMethods={formMethods}/>
-        <IndicatorNameField fieldName={fieldIndicatorName} formMethods={formMethods}/>
-        <IndicatorDescriptionField fieldName={fieldIndicatorDescription} formMethods={formMethods}/>
+        <IndicatorValueField fieldName={fieldIndicatorValue}/>
+        <IndicatorCategoryField options={indicatorCategories} fieldName={fieldIndicatorCategory}/>
+        <StixPatternField suggestedPattern={suggestedPattern} fieldName={fieldStixPattern}
+                          setValue={formMethods.setValue}/>
+        <IndicatorNameField fieldName={fieldIndicatorName}/>
+        <IndicatorDescriptionField fieldName={fieldIndicatorDescription}/>
         <Divider/>
     </section>
 }

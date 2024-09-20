@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import React, {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
+import {FormProvider, useForm} from "react-hook-form";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import {useFormInputProps} from "./formInputProps";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
@@ -22,6 +22,7 @@ import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
+import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};
@@ -75,7 +76,7 @@ export function Form({existingGrouping}) {
         label: `${identity.name} (${identity.identity_id})`,
         value: identity.identity_id
     })), [identities]);
-    useEffect( () => {
+    useEffect(() => {
         getIdentities(0, 0, (resp) => {
             setIdentities(resp.records);
         }, (error) => {
@@ -97,40 +98,39 @@ export function Form({existingGrouping}) {
     }, [formState]);
 
     return (
-        <MyForm onSubmit={handleSubmit(onSubmit)}>
-            <Heading>{title}</Heading>
-            <section>
-                {submissionError && <Message appearance="fill" type="error">
-                    {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
-                    {submissionError?.error && <code>{submissionError.error.toString()}</code>}
-                </Message>}
-                {existingGrouping && <TextControlGroup disabled
-                                                       label="Grouping ID" {...useFormInputProps(methods, FORM_FIELD_GROUPING_ID)}/>}
-                <TextControlGroup label="Name" {...useFormInputProps(methods, FORM_FIELD_NAME)}/>
-                <TextAreaControlGroup label="Description" {...useFormInputProps(methods, FORM_FIELD_DESCRIPTION)}/>
-                <SelectControlGroup label="Context" {...useFormInputProps(methods, FORM_FIELD_CONTEXT)}
-                                    options={GROUPING_CONTEXTS}/>
-                <SelectControlGroup label="Created by" {...useFormInputProps(methods, FORM_FIELD_CREATED_BY_REF)}
-                                    options={optionsIdentities}/>
-                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                              label={existingGrouping ? "Edit Grouping" : "Create Grouping"}/>
-            </section>
-            <Modal open={submitSuccess}>
-                <Modal.Header
-                    title={submissionSuccessModalTitle}
-                />
-                <Modal.Body>
-                    <GoToGroupingsButton/>
-                </Modal.Body>
-            </Modal>
-            <CollapsiblePanel title="Debug info">
-                <div style={{color: 'red'}}>
-                    <code>
-                        {JSON.stringify(formState.errors)}
-                    </code>
-                </div>
-            </CollapsiblePanel>
-        </MyForm>
+        <FormProvider {...methods}>
+            <MyForm onSubmit={handleSubmit(onSubmit)}>
+                <Heading>{title}</Heading>
+                <section>
+                    {submissionError && <Message appearance="fill" type="error">
+                        {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
+                        {submissionError?.error && <code>{submissionError.error.toString()}</code>}
+                    </Message>}
+                    {existingGrouping && <GroupingIdField disabled fieldName={FORM_FIELD_GROUPING_ID}/>}
+                    <NameField fieldName={FORM_FIELD_NAME}/>
+                    <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
+                    <ContextField options={GROUPING_CONTEXTS} fieldName={FORM_FIELD_CONTEXT}/>
+                    <CreatedByField fieldName={FORM_FIELD_CREATED_BY_REF} options={optionsIdentities}/>
+                    <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
+                                  label={existingGrouping ? "Edit Grouping" : "Create Grouping"}/>
+                </section>
+                <Modal open={submitSuccess}>
+                    <Modal.Header
+                        title={submissionSuccessModalTitle}
+                    />
+                    <Modal.Body>
+                        <GoToGroupingsButton/>
+                    </Modal.Body>
+                </Modal>
+                <CollapsiblePanel title="Debug info">
+                    <div style={{color: 'red'}}>
+                        <code>
+                            {JSON.stringify(formState.errors)}
+                        </code>
+                    </div>
+                </CollapsiblePanel>
+            </MyForm>
+        </FormProvider>
     )
 }
 

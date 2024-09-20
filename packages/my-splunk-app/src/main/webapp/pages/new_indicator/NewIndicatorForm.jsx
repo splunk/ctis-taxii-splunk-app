@@ -1,9 +1,4 @@
-import {
-    getGroupings,
-    getIdentities,
-    listIndicatorCategories,
-    postCreateIndicator
-} from "@splunk/my-react-component/src/ApiClient";
+import {getGroupings, listIndicatorCategories, postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
 import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
@@ -18,11 +13,6 @@ import {variables} from '@splunk/themes';
 
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
-import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGroup";
-import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
-
-import {useFormInputProps} from "../../common/formInputProps";
 
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import {IndicatorSubForm} from "./IndicatorSubForm";
@@ -58,7 +48,7 @@ const HorizontalButtonLayout = styled.div`
 `
 
 // TODO: change this to use a single object with keys as param
-const newIndicatorObject = ({ splunk_field_name = '', indicator_value = '' } = {}) => ({
+const newIndicatorObject = ({splunk_field_name = '', indicator_value = ''} = {}) => ({
     splunk_field_name: splunk_field_name,
     indicator_value: indicator_value,
     indicator_category: '',
@@ -151,7 +141,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         label: `${grouping.name} (${grouping.grouping_id})`,
         value: grouping.grouping_id
     })), [groupings]);
-    useEffect( () => {
+    useEffect(() => {
         getGroupings(0, 0, (resp) => {
             setGroupings(resp.records);
         }, (error) => {
@@ -165,10 +155,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
-                    <GroupingIdField {...useFormInputProps(methods, GROUPING_ID)} options={optionsGroupings}/>
-                    <ConfidenceField {...useFormInputProps(methods, CONFIDENCE)}/>
-                    <TLPv1RatingField {...useFormInputProps(methods, TLP_RATING)}/>
-                    <ValidFromField {...useFormInputProps(methods, VALID_FROM)}/>
+                    <GroupingIdField fieldName={GROUPING_ID} options={optionsGroupings}/>
+                    <ConfidenceField fieldName={CONFIDENCE}/>
+                    <TLPv1RatingField fieldName={TLP_RATING}/>
+                    <ValidFromField fieldName={VALID_FROM}/>
                 </section>
                 <Divider/>
                 {fields.map((field, index) => {
@@ -183,7 +173,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     <Button icon={<PlusCircle/>} inline={false} label='Add Another Indicator'
                             onClick={() => append(newIndicatorObject())}/>
                     <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                  label={`Create Indicators (${indicators.length})`} />
+                                  label={`Create Indicators (${indicators.length})`}/>
                 </HorizontalButtonLayout>
 
                 <CollapsiblePanel title="Debug info">

@@ -1,3 +1,6 @@
+import {useFormContext} from "react-hook-form";
+import {useEffect, useState} from "react";
+
 function findErrorMessage(validationObject, refName) {
     // Iterate over each key in the flat validation object
     for (let key in validationObject) {
@@ -41,14 +44,21 @@ function generateSetValueHandler(setValue, fieldName) {
     };
 }
 
-export const useFormInputProps = (formMethods, fieldName) => {
-    const {formState, watch, setValue} = formMethods;
-    const {errors} = formState;
-    const error = findErrorMessage(errors, fieldName);
-    return {
-        help: error,
-        error: !!error,
-        onChange: generateSetValueHandler(setValue, fieldName),
-        value: watch(fieldName)
-    }
+export const useFormInputProps = (fieldName) => {
+    const methodsViaHook = useFormContext();
+    const [returnProps, setReturnProps] = useState({});
+    useEffect(() => {
+        if(methodsViaHook !== null){
+            const {formState, watch, setValue} = methodsViaHook;
+            const {errors} = formState;
+            const error = findErrorMessage(errors, fieldName);
+            setReturnProps({
+                help: error,
+                error: !!error,
+                onChange: generateSetValueHandler(setValue, fieldName),
+                value: watch(fieldName)
+            });
+        }
+    }, [methodsViaHook]);
+    return returnProps;
 }

@@ -1,16 +1,8 @@
 import styled from "styled-components";
 import React, {useEffect} from "react";
-import {useForm} from "react-hook-form";
-import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
-import {useFormInputProps} from "./formInputProps";
-import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
+import {FormProvider, useForm} from "react-hook-form";
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
-import {
-    getIdentity,
-    postCreateIdentity,
-    editIdentity,
-    useGetRecord
-} from "@splunk/my-react-component/src/ApiClient";
+import {editIdentity, getIdentity, postCreateIdentity, useGetRecord} from "@splunk/my-react-component/src/ApiClient";
 import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
@@ -20,6 +12,7 @@ import {useOnFormSubmit} from "./formSubmit";
 import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
+import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fields";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};
@@ -79,37 +72,37 @@ export function Form({existingIdentity}) {
     }, [formState]);
 
     return (
-        <MyForm onSubmit={handleSubmit(onSubmit)}>
-            <Heading>{title}</Heading>
-            <section>
-                {submissionError && <Message appearance="fill" type="error">
-                    {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
-                    {submissionError?.error && <code>{submissionError.error.toString()}</code>}
-                </Message>}
-                {existingIdentity && <TextControlGroup disabled
-                                                       label="Identity ID" {...useFormInputProps(methods, FORM_FIELD_IDENTITY_ID)}/>}
-                <TextControlGroup label="Name" {...useFormInputProps(methods, FORM_FIELD_NAME)}/>
-                <SelectControlGroup label="Identity Class" {...useFormInputProps(methods, FORM_FIELD_IDENTITY_CLASS)}
-                                    options={IDENTITY_CLASSES}/>
-                <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                              label={existingIdentity ? "Edit Identity" : "Create Identity"}/>
-            </section>
-            <Modal open={submitSuccess}>
-                <Modal.Header
-                    title={submissionSuccessModalTitle}
-                />
-                <Modal.Body>
-                    <GotoIdentitiesPageButton/>
-                </Modal.Body>
-            </Modal>
-            <CollapsiblePanel title="Debug info">
-                <div style={{color: 'red'}}>
-                    <code>
-                        {JSON.stringify(formState.errors)}
-                    </code>
-                </div>
-            </CollapsiblePanel>
-        </MyForm>
+        <FormProvider {...methods}>
+            <MyForm onSubmit={handleSubmit(onSubmit)}>
+                <Heading>{title}</Heading>
+                <section>
+                    {submissionError && <Message appearance="fill" type="error">
+                        {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
+                        {submissionError?.error && <code>{submissionError.error.toString()}</code>}
+                    </Message>}
+                    {existingIdentity && <IdentityIdField disabled fieldName={FORM_FIELD_IDENTITY_ID}/>}
+                    <NameField fieldName={FORM_FIELD_NAME}/>
+                    <IdentityClassField fieldName={FORM_FIELD_IDENTITY_CLASS} options={IDENTITY_CLASSES}/>
+                    <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
+                                  label={existingIdentity ? "Edit Identity" : "Create Identity"}/>
+                </section>
+                <Modal open={submitSuccess}>
+                    <Modal.Header
+                        title={submissionSuccessModalTitle}
+                    />
+                    <Modal.Body>
+                        <GotoIdentitiesPageButton/>
+                    </Modal.Body>
+                </Modal>
+                <CollapsiblePanel title="Debug info">
+                    <div style={{color: 'red'}}>
+                        <code>
+                            {JSON.stringify(formState.errors)}
+                        </code>
+                    </div>
+                </CollapsiblePanel>
+            </MyForm>
+        </FormProvider>
     )
 }
 
