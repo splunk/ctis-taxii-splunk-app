@@ -29,13 +29,14 @@ export function ValidFromField({...props}) {
     return <DatetimeControlGroup label="Valid From (UTC)" {...props}/>
 }
 
-export function IndicatorValueField({...props}) {
-    return <TextControlGroup label="Indicator Value" {...props} />
+export function IndicatorValueField({fieldName, formMethods, ...props}) {
+    return <TextControlGroup label="Indicator Value" {...useFormInputProps(formMethods, fieldName)} {...props} />
 }
 
-export function IndicatorCategoryField({options, ...props}) {
+export function IndicatorCategoryField({formMethods, fieldName, options, ...props}) {
     return <SelectControlGroup label="Indicator Category"
                                options={options}
+                               {...useFormInputProps(formMethods, fieldName)}
                                {...props}/>
 }
 

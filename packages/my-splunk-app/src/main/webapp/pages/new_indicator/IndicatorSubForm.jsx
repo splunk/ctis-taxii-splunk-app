@@ -1,6 +1,6 @@
 import {useFormContext} from "react-hook-form";
 import React, {useEffect, useState} from "react";
-import {usePatternSuggester, useFieldWatchesStateValue} from "./patternSuggester";
+import {usePatternSuggester} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import Button from "@splunk/react-ui/Button";
@@ -20,6 +20,7 @@ import {
     IndicatorValueField,
     StixPatternField
 } from "../../common/indicator_form/fields";
+import {useFieldWatchesStateValue} from "../../common/utils";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -101,9 +102,8 @@ export const IndicatorSubForm = ({
             <SelectControlGroup label="Splunk Field Name" {...useFormInputProps(formMethods, fieldSplunkFieldName)}
                                 options={splunkFieldDropdownOptions}/>
         }
-        <IndicatorValueField {...useFormInputProps(formMethods, fieldIndicatorValue)} />
-        <IndicatorCategoryField
-            options={indicatorCategories} {...useFormInputProps(formMethods, fieldIndicatorCategory)}/>
+        <IndicatorValueField fieldName={fieldIndicatorValue} formMethods={formMethods}/>
+        <IndicatorCategoryField options={indicatorCategories} fieldName={fieldIndicatorCategory} formMethods={formMethods}/>
         <StixPatternField suggestedPattern={suggestedPattern} fieldName={fieldStixPattern} formMethods={formMethods}/>
         <IndicatorNameField fieldName={fieldIndicatorName} formMethods={formMethods}/>
         <IndicatorDescriptionField fieldName={fieldIndicatorDescription} formMethods={formMethods}/>

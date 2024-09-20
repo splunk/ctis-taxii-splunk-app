@@ -25,11 +25,3 @@ export const usePatternSuggester = (indicatorCategory, indicatorValue) => {
     return {suggestedPattern};
 }
 
-export const useFieldWatchesStateValue = ({formMethods, fieldName, stateValue}) => {
-    const {setValue} = formMethods;
-    useEffect(() => {
-        if (stateValue) {
-            setValue(fieldName, stateValue, {shouldValidate: true});
-        }
-    }, [stateValue]);
-}

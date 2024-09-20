@@ -36,7 +36,7 @@ const StixPatternControlGroup = ({
 
     return (
         <CustomControlGroup controlsLayout='stack' label={label} help={help} error={error} {...rest}>
-            <TextArea value={value} onChange={onChange} error={error}/>
+            <TextArea spellCheck={false} value={value} onChange={onChange} error={error}/>
             {
                 (!value || valueIsDiff) && patternExists && suggestionText
             }
