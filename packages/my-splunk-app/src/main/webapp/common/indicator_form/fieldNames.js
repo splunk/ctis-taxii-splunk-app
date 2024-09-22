@@ -1,0 +1,10 @@
+export const FIELD_SPLUNK_FIELD_NAME = "splunk_field_name";
+export const FIELD_INDICATOR_VALUE = "indicator_value";
+export const FIELD_INDICATOR_CATEGORY = "indicator_category";
+export const FIELD_STIX_PATTERN = "stix_pattern";
+export const FIELD_INDICATOR_NAME = "name";
+export const FIELD_INDICATOR_DESCRIPTION = "description";
+export const FIELD_GROUPING_ID = "grouping_id";
+export const FIELD_CONFIDENCE = "confidence";
+export const FIELD_TLP_RATING = "tlp_v1_rating";
+export const FIELD_VALID_FROM = "valid_from";

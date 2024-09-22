@@ -19,13 +19,18 @@ import {IndicatorSubForm} from "./IndicatorSubForm";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
 import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
-import {ConfidenceField, GroupingIdField, TLPv1RatingField, ValidFromField} from "../../common/indicator_form/fields";
-
-const GROUPING_ID = "grouping_id";
-const CONFIDENCE = "confidence";
-const TLP_RATING = "tlp_v1_rating";
-const VALID_FROM = "valid_from";
-
+import {
+    ConfidenceField,
+    GroupingIdField,
+    TLPv1RatingField,
+    ValidFromField
+} from "../../common/indicator_form/formControls";
+import {
+    FIELD_CONFIDENCE,
+    FIELD_GROUPING_ID,
+    FIELD_TLP_RATING,
+    FIELD_VALID_FROM
+} from "../../common/indicator_form/fieldNames";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
@@ -80,10 +85,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const methods = useForm({
         mode: 'all',
         defaultValues: {
-            [GROUPING_ID]: null,
-            [CONFIDENCE]: 100,
-            [TLP_RATING]: "GREEN",
-            [VALID_FROM]: new Date().toISOString().slice(0, -1),
+            [FIELD_GROUPING_ID]: null,
+            [FIELD_CONFIDENCE]: 100,
+            [FIELD_TLP_RATING]: "GREEN",
+            [FIELD_VALID_FROM]: new Date().toISOString().slice(0, -1),
             indicators: [firstIndicator]
         }
     });
@@ -102,12 +107,12 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const [submissionErrors, setSubmissionErrors] = useState(null);
 
 
-    register(GROUPING_ID, {required: "Grouping ID is required."});
-    const groupingId = watch(GROUPING_ID);
+    register(FIELD_GROUPING_ID, {required: "Grouping ID is required."});
+    const groupingId = watch(FIELD_GROUPING_ID);
 
-    register(TLP_RATING, {required: "TLP Rating is required."});
-    register(CONFIDENCE, {required: "Confidence is required."});
-    register(VALID_FROM, {required: "Valid from is required."});
+    register(FIELD_TLP_RATING, {required: "TLP Rating is required."});
+    register(FIELD_CONFIDENCE, {required: "Confidence is required."});
+    register(FIELD_VALID_FROM, {required: "Valid from is required."});
 
     const onSubmit = async (data) => {
         console.log(data);
@@ -155,10 +160,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
-                    <GroupingIdField fieldName={GROUPING_ID} options={optionsGroupings}/>
-                    <ConfidenceField fieldName={CONFIDENCE}/>
-                    <TLPv1RatingField fieldName={TLP_RATING}/>
-                    <ValidFromField fieldName={VALID_FROM}/>
+                    <GroupingIdField fieldName={FIELD_GROUPING_ID} options={optionsGroupings}/>
+                    <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
+                    <TLPv1RatingField fieldName={FIELD_TLP_RATING}/>
+                    <ValidFromField fieldName={FIELD_VALID_FROM}/>
                 </section>
                 <Divider/>
                 {fields.map((field, index) => {

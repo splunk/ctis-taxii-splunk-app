@@ -1,6 +1,6 @@
 import {useFormContext} from "react-hook-form";
 import React, {useEffect, useState} from "react";
-import {usePatternSuggester} from "./patternSuggester";
+import {PatternSuggester} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
 import Button from "@splunk/react-ui/Button";
 import Divider from "@splunk/react-ui/Divider";
@@ -16,10 +16,9 @@ import {
     IndicatorDescriptionField,
     IndicatorNameField,
     IndicatorValueField,
-    SplunkFieldNameDropdown,
-    StixPatternField
-} from "../../common/indicator_form/fields";
-import {useFieldWatchesStateValue} from "../../common/utils";
+    SplunkFieldNameDropdown
+} from "../../common/indicator_form/formControls";
+import {FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION, FIELD_INDICATOR_CATEGORY, FIELD_INDICATOR_VALUE, FIELD_SPLUNK_FIELD_NAME, FIELD_STIX_PATTERN} from "../../common/indicator_form/fieldNames";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -50,12 +49,12 @@ export const IndicatorSubForm = ({
     const {register, setValue, watch} = formMethods;
     const splunkFields = Object.keys(splunkEvent || {});
 
-    const fieldSplunkFieldName = `indicators.${index}.splunk_field_name`;
-    const fieldIndicatorValue = `indicators.${index}.indicator_value`;
-    const fieldIndicatorCategory = `indicators.${index}.indicator_category`;
-    const fieldIndicatorName = `indicators.${index}.name`;
-    const fieldIndicatorDescription = `indicators.${index}.description`;
-    const fieldStixPattern = `indicators.${index}.stix_pattern`;
+    const fieldSplunkFieldName = `indicators.${index}.${FIELD_SPLUNK_FIELD_NAME}`;
+    const fieldIndicatorValue = `indicators.${index}.${FIELD_INDICATOR_VALUE}`;
+    const fieldIndicatorCategory = `indicators.${index}.${FIELD_INDICATOR_CATEGORY}`;
+    const fieldIndicatorName = `indicators.${index}.${FIELD_INDICATOR_NAME}`;
+    const fieldIndicatorDescription = `indicators.${index}.${FIELD_INDICATOR_DESCRIPTION}`;
+    const fieldStixPattern = `indicators.${index}.${FIELD_STIX_PATTERN}`;
 
     register(fieldSplunkFieldName);
     register(fieldIndicatorValue, {required: "Indicator Value is required."});
@@ -67,9 +66,6 @@ export const IndicatorSubForm = ({
     const splunkFieldName = watch(fieldSplunkFieldName);
     const indicatorValue = watch(fieldIndicatorValue);
     const indicatorCategory = watch(fieldIndicatorCategory);
-
-    const {suggestedPattern} = usePatternSuggester(indicatorCategory, indicatorValue);
-    useFieldWatchesStateValue({formMethods, fieldName: fieldStixPattern, stateValue: suggestedPattern});
 
     useEffect(() => {
         if (splunkEvent?.hasOwnProperty(splunkFieldName)) {
@@ -103,8 +99,8 @@ export const IndicatorSubForm = ({
         }
         <IndicatorValueField fieldName={fieldIndicatorValue}/>
         <IndicatorCategoryField options={indicatorCategories} fieldName={fieldIndicatorCategory}/>
-        <StixPatternField suggestedPattern={suggestedPattern} fieldName={fieldStixPattern}
-                          setValue={formMethods.setValue}/>
+        <PatternSuggester indicatorCategory={indicatorCategory} indicatorValue={indicatorValue}
+                          stixPatternFieldName={fieldStixPattern}/>
         <IndicatorNameField fieldName={fieldIndicatorName}/>
         <IndicatorDescriptionField fieldName={fieldIndicatorDescription}/>
         <Divider/>
