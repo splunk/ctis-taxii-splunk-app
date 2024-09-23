@@ -31,6 +31,11 @@ def validate_confidence(instance, attribute, value: int):
     if not 0 <= value <= 100:
         raise ValueError("confidence must be between 0 and 100")
 
+def validate_grouping_id(instance, attribute, value):
+    if not value:
+        raise ValueError("grouping_id must be provided")
+    if not value.startswith("grouping--"):
+        raise ValueError("grouping_id must start with 'grouping--'")
 
 @define(slots=False, kw_only=True)
 class IndicatorModelV1(BaseModelV1):
@@ -40,7 +45,7 @@ class IndicatorModelV1(BaseModelV1):
     def _indicator_id_default(self):
         return f"indicator--{uuid4()}"
 
-    grouping_id: str = field()
+    grouping_id: str = field(validator=[validate_grouping_id])
     splunk_field_name: Optional[str] = field(default=None)
     indicator_value: str = field()
 

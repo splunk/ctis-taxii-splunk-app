@@ -6,9 +6,10 @@ from cattrs import ClassValidationError, transform_error
 from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators
 from TA_CTIS_TAXII.package.bin.models.tlp_v1 import TLPv1
 
+GROUPING_ID = "grouping--184f5231-02f6-49e8-8230-b740f4b82331"
 SAMPLE_DICT = {
     "schema_version": 1,
-    "grouping_id": "A",
+    "grouping_id": GROUPING_ID,
     "indicator_id": "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59",
     "splunk_field_name": "src_ip",
     "indicator_value": "100.2.3.4",
@@ -31,7 +32,7 @@ def get_sample_dict():
 SAMPLE_DICT_NO_SPLUNK_RESERVED_FIELDS = {k: v for k, v in SAMPLE_DICT.items() if k not in ["_user", "_key"]}
 
 SAMPLE_INDICATOR_INSTANCE = IndicatorModelV1(
-    grouping_id="A",
+    grouping_id=GROUPING_ID,
     indicator_id="indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59",
     splunk_field_name="src_ip",
     indicator_value="1.2.3.4",
@@ -93,7 +94,7 @@ def test_from_valid_dict_with_splunk_reserved_fields():
     assert indicator.stix_pattern == "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '100.2.3.4']"
     assert indicator.tlp_v1_rating == TLPv1.WHITE
     assert indicator.confidence == 100
-    assert indicator.grouping_id == "A"
+    assert indicator.grouping_id == GROUPING_ID
     assert indicator.indicator_id == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
     assert indicator.splunk_field_name == "src_ip"
     assert indicator.indicator_value == "100.2.3.4"
@@ -105,7 +106,7 @@ def test_from_valid_dict_without_splunk_reserved_fields():
     indicator = indicator_converter.structure(as_dict, IndicatorModelV1)
     assert indicator.key is None
     assert indicator.user is None
-    assert indicator.grouping_id == "A"
+    assert indicator.grouping_id == GROUPING_ID
     assert indicator.splunk_field_name == "src_ip"
     assert indicator.indicator_value == "100.2.3.4"
 
@@ -115,7 +116,7 @@ def test_from_valid_dict_without_schema_version():
     del as_dict["schema_version"]
     indicator = indicator_converter.structure(as_dict, IndicatorModelV1)
     assert indicator.schema_version == 1, "Should set default version as 1"
-    assert indicator.grouping_id == "A"
+    assert indicator.grouping_id == GROUPING_ID
     assert indicator.splunk_field_name == "src_ip"
     assert indicator.indicator_value == "100.2.3.4"
 
@@ -147,7 +148,7 @@ def test_to_dict():
                "stix_pattern"] == "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '1.2.3.4']"
     assert as_dict["tlp_v1_rating"] == "GREEN"
     assert as_dict["confidence"] == 42
-    assert as_dict["grouping_id"] == "A"
+    assert as_dict["grouping_id"] == GROUPING_ID
     assert as_dict["indicator_id"] == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
     assert as_dict["splunk_field_name"] == "src_ip"
     assert as_dict["indicator_value"] == "1.2.3.4"
@@ -199,10 +200,17 @@ def test_validate_stix_pattern():
 
     assert "Invalid STIX pattern" in repr(exc_info.value)
 
+@pytest.mark.parametrize("grouping_id", ["", None, "invalid"])
+def test_validate_grouping_id(grouping_id):
+    indicator_json = get_sample_dict()
+    indicator_json["grouping_id"] = grouping_id
+    with pytest.raises(ClassValidationError) as exc_info:
+        _ = indicator_converter.structure(indicator_json, IndicatorModelV1)
+
 class TestHandleFormPayload:
     def test_should_handle_indicators_list(self):
         payload = {
-            "grouping_id": "A",
+            "grouping_id": GROUPING_ID,
             "confidence": 100,
             "tlp_v1_rating": "WHITE",
             "valid_from": "2024-08-14T23:09:21.290",
@@ -222,7 +230,7 @@ class TestHandleFormPayload:
         assert len(models) == 1
     def test_should_produce_detailed_errors(self):
         payload = {
-            "grouping_id": "A",
+            "grouping_id": GROUPING_ID,
             "confidence": 100,
             "tlp_v1_rating": "WHITE",
             "valid_from": "2024-08-14T23:09:21.290",
