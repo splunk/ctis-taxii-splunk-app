@@ -13,7 +13,7 @@ export {GroupingIdField} from "./GroupingsDropdown";
 
 
 export function SplunkFieldNameDropdown({fieldName, options, ...props}) {
-    return <SelectControlGroup label="Splunk Field Name" options={options}
+    return <SelectControlGroup label="Splunk Field" options={options}
                                {...useFormInputProps(fieldName)}
                                {...props}/>
 }

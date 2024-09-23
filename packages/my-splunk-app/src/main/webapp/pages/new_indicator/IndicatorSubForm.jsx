@@ -19,13 +19,13 @@ import {
     SplunkFieldNameDropdown
 } from "../../common/indicator_form/formControls";
 import {
-    FIELD_INDICATOR_NAME,
-    FIELD_INDICATOR_DESCRIPTION,
     FIELD_INDICATOR_CATEGORY,
+    FIELD_INDICATOR_DESCRIPTION,
+    FIELD_INDICATOR_NAME,
     FIELD_INDICATOR_VALUE,
+    FIELD_INDICATORS,
     FIELD_SPLUNK_FIELD_NAME,
-    FIELD_STIX_PATTERN,
-    FIELD_INDICATORS
+    FIELD_STIX_PATTERN
 } from "../../common/indicator_form/fieldNames";
 
 const HorizontalLayout = styled.div`
@@ -75,14 +75,19 @@ export const IndicatorSubForm = ({
     const indicatorValue = watch(fieldIndicatorValue);
     const indicatorCategory = watch(fieldIndicatorCategory);
 
+    const indexStartingAtOne = index + 1;
+    const splunkFieldDropdownOptions = splunkFields.map(field => ({
+        label: `${field} (${splunkEvent[field]})`,
+        value: field
+    }));
+    const [toggleShowSplunkFieldDropdown, setToggleShowSplunkFieldDropdown] = useState(splunkEvent != null);
+
     useEffect(() => {
-        if (splunkEvent?.hasOwnProperty(splunkFieldName)) {
+        if (splunkEvent?.hasOwnProperty(splunkFieldName) && toggleShowSplunkFieldDropdown) {
             setValue(fieldIndicatorValue, splunkEvent[splunkFieldName], {shouldValidate: true});
         }
-    }, [splunkFieldName]);
-    const indexStartingAtOne = index + 1;
-    const splunkFieldDropdownOptions = splunkFields.map(field => ({label: field, value: field}));
-    const [toggleShowSplunkFieldDropdown, setToggleShowSplunkFieldDropdown] = useState(true);
+    }, [splunkFieldName, toggleShowSplunkFieldDropdown]);
+
     return <section key={field.id}>
         <HorizontalLayout>
             <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
@@ -105,7 +110,9 @@ export const IndicatorSubForm = ({
         {splunkEvent && toggleShowSplunkFieldDropdown &&
             <SplunkFieldNameDropdown fieldName={fieldSplunkFieldName} options={splunkFieldDropdownOptions}/>
         }
-        <IndicatorValueField fieldName={fieldIndicatorValue}/>
+        {
+            !toggleShowSplunkFieldDropdown && <IndicatorValueField fieldName={fieldIndicatorValue}/>
+        }
         <IndicatorCategoryField options={indicatorCategories} fieldName={fieldIndicatorCategory}/>
         <PatternSuggester indicatorCategory={indicatorCategory} indicatorValue={indicatorValue}
                           stixPatternFieldName={fieldStixPattern}/>
