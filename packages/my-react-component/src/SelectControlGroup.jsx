@@ -3,14 +3,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import {CustomControlGroup} from "./CustomControlGroup";
 
-const SelectControlGroup = ({label, value, onChange, error, help, options}) => {
+const SelectControlGroup = ({label, value, onChange, error, help, options, disabled = false, loading = false}) => {
+    const loadingSelect = <Select disabled={true} defaultValue={"loading"}>
+        <Select.Option label={"Loading..."} value={"loading"}/>
+    </Select>;
     return (
         <CustomControlGroup label={label} help={help} error={error}>
-            <Select value={value} onChange={onChange} error={error}>
-                {options.map(option => (
-                    <Select.Option key={option.value} label={option.label} value={option.value}/>
-                ))}
-            </Select>
+            {loading ? loadingSelect :
+                <Select disabled={disabled} value={value} onChange={onChange} error={error}>
+                    {options.map(option => (
+                        <Select.Option key={option.value} label={option.label} value={option.value}/>
+                    ))}
+                </Select>}
         </CustomControlGroup>
     );
 }

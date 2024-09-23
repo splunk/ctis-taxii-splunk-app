@@ -8,9 +8,9 @@ import {useFormInputProps} from "../formInputProps";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import {useFormContext} from "react-hook-form";
 
-export function GroupingIdField({fieldName, ...props}) {
-    return <SelectControlGroup label="Grouping ID" {...useFormInputProps(fieldName)} {...props}/>
-}
+
+export {GroupingIdField} from "./GroupingsDropdown";
+
 
 export function SplunkFieldNameDropdown({fieldName, options, ...props}) {
     return <SelectControlGroup label="Splunk Field Name" options={options}

@@ -1,4 +1,4 @@
-import {getGroupings, listIndicatorCategories, postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
+import {listIndicatorCategories, postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
 import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
@@ -141,18 +141,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }, console.error);
     }, []);
 
-    const [groupings, setGroupings] = useState([]);
-    const optionsGroupings = useMemo(() => groupings.map((grouping) => ({
-        label: `${grouping.name} (${grouping.grouping_id})`,
-        value: grouping.grouping_id
-    })), [groupings]);
-    useEffect(() => {
-        getGroupings(0, 0, (resp) => {
-            setGroupings(resp.records);
-        }, (error) => {
-            console.error(error);
-        }).then();
-    }, []);
 
     return (
         <FormProvider {...methods}>
@@ -160,7 +148,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
-                    <GroupingIdField fieldName={FIELD_GROUPING_ID} options={optionsGroupings}/>
+                    <GroupingIdField fieldName={FIELD_GROUPING_ID}/>
                     <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
                     <TLPv1RatingField fieldName={FIELD_TLP_RATING}/>
                     <ValidFromField fieldName={FIELD_VALID_FROM}/>

@@ -27,10 +27,11 @@ function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) 
             if (!resp.ok) {
                 errorHandler(resp);
             } else {
-                resp.json().then(successHandler);
+                return resp.json();
             }
         })
-        .catch(errorHandler)
+        .then(successHandler)
+        .catch(errorHandler);
 }
 
 function getData({endpoint, queryParams}, successHandler, errorHandler) {
@@ -49,9 +50,10 @@ function getData({endpoint, queryParams}, successHandler, errorHandler) {
             if (!resp.ok) {
                 errorHandler(resp);
             } else {
-                resp.json().then(successHandler);
+                return resp.json();
             }
         })
+        .then(successHandler)
         .catch(errorHandler)
 }
 
@@ -133,6 +135,33 @@ export function getGroupings(skip, limit, successHandler, errorHandler) {
             skip, limit
         }
     }, successHandler, errorHandler)
+}
+
+async function getAllRecords(endpoint, successHandler, errorHandler) {
+    const allRecords = [];
+    const pageSize = 100;
+    let offset = 0;
+    let hasMore = true;
+    while(hasMore){
+        await getData({
+            endpoint,
+            queryParams: {
+                skip: offset,
+                limit: pageSize
+            }
+        }, (resp) => {
+            allRecords.push(...resp.records);
+            offset += pageSize;
+            if (resp.records.length < pageSize) {
+                hasMore = false;
+            }
+        }, errorHandler);
+    }
+    successHandler(allRecords);
+}
+
+export async function getAllGroupings(successHandler, errorHandler) {
+    return getAllRecords('list-groupings', successHandler, errorHandler);
 }
 
 export function getIdentities(skip, limit, successHandler, errorHandler) {
