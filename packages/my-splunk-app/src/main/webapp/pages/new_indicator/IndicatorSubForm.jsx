@@ -25,7 +25,8 @@ import {
     FIELD_INDICATOR_VALUE,
     FIELD_INDICATORS,
     FIELD_SPLUNK_FIELD_NAME,
-    FIELD_STIX_PATTERN
+    FIELD_STIX_PATTERN,
+    REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
 
 const HorizontalLayout = styled.div`
@@ -64,12 +65,12 @@ export const IndicatorSubForm = ({
     const fieldIndicatorDescription = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_DESCRIPTION}`;
     const fieldStixPattern = `${FIELD_INDICATORS}.${index}.${FIELD_STIX_PATTERN}`;
 
-    register(fieldSplunkFieldName);
-    register(fieldIndicatorValue, {required: "Indicator Value is required."});
-    register(fieldIndicatorCategory, {required: "Indicator Category is required."});
-    register(fieldStixPattern, {required: "STIX Pattern is required."});
-    register(fieldIndicatorName, {required: "Indicator Name is required."});
-    register(fieldIndicatorDescription, {required: "Indicator Description is required."});
+    register(fieldSplunkFieldName, REGISTER_FIELD_OPTIONS[FIELD_SPLUNK_FIELD_NAME]);
+    register(fieldIndicatorValue, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_VALUE]);
+    register(fieldIndicatorCategory, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_CATEGORY]);
+    register(fieldStixPattern, REGISTER_FIELD_OPTIONS[FIELD_STIX_PATTERN]);
+    register(fieldIndicatorName, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_NAME]);
+    register(fieldIndicatorDescription, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_DESCRIPTION]);
 
     const splunkFieldName = watch(fieldSplunkFieldName);
     const indicatorValue = watch(fieldIndicatorValue);

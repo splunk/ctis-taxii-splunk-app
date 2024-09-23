@@ -1,5 +1,4 @@
 import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
-
 import React, {useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {FormProvider, useFieldArray, useForm} from "react-hook-form";
@@ -10,7 +9,6 @@ import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
 import PlusCircle from '@splunk/react-icons/PlusCircle';
 import {variables} from '@splunk/themes';
-
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 
@@ -30,7 +28,8 @@ import {
     FIELD_GROUPING_ID,
     FIELD_INDICATORS,
     FIELD_TLP_RATING,
-    FIELD_VALID_FROM
+    FIELD_VALID_FROM,
+    REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
 import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
 
@@ -108,10 +107,9 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const [submissionErrors, setSubmissionErrors] = useState(null);
 
 
-    register(FIELD_GROUPING_ID, {required: "Grouping ID is required."});
-    register(FIELD_TLP_RATING, {required: "TLP Rating is required."});
-    register(FIELD_CONFIDENCE, {required: "Confidence is required."});
-    register(FIELD_VALID_FROM, {required: "Valid from is required."});
+    for (const fieldName of [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM]) {
+        register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]);
+    }
 
     const [indicators, groupingId] = watch([FIELD_INDICATORS, FIELD_GROUPING_ID]);
 
