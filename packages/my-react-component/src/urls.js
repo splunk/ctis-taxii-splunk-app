@@ -11,7 +11,12 @@ export const VIEW_GROUPINGS_PAGE = createURL(`/app/${app}/groupings`);
 export const NEW_GROUPING_PAGE = createURL(`/app/${app}/new_grouping`);
 
 export const viewIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
-    search: indicatorId,
+    indicator_id: indicatorId,
+});
+
+export const editIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
+    action: 'edit',
+    indicator_id: indicatorId,
 });
 
 export const editIdentityPage = (identityId) => createURL(`/app/${app}/identities`, {

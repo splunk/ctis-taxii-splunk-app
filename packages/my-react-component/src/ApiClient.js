@@ -232,6 +232,17 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
     return {record, loading, error};
 }
 
+export function getIndicator({indicatorId, successHandler, errorHandler}) {
+    return getExactlyOneRecord({
+        query: {
+            "indicator_id": indicatorId
+        },
+        endpoint: 'list-indicators',
+        successHandler,
+        errorHandler
+    })
+}
+
 export function getIdentity({identityId, successHandler, errorHandler}) {
     return getExactlyOneRecord({
         query: {

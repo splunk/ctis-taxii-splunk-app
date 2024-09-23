@@ -10,16 +10,18 @@ import Plus from '@splunk/react-icons/Plus';
 import Pencil from '@splunk/react-icons/Pencil';
 import {app} from '@splunk/splunk-utils/config';
 import {createURL} from '@splunk/splunk-utils/url';
-import {StyledGreeting} from './styles';
 import {deleteIndicator, getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
-import {NEW_INDICATOR_PAGE} from "@splunk/my-react-component/src/urls";
+import {editIndicator, NEW_INDICATOR_PAGE} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
+import Heading from "@splunk/react-ui/Heading";
+import {getUrlQueryParams} from "../../common/queryParams";
+import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 
 
 const SEARCH_FIELD_OPTIONS = [
@@ -32,7 +34,7 @@ const SEARCH_FIELD_OPTIONS = [
 function IndicatorActionButtons({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
     return (<div>
-        <Button icon={<Pencil/>} label="Edit" appearance="secondary"/>
+        <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editIndicator(row.indicator_id)}/>
         <DeleteButton onClick={handleRequestOpen}/>
         <DeleteModal open={open} onRequestClose={handleRequestClose}
                      deleteEndpointFunction={deleteIndicator}
@@ -43,10 +45,10 @@ function IndicatorActionButtons({row}) {
 }
 
 const mappingOfColumnNameToCellValue = [
-    {columnName: "Indicator ID", getCellContent: (row) => row.indicator_id},
-    {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
     {columnName: "Name", getCellContent: (row) => row.name},
     {columnName: "STIX Pattern", getCellContent: (row) => row.stix_pattern},
+    {columnName: "Indicator ID", getCellContent: (row) => row.indicator_id},
+    {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
     {columnName: "Actions", getCellContent: (row) => <IndicatorActionButtons row={row}/>},
 ]
 
@@ -64,7 +66,6 @@ const expansionFieldNameToCellValue = {
     "Description": (row) => row?.description || "No description provided",
     "STIX Pattern": (row) => row.stix_pattern,
     "Valid From (UTC)": (row) => row.valid_from,
-    // "Groupings": (row) => <ListOfLinks titleToUrl={groupingIdsToMappingOfTitleToUrl(row.referenced_in_groupings)}/>,
     "Indicator Category": (row) => row.indicator_category,
     "Indicator Value": (row) => row.indicator_value,
     "TLP Rating": (row) => row.tlp_v1_rating,
@@ -84,10 +85,10 @@ function renderDataTable({records, loading, error}) {
     );
 }
 
-function MyStyledContainer() {
+function ListIndicators() {
     return (
-        <AppContainer>
-            <StyledGreeting>Indicators of Compromise (IoC)</StyledGreeting>
+        <>
+            <Heading level={1}>Indicators of Compromise (IoC)</Heading>
             <div>
                 {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
                 <Button icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
@@ -98,13 +99,26 @@ function MyStyledContainer() {
             <PaginatedDataTable renderData={renderDataTable} fetchData={getIndicators} onError={(e) => {
                 createErrorToast(e);
             }}/>
-        </AppContainer>
+        </>
     );
+}
+
+function Router() {
+    const queryParams = getUrlQueryParams();
+    if (queryParams.has('indicator_id')) {
+        const indicatorId = queryParams.get('indicator_id');
+        const editMode = queryParams.has('action', 'edit');
+        return <ViewOrEditIndicator editMode={editMode} indicatorId={indicatorId}/>
+    } else {
+        return (
+            <ListIndicators/>
+        );
+    }
 }
 
 getUserTheme()
     .then((theme) => {
-        layout(<MyStyledContainer/>,
+        layout(<AppContainer><Router/></AppContainer>,
             {theme,}
         );
     })
