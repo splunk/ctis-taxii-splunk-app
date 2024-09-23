@@ -8,3 +8,4 @@ export const FIELD_GROUPING_ID = "grouping_id";
 export const FIELD_CONFIDENCE = "confidence";
 export const FIELD_TLP_RATING = "tlp_v1_rating";
 export const FIELD_VALID_FROM = "valid_from";
+export const FIELD_INDICATORS = "indicators";

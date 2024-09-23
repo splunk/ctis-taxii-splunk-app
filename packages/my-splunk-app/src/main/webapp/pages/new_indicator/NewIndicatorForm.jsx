@@ -1,6 +1,6 @@
-import {listIndicatorCategories, postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
+import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {FormProvider, useFieldArray, useForm} from "react-hook-form";
 import styled from "styled-components";
@@ -28,9 +28,11 @@ import {
 import {
     FIELD_CONFIDENCE,
     FIELD_GROUPING_ID,
+    FIELD_INDICATORS,
     FIELD_TLP_RATING,
     FIELD_VALID_FROM
 } from "../../common/indicator_form/fieldNames";
+import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
@@ -89,18 +91,17 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             [FIELD_CONFIDENCE]: 100,
             [FIELD_TLP_RATING]: "GREEN",
             [FIELD_VALID_FROM]: new Date().toISOString().slice(0, -1),
-            indicators: [firstIndicator]
+            [FIELD_INDICATORS]: [firstIndicator]
         }
     });
     const {watch, register, trigger, handleSubmit, formState, control} = methods;
     const {fields, append, remove} = useFieldArray({
         control,
-        name: 'indicators',
+        name: FIELD_INDICATORS,
         rules: {
             required: "At least one indicator is required."
         }
     });
-    const indicators = watch('indicators');
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
@@ -108,11 +109,11 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
 
 
     register(FIELD_GROUPING_ID, {required: "Grouping ID is required."});
-    const groupingId = watch(FIELD_GROUPING_ID);
-
     register(FIELD_TLP_RATING, {required: "TLP Rating is required."});
     register(FIELD_CONFIDENCE, {required: "Confidence is required."});
     register(FIELD_VALID_FROM, {required: "Valid from is required."});
+
+    const [indicators, groupingId] = watch([FIELD_INDICATORS, FIELD_GROUPING_ID]);
 
     const onSubmit = async (data) => {
         console.log(data);
@@ -133,14 +134,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }
     }
 
-    const [indicatorCategories, setIndicatorCategories] = useState([]);
-    useEffect(() => {
-        listIndicatorCategories(null, null, (resp) => {
-            console.log(resp);
-            setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
-        }, console.error);
-    }, []);
-
+    const {indicatorCategories} = useIndicatorCategories();
 
     return (
         <FormProvider {...methods}>

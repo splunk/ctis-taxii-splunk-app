@@ -18,7 +18,15 @@ import {
     IndicatorValueField,
     SplunkFieldNameDropdown
 } from "../../common/indicator_form/formControls";
-import {FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION, FIELD_INDICATOR_CATEGORY, FIELD_INDICATOR_VALUE, FIELD_SPLUNK_FIELD_NAME, FIELD_STIX_PATTERN} from "../../common/indicator_form/fieldNames";
+import {
+    FIELD_INDICATOR_NAME,
+    FIELD_INDICATOR_DESCRIPTION,
+    FIELD_INDICATOR_CATEGORY,
+    FIELD_INDICATOR_VALUE,
+    FIELD_SPLUNK_FIELD_NAME,
+    FIELD_STIX_PATTERN,
+    FIELD_INDICATORS
+} from "../../common/indicator_form/fieldNames";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -49,12 +57,12 @@ export const IndicatorSubForm = ({
     const {register, setValue, watch} = formMethods;
     const splunkFields = Object.keys(splunkEvent || {});
 
-    const fieldSplunkFieldName = `indicators.${index}.${FIELD_SPLUNK_FIELD_NAME}`;
-    const fieldIndicatorValue = `indicators.${index}.${FIELD_INDICATOR_VALUE}`;
-    const fieldIndicatorCategory = `indicators.${index}.${FIELD_INDICATOR_CATEGORY}`;
-    const fieldIndicatorName = `indicators.${index}.${FIELD_INDICATOR_NAME}`;
-    const fieldIndicatorDescription = `indicators.${index}.${FIELD_INDICATOR_DESCRIPTION}`;
-    const fieldStixPattern = `indicators.${index}.${FIELD_STIX_PATTERN}`;
+    const fieldSplunkFieldName = `${FIELD_INDICATORS}.${index}.${FIELD_SPLUNK_FIELD_NAME}`;
+    const fieldIndicatorValue = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_VALUE}`;
+    const fieldIndicatorCategory = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_CATEGORY}`;
+    const fieldIndicatorName = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_NAME}`;
+    const fieldIndicatorDescription = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_DESCRIPTION}`;
+    const fieldStixPattern = `${FIELD_INDICATORS}.${index}.${FIELD_STIX_PATTERN}`;
 
     register(fieldSplunkFieldName);
     register(fieldIndicatorValue, {required: "Indicator Value is required."});
