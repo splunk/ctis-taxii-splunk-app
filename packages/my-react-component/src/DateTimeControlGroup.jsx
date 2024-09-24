@@ -11,10 +11,11 @@ const DatetimeInput = styled.input`
     color: ${variables.contentColorDefault};
 `
 
-const DatetimeControlGroup = ({label, value, readOnly = false, onChange, error, help}) => {
+const DatetimeControlGroup = ({label, value, readOnly = false, onChange, error, help, ...props}) => {
+    const humanReadableDate = new Date(value).toLocaleString();
     return (
-        <CustomControlGroup label={label} help={help} error={error}>
-            <DatetimeInput type="datetime-local" value={value} onChange={onChange} disabled={readOnly}/>
+        <CustomControlGroup label={label} help={help} error={error} value={humanReadableDate} readOnly={readOnly}>
+            <DatetimeInput type="datetime-local" value={value} onChange={onChange} {...props}/>
         </CustomControlGroup>
     );
 }
