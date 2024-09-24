@@ -10,7 +10,13 @@ export const FIELD_TLP_RATING = "tlp_v1_rating";
 export const FIELD_VALID_FROM = "valid_from";
 export const FIELD_INDICATORS = "indicators";
 
+// For Edit Indicator Form
+export const FIELD_INDICATOR_ID = "indicator_id";
+
 export const REGISTER_FIELD_OPTIONS = {
+    [FIELD_INDICATOR_ID] : {
+        required: "Indicator ID is required."
+    },
     [FIELD_GROUPING_ID]: {
         required: "Grouping ID is required."
     },

@@ -3,9 +3,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import {CustomControlGroup} from "./CustomControlGroup";
 
-const TextControlGroup = ({label, value, onChange, help, error, ...props}) => {
+const TextControlGroup = ({label, value, onChange, help, error, readOnly = false, ...props}) => {
     return (
-        <CustomControlGroup label={label} help={help} error={error}>
+        <CustomControlGroup label={label} help={help} error={error} readOnly={readOnly} value={value}>
             <Text canClear value={value} onChange={onChange} error={error} {...props}/>
         </CustomControlGroup>
     );

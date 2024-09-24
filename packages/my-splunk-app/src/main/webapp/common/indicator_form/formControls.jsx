@@ -12,6 +12,9 @@ import {useFormContext} from "react-hook-form";
 export {GroupingIdField} from "./GroupingsDropdown";
 
 
+export function IndicatorIdField({fieldName, ...props}) {
+    return <TextControlGroup label="Indicator ID" {...useFormInputProps(fieldName)} {...props}/>
+}
 export function SplunkFieldNameDropdown({fieldName, options, ...props}) {
     return <SelectControlGroup label="Splunk Field" options={options}
                                {...useFormInputProps(fieldName)}

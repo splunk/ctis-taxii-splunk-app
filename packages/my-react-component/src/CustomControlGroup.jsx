@@ -1,6 +1,17 @@
+import React from "react";
 import ControlGroup from "@splunk/react-ui/ControlGroup";
 import styled from "styled-components";
+import {ReadOnlyContainer} from "./ReadOnlyContainer";
 
-export const CustomControlGroup = styled(ControlGroup)`
+const StyledCustomControlGroup = styled(ControlGroup)`
     max-width: none; // Override max-width of ControlGroup which is 600px
 `;
+
+export const CustomControlGroup = ({readOnly=false, value, children, ...props}) => {
+    return (
+        <StyledCustomControlGroup {...props}>
+            {readOnly && <ReadOnlyContainer>{value}</ReadOnlyContainer>}
+            {!readOnly && children}
+        </StyledCustomControlGroup>
+    );
+}

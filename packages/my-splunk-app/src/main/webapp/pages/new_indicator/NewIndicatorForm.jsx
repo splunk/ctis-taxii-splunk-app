@@ -32,6 +32,8 @@ import {
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
 import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
+import {StyledForm} from "../../common/indicator_form/StyledForm";
+import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "../../common/date_utils";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
@@ -42,9 +44,6 @@ function GotoGroupingPageButton({groupingId}) {
     return (<Button to={`#${groupingId}`} appearance="primary" label={`Go to Grouping ${groupingId}`}/>);
 }
 
-const MyForm = styled.form`
-    max-width: 1000px;
-`
 const HorizontalButtonLayout = styled.div`
     margin-top: ${variables.spacingMedium};
     margin-bottom: ${variables.spacingMedium};
@@ -89,7 +88,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             [FIELD_GROUPING_ID]: null,
             [FIELD_CONFIDENCE]: 100,
             [FIELD_TLP_RATING]: "GREEN",
-            [FIELD_VALID_FROM]: new Date().toISOString().slice(0, -1),
+            [FIELD_VALID_FROM]: dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision()),
             [FIELD_INDICATORS]: [firstIndicator]
         }
     });
@@ -136,7 +135,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
 
     return (
         <FormProvider {...methods}>
-            <MyForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
+            <StyledForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
@@ -189,7 +188,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                         <GotoGroupingPageButton groupingId={groupingId}/>
                     </Modal.Body>
                 </Modal>
-            </MyForm>
+            </StyledForm>
         </FormProvider>
     );
 }

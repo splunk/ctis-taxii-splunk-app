@@ -3,9 +3,9 @@ import Number from "@splunk/react-ui/Number";
 import React from "react";
 import PropTypes from "prop-types";
 
-const NumberControlGroup = ({label, value, onChange, help, error, ...numberProps}) => {
+const NumberControlGroup = ({label, value, readOnly = false, onChange, help, error, ...numberProps}) => {
     return (
-        <CustomControlGroup label={label} help={help} error={error}>
+        <CustomControlGroup label={label} help={help} error={error} value={value} readOnly={readOnly}>
             <Number {...numberProps} value={value} onChange={onChange} error={error}/>
         </CustomControlGroup>
     );

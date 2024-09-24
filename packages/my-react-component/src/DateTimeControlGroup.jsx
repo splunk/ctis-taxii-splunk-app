@@ -2,7 +2,7 @@ import {CustomControlGroup} from "./CustomControlGroup";
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { variables } from '@splunk/themes';
+import {variables} from '@splunk/themes';
 
 const DatetimeInput = styled.input`
     padding: ${variables.spacingXSmall} ${variables.spacingSmall};
@@ -11,10 +11,10 @@ const DatetimeInput = styled.input`
     color: ${variables.contentColorDefault};
 `
 
-const DatetimeControlGroup = ({label, value, onChange, error, help}) => {
+const DatetimeControlGroup = ({label, value, readOnly = false, onChange, error, help}) => {
     return (
         <CustomControlGroup label={label} help={help} error={error}>
-            <DatetimeInput type="datetime-local" value={value} onChange={onChange} />
+            <DatetimeInput type="datetime-local" value={value} onChange={onChange} disabled={readOnly}/>
         </CustomControlGroup>
     );
 }
