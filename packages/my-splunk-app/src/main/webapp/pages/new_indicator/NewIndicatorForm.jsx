@@ -2,13 +2,11 @@ import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
 import React, {useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {FormProvider, useFieldArray, useForm} from "react-hook-form";
-import styled from "styled-components";
 
 import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
 import P from '@splunk/react-ui/Paragraph';
 import PlusCircle from '@splunk/react-icons/PlusCircle';
-import {variables} from '@splunk/themes';
 
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 
@@ -34,6 +32,7 @@ import {
 import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
 import {StyledForm} from "../../common/indicator_form/StyledForm";
 import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "../../common/date_utils";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButtonLayout";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
@@ -43,14 +42,6 @@ function GotoIndicatorsPageButton() {
 function GotoGroupingPageButton({groupingId}) {
     return (<Button to={`#${groupingId}`} appearance="primary" label={`Go to Grouping ${groupingId}`}/>);
 }
-
-const HorizontalButtonLayout = styled.div`
-    margin-top: ${variables.spacingMedium};
-    margin-bottom: ${variables.spacingMedium};
-    display: flex;
-    justify-content: space-between;
-    gap: ${variables.spacingMedium};
-`
 
 // TODO: change this to use a single object with keys as param
 const newIndicatorObject = ({splunk_field_name = '', indicator_value = ''} = {}) => ({

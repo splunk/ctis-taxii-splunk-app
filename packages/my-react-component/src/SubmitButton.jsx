@@ -1,12 +1,11 @@
-import Button from "@splunk/react-ui/Button";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import React from "react";
+import BaseButton from "./BaseButton";
 
-export default function SubmitButton({disabled, submitting, label, inline=false, type = "submit", appearance = "primary", ...props}) {
-    // const label = numIndicators > 1 ? "Create Indicators" : "Create Indicator";
+export default function SubmitButton({submitting, type="submit", ...props}) {
     return (
-        <Button inline={inline} type={type} label={label} appearance={appearance} disabled={disabled} {...props}>
+        <BaseButton type={type} {...props}>
             {submitting && <WaitSpinner/>}
-        </Button>
+        </BaseButton>
     );
 }

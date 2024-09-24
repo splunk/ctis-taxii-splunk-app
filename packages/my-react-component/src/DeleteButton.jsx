@@ -1,6 +1,6 @@
 import React from "react";
-import SubmitButton from "./SubmitButton";
 import TrashCanCross from '@splunk/react-icons/TrashCanCross';
+import SubmitButton from "./SubmitButton";
 
 export default function DeleteButton({
                                          disabled,
@@ -12,6 +12,6 @@ export default function DeleteButton({
                                      }) {
     return (
         <SubmitButton inline={inline} type={type} icon={<TrashCanCross/>} label={label} appearance="destructive"
-                      disabled={disabled} submitting={submitting} {...props} />
+                    disabled={disabled} submitting={submitting} {...props} />
     );
 }

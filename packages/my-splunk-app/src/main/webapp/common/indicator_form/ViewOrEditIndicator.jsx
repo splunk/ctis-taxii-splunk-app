@@ -18,15 +18,24 @@ import {
 import {StyledForm} from "./StyledForm";
 import {
     ConfidenceField,
-    GroupingIdField, IndicatorCategoryField,
+    GroupingIdField,
+    IndicatorCategoryField,
     IndicatorDescriptionField,
     IndicatorIdField,
-    IndicatorNameField, IndicatorValueField, TLPv1RatingField, ValidFromField
+    IndicatorNameField,
+    IndicatorValueField,
+    TLPv1RatingField,
+    ValidFromField
 } from "./formControls";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {MyHeading} from "@splunk/my-react-component/MyHeading";
 import useIndicatorCategories from "./indicatorCategories";
 import {reduceIsoStringPrecisionToSeconds} from "../date_utils";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButtonLayout";
+import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import EditButton from "@splunk/my-react-component/src/EditButton";
+import {editIndicator} from "@splunk/my-react-component/src/urls";
 
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,
@@ -73,15 +82,27 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
         <Loader loading={loading} error={error}>
             <FormProvider {...methods}>
                 <StyledForm>
-                    <IndicatorIdField fieldName={FIELD_INDICATOR_ID} readOnly={!editMode} disabled={true}/>
-                    <GroupingIdField fieldName={FIELD_GROUPING_ID} readOnly={!editMode}/>
-                    <IndicatorNameField fieldName={FIELD_INDICATOR_NAME} readOnly={!editMode}/>
-                    <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION} readOnly={!editMode}/>
-                    <ConfidenceField fieldName={FIELD_CONFIDENCE} readOnly={!editMode}/>
-                    <TLPv1RatingField fieldName={FIELD_TLP_RATING} readOnly={!editMode}/>
-                    <ValidFromField fieldName={FIELD_VALID_FROM} readOnly={!editMode}/>
-                    <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE} readOnly={!editMode}/>
-                    <IndicatorCategoryField fieldName={FIELD_INDICATOR_CATEGORY} options={indicatorCategories} readOnly={!editMode}/>
+                    <section>
+                        <IndicatorIdField fieldName={FIELD_INDICATOR_ID} readOnly={!editMode} disabled={true}/>
+                        <GroupingIdField fieldName={FIELD_GROUPING_ID} readOnly={!editMode}/>
+                        <IndicatorNameField fieldName={FIELD_INDICATOR_NAME} readOnly={!editMode}/>
+                        <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION} readOnly={!editMode}/>
+                        <ConfidenceField fieldName={FIELD_CONFIDENCE} readOnly={!editMode}/>
+                        <TLPv1RatingField fieldName={FIELD_TLP_RATING} readOnly={!editMode}/>
+                        <ValidFromField fieldName={FIELD_VALID_FROM} readOnly={!editMode}/>
+                        <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE} readOnly={!editMode}/>
+                        <IndicatorCategoryField fieldName={FIELD_INDICATOR_CATEGORY} options={indicatorCategories}
+                                                readOnly={!editMode}/>
+                    </section>
+                    <section>
+                        <CustomControlGroup label="">
+                            <HorizontalButtonLayout>
+                                <DeleteButton inline={true} onClick={() => {
+                                }}/>
+                                <EditButton inline={true} to={editIndicator(indicatorId)}/>
+                            </HorizontalButtonLayout>
+                        </CustomControlGroup>
+                    </section>
 
                 </StyledForm>
             </FormProvider>
