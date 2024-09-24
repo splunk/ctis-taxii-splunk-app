@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import layout from '@splunk/react-page';
 import {getUserTheme} from '@splunk/splunk-utils/themes';
@@ -22,7 +22,7 @@ import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import Heading from "@splunk/react-ui/Heading";
 import {getUrlQueryParams} from "../../common/queryParams";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
-
+import {useViewportBreakpoints} from "@splunk/my-react-component/viewportBreakpoints";
 
 const SEARCH_FIELD_OPTIONS = [
     {label: 'Any Field', value: '1'},
@@ -72,17 +72,36 @@ const expansionFieldNameToCellValue = {
 }
 
 
-function renderDataTable({records, loading, error}) {
+function RenderDataTable({records, loading, error}) {
     // TODO: pass in isLoading, error?
     const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
     const errorElement = <P>{`Error: ${error}`}</P>
+    const columns = useResponsiveColumns();
+    const columnNameToCellValue = mappingOfColumnNameToCellValue.filter((column) => columns.includes(column.columnName));
     const table = <ExpandableDataTable data={records}
                                        rowKeyFunction={(row) => row.indicator_id}
                                        expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
+                                       mappingOfColumnNameToCellValue={columnNameToCellValue}/>
     return (
         error ? errorElement : (loading ? loadingElement : table)
     );
+}
+
+function useResponsiveColumns() {
+    const {isSmallScreen, isMediumScreen, isLargeScreen, isXLargeScreen} = useViewportBreakpoints();
+    const [columns, setColumns] = React.useState(["Name", "STIX Pattern", "Indicator ID", "Actions"]);
+    useEffect(() => {
+        if (isXLargeScreen) {
+            setColumns(["Name", "STIX Pattern", "Indicator ID", "Grouping ID", "Actions"]);
+        } else if (isLargeScreen) {
+            setColumns(["Name", "STIX Pattern", "Indicator ID", "Actions"]);
+        } else if (isMediumScreen) {
+            setColumns(["Name", "STIX Pattern", "Actions"]);
+        } else {
+            setColumns(["Name", "Actions"]);
+        }
+    }, [isSmallScreen, isMediumScreen, isLargeScreen, isXLargeScreen]);
+    return columns;
 }
 
 function ListIndicators() {
@@ -96,7 +115,10 @@ function ListIndicators() {
             <SearchBar handleChange={(e) => {
             }} searchFieldDropdownOptions={SEARCH_FIELD_OPTIONS}/>
 
-            <PaginatedDataTable renderData={renderDataTable} fetchData={getIndicators} onError={(e) => {
+            {/*
+            // TODO: what else needs to be considered for handling search and filters?
+            */}
+            <PaginatedDataTable renderData={RenderDataTable} fetchData={getIndicators} onError={(e) => {
                 createErrorToast(e);
             }}/>
         </>

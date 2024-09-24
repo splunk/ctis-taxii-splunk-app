@@ -24,7 +24,8 @@
     "@splunk/react-icons": "^4.7.0",
     "@splunk/react-toast-notifications": "^0.11.3",
     "@splunk/react-ui": "^4.30.0",
-    "@splunk/themes": "^0.18.0"
+    "@splunk/themes": "^0.18.0",
+    "react-responsive": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",

@@ -57,15 +57,15 @@ function usePaginatedData(getDataPaginated, skip, limit, onError) {
  * Render Paginated Data Table
  *
  * @param {Object} props
- * @param {renderData} props.renderData - Function which accepts records, loading, error and returns JSX
+ * @param {renderData} props.renderData - Component Function which accepts records, loading, error and returns JSX
  * @param {fetchData} props.fetchData - Function which fetches data from server. Accepts skip, limit, onError and returns {records, totalRecords, loading, error}
  * @param {onError} props.onError - Callback to handle error. Accepts a single error argument.
  *
  */
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
-const DEFAULT_RESULTS_PER_PAGE = 20;
+const DEFAULT_RESULTS_PER_PAGE = 10;
 
-export default function PaginatedDataTable({renderData, fetchData, onError}) {
+export default function PaginatedDataTable({renderData: RenderData, fetchData, onError}) {
     const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
@@ -73,7 +73,7 @@ export default function PaginatedDataTable({renderData, fetchData, onError}) {
     const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
     return (
         <>
-            {renderData({records, loading, error})}
+            <RenderData records={records} loading={loading} error={error}/>
             <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
             <SearchPaginator totalPages={numPages}
                              pageNum={pageNum}
