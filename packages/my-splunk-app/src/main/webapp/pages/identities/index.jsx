@@ -1,8 +1,5 @@
 import React from 'react';
 
-import layout from '@splunk/react-page';
-import {getUserTheme} from '@splunk/splunk-utils/themes';
-
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import Button from "@splunk/react-ui/Button";
 import Pencil from '@splunk/react-icons/Pencil';
@@ -19,6 +16,7 @@ import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import {getUrlQueryParams} from "../../common/queryParams";
 import useModal from "@splunk/my-react-component/src/useModal";
+import {layoutWithTheme} from "../../common/theme";
 
 
 function Actions({row}) {
@@ -90,14 +88,8 @@ function Router() {
     }
 }
 
-getUserTheme()
-    .then((theme) => {
-        layout(<AppContainer><Router/></AppContainer>,
-            {theme,}
-        );
-    })
-    .catch((e) => {
-        const errorEl = document.createElement('span');
-        errorEl.innerHTML = e;
-        document.body.appendChild(errorEl);
-    });
+layoutWithTheme(
+    <AppContainer>
+        <Router/>
+    </AppContainer>
+);
