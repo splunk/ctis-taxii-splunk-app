@@ -55,6 +55,9 @@ export function Form({existingGrouping}) {
 
     register(FORM_FIELD_NAME, {required: "Name is required.", value: ""});
     register(FORM_FIELD_CONTEXT, {required: "Context is required.", value: ""});
+    register(FORM_FIELD_CREATED_BY_REF, {required: "Created By is required.", value: ""});
+    register(FORM_FIELD_DESCRIPTION, {required: "Description is required.", value: ""});
+
     if (existingGrouping) {
         register(FORM_FIELD_GROUPING_ID, {required: "Grouping ID is required.", value: ""});
     }
@@ -109,7 +112,7 @@ export function Form({existingGrouping}) {
                     <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
                     <ContextField options={GROUPING_CONTEXTS} fieldName={FORM_FIELD_CONTEXT}/>
                     <CreatedByField fieldName={FORM_FIELD_CREATED_BY_REF} options={optionsIdentities}/>
-                    <CustomControlGroup label="">
+                    <CustomControlGroup>
                         <HorizontalButtonLayout>
                             <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
                                           label={existingGrouping ? "Edit Grouping" : "Create Grouping"}/>
