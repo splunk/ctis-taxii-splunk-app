@@ -25,7 +25,7 @@ function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) 
         })
         .then(resp => {
             if (!resp.ok) {
-                errorHandler(resp);
+                return Promise.reject(resp);
             } else {
                 return resp.json();
             }

@@ -10,6 +10,9 @@ export const useOnFormSubmit = ({formMethods, submitToPostEndpoint, submissionSu
         [formState, submitSuccess]);
 
     async function onSubmit(data) {
+        setSubmissionError(null);
+        setSubmitSuccess(false);
+
         console.log(data);
         const formIsValid = await trigger();
         if (formIsValid) {

@@ -34,11 +34,13 @@ import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButto
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import EditButton from "@splunk/my-react-component/src/EditButton";
-import {urlForEditIndicator} from "@splunk/my-react-component/src/urls";
+import {urlForEditIndicator, viewIndicator} from "@splunk/my-react-component/src/urls";
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import {PatternSuggester} from "../../pages/new_indicator/patternSuggester";
 import {useOnFormSubmit} from "../formSubmit";
 import CancelButton from "@splunk/my-react-component/src/CancelButton";
+import Message from "@splunk/react-ui/Message";
+import P from "@splunk/react-ui/Paragraph";
 
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,
@@ -58,6 +60,7 @@ const ButtonsForEditMode = ({submitting, submitButtonDisabled}) => {
         <SubmitButton label={"Save Changes"} disabled={submitButtonDisabled} submitting={submitting}/>
     </HorizontalButtonLayout>;
 }
+
 export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const title = editMode ? `Edit Indicator` : `Indicator (${indicatorId})`;
     const readOnly = !editMode;
@@ -84,12 +87,11 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
         submissionErrorCallback: (error) => console.error(error),
     })
 
-    // useEffect(() => {
-    //     if(submitSuccess){
-    //         console.log("Submit success");
-    //         window.location = viewIndicator(indicatorId);
-    //     }
-    // }, [submitSuccess]);
+    useEffect(() => {
+        if(submitSuccess){
+            window.location = viewIndicator(indicatorId);
+        }
+    }, [submitSuccess]);
 
     useEffect(() => {
         if (record) {
@@ -115,6 +117,12 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
         <Loader loading={loading} error={error}>
             <FormProvider {...methods}>
                 <StyledForm onSubmit={handleSubmit(onSubmit)}>
+                    {submissionError?.json?.errors && <Message appearance="fill" type="error">
+                        <div>
+                            <P>Form submission error</P>
+                            {submissionError.json.errors.map(error => <P>{error}</P>)}
+                        </div>
+                    </Message>}
                     <section>
                         <IndicatorIdField fieldName={FIELD_INDICATOR_ID} readOnly={readOnly} disabled={true}/>
                         <GroupingIdField fieldName={FIELD_GROUPING_ID} readOnly={readOnly}/>

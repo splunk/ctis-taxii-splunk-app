@@ -6,6 +6,7 @@ import abc
 from typing import Optional, Dict, List
 from collections import defaultdict
 
+from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
 
 from server_exception import ServerException
@@ -28,7 +29,7 @@ class AbstractRestHandler(abc.ABC):
         self.logger = logger
 
     @abc.abstractmethod
-    def handle(self, input_json: Optional[dict], query_params:Dict[str, List], session_key:str) -> dict:
+    def handle(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str) -> dict:
         """
         Return any dict response or throw an exception.
         This will be wrapped by a common wrapper method.
@@ -47,7 +48,8 @@ class AbstractRestHandler(abc.ABC):
         input_payload = json.loads(payload_json)
         return input_payload
 
-    def handle_query_collection(self, input_json: Optional[dict], query_params:Dict[str, List], session_key:str, collection_name:str) -> dict:
+    def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
+                                collection_name: str) -> dict:
         self.logger.info(f"input_json: {input_json}")
         self.logger.info(f"query_params: {query_params}")
 
@@ -99,8 +101,13 @@ class AbstractRestHandler(abc.ABC):
 
     def update_record(self, collection, query_for_one_record: dict, input_json: dict, converter, model_class) -> dict:
         saved_record = self.query_exactly_one_record(collection, query=query_for_one_record)
-        structured = self.prepare_merged_model_instance(saved_record=saved_record, input_json=input_json,
-                                                   converter=converter, model_class=model_class)
+        try:
+            structured = self.prepare_merged_model_instance(saved_record=saved_record, input_json=input_json,
+                                                            converter=converter, model_class=model_class)
+        except ClassValidationError as exc:
+            self.logger.exception(f"Validation failed on merged model instance: {exc}")
+            raise exc
+
         structured.set_modified_to_now()
 
         updated_record_as_dict = converter.unstructure(structured)
@@ -118,7 +125,7 @@ class AbstractRestHandler(abc.ABC):
     @staticmethod
     def parse_query_params(query: list) -> dict:
         params = defaultdict(list)
-        for a,b in query:
+        for a, b in query:
             params[a].append(b)
         return params
 
@@ -181,7 +188,13 @@ class AbstractRestHandler(abc.ABC):
             return self.exception_response(e, 400)
         except ServerException as e:
             self.logger.exception(e)
-            return {"payload": {"error" : str(e), "errors": e.errors}, "status": 400}
+            return {"payload": {"error": str(e), "errors": e.errors}, "status": 400}
+        except ClassValidationError as e:
+            self.logger.exception("Validation Error")
+            return {"payload":
+                        {"error": f"Validation Error: {e}",
+                         "errors": [str(err) for err in e.exceptions] },
+                    "status": 400 }
         except Exception as e:
             self.logger.exception("Server error")
             return self.exception_response(e, 500)
