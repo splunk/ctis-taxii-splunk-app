@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import React from 'react';
 import Table from '@splunk/react-ui/Table';
+import Pencil from "@splunk/react-icons/Pencil";
+import Button from "@splunk/react-ui/Button";
+import Menu from "@splunk/react-ui/Menu";
 
 const TableCell = styled(Table.Cell)`
     padding: 0;
@@ -50,8 +53,15 @@ function getExpansionRow(row, rowKeyFunction, fieldNameToCellValue, numTableColu
     );
 }
 function ExpandableDataTable({data, rowKeyFunction, mappingOfColumnNameToCellValue, expansionRowFieldNameToCellValue}) {
+    const rowActionPrimary = (row) => <Button appearance="secondary" icon={<Pencil hideDefaultTooltip /> } onClick={() => console.log(row)}/>;
+    const rowActionsSecondary = (row) => (
+        <Menu>
+            <Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item>
+            <Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item>
+        </Menu>
+    );
     return (
-        <Table stripeRows rowExpansion="multi">
+        <Table stripeRows rowExpansion="multi" actionsColumnWidth={100}>
             <Table.Head>
                 {mappingOfColumnNameToCellValue.map(({columnName}) => (
                     <Table.HeadCell key={columnName}><strong>{columnName}</strong></Table.HeadCell>
@@ -59,7 +69,10 @@ function ExpandableDataTable({data, rowKeyFunction, mappingOfColumnNameToCellVal
             </Table.Head>
             <Table.Body>
                 {data && data.map((row) => (
-                    <Table.Row key={rowKeyFunction(row)} expansionRow={
+                    <Table.Row key={rowKeyFunction(row)}
+                               actionPrimary={rowActionPrimary(row)}
+                               actionsSecondary={rowActionsSecondary(row)}
+                               expansionRow={
                         getExpansionRow(row, rowKeyFunction, expansionRowFieldNameToCellValue, mappingOfColumnNameToCellValue.length)
                     }>
                         {mappingOfColumnNameToCellValue.map(({columnName, getCellContent}) => (

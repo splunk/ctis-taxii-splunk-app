@@ -1,8 +1,5 @@
 import React, {useEffect} from 'react';
 
-import layout from '@splunk/react-page';
-import {getUserTheme} from '@splunk/splunk-utils/themes';
-
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import {SearchBar} from "@splunk/my-react-component/src/SearchBar";
 import Button from "@splunk/react-ui/Button";
@@ -23,6 +20,7 @@ import Heading from "@splunk/react-ui/Heading";
 import {getUrlQueryParams} from "../../common/queryParams";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 import {useViewportBreakpoints} from "@splunk/my-react-component/viewportBreakpoints";
+import {layoutWithTheme} from "../../common/theme";
 
 const SEARCH_FIELD_OPTIONS = [
     {label: 'Any Field', value: '1'},
@@ -138,14 +136,4 @@ function Router() {
     }
 }
 
-getUserTheme()
-    .then((theme) => {
-        layout(<AppContainer><Router/></AppContainer>,
-            {theme,}
-        );
-    })
-    .catch((e) => {
-        const errorEl = document.createElement('span');
-        errorEl.innerHTML = e;
-        document.body.appendChild(errorEl);
-    });
+layoutWithTheme(<AppContainer><Router/></AppContainer>);

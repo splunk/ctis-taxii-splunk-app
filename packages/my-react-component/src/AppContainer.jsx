@@ -3,6 +3,13 @@ import React from "react";
 import styled from "styled-components";
 import {mixins, variables} from "@splunk/themes";
 import Toaster, {makeCreateToast} from "@splunk/react-toast-notifications/Toaster";
+import { createGlobalStyle } from 'styled-components'
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${variables.backgroundColor};
+  }
+`
 
 const StyledContainer = styled.div`
     ${mixins.reset('inline')};
@@ -11,7 +18,8 @@ const StyledContainer = styled.div`
     flex-direction: column;
     font-size: ${variables.fontSizeLarge};
     line-height: 200%;
-    margin: ${variables.spacingXXLarge} ${variables.spacingXXLarge};
+    padding: ${variables.spacingXXLarge} ${variables.spacingXXLarge};
+    background-color: ${variables.backgroundColor};
 `;
 
 export const createToast = makeCreateToast(Toaster);
@@ -25,9 +33,12 @@ export const createErrorToast = (error) => createToast(
 
 export function AppContainer({children}) {
     return (
-        <StyledContainer>
-            {children}
-            <ToastMessages position='top-right'/>
-        </StyledContainer>
+        <>
+            <GlobalStyle/>
+            <StyledContainer>
+                {children}
+                <ToastMessages position='top-right'/>
+            </StyledContainer>
+        </>
     )
 }
