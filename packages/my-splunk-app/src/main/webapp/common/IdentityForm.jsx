@@ -13,6 +13,8 @@ import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fields";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButtonLayout";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};
@@ -83,8 +85,12 @@ export function Form({existingIdentity}) {
                     {existingIdentity && <IdentityIdField disabled fieldName={FORM_FIELD_IDENTITY_ID}/>}
                     <NameField fieldName={FORM_FIELD_NAME}/>
                     <IdentityClassField fieldName={FORM_FIELD_IDENTITY_CLASS} options={IDENTITY_CLASSES}/>
-                    <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                  label={existingIdentity ? "Edit Identity" : "Create Identity"}/>
+                    <CustomControlGroup>
+                        <HorizontalButtonLayout>
+                            <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
+                                          label={existingIdentity ? "Edit Identity" : "Create Identity"}/>
+                        </HorizontalButtonLayout>
+                    </CustomControlGroup>
                 </section>
                 <Modal open={submitSuccess}>
                     <Modal.Header

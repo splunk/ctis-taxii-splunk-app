@@ -7,7 +7,7 @@ const StyledCustomControlGroup = styled(ControlGroup)`
     max-width: none; // Override max-width of ControlGroup which is 600px
 `;
 
-export const CustomControlGroup = ({readOnly=false, value, children, ...props}) => {
+export const CustomControlGroup = ({readOnly = false, value, children, ...props}) => {
     return (
         <StyledCustomControlGroup {...props}>
             {readOnly && <ReadOnlyContainer>{value}</ReadOnlyContainer>}

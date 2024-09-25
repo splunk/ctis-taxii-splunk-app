@@ -1,9 +1,6 @@
 import styled from "styled-components";
 import React, {useEffect, useMemo, useState} from "react";
 import {FormProvider, useForm} from "react-hook-form";
-import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
-import {useFormInputProps} from "./formInputProps";
-import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import {
     editGrouping,
@@ -21,8 +18,9 @@ import {useOnFormSubmit} from "./formSubmit";
 import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
-import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButtonLayout";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};
@@ -111,8 +109,12 @@ export function Form({existingGrouping}) {
                     <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
                     <ContextField options={GROUPING_CONTEXTS} fieldName={FORM_FIELD_CONTEXT}/>
                     <CreatedByField fieldName={FORM_FIELD_CREATED_BY_REF} options={optionsIdentities}/>
-                    <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                  label={existingGrouping ? "Edit Grouping" : "Create Grouping"}/>
+                    <CustomControlGroup label="">
+                        <HorizontalButtonLayout>
+                            <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
+                                          label={existingGrouping ? "Edit Grouping" : "Create Grouping"}/>
+                        </HorizontalButtonLayout>
+                    </CustomControlGroup>
                 </section>
                 <Modal open={submitSuccess}>
                     <Modal.Header

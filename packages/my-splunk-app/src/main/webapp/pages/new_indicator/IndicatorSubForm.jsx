@@ -2,10 +2,8 @@ import {useFormContext} from "react-hook-form";
 import React, {useEffect, useState} from "react";
 import {PatternSuggester} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
-import Button from "@splunk/react-ui/Button";
 import Divider from "@splunk/react-ui/Divider";
 import styled from "styled-components";
-import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
 import {variables} from '@splunk/themes';
@@ -28,6 +26,7 @@ import {
     FIELD_STIX_PATTERN,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
+import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -39,10 +38,8 @@ const StyledHeading = styled(Heading)`
     margin: 0;
     flex-grow: 1;
 `;
-
-const StyledButton = styled(Button)`
-    flex-grow: 0;
-    width: 100px;
+const StyledSection = styled.section`
+    margin-bottom: ${variables.spacingMedium};
 `;
 
 export const IndicatorSubForm = ({
@@ -89,11 +86,10 @@ export const IndicatorSubForm = ({
         }
     }, [splunkFieldName, toggleShowSplunkFieldDropdown]);
 
-    return <section key={field.id}>
+    return <StyledSection key={field.id}>
         <HorizontalLayout>
             <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
-            <StyledButton inline icon={<TrashCanCross/>} label="Remove" appearance="destructive"
-                          onClick={() => removeSelf()}/>
+            <DeleteButton inline label="Remove" onClick={() => removeSelf()}/>
         </HorizontalLayout>
         {submissionErrors && <Message appearance="fill" type="error">
             {submissionErrors.map(error => <P>{error}</P>)}
@@ -120,5 +116,5 @@ export const IndicatorSubForm = ({
         <IndicatorNameField fieldName={fieldIndicatorName}/>
         <IndicatorDescriptionField fieldName={fieldIndicatorDescription}/>
         <Divider/>
-    </section>
+    </StyledSection>
 }

@@ -33,6 +33,8 @@ import useIndicatorCategories from "../../common/indicator_form/indicatorCategor
 import {StyledForm} from "../../common/indicator_form/StyledForm";
 import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "../../common/date_utils";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButtonLayout";
+import BaseButton from "@splunk/my-react-component/src/BaseButton";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
@@ -144,12 +146,14 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                                              submissionErrors={getErrorsByIndex(submissionErrors, index)}/>
                 })
                 }
-                <HorizontalButtonLayout>
-                    <Button icon={<PlusCircle/>} inline={false} label='Add Another Indicator'
-                            onClick={() => append(newIndicatorObject())}/>
-                    <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                  label={`Create Indicators (${indicators.length})`}/>
-                </HorizontalButtonLayout>
+                <CustomControlGroup>
+                    <HorizontalButtonLayout>
+                        <BaseButton appearance="secondary" icon={<PlusCircle/>} inline label='Add Another Indicator'
+                                    onClick={() => append(newIndicatorObject())}/>
+                        <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
+                                      label={`Create Indicators (${indicators.length})`}/>
+                    </HorizontalButtonLayout>
+                </CustomControlGroup>
 
                 <CollapsiblePanel title="Debug info">
                     <div style={{color: 'green'}}>
