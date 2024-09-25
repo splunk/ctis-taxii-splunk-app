@@ -1,4 +1,3 @@
-import ControlGroup from "@splunk/react-ui/ControlGroup";
 import TextArea from "@splunk/react-ui/TextArea";
 import React from "react";
 import PropTypes from "prop-types";
@@ -35,7 +34,7 @@ const StixPatternControlGroup = ({
     const patternExists = !!suggestedPattern;
 
     return (
-        <CustomControlGroup controlsLayout='stack' label={label} help={help} error={error} {...rest}>
+        <CustomControlGroup controlsLayout='stack' label={label} help={help} error={error} value={value} {...rest}>
             <TextArea spellCheck={false} value={value} onChange={onChange} error={error}/>
             {
                 (!value || valueIsDiff) && patternExists && suggestionText

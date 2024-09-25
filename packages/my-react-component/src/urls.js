@@ -14,7 +14,7 @@ export const viewIndicator = (indicatorId) => createURL(`/app/${app}/indicators`
     indicator_id: indicatorId,
 });
 
-export const editIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
+export const urlForEditIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
     action: 'edit',
     indicator_id: indicatorId,
 });

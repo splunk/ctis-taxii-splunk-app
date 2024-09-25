@@ -12,7 +12,7 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
-import {editIndicator, NEW_INDICATOR_PAGE} from "@splunk/my-react-component/src/urls";
+import {urlForEditIndicator, NEW_INDICATOR_PAGE} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
@@ -32,7 +32,7 @@ const SEARCH_FIELD_OPTIONS = [
 function IndicatorActionButtons({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
     return (<div>
-        <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editIndicator(row.indicator_id)}/>
+        <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={urlForEditIndicator(row.indicator_id)}/>
         <DeleteButton onClick={handleRequestOpen}/>
         <DeleteModal open={open} onRequestClose={handleRequestClose}
                      deleteEndpointFunction={deleteIndicator}

@@ -15,6 +15,7 @@ export {GroupingIdField} from "./GroupingsDropdown";
 export function IndicatorIdField({fieldName, ...props}) {
     return <TextControlGroup label="Indicator ID" {...useFormInputProps(fieldName)} {...props}/>
 }
+
 export function SplunkFieldNameDropdown({fieldName, options, ...props}) {
     return <SelectControlGroup label="Splunk Field" options={options}
                                {...useFormInputProps(fieldName)}
@@ -58,13 +59,15 @@ export function IndicatorCategoryField({fieldName, options, ...props}) {
                                {...props}/>
 }
 
-export function StixPatternField({suggestedPattern, fieldName}) {
+export function StixPatternField({suggestedPattern, fieldName, ...props}) {
     const formMethods = useFormContext();
     const {setValue} = formMethods;
     return <StixPatternControlGroup label="STIX Pattern"
                                     {...useFormInputProps(fieldName)}
                                     suggestedPattern={suggestedPattern}
-                                    useSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}/>;
+                                    useSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
+                                    {...props}
+    />;
 }
 
 export function IndicatorNameField({fieldName, ...props}) {

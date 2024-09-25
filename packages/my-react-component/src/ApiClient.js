@@ -90,6 +90,10 @@ export function editGrouping(data, successHandler, errorHandler) {
     return postData('edit-grouping', data, successHandler, errorHandler)
 }
 
+export function editIndicator(data, successHandler, errorHandler) {
+    return postData('edit-indicator', data, successHandler, errorHandler)
+}
+
 export function deleteIdentity({identityId, successHandler, errorHandler}) {
     console.log('Deleting identity:', identityId);
     return deleteData({

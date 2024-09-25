@@ -27,9 +27,9 @@ export const usePatternSuggester = (indicatorCategory, indicatorValue) => {
     return {suggestedPattern};
 }
 
-export const PatternSuggester = ({indicatorCategory, indicatorValue, stixPatternFieldName}) => {
+export const PatternSuggester = ({indicatorCategory, indicatorValue, stixPatternFieldName, ...props}) => {
     const {suggestedPattern} = usePatternSuggester(indicatorCategory, indicatorValue);
     useFieldWatchesStateValue({fieldName: stixPatternFieldName, stateValue: suggestedPattern});
-    return <StixPatternField suggestedPattern={suggestedPattern} fieldName={stixPatternFieldName}/>;
+    return <StixPatternField suggestedPattern={suggestedPattern} fieldName={stixPatternFieldName} {...props}/>;
 }
 
