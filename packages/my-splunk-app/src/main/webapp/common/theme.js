@@ -1,9 +1,11 @@
-import {getTheme} from "@splunk/themes";
 import layout from "@splunk/react-page";
+import {getUserTheme} from "@splunk/splunk-utils/themes";
 
-export const theme = getTheme({colorScheme: 'dark'});
-
+// https://dev.splunk.com/enterprise/docs/developapps/createapps/buildapps/adduithemes/
+// You can also specify page title with layout()
 export const layoutWithTheme = (component) => {
-    return layout(component, {theme})
+    getUserTheme().then((theme) => {
+        return layout(component, {theme})
+    });
 };
 
