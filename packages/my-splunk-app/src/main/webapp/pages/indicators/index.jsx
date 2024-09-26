@@ -53,13 +53,6 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
 ]
 
-function groupingIdsToMappingOfTitleToUrl(groupingIds) {
-    return groupingIds.reduce((acc, groupingId) => {
-        acc[groupingId] = createURL(`app/${app}/groupings`, {id: groupingId});
-        return acc;
-    }, {})
-}
-
 const expansionFieldNameToCellValue = {
     "Indicator ID": (row) => row.indicator_id,
     "Grouping ID": (row) => row.grouping_id,
@@ -86,8 +79,8 @@ const RowActionPrimary = ({row}) => {
 }
 const RowActionsSecondary = ({row}) => (
     <Menu>
-        <Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item>
-        <Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item>
+        {/*<Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item>*/}
+        {/*<Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item>*/}
     </Menu>
 );
 
@@ -102,7 +95,7 @@ function RenderDataTable({records, loading, error}) {
                                        expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
                                        mappingOfColumnNameToCellValue={columnNameToCellValue}
                                        rowActionPrimary={RowActionPrimary}
-                                       rowActionsSecondary={RowActionsSecondary}
+                                       // rowActionsSecondary={RowActionsSecondary}
                                        actionsColumnWidth={120}
     />
     return (

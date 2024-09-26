@@ -15,12 +15,9 @@ const TableHeadCell = styled(Table.HeadCell)`
 const TableHead = styled(Table.Head)`
     height: 0; // Hide the table header
 `
-const MyTable = styled(Table)`
-
-`
 
 function ExpandedDataRecord({mapping}) {
-    return (<MyTable>
+    return (<Table>
         <TableHead>
             <TableHeadCell width={200}></TableHeadCell>
             <TableHeadCell></TableHeadCell>
@@ -33,7 +30,7 @@ function ExpandedDataRecord({mapping}) {
                 </Table.Row>
             ))}
         </Table.Body>
-    </MyTable>)
+    </Table>)
 }
 
 function getExpansionRow(row, rowKeyFunction, fieldNameToCellValue, numTableColumns) {
@@ -50,6 +47,10 @@ function getExpansionRow(row, rowKeyFunction, fieldNameToCellValue, numTableColu
         </Table.Row>
     );
 }
+
+const ContainerWithFixedMaxWidth = styled.div`
+    max-width: 600px;
+`;
 
 function ExpandableDataTable({
                                  data,
@@ -79,7 +80,9 @@ function ExpandableDataTable({
                                    getExpansionRow(row, rowKeyFunction, expansionRowFieldNameToCellValue, totalColumns)
                                }>
                         {mappingOfColumnNameToCellValue.map(({columnName, getCellContent}) => (
-                            <Table.Cell key={columnName}>{getCellContent(row)}</Table.Cell>
+                            <Table.Cell key={columnName}>
+                                <ContainerWithFixedMaxWidth>{getCellContent(row)}</ContainerWithFixedMaxWidth>
+                            </Table.Cell>
                         ))}
                     </Table.Row>
                 ))}
