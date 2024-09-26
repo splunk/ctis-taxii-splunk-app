@@ -1,15 +1,13 @@
 import styled from "styled-components";
 import React from 'react';
 import Table from '@splunk/react-ui/Table';
-import Pencil from "@splunk/react-icons/Pencil";
-import Button from "@splunk/react-ui/Button";
-import Menu from "@splunk/react-ui/Menu";
 
 const TableCell = styled(Table.Cell)`
     padding: 0;
 `
 const TableHeadCell = styled(Table.HeadCell)`
     padding: 0;
+
     & > div {
         padding: 0;
     }
@@ -25,7 +23,7 @@ function ExpandedDataRecord({mapping}) {
     return (<MyTable>
         <TableHead>
             <TableHeadCell width={200}></TableHeadCell>
-            <TableHeadCell width={1000}></TableHeadCell>
+            <TableHeadCell></TableHeadCell>
         </TableHead>
         <Table.Body>
             {Object.entries(mapping).map(([term, description]) => (
@@ -46,22 +44,27 @@ function getExpansionRow(row, rowKeyFunction, fieldNameToCellValue, numTableColu
     const expandedDataRecord = <ExpandedDataRecord mapping={mapping}/>;
     return (
         <Table.Row key={`${rowKeyFunction(row)}-expansion`}>
-            <Table.Cell style={{ borderTop: 'none' }} colSpan={numTableColumns}>
+            <Table.Cell style={{borderTop: 'none'}} colSpan={numTableColumns}>
                 {expandedDataRecord}
             </Table.Cell>
         </Table.Row>
     );
 }
-function ExpandableDataTable({data, rowKeyFunction, mappingOfColumnNameToCellValue, expansionRowFieldNameToCellValue}) {
-    const rowActionPrimary = (row) => <Button appearance="secondary" icon={<Pencil hideDefaultTooltip /> } onClick={() => console.log(row)}/>;
-    const rowActionsSecondary = (row) => (
-        <Menu>
-            <Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item>
-            <Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item>
-        </Menu>
-    );
+
+function ExpandableDataTable({
+                                 data,
+                                 rowKeyFunction,
+                                 mappingOfColumnNameToCellValue,
+                                 expansionRowFieldNameToCellValue,
+                                 rowActionPrimary: RowActionPrimary,
+                                 rowActionsSecondary: RowActionsSecondary,
+                                 actionsColumnWidth = 150,
+                             }) {
+
+    // Adding one to include actions column
+    const totalColumns = mappingOfColumnNameToCellValue.length + 1;
     return (
-        <Table stripeRows rowExpansion="multi" actionsColumnWidth={100}>
+        <Table stripeRows rowExpansion="multi" actionsColumnWidth={actionsColumnWidth}>
             <Table.Head>
                 {mappingOfColumnNameToCellValue.map(({columnName}) => (
                     <Table.HeadCell key={columnName}><strong>{columnName}</strong></Table.HeadCell>
@@ -70,11 +73,11 @@ function ExpandableDataTable({data, rowKeyFunction, mappingOfColumnNameToCellVal
             <Table.Body>
                 {data && data.map((row) => (
                     <Table.Row key={rowKeyFunction(row)}
-                               actionPrimary={rowActionPrimary(row)}
-                               actionsSecondary={rowActionsSecondary(row)}
+                               actionPrimary={RowActionPrimary && <RowActionPrimary row={row}/>}
+                               actionsSecondary={RowActionsSecondary && <RowActionsSecondary row={row}/>}
                                expansionRow={
-                        getExpansionRow(row, rowKeyFunction, expansionRowFieldNameToCellValue, mappingOfColumnNameToCellValue.length)
-                    }>
+                                   getExpansionRow(row, rowKeyFunction, expansionRowFieldNameToCellValue, totalColumns)
+                               }>
                         {mappingOfColumnNameToCellValue.map(({columnName, getCellContent}) => (
                             <Table.Cell key={columnName}>{getCellContent(row)}</Table.Cell>
                         ))}

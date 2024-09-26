@@ -8,10 +8,12 @@ export default function BaseButton({
                                        inline = false,
                                        type = "button",
                                        appearance = "primary",
+                                       noMargin = false,
                                        ...props
                                    }) {
     return (
-        <StyledButton inline={inline} type={type} label={label} appearance={appearance} disabled={disabled} {...props}>
+        <StyledButton noMargin={noMargin} inline={inline} type={type} label={label} appearance={appearance}
+                      disabled={disabled} {...props}>
             {children}
         </StyledButton>
     );

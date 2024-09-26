@@ -12,7 +12,7 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
-import {urlForEditIndicator, NEW_INDICATOR_PAGE} from "@splunk/my-react-component/src/urls";
+import {NEW_INDICATOR_PAGE, urlForEditIndicator} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
@@ -21,6 +21,10 @@ import {getUrlQueryParams} from "../../common/queryParams";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 import {useViewportBreakpoints} from "@splunk/my-react-component/viewportBreakpoints";
 import {layoutWithTheme} from "../../common/theme";
+import Menu from "@splunk/react-ui/Menu";
+import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
+import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
+
 
 const SEARCH_FIELD_OPTIONS = [
     {label: 'Any Field', value: '1'},
@@ -47,7 +51,6 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "STIX Pattern", getCellContent: (row) => row.stix_pattern},
     {columnName: "Indicator ID", getCellContent: (row) => row.indicator_id},
     {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
-    {columnName: "Actions", getCellContent: (row) => <IndicatorActionButtons row={row}/>},
 ]
 
 function groupingIdsToMappingOfTitleToUrl(groupingIds) {
@@ -69,6 +72,24 @@ const expansionFieldNameToCellValue = {
     "TLP Rating": (row) => row.tlp_v1_rating,
 }
 
+const RowActionPrimary = ({row}) => {
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
+    return (<span>
+        <EditIconOnlyButton to={urlForEditIndicator(row.indicator_id)}/>
+        <DeleteIconOnlyButton onClick={handleRequestOpen}/>
+        <DeleteModal open={open} onRequestClose={handleRequestClose}
+                     deleteEndpointFunction={deleteIndicator}
+                     deleteEndpointArgs={{indicatorId: row.indicator_id}}
+                     modalBodyContent={<P>Are you sure you want to delete this
+                         indicator: <strong>{row.name} ({row.indicator_id})</strong>?</P>}/>
+    </span>);
+}
+const RowActionsSecondary = ({row}) => (
+    <Menu>
+        <Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item>
+        <Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item>
+    </Menu>
+);
 
 function RenderDataTable({records, loading, error}) {
     // TODO: pass in isLoading, error?
@@ -79,7 +100,11 @@ function RenderDataTable({records, loading, error}) {
     const table = <ExpandableDataTable data={records}
                                        rowKeyFunction={(row) => row.indicator_id}
                                        expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={columnNameToCellValue}/>
+                                       mappingOfColumnNameToCellValue={columnNameToCellValue}
+                                       rowActionPrimary={RowActionPrimary}
+                                       rowActionsSecondary={RowActionsSecondary}
+                                       actionsColumnWidth={120}
+    />
     return (
         error ? errorElement : (loading ? loadingElement : table)
     );
@@ -87,16 +112,16 @@ function RenderDataTable({records, loading, error}) {
 
 function useResponsiveColumns() {
     const {isSmallScreen, isMediumScreen, isLargeScreen, isXLargeScreen} = useViewportBreakpoints();
-    const [columns, setColumns] = React.useState(["Name", "STIX Pattern", "Indicator ID", "Actions"]);
+    const [columns, setColumns] = React.useState(["Name", "STIX Pattern", "Indicator ID"]);
     useEffect(() => {
         if (isXLargeScreen) {
-            setColumns(["Name", "STIX Pattern", "Indicator ID", "Grouping ID", "Actions"]);
+            setColumns(["Name", "STIX Pattern", "Indicator ID", "Grouping ID"]);
         } else if (isLargeScreen) {
-            setColumns(["Name", "STIX Pattern", "Indicator ID", "Actions"]);
+            setColumns(["Name", "STIX Pattern", "Indicator ID"]);
         } else if (isMediumScreen) {
-            setColumns(["Name", "STIX Pattern", "Actions"]);
+            setColumns(["Name", "STIX Pattern"]);
         } else {
-            setColumns(["Name", "Actions"]);
+            setColumns(["Name"]);
         }
     }, [isSmallScreen, isMediumScreen, isLargeScreen, isXLargeScreen]);
     return columns;
