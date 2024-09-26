@@ -30,7 +30,7 @@ import Loader from "@splunk/my-react-component/src/Loader";
 import {MyHeading} from "@splunk/my-react-component/MyHeading";
 import useIndicatorCategories from "./indicatorCategories";
 import {reduceIsoStringPrecisionToSeconds} from "../date_utils";
-import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButtonLayout";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import EditButton from "@splunk/my-react-component/src/EditButton";

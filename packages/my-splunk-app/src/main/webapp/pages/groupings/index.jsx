@@ -2,8 +2,6 @@ import React from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import Button from "@splunk/react-ui/Button";
-import Pencil from '@splunk/react-icons/Pencil';
-import TrashCanCross from '@splunk/react-icons/TrashCanCross';
 import PaperPlane from '@splunk/react-icons/PaperPlane';
 import {ListOfLinks} from "@splunk/my-react-component/src/ListOfLinks";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -19,15 +17,27 @@ import {editGroupingPage, NEW_GROUPING_PAGE, viewIndicator} from "@splunk/my-rea
 import useModal from "@splunk/my-react-component/src/useModal";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import {layoutWithTheme} from "../../common/theme";
+import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
+import BaseButton from "@splunk/my-react-component/src/BaseButton";
+import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
+import Tooltip from "@splunk/react-ui/Tooltip";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import {variables} from "@splunk/themes";
 
+function SubmitToTaxiiButton({row}) {
+    return (<Tooltip content={"Submit to TAXII Server"}>
+        <BaseButton noBorder noMargin inline icon={<PaperPlane/>} label="Submit" appearance="primary"
+                    onClick={() => console.log(row)}/>
+    </Tooltip>);
+}
 
 function GroupingActionButtons({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
     const disableDeleteButton = row.indicators.length > 0;
-    return (<div>
-        <Button icon={<PaperPlane/>} label="Submit to CTIS" appearance="primary"/>
-        <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editGroupingPage(row.grouping_id)}/>
-        <Button icon={<TrashCanCross/>} label="Delete" appearance="destructive" onClick={handleRequestOpen}/>
+    return (<HorizontalButtonLayout gap={variables.spacingXSmall}>
+        <SubmitToTaxiiButton row={row}/>
+        <EditIconOnlyButton to={editGroupingPage(row.grouping_id)}/>
+        <DeleteIconOnlyButton onClick={handleRequestOpen}/>
         <DeleteModal open={open} onRequestClose={handleRequestClose}
                      disabled={disableDeleteButton}
                      disabledReason={<P>There is/are {row.indicators.length} indicators associated with this grouping.
@@ -37,7 +47,7 @@ function GroupingActionButtons({row}) {
                      deleteEndpointArgs={{groupingId: row.grouping_id}}
                      modalBodyContent={<P>Are you sure you want to delete this
                          grouping: <strong>{row.name} ({row.grouping_id})</strong>?</P>}/>
-    </div>)
+    </HorizontalButtonLayout>)
 }
 
 const mappingOfColumnNameToCellValue = [
@@ -45,7 +55,6 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
     {columnName: "Description", getCellContent: (row) => row.description},
     {columnName: "No. Indicators", getCellContent: (row) => row.indicators.length},
-    {columnName: "Actions", getCellContent: (row) => <GroupingActionButtons row={row}/>},
 ]
 
 
@@ -71,7 +80,10 @@ function renderDataTable({records, loading, error}) {
     const table = <ExpandableDataTable data={records}
                                        rowKeyFunction={(row) => row.grouping_id}
                                        expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
+                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                                       rowActionPrimary={GroupingActionButtons}
+                                       actionsColumnWidth={200}
+    />
     return (
         error ? errorElement : (loading ? loadingElement : table)
     );

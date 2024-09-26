@@ -14,7 +14,7 @@ import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fields";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-import {HorizontalButtonLayout} from "@splunk/my-react-component/HorizontalButtonLayout";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};

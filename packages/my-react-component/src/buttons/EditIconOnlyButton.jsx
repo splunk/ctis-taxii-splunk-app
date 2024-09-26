@@ -6,7 +6,7 @@ import Pencil from "@splunk/react-icons/Pencil";
 export default function EditIconOnlyButton({onClick, to, tooltipContent="Edit", ...props}) {
     return (
         <Tooltip content={tooltipContent} onClick={onClick}>
-            <BaseButton noMargin inline appearance="secondary" icon={<Pencil hideDefaultTooltip/>} to={to} {...props}/>
+            <BaseButton noBorder noMargin inline appearance="secondary" icon={<Pencil hideDefaultTooltip/>} to={to} {...props}/>
         </Tooltip>
     );
 }

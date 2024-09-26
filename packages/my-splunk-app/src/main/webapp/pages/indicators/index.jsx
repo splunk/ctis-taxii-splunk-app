@@ -24,7 +24,8 @@ import {layoutWithTheme} from "../../common/theme";
 import Menu from "@splunk/react-ui/Menu";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
-
+import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import {variables} from "@splunk/themes";
 
 const SEARCH_FIELD_OPTIONS = [
     {label: 'Any Field', value: '1'},
@@ -67,7 +68,7 @@ const expansionFieldNameToCellValue = {
 
 const RowActionPrimary = ({row}) => {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
-    return (<span>
+    return (<HorizontalButtonLayout gap={variables.spacingXSmall}>
         <EditIconOnlyButton to={urlForEditIndicator(row.indicator_id)}/>
         <DeleteIconOnlyButton onClick={handleRequestOpen}/>
         <DeleteModal open={open} onRequestClose={handleRequestClose}
@@ -75,7 +76,7 @@ const RowActionPrimary = ({row}) => {
                      deleteEndpointArgs={{indicatorId: row.indicator_id}}
                      modalBodyContent={<P>Are you sure you want to delete this
                          indicator: <strong>{row.name} ({row.indicator_id})</strong>?</P>}/>
-    </span>);
+    </HorizontalButtonLayout>);
 }
 const RowActionsSecondary = ({row}) => (
     <Menu>
