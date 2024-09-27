@@ -25,6 +25,7 @@
     "@splunk/react-toast-notifications": "^0.11.3",
     "@splunk/react-ui": "^4.30.0",
     "@splunk/themes": "^0.18.0",
+    "lodash": "^4.17.21",
     "react-responsive": "^10.0.0"
   },
   "devDependencies": {

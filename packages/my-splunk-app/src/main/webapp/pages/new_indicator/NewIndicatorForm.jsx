@@ -31,7 +31,7 @@ import {
 } from "../../common/indicator_form/fieldNames";
 import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
 import {StyledForm} from "../../common/indicator_form/StyledForm";
-import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "../../common/date_utils";
+import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";

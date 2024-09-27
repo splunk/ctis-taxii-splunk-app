@@ -8,7 +8,12 @@ export const dateToIsoStringWithoutTimezone = (date) => {
 }
 
 export const reduceIsoStringPrecisionToSeconds = (dateIsoString) => {
-    const date = new Date(dateIsoString);
+    let dateString = dateIsoString;
+    // Add back on UTC timezone if it was removed
+    if (!dateString.endsWith("Z")) {
+        dateString += "Z";
+    }
+    const date = new Date(dateString);
     date.setMilliseconds(0);
     return dateToIsoStringWithoutTimezone(date);
 }
