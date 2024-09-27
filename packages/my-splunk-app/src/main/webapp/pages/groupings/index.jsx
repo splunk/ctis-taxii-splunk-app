@@ -21,8 +21,7 @@ import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconO
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import Tooltip from "@splunk/react-ui/Tooltip";
-import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
-import {variables} from "@splunk/themes";
+import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 
 function SubmitToTaxiiButton({row}) {
     return (<Tooltip content={"Submit to TAXII Server"}>
@@ -34,7 +33,7 @@ function SubmitToTaxiiButton({row}) {
 function GroupingActionButtons({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
     const disableDeleteButton = row.indicators.length > 0;
-    return (<HorizontalButtonLayout gap={variables.spacingXSmall}>
+    return (<HorizontalActionButtonLayout>
         <SubmitToTaxiiButton row={row}/>
         <EditIconOnlyButton to={editGroupingPage(row.grouping_id)}/>
         <DeleteIconOnlyButton onClick={handleRequestOpen}/>
@@ -47,7 +46,7 @@ function GroupingActionButtons({row}) {
                      deleteEndpointArgs={{groupingId: row.grouping_id}}
                      modalBodyContent={<P>Are you sure you want to delete this
                          grouping: <strong>{row.name} ({row.grouping_id})</strong>?</P>}/>
-    </HorizontalButtonLayout>)
+    </HorizontalActionButtonLayout>)
 }
 
 const mappingOfColumnNameToCellValue = [

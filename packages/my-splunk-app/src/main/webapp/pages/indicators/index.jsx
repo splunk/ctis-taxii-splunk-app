@@ -4,9 +4,6 @@ import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTa
 import {SearchBar} from "@splunk/my-react-component/src/SearchBar";
 import Button from "@splunk/react-ui/Button";
 import Plus from '@splunk/react-icons/Plus';
-import Pencil from '@splunk/react-icons/Pencil';
-import {app} from '@splunk/splunk-utils/config';
-import {createURL} from '@splunk/splunk-utils/url';
 import {deleteIndicator, getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
@@ -14,7 +11,6 @@ import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/App
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {NEW_INDICATOR_PAGE, urlForEditIndicator} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
-import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import Heading from "@splunk/react-ui/Heading";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -24,8 +20,7 @@ import {layoutWithTheme} from "../../common/theme";
 import Menu from "@splunk/react-ui/Menu";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
-import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
-import {variables} from "@splunk/themes";
+import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 
 const SEARCH_FIELD_OPTIONS = [
     {label: 'Any Field', value: '1'},
@@ -33,19 +28,6 @@ const SEARCH_FIELD_OPTIONS = [
     {label: 'Splunk Field', value: '3'},
     {label: 'TLP Rating', value: '4'},
 ];
-
-function IndicatorActionButtons({row}) {
-    const {open, handleRequestClose, handleRequestOpen} = useModal();
-    return (<div>
-        <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={urlForEditIndicator(row.indicator_id)}/>
-        <DeleteButton onClick={handleRequestOpen}/>
-        <DeleteModal open={open} onRequestClose={handleRequestClose}
-                     deleteEndpointFunction={deleteIndicator}
-                     deleteEndpointArgs={{indicatorId: row.indicator_id}}
-                     modalBodyContent={<P>Are you sure you want to delete this
-                         indicator: <strong>{row.name} ({row.indicator_id})</strong>?</P>}/>
-    </div>)
-}
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
@@ -68,7 +50,7 @@ const expansionFieldNameToCellValue = {
 
 const RowActionPrimary = ({row}) => {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
-    return (<HorizontalButtonLayout gap={variables.spacingXSmall}>
+    return (<HorizontalActionButtonLayout>
         <EditIconOnlyButton to={urlForEditIndicator(row.indicator_id)}/>
         <DeleteIconOnlyButton onClick={handleRequestOpen}/>
         <DeleteModal open={open} onRequestClose={handleRequestClose}
@@ -76,7 +58,7 @@ const RowActionPrimary = ({row}) => {
                      deleteEndpointArgs={{indicatorId: row.indicator_id}}
                      modalBodyContent={<P>Are you sure you want to delete this
                          indicator: <strong>{row.name} ({row.indicator_id})</strong>?</P>}/>
-    </HorizontalButtonLayout>);
+    </HorizontalActionButtonLayout>);
 }
 const RowActionsSecondary = ({row}) => (
     <Menu>
@@ -96,7 +78,7 @@ function RenderDataTable({records, loading, error}) {
                                        expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
                                        mappingOfColumnNameToCellValue={columnNameToCellValue}
                                        rowActionPrimary={RowActionPrimary}
-                                       // rowActionsSecondary={RowActionsSecondary}
+        // rowActionsSecondary={RowActionsSecondary}
                                        actionsColumnWidth={120}
     />
     return (

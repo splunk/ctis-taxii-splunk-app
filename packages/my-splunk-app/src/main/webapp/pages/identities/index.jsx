@@ -2,7 +2,6 @@ import React from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import Button from "@splunk/react-ui/Button";
-import Pencil from '@splunk/react-icons/Pencil';
 import {deleteIdentity, getIdentities} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
@@ -12,32 +11,33 @@ import IdentityForm from "../../common/IdentityForm";
 import {editIdentityPage, NEW_IDENTITY_PAGE} from "@splunk/my-react-component/src/urls";
 import Heading from "@splunk/react-ui/Heading";
 import Plus from '@splunk/react-icons/Plus';
-import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import {getUrlQueryParams} from "../../common/queryParams";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {layoutWithTheme} from "../../common/theme";
+import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
+import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 
 
 function Actions({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
-    return (<div>
-        <Button icon={<Pencil/>} label="Edit" appearance="secondary" to={editIdentityPage(row.identity_id)}/>
-        <DeleteButton onClick={handleRequestOpen}/>
+    return (<HorizontalActionButtonLayout>
+        <EditIconOnlyButton to={editIdentityPage(row.identity_id)}/>
+        <DeleteIconOnlyButton onClick={handleRequestOpen}/>
         <DeleteModal open={open} onRequestClose={handleRequestClose}
                      deleteEndpointFunction={deleteIdentity}
                      deleteEndpointArgs={{identityId: row.identity_id}}
                      modalBodyContent={<P>Are you sure you want to delete this
                          identity: <strong>{row.name} ({row.identity_id})</strong>?</P>}
         />
-    </div>)
+    </HorizontalActionButtonLayout>)
 }
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
     {columnName: "Identity Class", getCellContent: (row) => row.identity_class},
     {columnName: "Identity ID", getCellContent: (row) => row.identity_id},
-    {columnName: "Actions", getCellContent: (row) => <Actions row={row}/>},
 ]
 
 const expansionFieldNameToCellValue = {
@@ -56,7 +56,9 @@ function renderDataTable({records, loading, error}) {
     const table = <ExpandableDataTable data={records}
                                        rowKeyFunction={(row) => row.identity_id}
                                        expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}/>
+                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                                       rowActionPrimary={Actions}
+    />
     return (
         error ? errorElement : (loading ? loadingElement : table)
     );
