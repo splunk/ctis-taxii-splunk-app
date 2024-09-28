@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import {variables} from '@splunk/themes';
 
-const DatetimeInput = styled.input`
+export const DatetimeInput = styled.input`
     padding: ${variables.spacingXSmall} ${variables.spacingSmall};
     font-family: ${variables.fontFamily};
     font-size: ${variables.fontSize};

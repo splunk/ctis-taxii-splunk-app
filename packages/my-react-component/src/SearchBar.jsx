@@ -1,18 +1,17 @@
 import React, {useEffect} from 'react';
 import Search from '@splunk/react-ui/Search';
-import ButtonGroup from '@splunk/react-ui/ButtonGroup';
 
 import styled from 'styled-components';
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
 import Dropdown from "@splunk/react-ui/Dropdown";
-import {without} from "lodash";
+import {escapeRegExp, without} from "lodash";
 import Button from "@splunk/react-ui/Button";
 import RadioList from '@splunk/react-ui/RadioList';
 import P from "@splunk/react-ui/Paragraph";
 import moment from "moment";
 import {dateToIsoStringWithoutTimezone} from "./date_utils";
 import {useDebounce} from "./debounce";
-import {escapeRegExp} from "lodash";
+import {DatetimeInput} from "./DateTimeControlGroup";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -28,12 +27,21 @@ const MyDropdownButton = styled(Button)`
     flex-grow: 0;
 `;
 
+const DateRangeLayout = styled.div`
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+
+`;
+
 function LastUpdatedDropdown({labelPrefix, fieldName, onQueryChange, ...props}) {
     const SELECTION_ANY = 'Any Time';
-    const SELECTION_LAST_24_HOURS = 'Last 24 hours';
+    const SELECTION_LAST_24_HOURS = 'In the last 24 hours';
+    const SELECTION_DATE_RANGE = 'Date Range (UTC)';
 
     const closeReasons = without(Dropdown.possibleCloseReasons, 'contentClick');
     const [selected, setSelected] = React.useState(SELECTION_ANY);
+    const showDateRange = selected === SELECTION_DATE_RANGE;
     const [query, setQuery] = React.useState({});
     const onSelected = (e, {value}) => {
         setSelected(value);
@@ -57,25 +65,32 @@ function LastUpdatedDropdown({labelPrefix, fieldName, onQueryChange, ...props}) 
     const toggle = <MyDropdownButton inline label={`${labelPrefix}: ${selected}`} isMenu/>;
 
     return (<StyledDropdown toggle={toggle} retainFocus closeReasons={closeReasons} {...props}>
-        <div style={{padding: 20, width: '300px'}}>
+        <div style={{padding: 20, width: '500px'}}>
             <P>Selected: {selected}</P>
             <RadioList value={selected} onChange={onSelected}>
-                <RadioList.Option value={SELECTION_ANY}>Any Time</RadioList.Option>
-                <RadioList.Option value={SELECTION_LAST_24_HOURS}>Last 24 hours</RadioList.Option>
+                <RadioList.Option value={SELECTION_ANY}>{SELECTION_ANY}</RadioList.Option>
+                <RadioList.Option value={SELECTION_LAST_24_HOURS}>{SELECTION_LAST_24_HOURS}</RadioList.Option>
+                <RadioList.Option value={SELECTION_DATE_RANGE}>{SELECTION_DATE_RANGE}</RadioList.Option>
+                {showDateRange && <DateRangeLayout>
+                    <span>Between</span>
+                    <DatetimeInput type="datetime-local"/>
+                    <span>and</span>
+                    <DatetimeInput type="datetime-local"/>
+                </DateRangeLayout>}
             </RadioList>
         </div>
     </StyledDropdown>);
 }
 
 const generateRegexQuery = (field, value) => {
-   return {[field]: {'$regex': escapeRegExp(value), '$options': 'i'}};
+    return {[field]: {'$regex': escapeRegExp(value), '$options': 'i'}};
 }
 const generateRegexQueryForFields = (fields, value) => {
     return {'$or': fields.map(field => generateRegexQuery(field, value))};
 }
 
 export const IndicatorsSearchBar = ({onQueryChange, fullTextSearchFields}) => {
-    if(!fullTextSearchFields) {
+    if (!fullTextSearchFields) {
         throw new Error("fullTextSearchFields array is required!");
     }
     const [query, setQuery] = React.useState({});
