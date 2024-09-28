@@ -83,3 +83,15 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
     );
 }
 
+export const GroupingsSearchBar = ({onQueryChange}) => {
+    const TEXT_SEARCH_FIELDS = ['name', 'description', 'grouping_id', 'context'];
+    const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
+
+    const subqueries = [lastUpdatedQuery];
+    return (
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
+            <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
+        </SearchBar>
+    );
+}
+

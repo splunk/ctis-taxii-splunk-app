@@ -22,13 +22,6 @@ import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconO
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 
-const SEARCH_FIELD_OPTIONS = [
-    {label: 'Any Field', value: '1'},
-    {label: 'Indicator ID', value: '2'},
-    {label: 'Splunk Field', value: '3'},
-    {label: 'TLP Rating', value: '4'},
-];
-
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
     {columnName: "STIX Pattern", getCellContent: (row) => row.stix_pattern},

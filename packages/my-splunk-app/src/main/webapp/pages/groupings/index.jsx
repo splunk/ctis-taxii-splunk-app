@@ -22,6 +22,7 @@ import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import Tooltip from "@splunk/react-ui/Tooltip";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 
 function SubmitToTaxiiButton({row}) {
     return (<Tooltip content={"Submit to TAXII Server"}>
@@ -89,13 +90,15 @@ function renderDataTable({records, loading, error}) {
 }
 
 function ListGroupings() {
+    const [query, setQuery] = React.useState({});
     return (
         <>
             <Heading level={1}>Groupings</Heading>
             <div>
                 <Button icon={<Plus/>} label="New Grouping" appearance="primary" to={NEW_GROUPING_PAGE}/>
             </div>
-            <PaginatedDataTable renderData={renderDataTable} fetchData={getGroupings} onError={(e) => {
+            <GroupingsSearchBar onQueryChange={setQuery}/>
+            <PaginatedDataTable renderData={renderDataTable} fetchData={getGroupings} query={query} onError={(e) => {
                 createErrorToast(e);
             }}/>
         </>
