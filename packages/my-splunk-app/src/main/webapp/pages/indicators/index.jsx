@@ -113,7 +113,7 @@ function ListIndicators() {
                 {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
                 <Button icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
             </div>
-            <SearchBar onSubmit={setQuery}/>
+            <SearchBar onQueryChange={setQuery}/>
             {/*
             // TODO: what else needs to be considered for handling search and filters?
             */}

@@ -1,11 +1,9 @@
 import React, {useEffect} from 'react';
 import Search from '@splunk/react-ui/Search';
-import Magnifier from '@splunk/react-icons/Magnifier';
 import ButtonGroup from '@splunk/react-ui/ButtonGroup';
 
 import styled from 'styled-components';
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
-import BaseButton from "./BaseButton";
 import Dropdown from "@splunk/react-ui/Dropdown";
 import {without} from "lodash";
 import Button from "@splunk/react-ui/Button";
@@ -71,12 +69,16 @@ function LastUpdatedDropdown({labelPrefix, fieldName, onQueryChange, ...props}) 
 }
 
 // TODO: this is effectively a form, so can use react-hook-form to manage state
-export const SearchBar = ({onSubmit}) => {
+export const SearchBar = ({onQueryChange}) => {
     const [query, setQuery] = React.useState({});
     const [lastUpdatedQuery, setLastUpdatedQuery] = React.useState({});
     useEffect(() => {
         setQuery({'$and': [lastUpdatedQuery]})
     }, [lastUpdatedQuery]);
+
+    useEffect(() => {
+        onQueryChange(query);
+    }, [query]);
 
     return (
         <SearchControlContainer>
@@ -95,8 +97,6 @@ export const SearchBar = ({onSubmit}) => {
                 {label: "AMBER", value: "AMBER"},
                 {label: "WHITE", value: "WHITE"},
             ]}/>
-            <BaseButton inline noMargin icon={<Magnifier/>} appearance="primary" label="Search"
-                        onClick={() => onSubmit(query)}/>
         </SearchControlContainer>
     );
 }
