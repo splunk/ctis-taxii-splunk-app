@@ -34,13 +34,18 @@ function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) 
         .catch(errorHandler);
 }
 
-function getData({endpoint, queryParams}, successHandler, errorHandler) {
+function getData({endpoint, queryParams, query, successHandler, errorHandler}) {
     const url = createRESTURL(endpoint, {app});
-    let finalUrl = url;
+    let allQueryParams = {};
     if (queryParams) {
-        const urlSearchParams = new URLSearchParams(queryParams);
-        finalUrl = `${url}?${urlSearchParams.toString()}`;
+        allQueryParams = {...queryParams};
     }
+    if (query) {
+        allQueryParams.query = JSON.stringify(query);
+    }
+
+    const urlSearchParams = new URLSearchParams(allQueryParams);
+    const finalUrl = `${url}?${urlSearchParams.toString()}`;
     return fetch(finalUrl,
         {
             method: 'GET',
@@ -113,6 +118,7 @@ export function deleteGrouping({groupingId, successHandler, errorHandler}) {
         errorHandler
     })
 }
+
 export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
     console.log('Deleting indicator:', indicatorId);
     return deleteData({
@@ -123,22 +129,33 @@ export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
     })
 }
 
-export function getIndicators(skip, limit, successHandler, errorHandler) {
+export function getIndicators({skip, limit, successHandler, errorHandler, query}) {
     return getData({
         endpoint: 'list-indicators',
         queryParams: {
             skip, limit
-        }
-    }, successHandler, errorHandler)
+        }, query, successHandler, errorHandler
+    })
 }
 
-export function getGroupings(skip, limit, successHandler, errorHandler) {
+export function getGroupings({skip, limit, successHandler, errorHandler, query}) {
     return getData({
         endpoint: 'list-groupings',
         queryParams: {
             skip, limit
-        }
-    }, successHandler, errorHandler)
+        },
+        query, successHandler, errorHandler
+    })
+}
+
+export function getIdentities({skip, limit, successHandler, errorHandler, query}) {
+    return getData({
+        endpoint: 'list-identities',
+        queryParams: {
+            skip, limit
+        },
+        query, successHandler, errorHandler
+    })
 }
 
 async function getAllRecords(endpoint, successHandler, errorHandler) {
@@ -146,35 +163,28 @@ async function getAllRecords(endpoint, successHandler, errorHandler) {
     const pageSize = 100;
     let offset = 0;
     let hasMore = true;
-    while(hasMore){
+    while (hasMore) {
         await getData({
             endpoint,
             queryParams: {
                 skip: offset,
                 limit: pageSize
-            }
-        }, (resp) => {
-            allRecords.push(...resp.records);
-            offset += pageSize;
-            if (resp.records.length < pageSize) {
-                hasMore = false;
-            }
-        }, errorHandler);
+            },
+            successHandler: (resp) => {
+                allRecords.push(...resp.records);
+                offset += pageSize;
+                if (resp.records.length < pageSize) {
+                    hasMore = false;
+                }
+            },
+            errorHandler
+        });
     }
     successHandler(allRecords);
 }
 
 export async function getAllGroupings(successHandler, errorHandler) {
     return getAllRecords('list-groupings', successHandler, errorHandler);
-}
-
-export function getIdentities(skip, limit, successHandler, errorHandler) {
-    return getData({
-        endpoint: 'list-identities',
-        queryParams: {
-            skip, limit
-        }
-    }, successHandler, errorHandler)
 }
 
 export function getExactlyOneRecord({query, endpoint, successHandler, errorHandler}) {
@@ -195,17 +205,18 @@ export function getExactlyOneRecord({query, endpoint, successHandler, errorHandl
         endpoint,
         queryParams: {
             query: JSON.stringify(query)
-        }
-    }, (resp) => {
-        // Assumption that JSON response will have a top-level array called "records"
-        if (resp.records.length === 1) {
-            successHandler(resp.records[0]);
-        } else if (resp.records.length === 0) {
-            errorHandler(new Error(`No records found for query: ${JSON.stringify(query)}`));
-        } else {
-            errorHandler(new Error(`Unexpected response: ${JSON.stringify(query)}`));
-        }
-    }, errorHandler)
+        },
+        successHandler: (resp) => {
+            // Assumption that JSON response will have a top-level array called "records"
+            if (resp.records.length === 1) {
+                successHandler(resp.records[0]);
+            } else if (resp.records.length === 0) {
+                errorHandler(new Error(`No records found for query: ${JSON.stringify(query)}`));
+            } else {
+                errorHandler(new Error(`Unexpected response: ${JSON.stringify(query)}`));
+            }
+        }, errorHandler
+    })
 }
 
 export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
@@ -280,5 +291,6 @@ export function listIndicatorCategories(splunkFieldName, indicatorValue, success
     return getData({
         endpoint: 'list-ioc-categories',
         queryParams: queryParams,
-    }, successHandler, errorHandler)
+        successHandler, errorHandler
+    })
 }

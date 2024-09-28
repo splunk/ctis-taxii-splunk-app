@@ -77,12 +77,14 @@ export function Form({existingGrouping}) {
         label: `${identity.name} (${identity.identity_id})`,
         value: identity.identity_id
     })), [identities]);
+
+    // TODO: Replace this with ApiClient function getAllIdentities()
     useEffect(() => {
-        getIdentities(0, 0, (resp) => {
+        getIdentities({skip: 0, limit: 0, successHandler: (resp) => {
             setIdentities(resp.records);
-        }, (error) => {
+        }, errorHandler: (error) => {
             console.error(error);
-        }).then();
+        }}).then();
     }, []);
 
     const postEndpointFunction = existingGrouping ? editGrouping : postCreateGrouping;

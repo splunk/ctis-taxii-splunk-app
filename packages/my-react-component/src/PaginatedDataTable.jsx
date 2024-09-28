@@ -2,34 +2,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import SearchPaginator from "./paginator";
 import P from '@splunk/react-ui/Paragraph';
 
-/**
- * @callback onError - Callback to handle error. Accepts a single error argument.
- * @param {error} error - Error object
- */
-/**
- * @callback fetchData
- * @param {int} skip - Number of records to skip (offset)
- * @param {int} limit - Number of records to return
- * @param {onError} onError - Error callback
- */
-
-/**
- * @callback renderData
- * @param {Object} props - Props
- * @param {Array} props.records - Array of records
- * @param {Boolean} props.loading - Loading state
- * @param {Error} props.error - Error object
- */
-
-/**
- * Hook to fetch paginated data
- * @param getDataPaginated
- * @param {int} skip
- * @param {int} limit
- * @param {onError} onError
- * @returns {{totalRecords: number, records: *[], loading: boolean, error: Object}}
- */
-function usePaginatedData(getDataPaginated, skip, limit, onError) {
+function usePaginatedData({getDataPaginated, skip, limit, onError, query}) {
     const [records, setRecords] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -38,18 +11,21 @@ function usePaginatedData(getDataPaginated, skip, limit, onError) {
         setLoading(true);
         setError(null);
         // TODO: handle cancel? E.g. if pagination changes before data loads
-        getDataPaginated(skip, limit, (data) => {
-            console.log(skip, limit, data)
-            setRecords(data.records);
-            setTotalRecords(data.total);
-            setLoading(false);
-        }, (error) => {
-            setLoading(false);
-            setError(error);
-            console.error(error);
-            onError(error);
+        getDataPaginated({
+            skip, limit, query,
+            successHandler: (data) => {
+                console.log(skip, limit, data)
+                setRecords(data.records);
+                setTotalRecords(data.total);
+                setLoading(false);
+            }, errorHandler: (error) => {
+                setLoading(false);
+                setError(error);
+                console.error(error);
+                onError(error);
+            }
         });
-    }, [skip, limit]);
+    }, [skip, limit, query]);
     return {records, totalRecords, loading, error};
 }
 
@@ -65,12 +41,30 @@ function usePaginatedData(getDataPaginated, skip, limit, onError) {
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
 const DEFAULT_RESULTS_PER_PAGE = 10;
 
-export default function PaginatedDataTable({renderData: RenderData, fetchData, onError}) {
+export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query}) {
     const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
-    const {records, totalRecords, loading, error} = usePaginatedData(fetchData, skip, resultsPerPage, onError);
+    const {records, totalRecords, loading, error} = usePaginatedData({
+        getDataPaginated: fetchData,
+        skip,
+        limit: resultsPerPage,
+        query,
+        onError
+    });
     const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
+
+    useEffect(() => {
+        console.log("Setting page num to 1");
+        setPageNum(1);
+    }, [resultsPerPage]);
+
+    useEffect(() => {
+        // Reset page number when query changes
+        console.log("Setting page num to 1 due to query change");
+        setPageNum(1);
+    }, [query]);
+
     return (
         <>
             <RenderData records={records} loading={loading} error={error}/>
