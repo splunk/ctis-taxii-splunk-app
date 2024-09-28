@@ -46,6 +46,8 @@ const expansionFieldNameToCellValue = {
     "Indicator Category": (row) => row.indicator_category,
     "Indicator Value": (row) => row.indicator_value,
     "TLP Rating": (row) => row.tlp_v1_rating,
+    "Created At (UTC)": (row) => row.created,
+    "Modified At (UTC)": (row) => row.modified,
 }
 
 const RowActionPrimary = ({row}) => {
@@ -121,9 +123,6 @@ function ListIndicators() {
             <PaginatedDataTable renderData={RenderDataTable} fetchData={getIndicators} query={query} onError={(e) => {
                 createErrorToast(e);
             }}/>
-            <div>
-                <P>Query: {JSON.stringify(query)}</P>
-            </div>
         </>
     );
 }

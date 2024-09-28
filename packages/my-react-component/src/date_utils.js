@@ -17,3 +17,7 @@ export const reduceIsoStringPrecisionToSeconds = (dateIsoString) => {
     date.setMilliseconds(0);
     return dateToIsoStringWithoutTimezone(date);
 }
+
+export const utcNowIsoStringWithoutTimezone = () => {
+    return dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision());
+}

@@ -3,84 +3,15 @@ import Search from '@splunk/react-ui/Search';
 
 import styled from 'styled-components';
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
-import Dropdown from "@splunk/react-ui/Dropdown";
-import {escapeRegExp, without} from "lodash";
-import Button from "@splunk/react-ui/Button";
-import RadioList from '@splunk/react-ui/RadioList';
-import P from "@splunk/react-ui/Paragraph";
-import moment from "moment";
-import {dateToIsoStringWithoutTimezone} from "./date_utils";
+import {escapeRegExp} from "lodash";
 import {useDebounce} from "./debounce";
-import {DatetimeInput} from "./DateTimeControlGroup";
+import {DatetimeRangePicker} from "./DatetimeRangePicker";
 
 const SearchControlContainer = styled.div`
     display: flex;
     flex-direction: row;
     gap: 4px;
 `;
-
-const StyledDropdown = styled(Dropdown)`
-`;
-const MyDropdownButton = styled(Button)`
-    //max-width: 250px;
-    min-width: 150px;
-    flex-grow: 0;
-`;
-
-const DateRangeLayout = styled.div`
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-
-`;
-
-function LastUpdatedDropdown({labelPrefix, fieldName, onQueryChange, ...props}) {
-    const SELECTION_ANY = 'Any Time';
-    const SELECTION_LAST_24_HOURS = 'In the last 24 hours';
-    const SELECTION_DATE_RANGE = 'Date Range (UTC)';
-
-    const closeReasons = without(Dropdown.possibleCloseReasons, 'contentClick');
-    const [selected, setSelected] = React.useState(SELECTION_ANY);
-    const showDateRange = selected === SELECTION_DATE_RANGE;
-    const [query, setQuery] = React.useState({});
-    const onSelected = (e, {value}) => {
-        setSelected(value);
-        if (value === SELECTION_ANY) {
-            setQuery({});
-        } else if (value === SELECTION_LAST_24_HOURS) {
-            const nowMinus24Hours = moment().subtract(24, 'hours');
-            setQuery({"$gt": dateToIsoStringWithoutTimezone(nowMinus24Hours.toDate())});
-        }
-    }
-
-    useEffect(() => {
-        // Check if object is empty (https://stackoverflow.com/a/20374145/23523267)
-        if (Object.keys(query).length === 0) {
-            onQueryChange({});
-        } else {
-            onQueryChange({[fieldName]: query});
-        }
-    }, [query])
-
-    const toggle = <MyDropdownButton inline label={`${labelPrefix}: ${selected}`} isMenu/>;
-
-    return (<StyledDropdown toggle={toggle} retainFocus closeReasons={closeReasons} {...props}>
-        <div style={{padding: 20, width: '500px'}}>
-            <P>Selected: {selected}</P>
-            <RadioList value={selected} onChange={onSelected}>
-                <RadioList.Option value={SELECTION_ANY}>{SELECTION_ANY}</RadioList.Option>
-                <RadioList.Option value={SELECTION_LAST_24_HOURS}>{SELECTION_LAST_24_HOURS}</RadioList.Option>
-                <RadioList.Option value={SELECTION_DATE_RANGE}>{SELECTION_DATE_RANGE}</RadioList.Option>
-                {showDateRange && <DateRangeLayout>
-                    <span>Between</span>
-                    <DatetimeInput type="datetime-local"/>
-                    <span>and</span>
-                    <DatetimeInput type="datetime-local"/>
-                </DateRangeLayout>}
-            </RadioList>
-        </div>
-    </StyledDropdown>);
-}
 
 const generateRegexQuery = (field, value) => {
     return {[field]: {'$regex': escapeRegExp(value), '$options': 'i'}};
@@ -111,13 +42,15 @@ export const IndicatorsSearchBar = ({onQueryChange, fullTextSearchFields}) => {
     }, [lastUpdatedQuery, debouncedSearchValue]);
 
     useEffect(() => {
+        console.log('Query is now:', JSON.stringify(query));
         onQueryChange(query);
     }, [query]);
 
     return (
         <SearchControlContainer>
             <Search style={{flex: 8}} onChange={handleSearchChange} value={searchValue}/>
-            <LastUpdatedDropdown labelPrefix="Modified" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
+            <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"}
+                                 onQueryChange={setLastUpdatedQuery}/>
             <SearchFieldDropdown defaultValue={""} prefixLabel="Grouping" options={[
                 {label: "Any", value: ""},
                 {label: "Grouping 1", value: "1"},
