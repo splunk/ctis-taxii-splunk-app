@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
-import {SearchBar} from "@splunk/my-react-component/src/SearchBar";
+import {IndicatorsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import Button from "@splunk/react-ui/Button";
 import Plus from '@splunk/react-icons/Plus';
 import {deleteIndicator, getIndicators} from "@splunk/my-react-component/src/ApiClient";
@@ -105,6 +105,7 @@ function useResponsiveColumns() {
 
 function ListIndicators() {
     const [query, setQuery] = React.useState({});
+    const TEXT_SEARCH_FIELDS = ['name', 'description', 'stix_pattern', 'indicator_value', 'indicator_category', 'indicator_id', 'grouping_id'];
 
     return (
         <>
@@ -113,7 +114,7 @@ function ListIndicators() {
                 {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
                 <Button icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
             </div>
-            <SearchBar onQueryChange={setQuery}/>
+            <IndicatorsSearchBar onQueryChange={setQuery} fullTextSearchFields={TEXT_SEARCH_FIELDS}/>
             {/*
             // TODO: what else needs to be considered for handling search and filters?
             */}

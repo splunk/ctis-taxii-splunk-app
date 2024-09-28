@@ -68,7 +68,7 @@ export default function PaginatedDataTable({renderData: RenderData, fetchData, o
     return (
         <>
             <RenderData records={records} loading={loading} error={error}/>
-            <P>{`Total Records: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
+            <P>{`Records found: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
             <SearchPaginator totalPages={numPages}
                              pageNum={pageNum}
                              onChangePage={setPageNum}

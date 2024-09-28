@@ -11,6 +11,8 @@ import RadioList from '@splunk/react-ui/RadioList';
 import P from "@splunk/react-ui/Paragraph";
 import moment from "moment";
 import {dateToIsoStringWithoutTimezone} from "./date_utils";
+import {useDebounce} from "./debounce";
+import {escapeRegExp} from "lodash";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -18,9 +20,6 @@ const SearchControlContainer = styled.div`
     gap: 4px;
 `;
 
-const StyledButtonGroup = styled(ButtonGroup)`
-    flex: 0.25 1 200px;
-`;
 const StyledDropdown = styled(Dropdown)`
 `;
 const MyDropdownButton = styled(Button)`
@@ -68,13 +67,33 @@ function LastUpdatedDropdown({labelPrefix, fieldName, onQueryChange, ...props}) 
     </StyledDropdown>);
 }
 
-// TODO: this is effectively a form, so can use react-hook-form to manage state
-export const SearchBar = ({onQueryChange}) => {
+const generateRegexQuery = (field, value) => {
+   return {[field]: {'$regex': escapeRegExp(value), '$options': 'i'}};
+}
+const generateRegexQueryForFields = (fields, value) => {
+    return {'$or': fields.map(field => generateRegexQuery(field, value))};
+}
+
+export const IndicatorsSearchBar = ({onQueryChange, fullTextSearchFields}) => {
+    if(!fullTextSearchFields) {
+        throw new Error("fullTextSearchFields array is required!");
+    }
     const [query, setQuery] = React.useState({});
     const [lastUpdatedQuery, setLastUpdatedQuery] = React.useState({});
+    const [searchValue, setSearchValue] = React.useState('');
+    const debouncedSearchValue = useDebounce(searchValue, 300);
+
+    const handleSearchChange = (e, {value}) => {
+        setSearchValue(value);
+    }
+
     useEffect(() => {
-        setQuery({'$and': [lastUpdatedQuery]})
-    }, [lastUpdatedQuery]);
+        let subqueries = [lastUpdatedQuery];
+        if (debouncedSearchValue) {
+            subqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
+        }
+        setQuery({'$and': subqueries});
+    }, [lastUpdatedQuery, debouncedSearchValue]);
 
     useEffect(() => {
         onQueryChange(query);
@@ -82,7 +101,7 @@ export const SearchBar = ({onQueryChange}) => {
 
     return (
         <SearchControlContainer>
-            <Search style={{flex: 8}}/>
+            <Search style={{flex: 8}} onChange={handleSearchChange} value={searchValue}/>
             <LastUpdatedDropdown labelPrefix="Modified" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
             <SearchFieldDropdown defaultValue={""} prefixLabel="Grouping" options={[
                 {label: "Any", value: ""},
