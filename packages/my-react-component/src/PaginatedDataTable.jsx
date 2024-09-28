@@ -1,12 +1,16 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import SearchPaginator from "./paginator";
 import P from '@splunk/react-ui/Paragraph';
+import {useDebounceMultiple} from "./debounce";
 
 function usePaginatedData({getDataPaginated, skip, limit, onError, query}) {
     const [records, setRecords] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const debouncedValues = useDebounceMultiple([skip, limit, query], 50);
+
     useEffect(() => {
         setLoading(true);
         setError(null);
@@ -25,7 +29,7 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query}) {
                 onError(error);
             }
         });
-    }, [skip, limit, query]);
+    }, [debouncedValues]);
     return {records, totalRecords, loading, error};
 }
 

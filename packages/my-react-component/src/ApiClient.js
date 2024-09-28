@@ -46,6 +46,7 @@ function getData({endpoint, queryParams, query, successHandler, errorHandler}) {
 
     const urlSearchParams = new URLSearchParams(allQueryParams);
     const finalUrl = `${url}?${urlSearchParams.toString()}`;
+    console.log('GET:', finalUrl);
     return fetch(finalUrl,
         {
             method: 'GET',
@@ -53,7 +54,7 @@ function getData({endpoint, queryParams, query, successHandler, errorHandler}) {
         })
         .then(resp => {
             if (!resp.ok) {
-                errorHandler(resp);
+                return Promise.reject(resp);
             } else {
                 return resp.json();
             }

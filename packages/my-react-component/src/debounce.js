@@ -14,3 +14,17 @@ export const useDebounce = (cb, delay) => {
     }, [cb, delay]);
     return debounceValue;
 }
+
+export const useDebounceMultiple = (values, delay) => {
+    const [debounceValues, setDebounceValues] = useState(values);
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebounceValues(values);
+        }, delay);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [JSON.stringify(values), delay]);
+    return debounceValues;
+}
