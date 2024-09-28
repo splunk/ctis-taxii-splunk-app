@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Search from '@splunk/react-ui/Search';
 
 import styled from 'styled-components';
@@ -6,6 +6,7 @@ import {SearchFieldDropdown} from "./SearchFieldDropdown";
 import {escapeRegExp} from "lodash";
 import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
+import {useListGroupings} from "@splunk/my-splunk-app/src/main/webapp/common/indicator_form/GroupingsDropdown";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -16,16 +17,16 @@ const SearchControlContainer = styled.div`
 const generateRegexQuery = (field, value) => {
     return {[field]: {'$regex': escapeRegExp(value), '$options': 'i'}};
 }
+
 const generateRegexQueryForFields = (fields, value) => {
     return {'$or': fields.map(field => generateRegexQuery(field, value))};
 }
 
-export const IndicatorsSearchBar = ({onQueryChange, fullTextSearchFields}) => {
+export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, children}) => {
     if (!fullTextSearchFields) {
         throw new Error("fullTextSearchFields array is required!");
     }
     const [query, setQuery] = React.useState({});
-    const [lastUpdatedQuery, setLastUpdatedQuery] = React.useState({});
     const [searchValue, setSearchValue] = React.useState('');
     const debouncedSearchValue = useDebounce(searchValue, 300);
 
@@ -34,12 +35,16 @@ export const IndicatorsSearchBar = ({onQueryChange, fullTextSearchFields}) => {
     }
 
     useEffect(() => {
-        let subqueries = [lastUpdatedQuery];
+        let all_subqueries = subqueries.filter(subquery => Object.keys(subquery).length > 0);
         if (debouncedSearchValue) {
-            subqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
+            all_subqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
         }
-        setQuery({'$and': subqueries});
-    }, [lastUpdatedQuery, debouncedSearchValue]);
+        if (all_subqueries.length === 0) {
+            setQuery({});
+        } else {
+            setQuery({'$and': all_subqueries});
+        }
+    }, [JSON.stringify(subqueries), debouncedSearchValue]);
 
     useEffect(() => {
         console.log('Query is now:', JSON.stringify(query));
@@ -49,22 +54,32 @@ export const IndicatorsSearchBar = ({onQueryChange, fullTextSearchFields}) => {
     return (
         <SearchControlContainer>
             <Search style={{flex: 8}} onChange={handleSearchChange} value={searchValue}/>
-            <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"}
-                                 onQueryChange={setLastUpdatedQuery}/>
-            <SearchFieldDropdown defaultValue={""} prefixLabel="Grouping" options={[
-                {label: "Any", value: ""},
-                {label: "Grouping 1", value: "1"},
-                {label: "Grouping 2", value: "2"},
-                {label: "Grouping 3", value: "3"},
-            ]}/>
-            <SearchFieldDropdown defaultValue={""} prefixLabel="TLP Rating" options={[
-                {label: "Any", value: ""},
-                {label: "GREEN", value: "GREEN"},
-                {label: "RED", value: "RED"},
-                {label: "AMBER", value: "AMBER"},
-                {label: "WHITE", value: "WHITE"},
-            ]}/>
+            {children}
         </SearchControlContainer>
+    );
+}
+
+export const IndicatorsSearchBar = ({onQueryChange}) => {
+    const TEXT_SEARCH_FIELDS = ['name', 'description', 'stix_pattern', 'indicator_value', 'indicator_category', 'indicator_id', 'grouping_id'];
+    const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
+    const [groupingQuery, setGroupingQuery] = useState({});
+    const [tlpRatingQuery, setTlpRatingQuery] = useState({});
+
+    const subqueries = [lastUpdatedQuery, groupingQuery, tlpRatingQuery];
+    const {optionsGroupings, loading} = useListGroupings();
+    return (
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
+            <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
+            <SearchFieldDropdown onQueryChange={setGroupingQuery} fieldName={'grouping_id'} defaultValue={""}
+                                 prefixLabel="Grouping" options={optionsGroupings} isLoadingOptions={loading}/>
+            <SearchFieldDropdown prefixLabel="TLP Rating" fieldName="tlp_v1_rating" onQueryChange={setTlpRatingQuery}
+                                 options={[
+                                     {label: "GREEN", value: "GREEN"},
+                                     {label: "RED", value: "RED"},
+                                     {label: "AMBER", value: "AMBER"},
+                                     {label: "WHITE", value: "WHITE"},
+                                 ]}/>
+        </SearchBar>
     );
 }
 

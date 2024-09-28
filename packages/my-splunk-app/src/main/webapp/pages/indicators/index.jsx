@@ -107,19 +107,14 @@ function useResponsiveColumns() {
 
 function ListIndicators() {
     const [query, setQuery] = React.useState({});
-    const TEXT_SEARCH_FIELDS = ['name', 'description', 'stix_pattern', 'indicator_value', 'indicator_category', 'indicator_id', 'grouping_id'];
 
     return (
         <>
             <Heading level={1}>Indicators of Compromise (IoC)</Heading>
             <div>
-                {/* // TODO: Move this to own file. Containing the button in a div prevents button expanding entire width page */}
                 <Button icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
             </div>
-            <IndicatorsSearchBar onQueryChange={setQuery} fullTextSearchFields={TEXT_SEARCH_FIELDS}/>
-            {/*
-            // TODO: what else needs to be considered for handling search and filters?
-            */}
+            <IndicatorsSearchBar onQueryChange={setQuery}/>
             <PaginatedDataTable renderData={RenderDataTable} fetchData={getIndicators} query={query} onError={(e) => {
                 createErrorToast(e);
             }}/>
