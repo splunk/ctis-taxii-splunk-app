@@ -14,8 +14,8 @@ def _validate_connection(api_root_url: str, username, password):
     logger.info(f"Validating connection to {api_root_url} with username={username}")
     try:
         from taxii2client.v21 import ApiRoot
-        server = ApiRoot(url=api_root_url, user=username, password=password)
-        collections = server.collections
+        api_root = ApiRoot(url=api_root_url, user=username, password=password)
+        collections = api_root.collections
         logger.info(f"Connection to TAXII server ({api_root_url}) successful. Collections: {collections}")
     except Exception as e:
         logger.exception(f"Connection to {api_root_url} failed: {e}")
