@@ -20,7 +20,7 @@ const SelectControlGroup = ({
                     animateLoading={true}
                     isLoadingOptions={loading}>
                 {options.map(option => (
-                    <Select.Option key={option.value} label={option.label} value={option.value}/>
+                    <Select.Option disabled={option.disabled ?? false} key={option.value} label={option.label} value={option.value}/>
                 ))}
             </Select>
         </CustomControlGroup>

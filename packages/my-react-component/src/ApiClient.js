@@ -34,7 +34,7 @@ function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) 
         .catch(errorHandler);
 }
 
-function getData({endpoint, queryParams, query, successHandler, errorHandler}) {
+export function getData({endpoint, queryParams, query, successHandler, errorHandler}) {
     const url = createRESTURL(endpoint, {app});
     let allQueryParams = {};
     if (queryParams) {
@@ -156,6 +156,27 @@ export function getIdentities({skip, limit, successHandler, errorHandler, query}
             skip, limit
         },
         query, successHandler, errorHandler
+    })
+}
+
+export function getTaxiiConfigs({successHandler, errorHandler}) {
+    return getData({
+        endpoint: 'TA_CTIS_TAXII_taxii_config',
+        queryParams: {
+            output_mode: 'json',
+            count: -1
+        },
+        successHandler, errorHandler
+    })
+}
+
+export function listTaxiiCollections({taxiiConfigName, successHandler, errorHandler}) {
+    return getData({
+        endpoint: 'list-taxii-collections',
+        queryParams: {
+            config_name: taxiiConfigName
+        },
+        successHandler, errorHandler
     })
 }
 

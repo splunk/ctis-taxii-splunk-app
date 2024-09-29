@@ -1,26 +1,113 @@
-import React from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
+import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
+import Heading from "@splunk/react-ui/Heading";
+import {layoutWithTheme} from "../../common/theme";
+import {getTaxiiConfigs, useGetRecord, listTaxiiCollections} from "@splunk/my-react-component/src/ApiClient";
+import Loader from "@splunk/my-react-component/src/Loader";
+import {FormProvider, useForm} from "react-hook-form";
+import styled from "styled-components";
+import {TaxiiCollectionId, TaxiiConfigField} from "../../common/submission_form/fields";
+import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 
-import layout from '@splunk/react-page';
-import MyReactComponent from '@splunk/my-react-component';
-import { getUserTheme } from '@splunk/splunk-utils/themes';
+const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
+const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
 
-import { StyledContainer, StyledGreeting } from './StartStyles';
+const StyledForm = styled.form`
+    max-width: 1000px;
+`;
 
-getUserTheme()
-    .then((theme) => {
-        layout(
-            <StyledContainer>
-                <StyledGreeting>Submissions</StyledGreeting>
-                <div>Your component will appear below.</div>
-                <MyReactComponent name="from inside MyReactComponent" />
-            </StyledContainer>,
-            {
-                theme,
-            }
-        );
+function collectionToOption(collection) {
+    let label = `${collection.title} (${collection.id})`;
+    if(collection.can_write === false) {
+        label += " [Cannot Write]";
+    }
+    return {
+        label: label,
+        value: collection.id,
+        disabled: collection.can_write === false
+    }
+}
+function useTaxiiCollections({selectedTaxiiConfig}) {
+    const [collectionOptions, setCollectionOptions] = useState([]);
+    const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        console.log("Selected TAXII Config:", selectedTaxiiConfig);
+        if(selectedTaxiiConfig) {
+            setLoading(true);
+            listTaxiiCollections({
+                taxiiConfigName: selectedTaxiiConfig,
+                successHandler: (resp) => {
+                    console.log("Collections:", resp);
+                    const options = resp.collections.map(collection => collectionToOption(collection));
+                    setCollectionOptions(options);
+                    setLoading(false);
+                },
+                errorHandler: (error) => {
+                    console.error("Error getting collections", error);
+                    setLoading(false);
+                }
+            }).then();
+        }
+    }, [selectedTaxiiConfig]);
+    return {collectionOptions, loading};
+
+}
+function Form() {
+    const {loading, record, error} = useGetRecord({
+        restGetFunction: getTaxiiConfigs,
+        restFunctionQueryArgs: {}
     })
-    .catch((e) => {
-        const errorEl = document.createElement('span');
-        errorEl.innerHTML = e;
-        document.body.appendChild(errorEl);
+    const taxiiConfigEntries = record?.entry || [];
+    const methods = useForm({
+        mode: 'all',
+        defaultValues: {
+            [FIELD_TAXII_CONFIG_NAME]: null,
+            [FIELD_TAXII_COLLECTION_ID]: null,
+        }
     });
+    const taxiiConfigOptions = taxiiConfigEntries.map(entry => ({label: entry.name, value: entry.name}));
+    const {watch, register, trigger, handleSubmit, formState, control} = methods;
+
+    register(FIELD_TAXII_CONFIG_NAME, {required: 'TAXII Config is required'});
+    register(FIELD_TAXII_COLLECTION_ID, {required: 'TAXII Collection is required'});
+
+    const selectedTaxiiConfig = watch(FIELD_TAXII_CONFIG_NAME);
+    const {loading: collectionOptionsLoading, collectionOptions} = useTaxiiCollections({selectedTaxiiConfig});
+
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+    const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
+        [submitSuccess, formState]);
+
+    const onSubmit = async (data) => {
+        debugger;
+        console.log(data);
+        await trigger();
+    }
+
+    return (
+        <FormProvider {...methods}>
+            <StyledForm name="SubmitGrouping" onSubmit={handleSubmit(onSubmit)}>
+                <Heading level={1}>Submit a Grouping to TAXII Server</Heading>
+                <Loader error={error} loading={loading}>
+                    <section>
+                        <TaxiiConfigField fieldName={FIELD_TAXII_CONFIG_NAME} options={taxiiConfigOptions}/>
+                        <TaxiiCollectionId loading={collectionOptionsLoading} disabled={selectedTaxiiConfig === null} fieldName={FIELD_TAXII_COLLECTION_ID} options={collectionOptions}/>
+                    </section>
+                    <CustomControlGroup>
+                        <HorizontalButtonLayout>
+                            <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
+                        </HorizontalButtonLayout>
+                    </CustomControlGroup>
+                </Loader>
+            </StyledForm>
+        </FormProvider>
+    );
+}
+
+function MyPage() {
+    return <AppContainer><Form/></AppContainer>
+}
+
+layoutWithTheme(<MyPage/>);
