@@ -95,3 +95,12 @@ export const GroupingsSearchBar = ({onQueryChange}) => {
     );
 }
 
+export const IdentitiesSearchBar = ({onQueryChange}) => {
+    const TEXT_SEARCH_FIELDS = ['name', 'identity_id', 'identity_class'];
+    const subqueries = [];
+    return (
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
+        </SearchBar>
+    );
+}
+

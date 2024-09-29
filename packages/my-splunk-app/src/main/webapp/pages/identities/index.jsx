@@ -18,6 +18,7 @@ import {layoutWithTheme} from "../../common/theme";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
+import {IdentitiesSearchBar} from "@splunk/my-react-component/src/SearchBar";
 
 
 function Actions({row}) {
@@ -65,13 +66,15 @@ function renderDataTable({records, loading, error}) {
 }
 
 function ListIdentities() {
+    const [query, setQuery] = React.useState({});
     return (
         <>
             <Heading level={1}>Identities</Heading>
             <div>
                 <Button icon={<Plus/>} label="New Identity" appearance="primary" to={NEW_IDENTITY_PAGE}/>
             </div>
-            <PaginatedDataTable renderData={renderDataTable} fetchData={getIdentities} onError={(e) => {
+            <IdentitiesSearchBar onQueryChange={setQuery} />
+            <PaginatedDataTable renderData={renderDataTable} fetchData={getIdentities} query={query} onError={(e) => {
                 createErrorToast(e);
             }}/>
         </>
