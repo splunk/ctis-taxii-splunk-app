@@ -3,7 +3,9 @@
         "configuration": {
             "tabs": [
                 {
-                    "name": "account",
+                    "name": "taxii_config",
+                    "restHandlerModule": "taxii_config_validator",
+                    "restHandlerClass": "CustomConnectionValidator",
                     "table": {
                         "actions": [
                             "edit",
@@ -14,6 +16,10 @@
                             {
                                 "label": "Name",
                                 "field": "name"
+                            },
+                            {
+                                "label": "Server Base URL",
+                                "field": "server_base_url"
                             }
                         ]
                     },
@@ -40,14 +46,28 @@
                         },
                         {
                             "type": "text",
-                            "label": "API key",
-                            "field": "api_key",
-                            "help": "API key",
+                            "label": "TAXII Server Discovery URL",
+                            "field": "server_base_url",
+                            "help": "Example: https://example.com/taxii2/",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "label": "Username",
+                            "field": "username",
+                            "help": "Username",
+                            "required": true
+                        },
+                        {
+                            "type": "text",
+                            "label": "Password",
+                            "field": "password",
+                            "help": "Password",
                             "required": true,
                             "encrypted": true
                         }
                     ],
-                    "title": "Accounts"
+                    "title": "TAXII Configurations"
                 },
                 {
                     "type": "loggingTab"
@@ -120,7 +140,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "0.0.0Recc2daf",
+        "version": "0.0.0R5188ba6",
         "displayName": "CTIS TAXII ES Add-on",
         "schemaVersion": "0.0.7",
         "_uccVersion": "5.49.0",

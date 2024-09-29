@@ -5,3 +5,4 @@ stix2-patterns
 splunktaucclib
 splunk-sdk
 solnlib
+taxii2-client
