@@ -14,6 +14,11 @@ export const viewIndicator = (indicatorId) => createURL(`/app/${app}/indicators`
     indicator_id: indicatorId,
 });
 
+export const urlForEditGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {
+    action: 'edit',
+    grouping_id: groupingId,
+});
+
 export const urlForEditIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
     action: 'edit',
     indicator_id: indicatorId,

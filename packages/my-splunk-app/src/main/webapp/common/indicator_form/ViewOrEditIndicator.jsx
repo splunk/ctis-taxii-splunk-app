@@ -48,9 +48,9 @@ const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION];
 
 const ButtonsForViewMode = ({indicatorId}) => {
+    // TODO: Implement delete functionality
     return <HorizontalButtonLayout>
-        <DeleteButton inline={true} onClick={() => {
-        }}/>
+        <DeleteButton inline={true} onClick={() => {}}/>
         <EditButton inline={true} to={urlForEditIndicator(indicatorId)}/>
     </HorizontalButtonLayout>;
 }

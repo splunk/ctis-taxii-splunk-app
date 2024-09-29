@@ -12,8 +12,7 @@ import {
 import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
-import {VIEW_GROUPINGS_PAGE} from "@splunk/my-react-component/src/urls";
-import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
+import {urlForEditGrouping, VIEW_GROUPINGS_PAGE} from "@splunk/my-react-component/src/urls";
 import {useOnFormSubmit} from "./formSubmit";
 import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
@@ -21,6 +20,11 @@ import Loader from "@splunk/my-react-component/src/Loader";
 import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
+import EditButton from "@splunk/my-react-component/src/EditButton";
+import CancelButton from "@splunk/my-react-component/src/CancelButton";
+import useModal from "@splunk/my-react-component/src/useModal";
+import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};
@@ -41,12 +45,24 @@ const GROUPING_CONTEXTS = [
     {label: 'malicious-activity', value: 'malicious-activity'},
 ];
 
+const ButtonsForViewMode = ({grouping}) => {
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
+    return <HorizontalButtonLayout justifyContent={'space-between'}>
+        <DeleteButton inline={true} onClick={handleRequestOpen}/>
+        <EditButton inline={true} to={urlForEditGrouping(grouping.grouping_id)}/>
+        <DeleteGroupingModal open={open} onRequestClose={handleRequestClose} grouping={grouping}/>
+    </HorizontalButtonLayout>;
+}
+
 function GoToGroupingsButton() {
     return (<Button to={VIEW_GROUPINGS_PAGE} appearance="primary" label="Go to Groupings"/>);
 }
 
-export function Form({existingGrouping}) {
-    const title = existingGrouping ? "Editing Grouping" : "Create New Grouping";
+export function Form({existingGrouping, readOnly = false}) {
+    if (readOnly && !existingGrouping) {
+        throw new Error("existingGrouping is required when readOnly is true.");
+    }
+    const title = existingGrouping ? (readOnly ? "Grouping" : "Editing Grouping") : "Create New Grouping";
     const submissionSuccessModalTitle = existingGrouping ? "Successfully Edited Grouping" : "Successfully Created New Grouping";
     const methods = useForm({
         mode: 'all',
@@ -64,13 +80,14 @@ export function Form({existingGrouping}) {
 
     useEffect(() => {
         if (existingGrouping) {
+            console.log("Setting values for existing grouping");
             setValue(FORM_FIELD_GROUPING_ID, existingGrouping.grouping_id);
             setValue(FORM_FIELD_NAME, existingGrouping.name);
             setValue(FORM_FIELD_CONTEXT, existingGrouping.context);
             setValue(FORM_FIELD_DESCRIPTION, existingGrouping.description);
             setValue(FORM_FIELD_CREATED_BY_REF, existingGrouping.created_by_ref);
         }
-    }, [existingGrouping, setValue]);
+    }, [JSON.stringify(existingGrouping)]);
 
     const [identities, setIdentities] = useState([]);
     const optionsIdentities = useMemo(() => identities.map((identity) => ({
@@ -80,11 +97,13 @@ export function Form({existingGrouping}) {
 
     // TODO: Replace this with ApiClient function getAllIdentities()
     useEffect(() => {
-        getIdentities({skip: 0, limit: 0, successHandler: (resp) => {
-            setIdentities(resp.records);
-        }, errorHandler: (error) => {
-            console.error(error);
-        }}).then();
+        getIdentities({
+            skip: 0, limit: 0, successHandler: (resp) => {
+                setIdentities(resp.records);
+            }, errorHandler: (error) => {
+                console.error(error);
+            }
+        }).then();
     }, []);
 
     const postEndpointFunction = existingGrouping ? editGrouping : postCreateGrouping;
@@ -100,6 +119,8 @@ export function Form({existingGrouping}) {
         console.log(getValues());
     }, [formState]);
 
+    const commonProps = {readOnly};
+
     return (
         <FormProvider {...methods}>
             <MyForm onSubmit={handleSubmit(onSubmit)}>
@@ -109,16 +130,19 @@ export function Form({existingGrouping}) {
                         {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
                         {submissionError?.error && <code>{submissionError.error.toString()}</code>}
                     </Message>}
-                    {existingGrouping && <GroupingIdField disabled fieldName={FORM_FIELD_GROUPING_ID}/>}
-                    <NameField fieldName={FORM_FIELD_NAME}/>
-                    <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
-                    <ContextField options={GROUPING_CONTEXTS} fieldName={FORM_FIELD_CONTEXT}/>
-                    <CreatedByField fieldName={FORM_FIELD_CREATED_BY_REF} options={optionsIdentities}/>
+                    {existingGrouping &&
+                        <GroupingIdField disabled {...commonProps} fieldName={FORM_FIELD_GROUPING_ID}/>}
+                    <NameField {...commonProps} fieldName={FORM_FIELD_NAME}/>
+                    <DescriptionField {...commonProps} fieldName={FORM_FIELD_DESCRIPTION}/>
+                    <ContextField {...commonProps} options={GROUPING_CONTEXTS} fieldName={FORM_FIELD_CONTEXT}/>
+                    <CreatedByField {...commonProps} fieldName={FORM_FIELD_CREATED_BY_REF} options={optionsIdentities}/>
                     <CustomControlGroup>
-                        <HorizontalButtonLayout>
+                        {!readOnly && <HorizontalButtonLayout>
+                            <CancelButton/>
                             <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                          label={existingGrouping ? "Edit Grouping" : "Create Grouping"}/>
-                        </HorizontalButtonLayout>
+                                          label={existingGrouping ? "Save Changes" : "Submit"}/>
+                        </HorizontalButtonLayout>}
+                        {readOnly && <ButtonsForViewMode grouping={existingGrouping}/>}
                     </CustomControlGroup>
                 </section>
                 <Modal open={submitSuccess}>
@@ -129,30 +153,23 @@ export function Form({existingGrouping}) {
                         <GoToGroupingsButton/>
                     </Modal.Body>
                 </Modal>
-                <CollapsiblePanel title="Debug info">
-                    <div style={{color: 'red'}}>
-                        <code>
-                            {JSON.stringify(formState.errors)}
-                        </code>
-                    </div>
-                </CollapsiblePanel>
             </MyForm>
         </FormProvider>
     )
 }
 
-function EditModeForm({groupingId}) {
+function ExistingGroupingForm({groupingId, readOnly = false}) {
     const {record, loading, error} = useGetRecord({
         restGetFunction: getGrouping,
         restFunctionQueryArgs: {groupingId}
     });
     return (
         <Loader error={error} loading={loading}>
-            <Form existingGrouping={record}/>
+            <Form existingGrouping={record} readOnly={readOnly}/>
         </Loader>
     );
 }
 
-export default function GroupingForm({editMode, groupingId}) {
-    return editMode ? <EditModeForm groupingId={groupingId}/> : <Form/>;
+export default function GroupingForm({groupingId, readOnly = false}) {
+    return groupingId ? <ExistingGroupingForm readOnly={readOnly} groupingId={groupingId}/> : <Form/>;
 }

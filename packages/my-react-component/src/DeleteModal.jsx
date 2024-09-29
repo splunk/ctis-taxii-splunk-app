@@ -3,6 +3,9 @@ import React, {useState} from "react";
 import DeleteButton from "./DeleteButton";
 import Button from "@splunk/react-ui/Button";
 import Message from "@splunk/react-ui/Message";
+import P from "@splunk/react-ui/Paragraph";
+import {deleteGrouping} from "./ApiClient";
+import {VIEW_GROUPINGS_PAGE} from "./urls";
 
 export default function DeleteModal({
                                         open,
@@ -11,7 +14,8 @@ export default function DeleteModal({
                                         onRequestClose,
                                         deleteEndpointFunction,
                                         deleteEndpointArgs,
-                                        modalBodyContent
+                                        modalBodyContent,
+                                        deletionSuccessUrl,
                                     }) {
     const [loading, setLoading] = useState(false);
 
@@ -24,7 +28,7 @@ export default function DeleteModal({
                 setLoading(false);
                 onRequestClose();
                 // TODO: find better way to trigger refresh of data
-                window.location = window.location;
+                window.location = deletionSuccessUrl ?? window.location;
             },
             errorHandler: (e) => {
                 console.error(e);
@@ -52,4 +56,19 @@ export default function DeleteModal({
             </Modal.Footer>
         </Modal>
     )
+}
+
+export function DeleteGroupingModal({open, onRequestClose, grouping}) {
+    return <DeleteModal open={open}
+                        onRequestClose={onRequestClose}
+                        deletionSuccessUrl={VIEW_GROUPINGS_PAGE}
+                        disabled={grouping.indicators.length > 0}
+                        disabledReason={<P>There is/are {grouping.indicators.length} indicators associated with this
+                            grouping.
+                            <br/>
+                            Delete them or associate them with another grouping before deleting this grouping.</P>}
+                        deleteEndpointFunction={deleteGrouping}
+                        deleteEndpointArgs={{groupingId: grouping.grouping_id}}
+                        modalBodyContent={<P>Are you sure you want to delete this
+                            grouping: <strong>{grouping.name} ({grouping.grouping_id})</strong>?</P>}/>
 }
