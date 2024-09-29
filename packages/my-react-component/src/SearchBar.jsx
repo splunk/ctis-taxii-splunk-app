@@ -7,6 +7,7 @@ import {escapeRegExp} from "lodash";
 import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
 import {useListGroupings} from "@splunk/my-splunk-app/src/main/webapp/common/indicator_form/GroupingsDropdown";
+import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -26,8 +27,12 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
     if (!fullTextSearchFields) {
         throw new Error("fullTextSearchFields array is required!");
     }
+
+    const queryParams = getUrlQueryParams();
+    const initialSearch = queryParams.get('search') || '';
+
     const [query, setQuery] = React.useState({});
-    const [searchValue, setSearchValue] = React.useState('');
+    const [searchValue, setSearchValue] = React.useState(initialSearch);
     const debouncedSearchValue = useDebounce(searchValue, 300);
 
     const handleSearchChange = (e, {value}) => {
@@ -44,7 +49,7 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
         } else {
             setQuery({'$and': all_subqueries});
         }
-    }, [JSON.stringify(subqueries), debouncedSearchValue]);
+    }, [JSON.stringify(subqueries), debouncedSearchValue, initialSearch]);
 
     useEffect(() => {
         console.log('Query is now:', JSON.stringify(query));
@@ -97,9 +102,8 @@ export const GroupingsSearchBar = ({onQueryChange}) => {
 
 export const IdentitiesSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'identity_id', 'identity_class'];
-    const subqueries = [];
     return (
-        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[]}>
         </SearchBar>
     );
 }

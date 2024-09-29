@@ -9,7 +9,7 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query}) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const debouncedValues = useDebounceMultiple([skip, limit, query], 50);
+    const debouncedValues = useDebounceMultiple([skip, limit, query], 100);
 
     useEffect(() => {
         setLoading(true);

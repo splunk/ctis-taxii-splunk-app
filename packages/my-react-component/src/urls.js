@@ -19,6 +19,10 @@ export const viewGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {
     grouping_id: groupingId,
 });
 
+export const viewIdentity = (identityId) => createURL(`/app/${app}/identities`, {
+    search: identityId,
+});
+
 export const urlForEditGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {
     action: 'edit',
     grouping_id: groupingId,
@@ -38,6 +42,10 @@ export const editGroupingPage = (groupingId) => createURL(`/app/${app}/groupings
     grouping_id: groupingId,
     action: 'edit',
 });
+
+export function IdentityIdLink({identityId}) {
+    return (<a href={viewIdentity(identityId)}>{identityId}</a>)
+}
 
 export function GroupingIdLink({groupingId}) {
     return (<a href={viewGrouping(groupingId)}>{groupingId}</a>)

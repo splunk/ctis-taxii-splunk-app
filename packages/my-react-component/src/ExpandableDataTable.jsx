@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React from 'react';
+import React, {useEffect} from 'react';
 import Table from '@splunk/react-ui/Table';
 
 const TableCell = styled(Table.Cell)`
@@ -64,8 +64,30 @@ function ExpandableDataTable({
 
     // Adding one to include actions column
     const totalColumns = mappingOfColumnNameToCellValue.length + 1;
+    const [expandedRows, setExpandedRows] = React.useState(() => new Set());
+    const toggleRowExpansion = (rowKey) => {
+        if (expandedRows.has(rowKey)) {
+            setExpandedRows(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(rowKey);
+                return newSet;
+            });
+        } else {
+            setExpandedRows(prev => {
+                return new Set(prev).add(rowKey);
+            });
+        }
+    }
+
+    useEffect(() => {
+        if(data.length === 1){
+            const rowKeyOfFirstRow = rowKeyFunction(data[0]);
+            setExpandedRows(new Set([rowKeyOfFirstRow]));
+        }
+    }, [JSON.stringify(data)]);
+
     return (
-        <Table stripeRows rowExpansion="multi" actionsColumnWidth={actionsColumnWidth}>
+        <Table stripeRows rowExpansion="controlled" actionsColumnWidth={actionsColumnWidth}>
             <Table.Head>
                 {mappingOfColumnNameToCellValue.map(({columnName}) => (
                     <Table.HeadCell key={columnName}><strong>{columnName}</strong></Table.HeadCell>
@@ -76,6 +98,8 @@ function ExpandableDataTable({
                     <Table.Row key={rowKeyFunction(row)}
                                actionPrimary={RowActionPrimary && <RowActionPrimary row={row}/>}
                                actionsSecondary={RowActionsSecondary && <RowActionsSecondary row={row}/>}
+                               onExpansion={() => toggleRowExpansion(rowKeyFunction(row))}
+                               expanded={expandedRows.has(rowKeyFunction(row))}
                                expansionRow={
                                    getExpansionRow(row, rowKeyFunction, expansionRowFieldNameToCellValue, totalColumns)
                                }>

@@ -13,7 +13,13 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import Plus from '@splunk/react-icons/Plus';
 import {getGroupings} from "@splunk/my-react-component/src/ApiClient";
-import {editGroupingPage, GroupingIdLink, NEW_GROUPING_PAGE, viewIndicator} from "@splunk/my-react-component/src/urls";
+import {
+    editGroupingPage,
+    GroupingIdLink,
+    IdentityIdLink,
+    NEW_GROUPING_PAGE,
+    viewIndicator
+} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
 import {layoutWithTheme} from "../../common/theme";
@@ -55,7 +61,7 @@ const expansionFieldNameToCellValue = {
     "Context": (row) => row.context,
     "Created At (UTC)": (row) => row.created,
     "Modified At (UTC)": (row) => row.modified,
-    "Created By": (row) => row.created_by_ref,
+    "Created By": (row) => <IdentityIdLink identityId={row.created_by_ref}/>,
     "Indicators": (row) => <ListOfLinks links={row.indicators.map(x => ({
         title: x,
         url: viewIndicator(x)
