@@ -1,3 +1,5 @@
+from concurrent.futures.thread import ThreadPoolExecutor
+
 import pytest
 import requests
 
@@ -6,6 +8,30 @@ from .util import create_new_grouping, edit_grouping, get_groupings_collection, 
 
 
 class TestScenarios:
+    @pytest.mark.skip(reason="This test is only used for manual testing")
+    def test_add_bulk_groupings(self, session, cleanup_identities_collection, cleanup_groupings_collection):
+        assert len(get_groupings_collection(session)) == 0
+        assert len(get_identities_collection(session)) == 0
+
+        resp = create_new_identity(session, {
+            "name": "identity-1",
+            "identity_class": "organization",
+        })
+        identity = resp["identity"]
+        assert identity["name"] == "identity-1"
+
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for i in range(1000):
+                executor.submit(create_new_grouping, session, {
+                    "created_by_ref": identity["identity_id"],
+                    "name": f"grouping-{i}",
+                    "description": f"description for grouping {i}",
+                    "context": "unspecified",
+                })
+
+        groupings = get_groupings_collection(session)
+        assert len(groupings) == 1000
+
     def test_add_new_grouping(self, session, cleanup_identities_collection, cleanup_groupings_collection):
         assert len(get_groupings_collection(session)) == 0
         assert len(get_identities_collection(session)) == 0
