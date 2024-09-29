@@ -4,14 +4,14 @@ import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTa
 import {IndicatorsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import Button from "@splunk/react-ui/Button";
 import Plus from '@splunk/react-icons/Plus';
-import {deleteIndicator, getIndicators} from "@splunk/my-react-component/src/ApiClient";
+import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {NEW_INDICATOR_PAGE, urlForEditIndicator} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
-import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
+import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
 import Heading from "@splunk/react-ui/Heading";
 import {getUrlQueryParams} from "../../common/queryParams";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
@@ -48,11 +48,7 @@ const RowActionPrimary = ({row}) => {
     return (<HorizontalActionButtonLayout>
         <EditIconOnlyButton to={urlForEditIndicator(row.indicator_id)}/>
         <DeleteIconOnlyButton onClick={handleRequestOpen}/>
-        <DeleteModal open={open} onRequestClose={handleRequestClose}
-                     deleteEndpointFunction={deleteIndicator}
-                     deleteEndpointArgs={{indicatorId: row.indicator_id}}
-                     modalBodyContent={<P>Are you sure you want to delete this
-                         indicator: <strong>{row.name} ({row.indicator_id})</strong>?</P>}/>
+        <DeleteIndicatorModal open={open} onRequestClose={handleRequestClose} indicator={row}/>
     </HorizontalActionButtonLayout>);
 }
 const RowActionsSecondary = ({row}) => (

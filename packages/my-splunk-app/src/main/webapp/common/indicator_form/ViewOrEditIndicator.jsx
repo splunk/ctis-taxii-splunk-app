@@ -41,17 +41,20 @@ import {useOnFormSubmit} from "../formSubmit";
 import CancelButton from "@splunk/my-react-component/src/CancelButton";
 import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
+import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
+import useModal from "@splunk/my-react-component/src/useModal";
 
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,
     FIELD_INDICATOR_CATEGORY, FIELD_INDICATOR_VALUE,
     FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION];
 
-const ButtonsForViewMode = ({indicatorId}) => {
-    // TODO: Implement delete functionality
-    return <HorizontalButtonLayout>
-        <DeleteButton inline={true} onClick={() => {}}/>
-        <EditButton inline={true} to={urlForEditIndicator(indicatorId)}/>
+const ButtonsForViewMode = ({indicator}) => {
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
+    return <HorizontalButtonLayout justifyContent='space-between'>
+        <DeleteButton inline={true} onClick={handleRequestOpen}/>
+        <EditButton inline={true} to={urlForEditIndicator(indicator.indicator_id)}/>
+        <DeleteIndicatorModal open={open} onRequestClose={handleRequestClose} indicator={indicator}/>
     </HorizontalButtonLayout>;
 }
 const ButtonsForEditMode = ({submitting, submitButtonDisabled}) => {
@@ -88,7 +91,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
     })
 
     useEffect(() => {
-        if(submitSuccess){
+        if (submitSuccess) {
             window.location = viewIndicator(indicatorId);
         }
     }, [submitSuccess]);
@@ -141,7 +144,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                     </section>
                     <section>
                         <CustomControlGroup>
-                            {!editMode && <ButtonsForViewMode indicatorId={indicatorId}/>}
+                            {!editMode && <ButtonsForViewMode indicator={record}/>}
                             {editMode && <ButtonsForEditMode submitting={formState.isSubmitting}
                                                              submitButtonDisabled={submitButtonDisabled}/>}
                         </CustomControlGroup>

@@ -4,8 +4,8 @@ import DeleteButton from "./DeleteButton";
 import Button from "@splunk/react-ui/Button";
 import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
-import {deleteGrouping} from "./ApiClient";
-import {VIEW_GROUPINGS_PAGE} from "./urls";
+import {deleteGrouping, deleteIndicator} from "./ApiClient";
+import {VIEW_GROUPINGS_PAGE, VIEW_INDICATORS_PAGE} from "./urls";
 
 export default function DeleteModal({
                                         open,
@@ -71,4 +71,13 @@ export function DeleteGroupingModal({open, onRequestClose, grouping}) {
                         deleteEndpointArgs={{groupingId: grouping.grouping_id}}
                         modalBodyContent={<P>Are you sure you want to delete this
                             grouping: <strong>{grouping.name} ({grouping.grouping_id})</strong>?</P>}/>
+}
+export function DeleteIndicatorModal({open, onRequestClose, indicator}) {
+    return <DeleteModal open={open}
+                        onRequestClose={onRequestClose}
+                        deletionSuccessUrl={VIEW_INDICATORS_PAGE}
+                        deleteEndpointFunction={deleteIndicator}
+                        deleteEndpointArgs={{indicatorId: indicator.indicator_id}}
+                        modalBodyContent={<P>Are you sure you want to delete this
+                            indicator: <strong>{indicator.name} ({indicator.indicator_id})</strong>?</P>}/>
 }
