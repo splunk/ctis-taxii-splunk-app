@@ -13,7 +13,7 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import Plus from '@splunk/react-icons/Plus';
 import {getGroupings} from "@splunk/my-react-component/src/ApiClient";
-import {editGroupingPage, NEW_GROUPING_PAGE, viewIndicator} from "@splunk/my-react-component/src/urls";
+import {editGroupingPage, GroupingIdLink, NEW_GROUPING_PAGE, viewIndicator} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
 import {layoutWithTheme} from "../../common/theme";
@@ -42,14 +42,14 @@ function GroupingActionButtons({row}) {
 }
 
 const mappingOfColumnNameToCellValue = [
-    {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
+    {columnName: "Grouping ID", getCellContent: (row) => <GroupingIdLink groupingId={row.grouping_id}/>},
     {columnName: "Name", getCellContent: (row) => row.name},
     {columnName: "Description", getCellContent: (row) => row.description},
     {columnName: "No. Indicators", getCellContent: (row) => row.indicators.length},
 ]
 
 const expansionFieldNameToCellValue = {
-    "Grouping ID": (row) => row.grouping_id,
+    "Grouping ID": (row) => <GroupingIdLink groupingId={row.grouping_id}/>,
     "Name": (row) => row.name,
     "Description": (row) => row?.description,
     "Context": (row) => row.context,

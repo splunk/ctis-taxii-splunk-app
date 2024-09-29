@@ -9,7 +9,12 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
-import {NEW_INDICATOR_PAGE, urlForEditIndicator} from "@splunk/my-react-component/src/urls";
+import {
+    GroupingIdLink,
+    IndicatorIdLink,
+    NEW_INDICATOR_PAGE,
+    urlForEditIndicator
+} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
 import Heading from "@splunk/react-ui/Heading";
@@ -25,13 +30,13 @@ import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/Horiz
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
     {columnName: "STIX Pattern", getCellContent: (row) => row.stix_pattern},
-    {columnName: "Indicator ID", getCellContent: (row) => row.indicator_id},
-    {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
+    {columnName: "Indicator ID", getCellContent: (row) => <IndicatorIdLink indicatorId={row.indicator_id}/>},
+    {columnName: "Grouping ID", getCellContent: (row) => <GroupingIdLink groupingId={row.grouping_id}/>},
 ]
 
 const expansionFieldNameToCellValue = {
-    "Indicator ID": (row) => row.indicator_id,
-    "Grouping ID": (row) => row.grouping_id,
+    "Indicator ID": (row) => <IndicatorIdLink indicatorId={row.indicator_id}/>,
+    "Grouping ID": (row) => <GroupingIdLink groupingId={row.grouping_id}/>,
     "Name": (row) => row.name,
     "Description": (row) => row?.description || "No description provided",
     "STIX Pattern": (row) => row.stix_pattern,
