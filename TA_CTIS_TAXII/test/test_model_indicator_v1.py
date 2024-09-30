@@ -5,7 +5,7 @@ from cattrs import ClassValidationError, transform_error
 
 from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators
 from TA_CTIS_TAXII.package.bin.models.tlp_v1 import TLPv1
-
+from stix2 import TLP_GREEN
 GROUPING_ID = "grouping--184f5231-02f6-49e8-8230-b740f4b82331"
 SAMPLE_DICT = {
     "schema_version": 1,
@@ -46,6 +46,20 @@ SAMPLE_INDICATOR_INSTANCE = IndicatorModelV1(
     user="nobody",
     key="66bd393930444c60800ab750"
 )
+
+def new_sample_indicator_instance():
+    return IndicatorModelV1(
+        grouping_id=GROUPING_ID,
+        splunk_field_name="src_ip",
+        indicator_value="1.2.3.4",
+        indicator_category="source_ipv4",
+        name="name",
+        description="desc",
+        stix_pattern="[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '1.2.3.4']",
+        confidence=42,
+        tlp_v1_rating=TLPv1.GREEN,
+        valid_from=datetime(2024, 8, 14, 23, 9, 21, 123456),
+    )
 
 
 def test_from_dict_missing_required_fields():
@@ -199,6 +213,21 @@ def test_validate_stix_pattern():
         _ = indicator_converter.structure(indicator_json, IndicatorModelV1)
 
     assert "Invalid STIX pattern" in repr(exc_info.value)
+
+def test_to_stix():
+    indicator = new_sample_indicator_instance()
+    stix = indicator.to_stix()
+    assert stix.id == indicator.indicator_id
+    assert stix.created == indicator.created
+    assert stix.modified == indicator.modified
+    assert stix.name == indicator.name
+    assert stix.description == indicator.description
+    assert stix.pattern == indicator.stix_pattern
+    assert stix.pattern_type == "stix2"
+    assert stix.valid_from == indicator.valid_from
+    assert stix.confidence == indicator.confidence
+    assert stix.object_marking_refs == [TLP_GREEN.id]
+
 
 @pytest.mark.parametrize("grouping_id", ["", None, "invalid"])
 def test_validate_grouping_id(grouping_id):

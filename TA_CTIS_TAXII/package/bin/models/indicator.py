@@ -59,6 +59,20 @@ class IndicatorModelV1(BaseModelV1):
     valid_from: datetime = field()
     confidence: int = field(validator=[validate_confidence])
 
+    def to_stix(self):
+        return StixIndicator(
+            id=self.indicator_id,
+            created=self.created,
+            modified=self.modified,
+            name=self.name,
+            description=self.description,
+            pattern=self.stix_pattern,
+            pattern_type="stix2",
+            valid_from=self.valid_from,
+            confidence=self.confidence,
+            object_marking_refs=self.tlp_v1_rating.to_object_marking_ref(),
+        )
+
 """
 Example form payload:
 {
