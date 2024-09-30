@@ -4,8 +4,6 @@ from cattrs import Converter
 from datetime import datetime
 
 
-# TODO: created and modified datetime required fields
-#  Populate with default value of now
 @define(slots=False, kw_only=True)
 class BaseModel:
     key: str = None

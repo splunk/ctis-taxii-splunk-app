@@ -3,7 +3,7 @@ from typing import List
 from .indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators
 from .identity import IdentityModelV1, identity_converter
 from .grouping import GroupingModelV1, grouping_converter
-
+from .submission import SubmissionModelV1, SubmissionStatus
 from stix2 import Bundle
 
 def bundle_for_grouping(grouping_: GroupingModelV1, grouping_identity: IdentityModelV1, indicators: List[IndicatorModelV1]) -> Bundle:
