@@ -264,15 +264,16 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
                 setRecord(resp);
                 setLoading(false);
             },
-            errorHandler: (error) => {
-                setLoading(false);
-                console.error(error);
-                const objectKeys = Object.keys(error);
-                if (error === {} || objectKeys.length > 0) {
-                    setError(JSON.stringify(error));
-                } else {
+            errorHandler: async (error) => {
+                if(error instanceof Response){
+                    const error_text = await error.text()
+                    setError(error_text);
+                    console.error(error_text, error);
+                }else{
                     setError(String(error));
+                    console.error(error);
                 }
+                setLoading(false);
             }
         });
     }, []);

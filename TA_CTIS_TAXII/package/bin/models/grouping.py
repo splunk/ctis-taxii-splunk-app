@@ -5,7 +5,6 @@ from stix2 import Grouping
 from typing import List
 
 from .base import BaseModelV1, make_base_converter
-from .submission import SubmissionModelV1
 
 
 def validate_grouping_id(instance, attribute, value):
@@ -57,7 +56,6 @@ class GroupingModelV1(BaseModelV1):
     context: str = field(validator=[validate_grouping_context])
     name: str = field()
     description: str = field()
-    submissions: List[SubmissionModelV1] = field(factory=list)
 
     def to_stix(self, object_ids: List) -> Grouping:
         assert len(object_ids) > 0, "Grouping must have at least one object_ref such as an Indicator ID."

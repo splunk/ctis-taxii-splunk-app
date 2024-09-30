@@ -31,8 +31,10 @@ import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/Horiz
 import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 
 function SubmitToTaxiiButton({row}) {
-    return (<Tooltip content={"Submit to TAXII Server"}>
-        <BaseButton noBorder noMargin inline icon={<PaperPlane/>} label="Submit" appearance="primary" to={urlForSubmitGrouping(row.grouping_id)} />
+    const disabled = row.indicators.length === 0;
+    const tooltipContent = disabled ? "No indicators to submit" : "Submit to TAXII Server";
+    return (<Tooltip content={tooltipContent}>
+        <BaseButton disabled={disabled} noBorder noMargin inline icon={<PaperPlane/>} label="Submit" appearance="primary" to={urlForSubmitGrouping(row.grouping_id)} />
     </Tooltip>);
 }
 
