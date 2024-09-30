@@ -170,6 +170,16 @@ export function getTaxiiConfigs({successHandler, errorHandler}) {
     })
 }
 
+export function getStixBundleForGrouping({groupingId, successHandler, errorHandler}) {
+    return getData({
+        endpoint: 'get-stix-bundle-for-grouping',
+        queryParams: {
+            grouping_id: groupingId
+        },
+        successHandler, errorHandler
+    })
+}
+
 export function listTaxiiCollections({taxiiConfigName, successHandler, errorHandler}) {
     return getData({
         endpoint: 'list-taxii-collections',

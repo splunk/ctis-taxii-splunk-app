@@ -3,7 +3,7 @@ import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
 import Heading from "@splunk/react-ui/Heading";
 import {layoutWithTheme} from "../../common/theme";
 import {
-    getGrouping,
+    getGrouping, getStixBundleForGrouping,
     getTaxiiConfigs,
     listTaxiiCollections,
     useGetRecord
@@ -17,6 +17,7 @@ import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGr
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import {getUrlQueryParams} from "../../common/queryParams";
 import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
+import Code from '@splunk/react-ui/Code';
 
 const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
 const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
@@ -41,6 +42,7 @@ function collectionToOption(collection) {
 function useTaxiiCollections({selectedTaxiiConfig}) {
     const [collectionOptions, setCollectionOptions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     useEffect(() => {
         console.log("Selected TAXII Config:", selectedTaxiiConfig);
         if (selectedTaxiiConfig) {
@@ -53,14 +55,17 @@ function useTaxiiCollections({selectedTaxiiConfig}) {
                     setCollectionOptions(options);
                     setLoading(false);
                 },
-                errorHandler: (error) => {
-                    console.error("Error getting collections", error);
+                errorHandler: async (error_response) => {
+                    const error_text = await error_response.text()
+                    const errMessage = `Error getting TAXII collections: ${error_text}`;
+                    console.error(errMessage, error_response);
                     setLoading(false);
+                    setError(errMessage);
                 }
             }).then();
         }
     }, [selectedTaxiiConfig]);
-    return {collectionOptions, loading};
+    return {collectionOptions, loading, error};
 
 }
 
@@ -84,8 +89,14 @@ function Form({groupingId}) {
         restGetFunction: getTaxiiConfigs,
         restFunctionQueryArgs: {}
     })
-    const loading = loadingGrouping || loadingTaxiiConfigs;
-    const error = groupingError || taxiiConfigError;
+
+    const {loading: bundleLoading, record: bundle, error: bundleError} = useGetRecord({
+        restGetFunction: getStixBundleForGrouping,
+        restFunctionQueryArgs: {groupingId}
+    });
+    const bundleJsonString = JSON.stringify(bundle?.bundle, null, 4);
+
+    const loading = loadingGrouping || bundleLoading || loadingTaxiiConfigs;
     const taxiiConfigEntries = taxiiConfig?.entry || [];
     const taxiiConfigOptions = taxiiConfigEntries.map(entry => ({label: entry.name, value: entry.name}));
 
@@ -94,7 +105,10 @@ function Form({groupingId}) {
     register(FIELD_TAXII_COLLECTION_ID, {required: 'TAXII Collection is required'});
 
     const selectedTaxiiConfig = watch(FIELD_TAXII_CONFIG_NAME);
-    const {loading: collectionOptionsLoading, collectionOptions} = useTaxiiCollections({selectedTaxiiConfig});
+    const {loading: collectionOptionsLoading, collectionOptions, error: taxiiCollectionsError} = useTaxiiCollections({selectedTaxiiConfig});
+
+    const error = groupingError || bundleError || taxiiConfigError || taxiiCollectionsError;
+
 
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
@@ -120,9 +134,7 @@ function Form({groupingId}) {
                     <section>
                         <CustomControlGroup>
                             <CollapsiblePanel title="Preview of STIX Bundle JSON">
-                                <code>
-                                    TODO: Fetch STIX Bundle JSON from endpoint
-                                </code>
+                                <Code language="json" value={bundleJsonString} />
                             </CollapsiblePanel>
                         </CustomControlGroup>
                     </section>
