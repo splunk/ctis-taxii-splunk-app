@@ -1,4 +1,3 @@
-import json
 import os
 import sys
 from datetime import datetime
@@ -13,19 +12,11 @@ try:
     from models import GroupingModelV1, grouping_converter, SubmissionModelV1, SubmissionStatus, submission_converter
     from solnlib._utils import get_collection_data
     import remote_pdb
-    from taxii2client.v21 import ApiRoot, Collection
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
 
 logger = get_logger_for_script(__file__)
-
-
-def get_taxii_collection(taxii_config: dict, collection_id: str) -> Collection:
-    api_root = ApiRoot(url=taxii_config["api_root_url"], user=taxii_config["username"],
-                       password=taxii_config["password"])
-    collection_id_to_collection = {c.id: c for c in api_root.collections}
-    return collection_id_to_collection[collection_id]
 
 
 class SubmitGroupingHandler(AbstractRestHandler):
@@ -65,32 +56,16 @@ class SubmitGroupingHandler(AbstractRestHandler):
         self.insert_record(collection=submissions_collection, input_json=new_submission_dict,
                            converter=submission_converter, model_class=SubmissionModelV1)
 
-        taxii_response_dict = None
-        error = None
-        try:
-            taxii_collection = get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
-            taxii_response = taxii_collection.add_objects(bundle.serialize())
-            taxii_response_dict = taxii_response._raw
-            self.logger.info(f"taxii_response: {taxii_response_dict}")
-        except Exception as e:
-            self.logger.exception(f"Failed to submit to TAXII collection: {e}")
-            error = str(e)
-
-        submission_delta = {
-            "bundle_json_sent": bundle.serialize(),
-            "response_json": json.dumps(taxii_response_dict) if taxii_response_dict else None,
-            "error_message": error,
-            "status": SubmissionStatus.FAILED.value if error else SubmissionStatus.SENT.value,
-        }
-        updated_submission = self.update_record(collection=submissions_collection,
-                           query_for_one_record={"submission_id": new_submission.submission_id},
-                           input_json=submission_delta,
-                           converter=submission_converter, model_class=SubmissionModelV1)
-
+        submission_to_return = new_submission_dict
+        if not scheduled_at:
+            updated_submission = self.submit_grouping(session_key=session_key,
+                                                      taxii_config=taxii_config,
+                                                      taxii_collection_id=taxii_collection_id,
+                                                      bundle=bundle,
+                                                      submission_id=new_submission.submission_id)
+            submission_to_return = updated_submission
         return {
-            "submission": updated_submission,
-            "taxii_response": taxii_response_dict,
-            "error": error,
+            "submission": submission_to_return
         }
 
 

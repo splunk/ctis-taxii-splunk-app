@@ -12,8 +12,9 @@ from stix2 import Bundle
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
 from models import GroupingModelV1, grouping_converter, IndicatorModelV1, indicator_converter, IdentityModelV1, \
-    identity_converter, bundle_for_grouping
+    identity_converter, bundle_for_grouping, submission_converter, SubmissionModelV1, SubmissionStatus
 from server_exception import ServerException
+from taxii2client.v21 import ApiRoot, Collection
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
@@ -27,6 +28,15 @@ def get_logger_for_script(script_filepath: str) -> logging.Logger:
     script_name = os.path.basename(script_filepath)
     return solnlib.log.Logs().get_logger(f"{NAMESPACE}.{script_name}")
 
+
+
+def get_taxii_collection(taxii_config: dict, collection_id: str) -> Collection:
+    api_root = ApiRoot(url=taxii_config["api_root_url"], user=taxii_config["username"],
+                       password=taxii_config["password"])
+    collection_id_to_collection = {c.id: c for c in api_root.collections}
+    if collection_id not in collection_id_to_collection:
+        raise ValueError(f"Collection ID {collection_id} not found in TAXII server.")
+    return collection_id_to_collection[collection_id]
 
 class AbstractRestHandler(abc.ABC):
     def __init__(self, logger):
@@ -63,6 +73,32 @@ class AbstractRestHandler(abc.ABC):
         self.logger.info(f"Getting conf_file={conf_name} stanza={stanza_name}")
         taxii_config_conf = cfm.get_conf(conf_name)
         return taxii_config_conf.get(stanza_name)
+
+    def submit_grouping(self, session_key: str, bundle: Bundle, submission_id: str, taxii_config: dict,
+                        taxii_collection_id: str) -> dict:
+        submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")
+        taxii_response_dict = None
+        error = None
+        try:
+            taxii_collection = get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
+            taxii_response = taxii_collection.add_objects(bundle.serialize())
+            taxii_response_dict = taxii_response._raw
+            self.logger.info(f"taxii_response: {taxii_response_dict}")
+        except Exception as e:
+            self.logger.exception(f"Failed to submit to TAXII collection: {e}")
+            error = str(e)
+
+        submission_delta = {
+            "bundle_json_sent": bundle.serialize(),
+            "response_json": json.dumps(taxii_response_dict) if taxii_response_dict else None,
+            "error_message": error,
+            "status": SubmissionStatus.FAILED.value if error else SubmissionStatus.SENT.value,
+        }
+        updated_submission = self.update_record(collection=submissions_collection,
+                                                query_for_one_record={"submission_id": submission_id},
+                                                input_json=submission_delta,
+                                                converter=submission_converter, model_class=SubmissionModelV1)
+        return updated_submission
 
     def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
                                 collection_name: str) -> dict:
