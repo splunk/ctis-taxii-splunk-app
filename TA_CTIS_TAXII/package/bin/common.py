@@ -8,7 +8,10 @@ from collections import defaultdict
 
 from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
+from stix2 import Bundle
 
+from models import GroupingModelV1, grouping_converter, IndicatorModelV1, indicator_converter, IdentityModelV1, \
+    identity_converter, bundle_for_grouping
 from server_exception import ServerException
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -212,3 +215,24 @@ class AbstractRestHandler(abc.ABC):
                 return outer_self.generate_response(in_string)
 
         return Handler
+
+    def generate_stix_bundle_for_grouping(self, grouping_id:str, session_key:str) -> Bundle:
+        groupings_collection = self.get_collection(collection_name="groupings", session_key=session_key)
+        indicators_collection = self.get_collection(collection_name="indicators", session_key=session_key)
+        identities_collection = self.get_collection(collection_name="identities", session_key=session_key)
+
+        grouping = self.query_exactly_one_record(collection=groupings_collection, query={"grouping_id": grouping_id})
+        grouping_model = grouping_converter.structure(grouping, GroupingModelV1)
+        self.logger.info(f"grouping: {grouping_model}")
+
+        indicators = indicators_collection.query(query={"grouping_id": grouping_id}, limit=0, offset=0)
+        indicator_models = [indicator_converter.structure(indicator, IndicatorModelV1) for indicator in indicators]
+        self.logger.info(f"indicators: {indicator_models}")
+
+        identity = self.query_exactly_one_record(collection=identities_collection,
+                                                 query={"identity_id": grouping["created_by_ref"]})
+        identity_model = identity_converter.structure(identity, IdentityModelV1)
+        self.logger.info(f"identity: {identity_model}")
+
+        bundle = bundle_for_grouping(grouping_=grouping_model, indicators=indicator_models, grouping_identity=identity_model)
+        return bundle
