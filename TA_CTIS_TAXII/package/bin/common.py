@@ -10,6 +10,7 @@ from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
 from stix2 import Bundle
 
+from const import ADDON_NAME, ADDON_NAME_LOWER
 from models import GroupingModelV1, grouping_converter, IndicatorModelV1, indicator_converter, IdentityModelV1, \
     identity_converter, bundle_for_grouping
 from server_exception import ServerException
@@ -50,6 +51,18 @@ class AbstractRestHandler(abc.ABC):
         payload_json = in_string_dict["payload"]
         input_payload = json.loads(payload_json)
         return input_payload
+
+    def get_taxii_config(self, session_key: str, stanza_name: str):
+        from solnlib import conf_manager
+        conf_name = f"{ADDON_NAME_LOWER}_taxii_config"
+        cfm = conf_manager.ConfManager(
+            session_key,
+            ADDON_NAME,
+            realm=f"__REST_CREDENTIAL__#{ADDON_NAME}#configs/conf-{conf_name}",
+        )
+        self.logger.info(f"Getting conf_file={conf_name} stanza={stanza_name}")
+        taxii_config_conf = cfm.get_conf(conf_name)
+        return taxii_config_conf.get(stanza_name)
 
     def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
                                 collection_name: str) -> dict:

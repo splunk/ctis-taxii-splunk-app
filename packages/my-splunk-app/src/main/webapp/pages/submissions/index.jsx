@@ -3,7 +3,8 @@ import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
 import Heading from "@splunk/react-ui/Heading";
 import {layoutWithTheme} from "../../common/theme";
 import {
-    getGrouping, getStixBundleForGrouping,
+    getGrouping,
+    getStixBundleForGrouping,
     getTaxiiConfigs,
     listTaxiiCollections,
     useGetRecord
@@ -105,10 +106,13 @@ function Form({groupingId}) {
     register(FIELD_TAXII_COLLECTION_ID, {required: 'TAXII Collection is required'});
 
     const selectedTaxiiConfig = watch(FIELD_TAXII_CONFIG_NAME);
-    const {loading: collectionOptionsLoading, collectionOptions, error: taxiiCollectionsError} = useTaxiiCollections({selectedTaxiiConfig});
+    const {
+        loading: collectionOptionsLoading,
+        collectionOptions,
+        error: taxiiCollectionsError
+    } = useTaxiiCollections({selectedTaxiiConfig});
 
     const error = groupingError || bundleError || taxiiConfigError || taxiiCollectionsError;
-
 
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
@@ -131,18 +135,16 @@ function Form({groupingId}) {
                         <TaxiiCollectionId loading={collectionOptionsLoading} disabled={selectedTaxiiConfig === null}
                                            fieldName={FIELD_TAXII_COLLECTION_ID} options={collectionOptions}/>
                     </section>
-                    <section>
-                        <CustomControlGroup>
-                            <CollapsiblePanel title="Preview of STIX Bundle JSON">
-                                <Code language="json" value={bundleJsonString} />
-                            </CollapsiblePanel>
-                        </CustomControlGroup>
-                    </section>
                     <CustomControlGroup>
                         <HorizontalButtonLayout>
                             <SubmitButton disabled={submitButtonDisabled} submitting={formState.isSubmitting}/>
                         </HorizontalButtonLayout>
                     </CustomControlGroup>
+                    <section>
+                        <CollapsiblePanel title="Preview of STIX Bundle JSON">
+                            <Code language="json" value={bundleJsonString}/>
+                        </CollapsiblePanel>
+                    </section>
                 </Loader>
             </StyledForm>
         </FormProvider>

@@ -28,6 +28,11 @@ export const urlForEditGrouping = (groupingId) => createURL(`/app/${app}/groupin
     grouping_id: groupingId,
 });
 
+export const urlForSubmitGrouping = (groupingId) => createURL(`/app/${app}/submissions`, {
+    action: 'submit',
+    grouping_id: groupingId,
+});
+
 export const urlForEditIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
     action: 'edit',
     indicator_id: indicatorId,

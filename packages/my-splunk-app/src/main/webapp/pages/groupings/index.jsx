@@ -17,7 +17,7 @@ import {
     editGroupingPage,
     GroupingIdLink,
     IdentityIdLink,
-    NEW_GROUPING_PAGE,
+    NEW_GROUPING_PAGE, urlForSubmitGrouping,
     viewIndicator
 } from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
@@ -32,8 +32,7 @@ import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 
 function SubmitToTaxiiButton({row}) {
     return (<Tooltip content={"Submit to TAXII Server"}>
-        <BaseButton noBorder noMargin inline icon={<PaperPlane/>} label="Submit" appearance="primary"
-                    onClick={() => console.log(row)}/>
+        <BaseButton noBorder noMargin inline icon={<PaperPlane/>} label="Submit" appearance="primary" to={urlForSubmitGrouping(row.grouping_id)} />
     </Tooltip>);
 }
 
