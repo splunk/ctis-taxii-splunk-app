@@ -12,6 +12,7 @@ class SubmissionStatus(Enum):
     SCHEDULED = "SCHEDULED"
     SENT = "SENT"
     FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
 
 
 @define(slots=False, kw_only=True)
