@@ -17,6 +17,7 @@ class SubmissionStatus(Enum):
 
 @define(slots=False, kw_only=True)
 class SubmissionModelV1(BaseModelV1):
+    grouping_id: str = field()
     submission_id: str = field(factory=lambda: str(uuid4()))
     scheduled_at: datetime = field(factory=datetime.utcnow)
     bundle_json_sent: Optional[str] = field(default=None)

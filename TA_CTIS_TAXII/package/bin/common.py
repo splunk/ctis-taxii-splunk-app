@@ -79,9 +79,11 @@ class AbstractRestHandler(abc.ABC):
         submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")
         taxii_response_dict = None
         error = None
+        bundle_json = bundle.serialize()
         try:
+            self.logger.info(f"Submitting bundle={bundle_json} to TAXII collection: collection_id={taxii_collection_id}")
             taxii_collection = get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
-            taxii_response = taxii_collection.add_objects(bundle.serialize())
+            taxii_response = taxii_collection.add_objects(bundle_json)
             taxii_response_dict = taxii_response._raw
             self.logger.info(f"taxii_response: {taxii_response_dict}")
         except Exception as e:
@@ -89,7 +91,7 @@ class AbstractRestHandler(abc.ABC):
             error = str(e)
 
         submission_delta = {
-            "bundle_json_sent": bundle.serialize(),
+            "bundle_json_sent": bundle_json,
             "response_json": json.dumps(taxii_response_dict) if taxii_response_dict else None,
             "error_message": error,
             "status": SubmissionStatus.FAILED.value if error else SubmissionStatus.SENT.value,

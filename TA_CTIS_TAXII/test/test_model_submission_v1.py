@@ -1,10 +1,12 @@
 from TA_CTIS_TAXII.package.bin.models import SubmissionModelV1, SubmissionStatus, submission_converter
 from datetime import datetime
 
+GROUPING_ID = "grouping--22f7d710-d9f3-4b42-81ab-d35d722936dc"
 
 class TestSubmissionModel:
     def test_unstructure_scheduled_submission(self):
         submission = SubmissionModelV1(
+            grouping_id=GROUPING_ID,
             bundle_json_sent=None,
             status=SubmissionStatus.SCHEDULED,
             scheduled_at=datetime(2024, 1, 2, 3, 4, 5),
@@ -12,6 +14,7 @@ class TestSubmissionModel:
             collection_id="abc123",
         )
         as_dict = submission_converter.unstructure(submission)
+        assert as_dict["grouping_id"] == GROUPING_ID
         assert as_dict["bundle_json_sent"] is None
         assert as_dict["status"] == "SCHEDULED"
         assert as_dict["taxii_config_name"] == "taxii_config"
@@ -22,17 +25,20 @@ class TestSubmissionModel:
 
     def test_unstructure_submission_now(self):
         submission = SubmissionModelV1(
+            grouping_id=GROUPING_ID,
             bundle_json_sent="{}",
             status=SubmissionStatus.SCHEDULED,
             taxii_config_name="taxii_config",
             collection_id="abc123",
         )
+        assert submission.grouping_id == GROUPING_ID
         assert submission.submission_id is not None
         assert submission.scheduled_at is not None, "Should be set to now if not given"
         assert submission.response_json is None
         assert submission.error_message is None
 
         as_dict = submission_converter.unstructure(submission)
+        assert as_dict["grouping_id"] == GROUPING_ID
         assert as_dict["bundle_json_sent"] == "{}"
         assert as_dict["status"] == "SCHEDULED"
         assert as_dict["taxii_config_name"] == "taxii_config"
@@ -41,6 +47,7 @@ class TestSubmissionModel:
 
     def test_structure(self):
         as_dict = {
+            "grouping_id" : GROUPING_ID,
             "bundle_json_sent": "{}",
             "status": "SCHEDULED",
             "taxii_config_name": "taxii_config",
@@ -52,3 +59,4 @@ class TestSubmissionModel:
         assert submission.taxii_config_name == "taxii_config"
         assert submission.collection_id == "abc123"
         assert submission.submission_id is not None
+        assert submission.grouping_id == GROUPING_ID

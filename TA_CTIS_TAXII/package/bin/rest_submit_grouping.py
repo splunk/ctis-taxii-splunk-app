@@ -34,6 +34,8 @@ class SubmitGroupingHandler(AbstractRestHandler):
         taxii_collection_id = input_json["taxii_collection_id"]
 
         taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=taxii_config_name)
+
+        # This implicitly validates that the grouping exists, along with the indicators and identity objects
         bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id, session_key=session_key)
         self.logger.info(f"bundle: {bundle.serialize()}")
 
@@ -45,6 +47,7 @@ class SubmitGroupingHandler(AbstractRestHandler):
             scheduled_at_kwargs["scheduled_at"] = datetime.fromisoformat(scheduled_at)
 
         new_submission = SubmissionModelV1(
+            grouping_id=grouping_id,
             bundle_json_sent=None,
             taxii_config_name=taxii_config_name,
             collection_id=taxii_collection_id,
