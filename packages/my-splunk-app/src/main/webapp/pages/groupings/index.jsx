@@ -2,7 +2,6 @@ import React from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import Button from "@splunk/react-ui/Button";
-import {ListOfLinks} from "@splunk/my-react-component/src/ListOfLinks";
 import {getUrlQueryParams} from "../../common/queryParams";
 import GroupingForm from "../../common/GroupingForm";
 import Heading from "@splunk/react-ui/Heading";
@@ -12,13 +11,7 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import Plus from '@splunk/react-icons/Plus';
 import {getGroupings} from "@splunk/my-react-component/src/ApiClient";
-import {
-    editGroupingPage,
-    GroupingIdLink,
-    IdentityIdLink,
-    NEW_GROUPING_PAGE,
-    viewIndicator
-} from "@splunk/my-react-component/src/urls";
+import {editGroupingPage, GroupingIdLink, IdentityIdLink, NEW_GROUPING_PAGE} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
 import {layoutWithTheme} from "../../common/theme";
@@ -28,6 +21,7 @@ import Tooltip from "@splunk/react-ui/Tooltip";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import {SubmitGroupingButton} from "@splunk/my-react-component/src/SubmitGroupingButton";
+import {IndicatorCardLayout} from "@splunk/my-react-component/src/IndicatorCard";
 
 function SubmitToTaxiiButton({row}) {
     const disabled = row.indicators.length === 0;
@@ -62,11 +56,7 @@ const expansionFieldNameToCellValue = {
     "Created At (UTC)": (row) => row.created,
     "Modified At (UTC)": (row) => row.modified,
     "Created By": (row) => <IdentityIdLink identityId={row.created_by_ref}/>,
-    "Indicators": (row) => <ListOfLinks links={row.indicators.map(x => ({
-        title: x,
-        url: viewIndicator(x)
-    }))
-    }/>,
+    "Indicators": (row) => <IndicatorCardLayout indicatorIds={row.indicators}/>,
 }
 
 function renderDataTable({records, loading, error}) {
