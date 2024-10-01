@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import Heading from "@splunk/react-ui/Heading";
 import {
+    errorToText,
     getGrouping,
     getStixBundleForGrouping,
     getTaxiiConfigs,
@@ -22,6 +23,7 @@ import {dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/dat
 import {variables} from "@splunk/themes";
 import moment from "moment";
 import {urlForViewSubmission} from "@splunk/my-react-component/src/urls";
+import Message from "@splunk/react-ui/Message";
 
 const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
 const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
@@ -153,6 +155,8 @@ export function Form({groupingId}) {
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
 
+    const [submissionError, setSubmissionError] = useState(null);
+
     const onSubmit = async (data) => {
         console.log("Form data:", data);
         const formIsValid = await trigger();
@@ -164,7 +168,11 @@ export function Form({groupingId}) {
                 window.location = urlForViewSubmission(resp.submission.submission_id);
             }, (error) => {
                 console.error("Error submitting grouping", error);
-                // TODO: Display error message on this page
+                errorToText(error).then(
+                       errorText => {
+                           setSubmissionError(errorText);
+                       }
+                );
             });
         } else {
             console.log("Form is not valid");
@@ -184,12 +192,14 @@ export function Form({groupingId}) {
         }
     }, [scheduledSubmission]);
 
-
     return (
         <FormProvider {...methods}>
             <StyledForm name="SubmitGrouping" onSubmit={handleSubmit(onSubmit)}>
                 <MyHeading level={1}>Submit Grouping as STIX Bundle to TAXII Server</MyHeading>
                 <Loader error={error} loading={loading}>
+                    {submissionError && <Message appearance="fill" type="error">
+                        Error: {JSON.stringify(submissionError)}
+                    </Message>}
                     <section>
                         <GroupingId fieldName={FIELD_GROUPING_ID}/>
                         <TaxiiConfigField fieldName={FIELD_TAXII_CONFIG_NAME} options={taxiiConfigOptions}/>

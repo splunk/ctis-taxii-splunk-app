@@ -10,6 +10,23 @@ function deleteData({endpoint, data, successHandler, errorHandler}) {
     return submitToEndpoint('DELETE', endpoint, data, successHandler, errorHandler);
 }
 
+export async function errorToText(errorOrResponse) {
+    if (errorOrResponse instanceof Response) {
+        try {
+            const response_json = await errorOrResponse.json();
+            if(response_json?.error) {
+                return response_json.error;
+            }else{
+                return JSON.stringify(response_json);
+            }
+        } catch (e) {
+            return String(errorOrResponse);
+        }
+    } else {
+        return String(errorOrResponse);
+    }
+}
+
 function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) {
     // Custom CSRF headers set for POST requests to custom endpoints
     // See https://docs.splunk.com/Documentation/StreamApp/7.1.3/DeployStreamApp/SplunkAppforStreamRESTAPI
