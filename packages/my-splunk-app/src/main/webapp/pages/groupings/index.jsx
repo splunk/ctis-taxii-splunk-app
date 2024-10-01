@@ -2,7 +2,6 @@ import React from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import Button from "@splunk/react-ui/Button";
-import PaperPlane from '@splunk/react-icons/PaperPlane';
 import {ListOfLinks} from "@splunk/my-react-component/src/ListOfLinks";
 import {getUrlQueryParams} from "../../common/queryParams";
 import GroupingForm from "../../common/GroupingForm";
@@ -17,24 +16,24 @@ import {
     editGroupingPage,
     GroupingIdLink,
     IdentityIdLink,
-    NEW_GROUPING_PAGE, urlForSubmitGrouping,
+    NEW_GROUPING_PAGE,
     viewIndicator
 } from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
 import {layoutWithTheme} from "../../common/theme";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
-import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import Tooltip from "@splunk/react-ui/Tooltip";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
+import {SubmitGroupingButton} from "@splunk/my-react-component/src/SubmitGroupingButton";
 
 function SubmitToTaxiiButton({row}) {
     const disabled = row.indicators.length === 0;
     const tooltipContent = disabled ? "No indicators to submit" : "Submit to TAXII Server";
     return (<Tooltip content={tooltipContent}>
-        <BaseButton disabled={disabled} noBorder noMargin inline icon={<PaperPlane/>} label="Submit" appearance="primary" to={urlForSubmitGrouping(row.grouping_id)} />
+        <SubmitGroupingButton noBorder noMargin groupingId={row.grouping_id} disabled={disabled}/>
     </Tooltip>);
 }
 

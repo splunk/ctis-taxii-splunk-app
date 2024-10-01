@@ -35,14 +35,11 @@ import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import {SubmitGroupingButton} from "@splunk/my-react-component/src/SubmitGroupingButton";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
     return (<Button to={VIEW_INDICATORS_PAGE} appearance="secondary" label="Go to Indicators"/>);
-}
-
-function GotoGroupingPageButton({groupingId}) {
-    return (<Button to={`#${groupingId}`} appearance="primary" label={`Go to Grouping ${groupingId}`}/>);
 }
 
 // TODO: change this to use a single object with keys as param
@@ -97,7 +94,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
     const [submissionErrors, setSubmissionErrors] = useState(null);
-
 
     for (const fieldName of [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM]) {
         register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]);
@@ -180,7 +176,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     <Modal.Body>
                         <P>To submit to CTIS, proceed to submit the Grouping.</P>
                         <GotoIndicatorsPageButton/>
-                        <GotoGroupingPageButton groupingId={groupingId}/>
+                        <SubmitGroupingButton groupingId={groupingId}/>
                     </Modal.Body>
                 </Modal>
             </StyledForm>

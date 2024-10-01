@@ -36,11 +36,11 @@ function ViewSubmissionRecord({submissionId}) {
             <Heading>Submission</Heading>
             {record &&
                 <section>
-                    <CustomControlGroup label="Submission ID" value={record?.submission_id} readOnly={true}/>
-                    <CustomControlGroup label="Grouping ID" value={record?.grouping_id} readOnly={true}/>
                     <CustomControlGroup label="Status" value={
                         <StyledMessage appearance="fill" type={statusAppearance}>{record?.status}</StyledMessage>
                     } readOnly={true}/>
+                    <CustomControlGroup label="Submission ID" value={record?.submission_id} readOnly={true}/>
+                    <CustomControlGroup label="Grouping ID" value={record?.grouping_id} readOnly={true}/>
                     <CustomControlGroup label="Scheduled At (UTC)" value={record?.scheduled_at} readOnly={true}/>
                     <CustomControlGroup label="TAXII Config Name" value={record?.taxii_config_name} readOnly={true}/>
                     <CustomControlGroup label="TAXII Collection ID" value={record?.collection_id} readOnly={true}/>

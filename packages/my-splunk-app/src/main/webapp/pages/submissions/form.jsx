@@ -161,7 +161,6 @@ export function Form({groupingId}) {
             await submitGrouping(data, (resp) => {
                 console.log(resp);
                 setSubmitSuccess(true);
-                // TODO: Redirect to success page: view submission record
                 window.location = urlForViewSubmission(resp.submission.submission_id);
             }, (error) => {
                 console.error("Error submitting grouping", error);
