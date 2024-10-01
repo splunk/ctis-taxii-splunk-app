@@ -18,6 +18,10 @@ const MyDropdownButton = styled(Button)`
     min-width: 150px;
     flex-grow: 0;
 `;
+
+const StyledDropdown = styled(Dropdown)`
+`;
+
 function useDateRangePicker() {
     const now = moment().milliseconds(0).toDate();
     const twoDaysAgo = moment().milliseconds(0).subtract(2, 'days').toDate();
@@ -54,22 +58,32 @@ function useDateRangePicker() {
     return {startDateIsoString, endDateIsoString, handleStartDateChange, handleEndDateChange};
 }
 
-export function DatetimeRangePicker({labelPrefix, fieldName, onQueryChange, ...props}) {
-    const SELECTION_ANY = 'Any Time';
-    const SELECTION_LAST_24_HOURS = 'In the last 24 hours';
-    const SELECTION_LAST_7_DAYS = 'In the last 7 days';
-    const SELECTION_LAST_30_DAYS = 'In the last 30 days';
-    const SELECTION_DATE_RANGE = 'Between Dates (UTC)';
+const SELECTION_NOT_APPLIED = 'Not Filtered';
+const SELECTION_ANY = 'Any Time';
+const SELECTION_LAST_24_HOURS = 'In the last 24 hours';
+const SELECTION_LAST_7_DAYS = 'In the last 7 days';
+const SELECTION_LAST_30_DAYS = 'In the last 30 days';
+const SELECTION_DATE_RANGE = 'Between Dates (UTC)';
+
+export function DatetimeRangePicker({
+                                        optional = false,
+                                        labelPrefix,
+                                        fieldName,
+                                        onQueryChange,
+                                        ...props
+                                    }) {
 
     const closeReasons = without(Dropdown.possibleCloseReasons, 'contentClick');
-    const [selected, setSelected] = React.useState(SELECTION_ANY);
+    const [selected, setSelected] = React.useState(optional ? SELECTION_NOT_APPLIED : SELECTION_ANY);
     const showDateRange = selected === SELECTION_DATE_RANGE;
-    const [query, setQuery] = React.useState({});
+    const [query, setQuery] = React.useState(optional ? null : {});
     const {startDateIsoString, endDateIsoString, handleStartDateChange, handleEndDateChange} = useDateRangePicker();
 
     const onSelected = (e, {value}) => {
         setSelected(value);
-        if (value === SELECTION_ANY) {
+        if (value === SELECTION_NOT_APPLIED) {
+            setQuery(null);
+        } else if (value === SELECTION_ANY) {
             setQuery({});
         } else if (value === SELECTION_LAST_24_HOURS) {
             const nowMinus24Hours = moment().subtract(24, 'hours');
@@ -92,19 +106,21 @@ export function DatetimeRangePicker({labelPrefix, fieldName, onQueryChange, ...p
     }, [selected, startDateIsoString, endDateIsoString]);
 
     useEffect(() => {
-        // Check if object is empty (https://stackoverflow.com/a/20374145/23523267)
-        if (Object.keys(query).length === 0) {
+        if (query === null) {
+            onQueryChange(null);
+        } else if (Object.keys(query).length === 0) {
             onQueryChange({});
         } else {
             onQueryChange({[fieldName]: query});
         }
     }, [query])
 
-    const toggle = <MyDropdownButton inline label={`${labelPrefix}: ${selected}`} isMenu/>;
+    const toggle = <MyDropdownButton label={`${labelPrefix}: ${selected}`} isMenu/>;
 
-    return (<Dropdown toggle={toggle} retainFocus closeReasons={closeReasons} {...props}>
+    return (<StyledDropdown toggle={toggle} retainFocus closeReasons={closeReasons} {...props}>
         <div style={{padding: 20}}>
             <RadioList value={selected} onChange={onSelected}>
+                {optional && <RadioList.Option value={SELECTION_NOT_APPLIED}>{SELECTION_NOT_APPLIED}</RadioList.Option>}
                 <RadioList.Option value={SELECTION_ANY}>{SELECTION_ANY}</RadioList.Option>
                 <RadioList.Option value={SELECTION_LAST_24_HOURS}>{SELECTION_LAST_24_HOURS}</RadioList.Option>
                 <RadioList.Option value={SELECTION_LAST_7_DAYS}>{SELECTION_LAST_7_DAYS}</RadioList.Option>
@@ -117,5 +133,5 @@ export function DatetimeRangePicker({labelPrefix, fieldName, onQueryChange, ...p
                 </DateRangeLayout>}
             </RadioList>
         </div>
-    </Dropdown>);
+    </StyledDropdown>);
 }

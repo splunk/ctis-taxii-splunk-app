@@ -8,11 +8,22 @@ import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
 import {useListGroupings} from "@splunk/my-splunk-app/src/main/webapp/common/indicator_form/GroupingsDropdown";
 import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
+import {variables} from "@splunk/themes";
+import {getSubmissions} from "./ApiClient";
 
 const SearchControlContainer = styled.div`
     display: flex;
     flex-direction: row;
-    gap: 4px;
+    gap: ${variables.spacingXSmall};
+
+    // Reset margin for children (set by Splunk UI)
+
+    & > * {
+        margin: 0 !important;
+    }
+
+    margin-top: ${variables.spacingSmall};
+    margin-bottom: ${variables.spacingSmall};
 `;
 
 const generateRegexQuery = (field, value) => {
@@ -40,7 +51,7 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
     }
 
     useEffect(() => {
-        let all_subqueries = subqueries.filter(subquery => Object.keys(subquery).length > 0);
+        let all_subqueries = subqueries.filter(subquery => subquery !== null && Object.keys(subquery).length > 0);
         if (debouncedSearchValue) {
             all_subqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
         }
@@ -91,11 +102,34 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
 export const GroupingsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'description', 'grouping_id', 'context'];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
+    const [lastSubmittedQuery, setLastSubmittedQuery] = useState(null);
+    const [filterOnGroupingId, setFilterOnGroupingId] = useState({});
+    useEffect(() => {
+        console.log("Last Submitted Query:", lastSubmittedQuery);
+        if(lastSubmittedQuery) {
+            getSubmissions({
+                skip: 0,
+                limit: 0,
+                fields : 'grouping_id',
+                query: lastSubmittedQuery,
+                successHandler: (resp) => {
+                    const grouping_ids = resp.records.map(record => record.grouping_id);
+                    setFilterOnGroupingId({grouping_id: {'$in': grouping_ids}});
+                }, errorHandler: (error) => {
+                    console.error("Error getting submissions:", error);
+                }
+            }).then();
+        }else{
+            setFilterOnGroupingId(null);
+        }
+    }, [lastSubmittedQuery]);
 
-    const subqueries = [lastUpdatedQuery];
+    const subqueries = [lastUpdatedQuery, filterOnGroupingId];
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
             <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
+            <DatetimeRangePicker optional={true} labelPrefix="Last Submitted" fieldName={"modified"}
+                                 onQueryChange={setLastSubmittedQuery}/>
         </SearchBar>
     );
 }

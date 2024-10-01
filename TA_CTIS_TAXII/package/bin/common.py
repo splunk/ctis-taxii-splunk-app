@@ -221,6 +221,8 @@ class AbstractRestHandler(abc.ABC):
             collection_query_kwargs["skip"] = int(query_params["skip"][0])
         if "query" in query_params:
             collection_query_kwargs["query"] = query_params["query"][0]
+        if "fields" in query_params:
+            collection_query_kwargs["fields"] = query_params["fields"][0]
         return collection_query_kwargs
 
     @staticmethod

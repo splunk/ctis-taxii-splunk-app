@@ -163,11 +163,12 @@ export function getIdentities({skip, limit, successHandler, errorHandler, query}
     })
 }
 
-export function getSubmissions({skip, limit, successHandler, errorHandler, query}) {
+// Note: fields="" means all fields
+export function getSubmissions({skip, limit, fields="", successHandler, errorHandler, query}) {
     return getData({
         endpoint: 'list-submissions',
         queryParams: {
-            skip, limit
+            skip, limit, fields
         },
         query, successHandler, errorHandler
     })
