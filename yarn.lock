@@ -1606,7 +1606,6 @@
     "@splunk/themes" "^0.18.0"
     lodash "^4.17.21"
     moment "^2.30.1"
-    react-datepicker "^7.4.0"
     react-responsive "^10.0.0"
 
 "@splunk/my-splunk-app@file:/Users/bliew/dev/ctis-taxii-es-ar/packages/my-splunk-app":

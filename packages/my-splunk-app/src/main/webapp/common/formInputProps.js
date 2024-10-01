@@ -53,8 +53,7 @@ export const useFormInputProps = (fieldName) => {
             const {errors} = formState;
             const error = findErrorMessage(errors, fieldName);
             setReturnProps({
-                help: error,
-                error: !!error,
+                error: error,
                 onChange: generateSetValueHandler(setValue, fieldName),
                 value: watch(fieldName)
             });

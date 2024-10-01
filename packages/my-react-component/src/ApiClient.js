@@ -76,6 +76,10 @@ export function getStixPatternSuggestion(indicatorCategory, indicatorValue, succ
 
 }
 
+export function submitGrouping(data, successHandler, errorHandler) {
+    return postData('submit-grouping', data, successHandler, errorHandler)
+}
+
 export function postCreateIndicator(data, successHandler, errorHandler) {
     return postData('create-indicator', data, successHandler, errorHandler)
 }
