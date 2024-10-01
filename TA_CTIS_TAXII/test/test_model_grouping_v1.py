@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from TA_CTIS_TAXII.package.bin.models import GroupingModelV1, SubmissionModelV1, SubmissionStatus, grouping_converter
@@ -15,6 +17,19 @@ def test_unstructure():
     assert as_dict["context"] == "unspecified"
     assert as_dict["created_by_ref"] == IDENTITY_ID
     assert as_dict["grouping_id"].startswith("grouping--")
+    assert as_dict["last_submission_at"] is None
+
+
+def test_unstructure_with_last_submission_at():
+    dt = datetime(2024, 1, 2)
+    grouping = GroupingModelV1(name="Group ABC", description="Group ABC description", context="unspecified",
+                               created_by_ref=IDENTITY_ID, last_submission_at=dt)
+    as_dict = grouping_converter.unstructure(grouping)
+    assert as_dict["name"] == "Group ABC"
+    assert as_dict["description"] == "Group ABC description"
+    assert as_dict["context"] == "unspecified"
+    assert as_dict["created_by_ref"] == IDENTITY_ID
+    assert as_dict["last_submission_at"] == "2024-01-02T00:00:00"
 
 
 def test_structure():
@@ -30,6 +45,7 @@ def test_structure():
     assert grouping.context == "unspecified"
     assert grouping.created_by_ref == IDENTITY_ID
     assert grouping.grouping_id.startswith("grouping--")
+    assert grouping.last_submission_at is None
 
 
 def test_to_stix():

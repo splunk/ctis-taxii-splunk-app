@@ -103,32 +103,12 @@ export const GroupingsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'description', 'grouping_id', 'context'];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
     const [lastSubmittedQuery, setLastSubmittedQuery] = useState(null);
-    const [filterOnGroupingId, setFilterOnGroupingId] = useState({});
-    useEffect(() => {
-        console.log("Last Submitted Query:", lastSubmittedQuery);
-        if(lastSubmittedQuery) {
-            getSubmissions({
-                skip: 0,
-                limit: 0,
-                fields : 'grouping_id',
-                query: lastSubmittedQuery,
-                successHandler: (resp) => {
-                    const grouping_ids = resp.records.map(record => record.grouping_id);
-                    setFilterOnGroupingId({grouping_id: {'$in': grouping_ids}});
-                }, errorHandler: (error) => {
-                    console.error("Error getting submissions:", error);
-                }
-            }).then();
-        }else{
-            setFilterOnGroupingId(null);
-        }
-    }, [lastSubmittedQuery]);
 
-    const subqueries = [lastUpdatedQuery, filterOnGroupingId];
+    const subqueries = [lastUpdatedQuery, lastSubmittedQuery];
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
             <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
-            <DatetimeRangePicker optional={true} labelPrefix="Last Submitted" fieldName={"modified"}
+            <DatetimeRangePicker optional={true} labelPrefix="Last Submitted" fieldName={"last_submission_at"}
                                  onQueryChange={setLastSubmittedQuery}/>
         </SearchBar>
     );

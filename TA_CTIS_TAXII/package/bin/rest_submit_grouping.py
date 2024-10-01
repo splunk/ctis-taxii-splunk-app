@@ -59,6 +59,13 @@ class SubmitGroupingHandler(AbstractRestHandler):
         self.insert_record(collection=submissions_collection, input_json=new_submission_dict,
                            converter=submission_converter, model_class=SubmissionModelV1)
 
+        groupings_collection = self.get_collection(session_key=session_key, collection_name="groupings")
+        # Update grouping with last_submission_at
+        self.update_record(collection=groupings_collection,
+                           query_for_one_record={"grouping_id": grouping_id},
+                           input_json={"last_submission_at": new_submission.scheduled_at.isoformat()},
+                           converter=grouping_converter, model_class=GroupingModelV1)
+
         submission_to_return = new_submission_dict
         if not scheduled_at:
             updated_submission = self.submit_grouping(session_key=session_key,

@@ -1,8 +1,9 @@
+from datetime import datetime
 from uuid import uuid4
 
 from attrs import define, field
 from stix2 import Grouping
-from typing import List
+from typing import List, Optional
 
 from .base import BaseModelV1, make_base_converter
 
@@ -56,6 +57,7 @@ class GroupingModelV1(BaseModelV1):
     context: str = field(validator=[validate_grouping_context])
     name: str = field()
     description: str = field()
+    last_submission_at: Optional[datetime] = field(default=None)
 
     def to_stix(self, object_ids: List) -> Grouping:
         assert len(object_ids) > 0, "Grouping must have at least one object_ref such as an Indicator ID."

@@ -65,6 +65,25 @@ const SELECTION_LAST_7_DAYS = 'In the last 7 days';
 const SELECTION_LAST_30_DAYS = 'In the last 30 days';
 const SELECTION_DATE_RANGE = 'Between Dates (UTC)';
 
+const queryBasedOnSelection = (value) => {
+    if (value === SELECTION_NOT_APPLIED) {
+        return null;
+    } else if (value === SELECTION_ANY) {
+        return {"$ne": null};
+    } else if (value === SELECTION_LAST_24_HOURS) {
+        const nowMinus24Hours = moment().subtract(24, 'hours');
+        return {"$gt": dateToIsoStringWithoutTimezone(nowMinus24Hours.toDate())};
+    } else if (value === SELECTION_LAST_7_DAYS) {
+        const nowMinus7Days = moment().subtract(7, 'days');
+        return {"$gt": dateToIsoStringWithoutTimezone(nowMinus7Days.toDate())};
+    } else if (value === SELECTION_LAST_30_DAYS) {
+        const nowMinus30Days = moment().subtract(30, 'days');
+        return {"$gt": dateToIsoStringWithoutTimezone(nowMinus30Days.toDate())};
+    } else {
+        throw new Error(`Unknown selection value: ${value}`);
+    }
+}
+
 export function DatetimeRangePicker({
                                         optional = false,
                                         labelPrefix,
@@ -76,25 +95,12 @@ export function DatetimeRangePicker({
     const closeReasons = without(Dropdown.possibleCloseReasons, 'contentClick');
     const [selected, setSelected] = React.useState(optional ? SELECTION_NOT_APPLIED : SELECTION_ANY);
     const showDateRange = selected === SELECTION_DATE_RANGE;
-    const [query, setQuery] = React.useState(optional ? null : {});
+    const [query, setQuery] = React.useState(queryBasedOnSelection(selected));
     const {startDateIsoString, endDateIsoString, handleStartDateChange, handleEndDateChange} = useDateRangePicker();
 
     const onSelected = (e, {value}) => {
         setSelected(value);
-        if (value === SELECTION_NOT_APPLIED) {
-            setQuery(null);
-        } else if (value === SELECTION_ANY) {
-            setQuery({});
-        } else if (value === SELECTION_LAST_24_HOURS) {
-            const nowMinus24Hours = moment().subtract(24, 'hours');
-            setQuery({"$gt": dateToIsoStringWithoutTimezone(nowMinus24Hours.toDate())});
-        } else if (value === SELECTION_LAST_7_DAYS) {
-            const nowMinus7Days = moment().subtract(7, 'days');
-            setQuery({"$gt": dateToIsoStringWithoutTimezone(nowMinus7Days.toDate())});
-        } else if (value === SELECTION_LAST_30_DAYS) {
-            const nowMinus30Days = moment().subtract(30, 'days');
-            setQuery({"$gt": dateToIsoStringWithoutTimezone(nowMinus30Days.toDate())});
-        }
+        setQuery(queryBasedOnSelection(value));
     }
     useEffect(() => {
         if (selected === SELECTION_DATE_RANGE) {
