@@ -21,6 +21,7 @@ import Switch from "@splunk/react-ui/Switch";
 import {dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
 import {variables} from "@splunk/themes";
 import moment from "moment";
+import {urlForViewSubmission} from "@splunk/my-react-component/src/urls";
 
 const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
 const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
@@ -161,6 +162,7 @@ export function Form({groupingId}) {
                 console.log(resp);
                 setSubmitSuccess(true);
                 // TODO: Redirect to success page: view submission record
+                window.location = urlForViewSubmission(resp.submission.submission_id);
             }, (error) => {
                 console.error("Error submitting grouping", error);
                 // TODO: Display error message on this page
@@ -182,6 +184,7 @@ export function Form({groupingId}) {
             setValue(FIELD_SCHEDULED_AT, null, {shouldValidate: true});
         }
     }, [scheduledSubmission]);
+
 
     return (
         <FormProvider {...methods}>

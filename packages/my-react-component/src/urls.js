@@ -38,6 +38,10 @@ export const urlForEditIndicator = (indicatorId) => createURL(`/app/${app}/indic
     indicator_id: indicatorId,
 });
 
+export const urlForViewSubmission = (submissionId) => createURL(`/app/${app}/submissions`, {
+    submission_id: submissionId,
+});
+
 export const editIdentityPage = (identityId) => createURL(`/app/${app}/identities`, {
     identity_id: identityId,
     action: 'edit',

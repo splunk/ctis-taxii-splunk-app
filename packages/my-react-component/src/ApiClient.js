@@ -163,6 +163,16 @@ export function getIdentities({skip, limit, successHandler, errorHandler, query}
     })
 }
 
+export function getSubmissions({skip, limit, successHandler, errorHandler, query}) {
+    return getData({
+        endpoint: 'list-submissions',
+        queryParams: {
+            skip, limit
+        },
+        query, successHandler, errorHandler
+    })
+}
+
 export function getTaxiiConfigs({successHandler, errorHandler}) {
     return getData({
         endpoint: 'TA_CTIS_TAXII_taxii_config',
@@ -312,6 +322,17 @@ export function getGrouping({groupingId, successHandler, errorHandler}) {
             "grouping_id": groupingId
         },
         endpoint: 'list-groupings',
+        successHandler,
+        errorHandler
+    })
+}
+
+export function getSubmission({submissionId, successHandler, errorHandler}) {
+    return getExactlyOneRecord({
+        query: {
+            "submission_id": submissionId
+        },
+        endpoint: 'list-submissions',
         successHandler,
         errorHandler
     })
