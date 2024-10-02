@@ -8,6 +8,7 @@ import {SubmissionStatusChip} from "./SubmissionStatusChip";
 import moment from "moment";
 import Loader from "./Loader";
 import {CardContainer, StyledCard} from "./CardLayout";
+import DL from '@splunk/react-ui/DefinitionList';
 
 const HeaderContent = styled.div`
     display: flex;
@@ -23,7 +24,12 @@ export function SubmissionCard({submission}) {
     } else {
         dateText = `scheduled ${scheduledAt.fromNow()}`;
     }
-    const cardTitle = `Submission ${dateText}`;
+    let cardTitle;
+    if(submission.status === "FAILED"){
+        cardTitle = `Failed submission ${dateText}`;
+    }else{
+        cardTitle = `Submission ${dateText}`;
+    }
     return <StyledCard to={urlForViewSubmission(submission.submission_id)} openInNewContext>
         <Card.Header title={cardTitle} subtitle={scheduledAt.format()}>
             <HeaderContent>
@@ -31,7 +37,12 @@ export function SubmissionCard({submission}) {
             </HeaderContent>
         </Card.Header>
         <Card.Body>
-            <P>Sent to TAXII Collection {submission.collection_id} ({submission.taxii_config_name})</P>
+            <DL termWidth={200}>
+                <DL.Term>TAXII Config</DL.Term>
+                <DL.Description>{submission.taxii_config_name}</DL.Description>
+                <DL.Term>TAXII Collection</DL.Term>
+                <DL.Description>{submission.collection_id}</DL.Description>
+            </DL>
         </Card.Body>
     </StyledCard>
 }
@@ -42,6 +53,7 @@ export function SubmissionCardLayout({groupingId}) {
         restFunctionQueryArgs: {
             skip: 0,
             limit: 0,
+            sort: "scheduled_at:-1",
             query: {
                 grouping_id: groupingId,
             }

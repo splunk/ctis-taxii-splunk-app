@@ -5,6 +5,9 @@ import {variables} from "@splunk/themes";
 export const StyledCard = styled(Card)`
     flex-basis: 100%;
     border-radius: 4px;
+    &:hover {
+        background-color: ${variables.backgroundColorHover};
+    }
 `;
 export const CardContainer = styled.div`
     max-width: 1200px;
