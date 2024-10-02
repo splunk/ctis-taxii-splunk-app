@@ -4,6 +4,9 @@ import Chip from "@splunk/react-ui/Chip";
 import Calendar from '@splunk/react-icons/Calendar';
 import ExclamationTriangle from '@splunk/react-icons/ExclamationTriangle';
 import CheckCircle from '@splunk/react-icons/CheckCircle';
+import InformationCircle from '@splunk/react-icons/InformationCircle';
+
+
 
 import {variables} from "@splunk/themes";
 
@@ -20,11 +23,17 @@ const ChipContents = styled.div`
     gap: 2px;
 `;
 
+const COLOR_GREEN = '#1a8929';
+
 export function SubmissionStatusChip({status}) {
+    // TODO: Handle other statuses including CANCELLED
     let backgroundColor = variables.statusColorInfo;
-    let icon = <Calendar/>;
-    if (status === "SENT") {
-        backgroundColor = '#1a8929';
+    let icon = <InformationCircle/>;
+    if (status === "SCHEDULED") {
+        backgroundColor = variables.statusColorInfo;
+        icon = <Calendar/>;
+    }else if (status === "SENT") {
+        backgroundColor = COLOR_GREEN;
         icon = <CheckCircle/>;
     } else if (status === "FAILED") {
         backgroundColor = variables.statusColorCritical;

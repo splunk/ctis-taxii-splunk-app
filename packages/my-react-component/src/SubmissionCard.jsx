@@ -4,27 +4,34 @@ import {getSubmissions, useGetRecord} from "@splunk/my-react-component/src/ApiCl
 import P from "@splunk/react-ui/Paragraph";
 import styled from "styled-components";
 import {urlForViewSubmission} from "./urls";
-import {variables} from "@splunk/themes";
 import {SubmissionStatusChip} from "./SubmissionStatusChip";
+import moment from "moment";
+import Loader from "./Loader";
+import {CardContainer, StyledCard} from "./CardLayout";
 
-const StyledCard = styled(Card)`
-    flex-basis: 100%;
-`;
-const CardContainer = styled.div`
-    max-width: 1200px;
+const HeaderContent = styled.div`
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: ${variables.spacingSmall};
+    justify-content: flex-end;
 `;
 
 export function SubmissionCard({submission}) {
-    const cardTitle = `Submission`;
+    const scheduledAt = moment.utc(submission.scheduled_at);
+    const now = moment();
+    let dateText;
+    if (scheduledAt.isBefore(now)) {
+        dateText = `sent ${scheduledAt.fromNow()}`;
+    } else {
+        dateText = `scheduled ${scheduledAt.fromNow()}`;
+    }
+    const cardTitle = `Submission ${dateText}`;
     return <StyledCard to={urlForViewSubmission(submission.submission_id)} openInNewContext>
-        <Card.Header title={cardTitle} subtitle='Click to view more detail'/>
+        <Card.Header title={cardTitle} subtitle={scheduledAt.format()}>
+            <HeaderContent>
+                <SubmissionStatusChip status={submission.status}/>
+            </HeaderContent>
+        </Card.Header>
         <Card.Body>
-            <P>{submission.status}</P>
-            <P><SubmissionStatusChip status={submission.status}/></P>
+            <P>Sent to TAXII Collection {submission.collection_id} ({submission.taxii_config_name})</P>
         </Card.Body>
     </StyledCard>
 }
@@ -42,9 +49,11 @@ export function SubmissionCardLayout({groupingId}) {
     })
     const submissions = response?.records || [];
     return <CardContainer>
-        {submissions.length === 0 && <P>No submissions</P>}
-        {submissions.map(submission => (
-            <SubmissionCard key={submission.submission_id} submission={submission}/>
-        ))}
+        <Loader loading={loading} error={error}>
+            {submissions.length === 0 && <P>No submissions</P>}
+            {submissions.map(submission => (
+                <SubmissionCard key={submission.submission_id} submission={submission}/>
+            ))}
+        </Loader>
     </CardContainer>
 }
