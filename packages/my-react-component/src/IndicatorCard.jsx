@@ -12,8 +12,8 @@ export function IndicatorCard({indicatorId}) {
         restFunctionQueryArgs: {indicatorId},
     });
     const cardTitle = record ? `Indicator: ${record?.name}` : 'Indicator';
-    return <StyledCard to={viewIndicator(indicatorId)} openInNewContext>
-        <Card.Header title={cardTitle} subtitle='Click to view more detail'/>
+    return <StyledCard to={viewIndicator(indicatorId)} openInNewContext title="Click for more info">
+        <Card.Header title={cardTitle}/>
         <Card.Body>
             <Loader loading={loading} error={error}>
                 <P>{record?.description}</P>
