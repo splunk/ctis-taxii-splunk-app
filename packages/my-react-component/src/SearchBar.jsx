@@ -124,8 +124,16 @@ export const IdentitiesSearchBar = ({onQueryChange}) => {
 export const SubmissionsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['submission_id', 'grouping_id', 'status', 'taxii_config_name',
         'collection_id', 'error_message', 'response_json', 'bundle_json_sent'];
+    const [statusQuery, setStatusQuery] = useState({});
     return (
-        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[]}>
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[statusQuery]}>
+            <SearchFieldDropdown prefixLabel="Status" fieldName="status" onQueryChange={setStatusQuery}
+                                 options={[
+                                     {label: "SENT", value: "SENT"},
+                                     {label: "SCHEDULED", value: "SCHEDULED"},
+                                     {label: "FAILED", value: "FAILED"},
+                                     {label: "CANCELLED", value: "CANCELLED"},
+                                 ]}/>
         </SearchBar>
     );
 }
