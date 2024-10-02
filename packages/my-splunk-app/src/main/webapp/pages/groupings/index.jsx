@@ -22,6 +22,7 @@ import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/Horiz
 import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import {SubmitGroupingButton} from "@splunk/my-react-component/src/SubmitGroupingButton";
 import {IndicatorCardLayout} from "@splunk/my-react-component/src/IndicatorCard";
+import {SubmissionCardLayout} from "@splunk/my-react-component/src/SubmissionCard";
 
 function SubmitToTaxiiButton({row}) {
     const disabled = row.indicators.length === 0;
@@ -57,6 +58,7 @@ const expansionFieldNameToCellValue = {
     "Modified At (UTC)": (row) => row.modified,
     "Created By": (row) => <IdentityIdLink identityId={row.created_by_ref}/>,
     "Indicators": (row) => <IndicatorCardLayout indicatorIds={row.indicators}/>,
+    "Submissions" : (row) => <SubmissionCardLayout groupingId={row.grouping_id}/>,
 }
 
 function renderDataTable({records, loading, error}) {

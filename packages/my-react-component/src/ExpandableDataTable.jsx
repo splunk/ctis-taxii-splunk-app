@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import React, {useEffect} from 'react';
 import Table from '@splunk/react-ui/Table';
+import {variables} from "@splunk/themes";
 
 const TableCell = styled(Table.Cell)`
-    padding: 0;
+    padding: ${variables.spacingXSmall} 0;
 `
 const TableHeadCell = styled(Table.HeadCell)`
     padding: 0;
@@ -15,6 +16,8 @@ const TableHeadCell = styled(Table.HeadCell)`
 const TableHead = styled(Table.Head)`
     height: 0; // Hide the table header
 `
+const TableRow = styled(Table.Row)`
+`;
 
 function ExpandedDataRecord({mapping}) {
     return (<Table>
@@ -24,10 +27,10 @@ function ExpandedDataRecord({mapping}) {
         </TableHead>
         <Table.Body>
             {Object.entries(mapping).map(([term, description]) => (
-                <Table.Row key={term}>
+                <TableRow key={term}>
                     <TableCell><strong>{term}</strong></TableCell>
                     <TableCell>{description}</TableCell>
-                </Table.Row>
+                </TableRow>
             ))}
         </Table.Body>
     </Table>)

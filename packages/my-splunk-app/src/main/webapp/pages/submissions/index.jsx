@@ -8,14 +8,10 @@ import {getSubmission, useGetRecord} from "@splunk/my-react-component/src/ApiCli
 import Heading from "@splunk/react-ui/Heading";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import styled from "styled-components";
-import Message from '@splunk/react-ui/Message';
-
+import {SubmissionStatusChip} from "@splunk/my-react-component/src/SubmissionStatusChip";
 
 const Container = styled.div`
     max-width: 1000px;
-`;
-const StyledMessage = styled(Message)`
-    margin: 0;
 `;
 
 function ViewSubmissionRecord({submissionId}) {
@@ -24,20 +20,13 @@ function ViewSubmissionRecord({submissionId}) {
         restFunctionQueryArgs: {submissionId}
     });
     const noContent = "None";
-    let statusAppearance = "info";
-    if (record?.status === "SENT") {
-        statusAppearance = "success";
-    }else if (record?.status === "FAILED") {
-        statusAppearance = "error";
-    }
-    // <Chip appearance={statusChipAppearance}>{record?.status}</Chip>
     return (<Loader loading={loading} error={error}>
         <Container>
             <Heading>Submission</Heading>
             {record &&
                 <section>
                     <CustomControlGroup label="Status" value={
-                        <StyledMessage appearance="fill" type={statusAppearance}>{record?.status}</StyledMessage>
+                        <SubmissionStatusChip status={record?.status}/>
                     } readOnly={true}/>
                     <CustomControlGroup label="Submission ID" value={record?.submission_id} readOnly={true}/>
                     <CustomControlGroup label="Grouping ID" value={record?.grouping_id} readOnly={true}/>

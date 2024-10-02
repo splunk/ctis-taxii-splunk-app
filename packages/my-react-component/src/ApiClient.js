@@ -297,14 +297,9 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
                 setLoading(false);
             },
             errorHandler: async (error) => {
-                if(error instanceof Response){
-                    const error_text = await error.text()
-                    setError(error_text);
-                    console.error(error_text, error);
-                }else{
-                    setError(String(error));
-                    console.error(error);
-                }
+                const errorText = await errorToText(error);
+                setError(errorText);
+                console.error(errorText, error);
                 setLoading(false);
             }
         });

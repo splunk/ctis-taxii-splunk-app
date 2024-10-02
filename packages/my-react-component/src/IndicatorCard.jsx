@@ -8,19 +8,14 @@ import {viewIndicator} from "./urls";
 import {variables} from "@splunk/themes";
 
 const StyledCard = styled(Card)`
-    width: fit-content;
-    min-width: 400px;
-    max-width: 1000px;
     flex-basis: 100%;
-    //flex-grow: 0;
 `;
 const CardContainer = styled.div`
+    max-width: 1200px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: ${variables.spacingSmall};
-    margin-top: ${variables.spacingSmall};
-    margin-bottom: ${variables.spacingSmall};
 `;
 
 export function IndicatorCard({indicatorId}) {
