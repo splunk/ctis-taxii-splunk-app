@@ -9,9 +9,10 @@ import {variables} from "@splunk/themes";
 
 const StyledCard = styled(Card)`
     width: fit-content;
-    min-width: 300px;
-    max-width: 600px;
+    min-width: 400px;
+    max-width: 1000px;
     flex-basis: 100%;
+    //flex-grow: 0;
 `;
 const CardContainer = styled.div`
     display: flex;
