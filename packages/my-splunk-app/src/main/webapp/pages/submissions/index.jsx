@@ -1,47 +1,53 @@
 import React from 'react';
-import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
+import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import {layoutWithTheme} from "../../common/theme";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {getUrlQueryParams} from "../../common/queryParams";
 import {Form} from "./form";
-import {getSubmission, useGetRecord} from "@splunk/my-react-component/src/ApiClient";
+import {SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER, ViewSubmissionRecord} from "./ViewSubmissionRecord";
 import Heading from "@splunk/react-ui/Heading";
-import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-import styled from "styled-components";
+import {SubmissionsSearchBar} from "@splunk/my-react-component/src/SearchBar";
+import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
+import {getSubmissions} from "@splunk/my-react-component/src/ApiClient";
+import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import {SubmissionStatusChip} from "@splunk/my-react-component/src/SubmissionStatusChip";
+import moment from "moment";
 
-const Container = styled.div`
-    max-width: 1000px;
-`;
+function displayScheduledAt(scheduled_at) {
+    const fromNow = moment.utc(scheduled_at).fromNow();
+    const formatted = moment.utc(scheduled_at).format();
+    return `${formatted} (${fromNow})`;
+}
 
-function ViewSubmissionRecord({submissionId}) {
-    const {error, record, loading} = useGetRecord({
-        restGetFunction: getSubmission,
-        restFunctionQueryArgs: {submissionId}
-    });
-    const noContent = "None";
-    return (<Loader loading={loading} error={error}>
-        <Container>
-            <Heading>Submission</Heading>
-            {record &&
-                <section>
-                    <CustomControlGroup label="Status" value={
-                        <SubmissionStatusChip status={record?.status}/>
-                    } readOnly={true}/>
-                    <CustomControlGroup label="Submission ID" value={record?.submission_id} readOnly={true}/>
-                    <CustomControlGroup label="Grouping ID" value={record?.grouping_id} readOnly={true}/>
-                    <CustomControlGroup label="Scheduled At (UTC)" value={record?.scheduled_at} readOnly={true}/>
-                    <CustomControlGroup label="TAXII Config Name" value={record?.taxii_config_name} readOnly={true}/>
-                    <CustomControlGroup label="TAXII Collection ID" value={record?.collection_id} readOnly={true}/>
-                    <CustomControlGroup label="Bundle JSON Sent" value={record?.bundle_json_sent ?? noContent} readOnly={true}/>
-                    <CustomControlGroup label="Response from TAXII Server" value={record?.response_json ?? noContent}
-                                        readOnly={true}/>
-                    <CustomControlGroup label="Error Message" value={record?.error_message ?? noContent} readOnly={true}/>
+const mappingOfColumnNameToCellValue = [
+    {columnName: "Grouping ID", getCellContent: (row) => row.submission_id},
+    {columnName: "Scheduled/Sent At (UTC)", getCellContent: (row) => displayScheduledAt(row.scheduled_at)},
+    {columnName: "Status", getCellContent: (row) => <SubmissionStatusChip status={row.status}/>},
+]
 
-                </section>
-            }
-        </Container>
-    </Loader>);
+function RenderDataTable({records, loading, error}) {
+    const table = <ExpandableDataTable data={records}
+                                       rowKeyFunction={(row) => row.submission_id}
+                                       expansionRowFieldNameToCellValue={SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER}
+                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+    />
+    return <Loader error={error} loading={loading}>
+        {table}
+    </Loader>
+}
+
+function ListSubmissions() {
+    const [query, setQuery] = React.useState({});
+    return (
+        <>
+            <Heading level={1}>Submissions</Heading>
+            <SubmissionsSearchBar onQueryChange={setQuery}/>
+            <PaginatedDataTable renderData={RenderDataTable} fetchData={getSubmissions} sort={'scheduled_at:-1'}
+                                query={query} onError={(e) => {
+                createErrorToast(e);
+            }}/>
+        </>
+    );
 }
 
 function Router() {
@@ -53,7 +59,7 @@ function Router() {
         const submissionId = queryParams.get('submission_id');
         return <ViewSubmissionRecord submissionId={submissionId}/>;
     } else {
-        return <Loader error={'Invalid URL'} loading={false}/>
+        return <ListSubmissions/>;
     }
 }
 

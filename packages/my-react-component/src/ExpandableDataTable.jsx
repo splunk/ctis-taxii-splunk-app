@@ -66,7 +66,11 @@ function ExpandableDataTable({
                              }) {
 
     // Adding one to include actions column
-    const totalColumns = mappingOfColumnNameToCellValue.length + 1;
+    let totalColumns = mappingOfColumnNameToCellValue.length;
+    const hasActionsColumn = RowActionPrimary || RowActionsSecondary;
+    if(hasActionsColumn){
+        totalColumns += 1;
+    }
     const [expandedRows, setExpandedRows] = React.useState(() => new Set());
     const toggleRowExpansion = (rowKey) => {
         if (expandedRows.has(rowKey)) {
@@ -90,7 +94,7 @@ function ExpandableDataTable({
     }, [JSON.stringify(data)]);
 
     return (
-        <Table stripeRows rowExpansion="controlled" actionsColumnWidth={actionsColumnWidth}>
+        <Table stripeRows rowExpansion="controlled" actionsColumnWidth={hasActionsColumn ? actionsColumnWidth : null}>
             <Table.Head>
                 {mappingOfColumnNameToCellValue.map(({columnName}) => (
                     <Table.HeadCell key={columnName}><strong>{columnName}</strong></Table.HeadCell>

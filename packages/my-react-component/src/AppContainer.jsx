@@ -1,14 +1,13 @@
 import ToastMessages from "@splunk/react-toast-notifications";
 import React from "react";
-import styled from "styled-components";
-import {mixins, variables} from "@splunk/themes";
+import styled, {createGlobalStyle} from "styled-components";
+import {mixins, SplunkThemeProvider, variables} from "@splunk/themes";
 import Toaster, {makeCreateToast} from "@splunk/react-toast-notifications/Toaster";
-import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${variables.backgroundColor};
-  }
+    body {
+        background-color: ${variables.backgroundColor};
+    }
 `
 
 const StyledContainer = styled.div`
@@ -35,10 +34,12 @@ export function AppContainer({children}) {
     return (
         <>
             <GlobalStyle/>
-            <StyledContainer>
-                {children}
-                <ToastMessages position='top-right'/>
-            </StyledContainer>
+            <SplunkThemeProvider>
+                <StyledContainer>
+                    {children}
+                    <ToastMessages position='top-right'/>
+                </StyledContainer>
+            </SplunkThemeProvider>
         </>
     )
 }

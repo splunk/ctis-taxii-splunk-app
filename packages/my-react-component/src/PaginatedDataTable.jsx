@@ -3,7 +3,7 @@ import SearchPaginator from "./paginator";
 import P from '@splunk/react-ui/Paragraph';
 import {useDebounceMultiple} from "./debounce";
 
-function usePaginatedData({getDataPaginated, skip, limit, onError, query}) {
+function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort=""}) {
     const [records, setRecords] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query}) {
         setError(null);
         // TODO: handle cancel? E.g. if pagination changes before data loads
         getDataPaginated({
-            skip, limit, query,
+            skip, limit, query, sort,
             successHandler: (data) => {
                 console.log(skip, limit, data)
                 setRecords(data.records);
@@ -45,7 +45,7 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query}) {
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
 const DEFAULT_RESULTS_PER_PAGE = 10;
 
-export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query}) {
+export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort=""}) {
     const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
@@ -54,6 +54,7 @@ export default function PaginatedDataTable({renderData: RenderData, fetchData, o
         skip,
         limit: resultsPerPage,
         query,
+        sort,
         onError
     });
     const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
