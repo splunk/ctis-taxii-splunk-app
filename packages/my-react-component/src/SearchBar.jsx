@@ -125,8 +125,9 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['submission_id', 'grouping_id', 'status', 'taxii_config_name',
         'collection_id', 'error_message', 'response_json', 'bundle_json_sent'];
     const [statusQuery, setStatusQuery] = useState({});
+    const [scheduledAtQuery, setScheduledAtQuery] = useState({});
     return (
-        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[statusQuery]}>
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[statusQuery, scheduledAtQuery]}>
             <SearchFieldDropdown prefixLabel="Status" fieldName="status" onQueryChange={setStatusQuery}
                                  options={[
                                      {label: "SENT", value: "SENT"},
@@ -134,6 +135,7 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
                                      {label: "FAILED", value: "FAILED"},
                                      {label: "CANCELLED", value: "CANCELLED"},
                                  ]}/>
+            <DatetimeRangePicker labelPrefix="Scheduled/Sent At" fieldName={"scheduled_at"} onQueryChange={setScheduledAtQuery}/>
         </SearchBar>
     );
 }

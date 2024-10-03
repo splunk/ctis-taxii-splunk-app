@@ -65,7 +65,7 @@ const SELECTION_LAST_7_DAYS = 'In the last 7 days';
 const SELECTION_LAST_30_DAYS = 'In the last 30 days';
 const SELECTION_DATE_RANGE = 'Between Dates (UTC)';
 
-const queryBasedOnSelection = (value) => {
+const queryBasedOnSelection = (value, dateRangeStartIsoString, dateRangeEndIsoString) => {
     if (value === SELECTION_NOT_APPLIED) {
         return null;
     } else if (value === SELECTION_ANY) {
@@ -79,6 +79,11 @@ const queryBasedOnSelection = (value) => {
     } else if (value === SELECTION_LAST_30_DAYS) {
         const nowMinus30Days = moment().subtract(30, 'days');
         return {"$gt": dateToIsoStringWithoutTimezone(nowMinus30Days.toDate())};
+    } else if (value === SELECTION_DATE_RANGE) {
+        return {
+            "$gte": dateRangeStartIsoString,
+            "$lte": dateRangeEndIsoString
+        };
     } else {
         throw new Error(`Unknown selection value: ${value}`);
     }
@@ -95,20 +100,15 @@ export function DatetimeRangePicker({
     const closeReasons = without(Dropdown.possibleCloseReasons, 'contentClick');
     const [selected, setSelected] = React.useState(optional ? SELECTION_NOT_APPLIED : SELECTION_ANY);
     const showDateRange = selected === SELECTION_DATE_RANGE;
-    const [query, setQuery] = React.useState(queryBasedOnSelection(selected));
     const {startDateIsoString, endDateIsoString, handleStartDateChange, handleEndDateChange} = useDateRangePicker();
+    const [query, setQuery] = React.useState(queryBasedOnSelection(selected, startDateIsoString, endDateIsoString));
 
     const onSelected = (e, {value}) => {
         setSelected(value);
-        setQuery(queryBasedOnSelection(value));
     }
+
     useEffect(() => {
-        if (selected === SELECTION_DATE_RANGE) {
-            setQuery({
-                "$gte": startDateIsoString,
-                "$lte": endDateIsoString
-            });
-        }
+        setQuery(queryBasedOnSelection(selected, startDateIsoString, endDateIsoString));
     }, [selected, startDateIsoString, endDateIsoString]);
 
     useEffect(() => {
