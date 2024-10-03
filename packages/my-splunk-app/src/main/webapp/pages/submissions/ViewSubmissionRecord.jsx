@@ -16,12 +16,18 @@ const StyledSection = styled.section`
     max-width: 1000px;
 `;
 
+export const formatScheduledAt = (scheduledAt) => {
+    const timestampFormatted = moment.utc(scheduledAt).format("YYYY-MM-DD HH:mm:ss");
+    const fromNow = moment.utc(scheduledAt).fromNow();
+    return `${timestampFormatted} (${fromNow})`;
+}
+
 const NO_CONTENT = "None";
 export const SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER = {
     "Status": (record) => <SubmissionStatusChip status={record.status}/>,
     "Submission ID": (record) => record.submission_id,
     "Grouping ID": (record) => record.grouping_id,
-    "Scheduled At (UTC)": (record) => moment.utc(record.scheduled_at).format(),
+    "Scheduled At (UTC)": (record) => formatScheduledAt(record.scheduled_at),
     "TAXII Config Name": (record) => record.taxii_config_name,
     "TAXII Collection ID": (record) => record.collection_id,
     "Bundle JSON Sent": (record) => {

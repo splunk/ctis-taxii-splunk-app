@@ -4,24 +4,22 @@ import {layoutWithTheme} from "../../common/theme";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {getUrlQueryParams} from "../../common/queryParams";
 import {Form} from "./form";
-import {SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER, ViewSubmissionRecord} from "./ViewSubmissionRecord";
+import {
+    formatScheduledAt,
+    SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER,
+    ViewSubmissionRecord
+} from "./ViewSubmissionRecord";
 import Heading from "@splunk/react-ui/Heading";
 import {SubmissionsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {getSubmissions} from "@splunk/my-react-component/src/ApiClient";
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import {SubmissionStatusChip} from "@splunk/my-react-component/src/SubmissionStatusChip";
-import moment from "moment";
 
-function displayScheduledAt(scheduled_at) {
-    const fromNow = moment.utc(scheduled_at).fromNow();
-    const formatted = moment.utc(scheduled_at).format();
-    return `${formatted} (${fromNow})`;
-}
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => row.submission_id},
-    {columnName: "Scheduled/Sent At (UTC)", getCellContent: (row) => displayScheduledAt(row.scheduled_at)},
+    {columnName: "Scheduled/Sent At (UTC)", getCellContent: (row) => formatScheduledAt(row.scheduled_at)},
     {columnName: "Status", getCellContent: (row) => <SubmissionStatusChip status={row.status}/>},
 ]
 
