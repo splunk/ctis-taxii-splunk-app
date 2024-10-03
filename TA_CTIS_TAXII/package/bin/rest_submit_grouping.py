@@ -20,6 +20,13 @@ logger = get_logger_for_script(__file__)
 
 
 class SubmitGroupingHandler(AbstractRestHandler):
+    def update_grouping_last_submission_at(self, grouping_id: str, last_submission_at: datetime, session_key: str):
+        groupings_collection = self.get_collection(session_key=session_key, collection_name="groupings")
+        self.update_record(collection=groupings_collection,
+                           query_for_one_record={"grouping_id": grouping_id},
+                           input_json={"last_submission_at": last_submission_at.isoformat()},
+                           converter=grouping_converter, model_class=GroupingModelV1)
+
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         if "grouping_id" not in input_json:
             raise ValueError("grouping_id is required.")
@@ -33,9 +40,10 @@ class SubmitGroupingHandler(AbstractRestHandler):
             raise ValueError("taxii_collection_id is required.")
         taxii_collection_id = input_json["taxii_collection_id"]
 
-        taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=taxii_config_name)
+        # Validate that TAXII Config exists
+        self.get_taxii_config(session_key=session_key, stanza_name=taxii_config_name)
 
-        # This implicitly validates that the grouping exists, along with the indicators and identity objects
+        # Validates that the grouping exists, along with the indicators and identity objects
         bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id, session_key=session_key)
         self.logger.info(f"bundle: {bundle.serialize()}")
 
@@ -59,19 +67,12 @@ class SubmitGroupingHandler(AbstractRestHandler):
         self.insert_record(collection=submissions_collection, input_json=new_submission_dict,
                            converter=submission_converter, model_class=SubmissionModelV1)
 
-        groupings_collection = self.get_collection(session_key=session_key, collection_name="groupings")
-        # Update grouping with last_submission_at
-        self.update_record(collection=groupings_collection,
-                           query_for_one_record={"grouping_id": grouping_id},
-                           input_json={"last_submission_at": new_submission.scheduled_at.isoformat()},
-                           converter=grouping_converter, model_class=GroupingModelV1)
+        self.update_grouping_last_submission_at(grouping_id=grouping_id, last_submission_at=new_submission.scheduled_at,
+                                                session_key=session_key)
 
         submission_to_return = new_submission_dict
         if not scheduled_at:
             updated_submission = self.submit_grouping(session_key=session_key,
-                                                      taxii_config=taxii_config,
-                                                      taxii_collection_id=taxii_collection_id,
-                                                      bundle=bundle,
                                                       submission_id=new_submission.submission_id)
             submission_to_return = updated_submission
         return {

@@ -74,13 +74,19 @@ class AbstractRestHandler(abc.ABC):
         taxii_config_conf = cfm.get_conf(conf_name)
         return taxii_config_conf.get(stanza_name)
 
-    def submit_grouping(self, session_key: str, bundle: Bundle, submission_id: str, taxii_config: dict,
-                        taxii_collection_id: str) -> dict:
+    def submit_grouping(self, session_key: str, submission_id: str) -> dict:
         submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")
         taxii_response_dict = None
         error = None
-        bundle_json = bundle.serialize()
+        bundle_json = None
         try:
+            submission = self.query_exactly_one_record(collection=submissions_collection, query={"submission_id": submission_id})
+            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission["grouping_id"], session_key=session_key)
+            bundle_json = bundle.serialize()
+
+            taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission["taxii_config_name"])
+            taxii_collection_id = submission["collection_id"]
+
             self.logger.info(f"Submitting bundle={bundle_json} to TAXII collection: collection_id={taxii_collection_id}")
             taxii_collection = get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
             taxii_response = taxii_collection.add_objects(bundle_json)

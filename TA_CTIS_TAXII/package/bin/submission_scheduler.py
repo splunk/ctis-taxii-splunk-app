@@ -37,7 +37,6 @@ class SubmissionSchedulerCommand(GeneratingCommand):
         # Example:-
         #    service = self.service
         service = self.service
-        output = []
         # remote_pdb.RemotePdb(host="0.0.0.0", port=4444).set_trace()
         session_key = service.token  # not sure if this is the right way to get the session key
         handler = MyHandler(logger=logger)
@@ -56,22 +55,12 @@ class SubmissionSchedulerCommand(GeneratingCommand):
         for submission in submissions:
             logger.info(f"Submission ready to be submitted: {submission}")
             try:
-                # TODO: Move generating bundle and getting taxii config to the handler.submit_grouping method, so that
-                #  error handling can be done in one place and we can write the error message to the submission record
                 submission_model = submission_converter.structure(submission, SubmissionModelV1)
-                bundle = handler.generate_stix_bundle_for_grouping(grouping_id=submission_model.grouping_id,
-                                                                   session_key=session_key)
-                taxii_config = handler.get_taxii_config(session_key=session_key,
-                                                        stanza_name=submission_model.taxii_config_name)
                 updated_submission = handler.submit_grouping(session_key=session_key,
-                                                             submission_id=submission_model.submission_id,
-                                                             bundle=bundle,
-                                                             taxii_config=taxii_config,
-                                                             taxii_collection_id=submission_model.collection_id)
+                                                             submission_id=submission_model.submission_id)
                 yield {'_time': time.time(), '_raw': json.dumps(updated_submission)}
-            except Exception as e:
-                logger.exception(f"Error submitting grouping: {e}")
-
+            except Exception as exc:
+                logger.exception(f"Error submitting grouping: {exc}")
 
 
 dispatch(SubmissionSchedulerCommand, sys.argv, sys.stdin, sys.stdout, __name__)
