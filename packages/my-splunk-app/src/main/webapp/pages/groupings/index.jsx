@@ -20,7 +20,7 @@ import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteI
 import Tooltip from "@splunk/react-ui/Tooltip";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
-import {SubmitGroupingButton} from "@splunk/my-react-component/src/SubmitGroupingButton";
+import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
 import {IndicatorCardLayout} from "@splunk/my-react-component/src/IndicatorCard";
 import {SubmissionCardLayout} from "@splunk/my-react-component/src/SubmissionCard";
 

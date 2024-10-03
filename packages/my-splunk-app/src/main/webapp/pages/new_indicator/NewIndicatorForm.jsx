@@ -35,7 +35,7 @@ import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-import {SubmitGroupingButton} from "@splunk/my-react-component/src/SubmitGroupingButton";
+import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
@@ -174,7 +174,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                         title={"Successfully Created New Indicator" + (indicators.length > 1 ? "s" : "")}
                     />
                     <Modal.Body>
-                        <P>To submit to CTIS, proceed to submit the Grouping.</P>
+                        <P>To submit to TAXII server, proceed to submit the Grouping.</P>
                         <GotoIndicatorsPageButton/>
                         <SubmitGroupingButton groupingId={groupingId}/>
                     </Modal.Body>

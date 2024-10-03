@@ -150,6 +150,10 @@ export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
         errorHandler
     })
 }
+export function cancelSubmission({submissionId, successHandler, errorHandler}) {
+    console.log('Cancelling submission:', submissionId);
+    return postData('unschedule-submission', {submission_id: submissionId}, successHandler, errorHandler)
+}
 
 export function getIndicators({skip, limit, successHandler, errorHandler, query}) {
     return getData({

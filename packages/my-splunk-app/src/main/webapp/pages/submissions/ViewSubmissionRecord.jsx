@@ -8,6 +8,7 @@ import React from "react";
 import Code from "@splunk/react-ui/Code";
 import CollapsiblePanel from '@splunk/react-ui/CollapsiblePanel';
 import moment from "moment";
+import {GroupingIdLink} from "@splunk/my-react-component/src/urls";
 
 const Container = styled.div`
     max-width: 1000px;
@@ -26,7 +27,7 @@ const NO_CONTENT = "None";
 export const SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER = {
     "Status": (record) => <SubmissionStatusChip status={record.status}/>,
     "Submission ID": (record) => record.submission_id,
-    "Grouping ID": (record) => record.grouping_id,
+    "Grouping ID": (record) => <GroupingIdLink groupingId={record.grouping_id}/>,
     "Scheduled At (UTC)": (record) => formatScheduledAt(record.scheduled_at),
     "TAXII Config Name": (record) => record.taxii_config_name,
     "TAXII Collection ID": (record) => record.collection_id,

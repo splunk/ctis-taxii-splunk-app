@@ -15,7 +15,12 @@ import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTabl
 import {getSubmissions} from "@splunk/my-react-component/src/ApiClient";
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import {SubmissionStatusChip} from "@splunk/my-react-component/src/SubmissionStatusChip";
+import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
+import {CancelSubmissionButton} from "@splunk/my-react-component/src/buttons/CancelSubmissionButton";
+import useModal from "@splunk/my-react-component/src/useModal";
 
+import {CancelSubmissionModal} from "@splunk/my-react-component/src/CancelSubmissionModal";
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => row.submission_id},
@@ -23,11 +28,22 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Status", getCellContent: (row) => <SubmissionStatusChip status={row.status}/>},
 ]
 
+const RowActionPrimary = ({row}) => {
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
+    return (<HorizontalActionButtonLayout>
+        {row.status === "FAILED" &&
+            <SubmitGroupingButton inline={false} label="Retry Submission" groupingId={row.grouping_id}/>}
+        {row.status === "SCHEDULED" && <CancelSubmissionButton inline={false} onClick={handleRequestOpen}/>}
+        <CancelSubmissionModal open={open} onRequestClose={handleRequestClose} submission={row}/>
+    </HorizontalActionButtonLayout>);
+}
+
 function RenderDataTable({records, loading, error}) {
     const table = <ExpandableDataTable data={records}
                                        rowKeyFunction={(row) => row.submission_id}
                                        expansionRowFieldNameToCellValue={SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER}
                                        mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                                       rowActionPrimary={RowActionPrimary}
     />
     return <Loader error={error} loading={loading}>
         {table}
