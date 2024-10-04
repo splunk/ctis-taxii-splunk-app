@@ -52,7 +52,7 @@ function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) 
         .catch(errorHandler);
 }
 
-export function getData({endpoint, queryParams, query, successHandler, errorHandler}) {
+export function getData({endpoint, queryParams, query, successHandler, errorHandler, requestId=null}) {
     const url = createRESTURL(endpoint, {app});
     let allQueryParams = {};
     if (queryParams) {
@@ -77,7 +77,7 @@ export function getData({endpoint, queryParams, query, successHandler, errorHand
                 return resp.json();
             }
         })
-        .then(successHandler)
+        .then(json => successHandler(json, {requestId}))
         .catch(errorHandler)
 }
 
@@ -156,43 +156,43 @@ export function cancelSubmission({submissionId, successHandler, errorHandler}) {
     return postData('unschedule-submission', {submission_id: submissionId}, successHandler, errorHandler)
 }
 
-export function getIndicators({skip=0, limit=0, successHandler, errorHandler, query}) {
+export function getIndicators({skip=0, limit=0, successHandler, errorHandler, query, ...rest}) {
     return getData({
         endpoint: 'list-indicators',
         queryParams: {
             skip, limit
-        }, query, successHandler, errorHandler
+        }, query, successHandler, errorHandler, ...rest
     })
 }
 
-export function getGroupings({skip=0, limit=0, successHandler, errorHandler, query}) {
+export function getGroupings({skip=0, limit=0, successHandler, errorHandler, query, ...rest}) {
     return getData({
         endpoint: 'list-groupings',
         queryParams: {
             skip, limit
         },
-        query, successHandler, errorHandler
+        query, successHandler, errorHandler, ...rest
     })
 }
 
-export function getIdentities({skip=0, limit=0, successHandler, errorHandler, query}) {
+export function getIdentities({skip=0, limit=0, successHandler, errorHandler, query, ...rest}) {
     return getData({
         endpoint: 'list-identities',
         queryParams: {
             skip, limit
         },
-        query, successHandler, errorHandler
+        query, successHandler, errorHandler, ...rest
     })
 }
 
 // Note: fields="" means all fields
-export function getSubmissions({skip=0, limit=0, sort="", fields="", successHandler, errorHandler, query}) {
+export function getSubmissions({skip=0, limit=0, sort="", fields="", successHandler, errorHandler, query, ...rest}) {
     return getData({
         endpoint: 'list-submissions',
         queryParams: {
             skip, limit, fields, sort
         },
-        query, successHandler, errorHandler
+        query, successHandler, errorHandler, ...rest
     })
 }
 

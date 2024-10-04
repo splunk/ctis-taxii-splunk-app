@@ -2,34 +2,54 @@ import React, {useEffect, useMemo, useState} from 'react';
 import SearchPaginator from "./paginator";
 import P from '@splunk/react-ui/Paragraph';
 import {useDebounceMultiple} from "./debounce";
+import {v4 as uuidv4} from 'uuid';
 
-function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort=""}) {
+function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort = ""}) {
     const [records, setRecords] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [lastRequestId, setLastRequestId] = useState(null);
+    const [requestIdToResponse, setRequestIdToResponse] = useState({});
 
     const debouncedValues = useDebounceMultiple([skip, limit, query], 100);
 
     useEffect(() => {
-        setLoading(true);
-        setError(null);
-        // TODO: handle cancel? E.g. if pagination changes before data loads
-        getDataPaginated({
-            skip, limit, query, sort,
-            successHandler: (data) => {
-                console.log(skip, limit, data)
-                setRecords(data.records);
-                setTotalRecords(data.total);
-                setLoading(false);
-            }, errorHandler: (error) => {
-                setLoading(false);
-                setError(error);
-                console.error(error);
-                onError(error);
-            }
-        });
+        const newRequestId = uuidv4();
+        console.log("Setting new request ID:", newRequestId, "for request:", JSON.stringify(debouncedValues));
+        setLastRequestId(newRequestId);
     }, [debouncedValues]);
+
+    useEffect(() => {
+        if (lastRequestId) {
+            console.log("Latest request ID:", lastRequestId)
+            setLoading(true);
+            setError(null);
+            getDataPaginated({
+                skip, limit, query, sort,
+                requestId: lastRequestId,
+                successHandler: (data, {requestId: responseRequestId}) => {
+                    setRequestIdToResponse((prev) => ({...prev, [responseRequestId]: data}));
+                }, errorHandler: (error) => {
+                    setLoading(false);
+                    setError(error);
+                    console.error(error);
+                    onError(error);
+                }
+            }).then();
+        }
+    }, [lastRequestId]);
+
+    useEffect(() => {
+        if (lastRequestId && requestIdToResponse[lastRequestId]) {
+            const response = requestIdToResponse[lastRequestId];
+            console.log(`Settings records for request ID: ${lastRequestId}`);
+            setRecords(response.records);
+            setTotalRecords(response.total);
+            setLoading(false);
+        }
+    }, [requestIdToResponse, lastRequestId]);
+
     return {records, totalRecords, loading, error};
 }
 
@@ -45,7 +65,7 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort="
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
 const DEFAULT_RESULTS_PER_PAGE = 10;
 
-export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort=""}) {
+export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort = ""}) {
     const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
