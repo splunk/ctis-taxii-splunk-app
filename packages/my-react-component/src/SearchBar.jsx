@@ -5,12 +5,11 @@ import styled from 'styled-components';
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
 import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
-import {useListGroupings} from "@splunk/my-splunk-app/src/main/webapp/common/indicator_form/GroupingsDropdown";
 import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 import {variables} from "@splunk/themes";
 import SearchableSelect from "./search/SearchableSelect";
 import {generateRegexQueryForFields} from "./search/util";
-import {getGroupings, getIdentities, getSubmissions} from "./ApiClient";
+import {getGroupings, getIdentities, getIndicators, getSubmissions} from "./ApiClient";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -73,14 +72,31 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
     const [groupingQuery, setGroupingQuery] = useState({});
     const [tlpRatingQuery, setTlpRatingQuery] = useState({});
+    const [indicatorFilter, setIndicatorFilter] = useState(null);
+    const [groupingFilter, setGroupingFilter] = useState(null);
 
-    const subqueries = [lastUpdatedQuery, groupingQuery, tlpRatingQuery];
-    const {optionsGroupings, loading} = useListGroupings();
+    const subqueries = [lastUpdatedQuery, groupingQuery, tlpRatingQuery, indicatorFilter, groupingFilter];
+
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
+            <SearchableSelect searchableFields={['name', 'indicator_id']}
+                              prefixLabel="Indicator"
+                              placeholder={"Indicator..."}
+                              restGetFunction={getIndicators}
+                              queryFilterField={"indicator_id"}
+                              initialSelectionQueryParamName={"indicator_id"}
+                              selectOptionLabelFunction={(record) => `${record.name} (${record.indicator_id})`}
+                              onQueryChange={setIndicatorFilter}/>
+
+            <SearchableSelect searchableFields={['name', 'grouping_id']}
+                              prefixLabel="Grouping"
+                              placeholder={"Grouping..."}
+                              restGetFunction={getGroupings}
+                              queryFilterField={"grouping_id"}
+                              initialSelectionQueryParamName={"grouping_id"}
+                              selectOptionLabelFunction={(record) => `${record.name} (${record.grouping_id})`}
+                              onQueryChange={setGroupingFilter}/>
             <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
-            <SearchFieldDropdown onQueryChange={setGroupingQuery} fieldName={'grouping_id'} defaultValue={""}
-                                 prefixLabel="Grouping" options={optionsGroupings} isLoadingOptions={loading}/>
             <SearchFieldDropdown prefixLabel="TLP Rating" fieldName="tlp_v1_rating" onQueryChange={setTlpRatingQuery}
                                  options={[
                                      {label: "GREEN", value: "GREEN"},

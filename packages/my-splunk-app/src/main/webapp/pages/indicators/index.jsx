@@ -118,10 +118,9 @@ function ListIndicators() {
 
 function Router() {
     const queryParams = getUrlQueryParams();
-    if (queryParams.has('indicator_id')) {
+    if (queryParams.has('indicator_id') && queryParams.has('action', 'edit')) {
         const indicatorId = queryParams.get('indicator_id');
-        const editMode = queryParams.has('action', 'edit');
-        return <ViewOrEditIndicator editMode={editMode} indicatorId={indicatorId}/>
+        return <ViewOrEditIndicator editMode={true} indicatorId={indicatorId}/>
     } else {
         return (
             <ListIndicators/>

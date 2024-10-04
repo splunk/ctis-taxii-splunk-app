@@ -30,7 +30,7 @@ export function SubmissionCard({submission}) {
     }else{
         cardTitle = `Submission ${dateText}`;
     }
-    return <StyledCard to={urlForViewSubmission(submission.submission_id)} openInNewContext title="Click for more info">
+    return <StyledCard to={urlForViewSubmission(submission.submission_id)} title="Click for more info">
         <Card.Header title={cardTitle} subtitle={scheduledAt.format()}>
             <HeaderContent>
                 <SubmissionStatusChip status={submission.status}/>
