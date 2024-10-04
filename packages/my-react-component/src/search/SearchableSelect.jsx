@@ -7,12 +7,13 @@ import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/qu
 
 export default function SearchableSelect({
                                              prefixLabel,
-                                             recordFields,
+                                             searchableFields,
                                              queryFilterField,
                                              restGetFunction,
                                              placeholder,
                                              onQueryChange,
-                                             initialSelectionQueryParamName
+                                             initialSelectionQueryParamName,
+                                             selectOptionLabelFunction
                                          }) {
     let initialSelection = '';
     if (initialSelectionQueryParamName) {
@@ -32,7 +33,7 @@ export default function SearchableSelect({
         restGetFunction: restGetFunction,
         restFunctionQueryArgs: {
             limit: 100,
-            query: generateRegexQueryForFields(recordFields, debouncedSearchFilter),
+            query: generateRegexQueryForFields(searchableFields, debouncedSearchFilter),
         }
     })
     useEffect(() => {
@@ -64,7 +65,7 @@ export default function SearchableSelect({
             <Select.Option label="Any" value=""/>
             {options.map((option) => (
                 <Select.Option key={option[queryFilterField]}
-                               label={`${option.name} (${option[queryFilterField]})`}
+                               label={selectOptionLabelFunction(option)}
                                value={option[queryFilterField]}/>
             ))}
         </Select>

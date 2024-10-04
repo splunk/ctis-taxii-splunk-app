@@ -10,7 +10,7 @@ import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/qu
 import {variables} from "@splunk/themes";
 import SearchableSelect from "./search/SearchableSelect";
 import {generateRegexQueryForFields} from "./search/util";
-import {getIdentities} from "./ApiClient";
+import {getIdentities, getSubmissions} from "./ApiClient";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -113,12 +113,13 @@ export const IdentitiesSearchBar = ({onQueryChange}) => {
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS}
                    subqueries={[identityFilter]}>
-            <SearchableSelect recordFields={['name', 'identity_id']}
+            <SearchableSelect searchableFields={['name', 'identity_id']}
                               prefixLabel="Identity"
                               placeholder={"Identity..."}
                               restGetFunction={getIdentities}
                               queryFilterField={"identity_id"}
                               initialSelectionQueryParamName={"identity_id"}
+                              selectOptionLabelFunction={(record) => `${record.name} (${record.identity_id})`}
                               onQueryChange={setIdentityFilter}/>
         </SearchBar>
     );
@@ -129,9 +130,18 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
         'collection_id', 'error_message', 'response_json', 'bundle_json_sent'];
     const [statusQuery, setStatusQuery] = useState({});
     const [scheduledAtQuery, setScheduledAtQuery] = useState({});
+    const [submissionFilter, setSubmissionFilter] = useState(null);
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS}
-                   subqueries={[statusQuery, scheduledAtQuery]}>
+                   subqueries={[statusQuery, scheduledAtQuery, submissionFilter]}>
+            <SearchableSelect searchableFields={['submission_id']}
+                              prefixLabel="Submission"
+                              placeholder={"Submission..."}
+                              restGetFunction={getSubmissions}
+                              queryFilterField={"submission_id"}
+                              initialSelectionQueryParamName={"submission_id"}
+                              selectOptionLabelFunction={(record) => record.submission_id}
+                              onQueryChange={setSubmissionFilter}/>
             <SearchFieldDropdown prefixLabel="Status" fieldName="status" onQueryChange={setStatusQuery}
                                  options={[
                                      {label: "SENT", value: "SENT"},

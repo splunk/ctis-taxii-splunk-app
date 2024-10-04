@@ -69,9 +69,6 @@ function Router() {
     if (queryParams.has('grouping_id') && queryParams.has('action', 'submit')) {
         const groupingId = queryParams.get('grouping_id');
         return <Form groupingId={groupingId}/>
-    } else if (queryParams.has('submission_id')) {
-        const submissionId = queryParams.get('submission_id');
-        return <ViewSubmissionRecord submissionId={submissionId}/>;
     } else {
         return <ListSubmissions/>;
     }
