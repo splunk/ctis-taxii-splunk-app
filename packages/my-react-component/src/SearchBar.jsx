@@ -3,12 +3,13 @@ import Search from '@splunk/react-ui/Search';
 
 import styled from 'styled-components';
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
-import {escapeRegExp} from "lodash";
 import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
 import {useListGroupings} from "@splunk/my-splunk-app/src/main/webapp/common/indicator_form/GroupingsDropdown";
 import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 import {variables} from "@splunk/themes";
+import SearchableSelect from "./search/SearchableSelect";
+import {generateRegexQueryForFields} from "./search/util";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -24,14 +25,6 @@ const SearchControlContainer = styled.div`
     margin-top: ${variables.spacingSmall};
     margin-bottom: ${variables.spacingSmall};
 `;
-
-const generateRegexQuery = (field, value) => {
-    return {[field]: {'$regex': escapeRegExp(value), '$options': 'i'}};
-}
-
-const generateRegexQueryForFields = (fields, value) => {
-    return {'$or': fields.map(field => generateRegexQuery(field, value))};
-}
 
 export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, children}) => {
     if (!fullTextSearchFields) {
@@ -115,8 +108,10 @@ export const GroupingsSearchBar = ({onQueryChange}) => {
 
 export const IdentitiesSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'identity_id', 'identity_class'];
+    const [identityFilter, setIdentityFilter] = useState(null);
     return (
-        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[]}>
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[identityFilter]}>
+            <SearchableSelect prefixLabel="Identity" placeholder={"Identity..."} onQueryChange={setIdentityFilter}/>
         </SearchBar>
     );
 }

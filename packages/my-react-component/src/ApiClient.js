@@ -1,6 +1,7 @@
 import {createRESTURL} from '@splunk/splunk-utils/url';
 import {app, getCSRFToken} from '@splunk/splunk-utils/config';
 import {useEffect, useState} from "react";
+import {useDebounce} from "./debounce";
 
 function postData(endpoint, data, successHandler, errorHandler) {
     return submitToEndpoint('POST', endpoint, data, successHandler, errorHandler);
@@ -155,7 +156,7 @@ export function cancelSubmission({submissionId, successHandler, errorHandler}) {
     return postData('unschedule-submission', {submission_id: submissionId}, successHandler, errorHandler)
 }
 
-export function getIndicators({skip, limit, successHandler, errorHandler, query}) {
+export function getIndicators({skip=0, limit=0, successHandler, errorHandler, query}) {
     return getData({
         endpoint: 'list-indicators',
         queryParams: {
@@ -164,7 +165,7 @@ export function getIndicators({skip, limit, successHandler, errorHandler, query}
     })
 }
 
-export function getGroupings({skip, limit, successHandler, errorHandler, query}) {
+export function getGroupings({skip=0, limit=0, successHandler, errorHandler, query}) {
     return getData({
         endpoint: 'list-groupings',
         queryParams: {
@@ -174,7 +175,7 @@ export function getGroupings({skip, limit, successHandler, errorHandler, query})
     })
 }
 
-export function getIdentities({skip, limit, successHandler, errorHandler, query}) {
+export function getIdentities({skip=0, limit=0, successHandler, errorHandler, query}) {
     return getData({
         endpoint: 'list-identities',
         queryParams: {
@@ -185,7 +186,7 @@ export function getIdentities({skip, limit, successHandler, errorHandler, query}
 }
 
 // Note: fields="" means all fields
-export function getSubmissions({skip, limit, sort="", fields="", successHandler, errorHandler, query}) {
+export function getSubmissions({skip=0, limit=0, sort="", fields="", successHandler, errorHandler, query}) {
     return getData({
         endpoint: 'list-submissions',
         queryParams: {
@@ -292,6 +293,7 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const debouncedQueryArgs = useDebounce(JSON.stringify(restFunctionQueryArgs), 100);
     useEffect(() => {
         restGetFunction({
             ...restFunctionQueryArgs,
@@ -307,7 +309,7 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
                 setLoading(false);
             }
         });
-    }, []);
+    }, [debouncedQueryArgs]);
     return {record, loading, error};
 }
 
