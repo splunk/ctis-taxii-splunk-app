@@ -17,6 +17,22 @@ const TableHead = styled(Table.Head)`
     height: 0; // Hide the table header
 `
 const TableRow = styled(Table.Row)`
+    & > ${TableCell}:first-child {
+        font-weight: ${variables.fontWeightBold};
+    }
+
+    & > ${TableCell} {
+        font-size: ${variables.fontSizeLarge};
+    }
+`;
+
+const LargeBoldText = styled.span`
+    font-weight: ${variables.fontWeightBold};
+    font-size: ${variables.fontSizeLarge};
+`;
+
+const LargeText = styled.span`
+    font-size: ${variables.fontSizeLarge};
 `;
 
 function ExpandedDataRecord({mapping}) {
@@ -28,7 +44,7 @@ function ExpandedDataRecord({mapping}) {
         <Table.Body>
             {Object.entries(mapping).map(([term, description]) => (
                 <TableRow key={term}>
-                    <TableCell><strong>{term}</strong></TableCell>
+                    <TableCell>{term}</TableCell>
                     <TableCell>{description}</TableCell>
                 </TableRow>
             ))}
@@ -68,7 +84,7 @@ function ExpandableDataTable({
     // Adding one to include actions column
     let totalColumns = mappingOfColumnNameToCellValue.length;
     const hasActionsColumn = RowActionPrimary || RowActionsSecondary;
-    if(hasActionsColumn){
+    if (hasActionsColumn) {
         totalColumns += 1;
     }
     const [expandedRows, setExpandedRows] = React.useState(() => new Set());
@@ -87,7 +103,7 @@ function ExpandableDataTable({
     }
 
     useEffect(() => {
-        if(data.length === 1){
+        if (data.length === 1) {
             const rowKeyOfFirstRow = rowKeyFunction(data[0]);
             setExpandedRows(new Set([rowKeyOfFirstRow]));
         }
@@ -97,7 +113,9 @@ function ExpandableDataTable({
         <Table stripeRows rowExpansion="controlled" actionsColumnWidth={hasActionsColumn ? actionsColumnWidth : null}>
             <Table.Head>
                 {mappingOfColumnNameToCellValue.map(({columnName}) => (
-                    <Table.HeadCell key={columnName}><strong>{columnName}</strong></Table.HeadCell>
+                    <Table.HeadCell key={columnName}>
+                        <LargeBoldText>{columnName}</LargeBoldText>
+                    </Table.HeadCell>
                 ))}
             </Table.Head>
             <Table.Body>
@@ -112,7 +130,9 @@ function ExpandableDataTable({
                                }>
                         {mappingOfColumnNameToCellValue.map(({columnName, getCellContent}) => (
                             <Table.Cell key={columnName}>
-                                <ContainerWithFixedMaxWidth>{getCellContent(row)}</ContainerWithFixedMaxWidth>
+                                <ContainerWithFixedMaxWidth>
+                                    <LargeText>{getCellContent(row)}</LargeText>
+                                </ContainerWithFixedMaxWidth>
                             </Table.Cell>
                         ))}
                     </Table.Row>
