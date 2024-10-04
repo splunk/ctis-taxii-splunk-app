@@ -20,7 +20,7 @@ export const viewGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {
 });
 
 export const viewIdentity = (identityId) => createURL(`/app/${app}/identities`, {
-    search: identityId,
+    identity_id: identityId,
 });
 
 export const urlForEditGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {

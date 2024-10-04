@@ -1,11 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import Select from "@splunk/react-ui/Select";
 import {useDebounce} from "../debounce";
-import {getIdentities, useGetRecord} from "../ApiClient";
+import {useGetRecord} from "../ApiClient";
 import {generateRegexQueryForFields} from "./util";
+import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 
-export default function SearchableSelect({prefixLabel, placeholder, onQueryChange}) {
-    const [selectedValue, setSelectedValue] = useState(null);
+export default function SearchableSelect({
+                                             prefixLabel,
+                                             recordFields,
+                                             queryFilterField,
+                                             restGetFunction,
+                                             placeholder,
+                                             onQueryChange,
+                                             initialSelectionQueryParamName
+                                         }) {
+    let initialSelection = '';
+    if (initialSelectionQueryParamName) {
+        initialSelection = getUrlQueryParams().get(initialSelectionQueryParamName) ?? initialSelection;
+    }
+    const [selectedValue, setSelectedValue] = useState(initialSelection);
     const handleChange = (e, {value}) => {
         setSelectedValue(value);
     };
@@ -16,10 +29,10 @@ export default function SearchableSelect({prefixLabel, placeholder, onQueryChang
     }
     const debouncedSearchFilter = useDebounce(searchFilter, 300);
     const {loading, record: response, error} = useGetRecord({
-        restGetFunction: getIdentities,
+        restGetFunction: restGetFunction,
         restFunctionQueryArgs: {
             limit: 100,
-            query: generateRegexQueryForFields(['name', 'identity_id'], debouncedSearchFilter),
+            query: generateRegexQueryForFields(recordFields, debouncedSearchFilter),
         }
     })
     useEffect(() => {
@@ -33,7 +46,7 @@ export default function SearchableSelect({prefixLabel, placeholder, onQueryChang
 
     useEffect(() => {
         if (selectedValue) {
-            onQueryChange({identity_id: selectedValue});
+            onQueryChange({[queryFilterField]: selectedValue});
         } else {
             onQueryChange({});
         }
@@ -50,9 +63,9 @@ export default function SearchableSelect({prefixLabel, placeholder, onQueryChang
         >
             <Select.Option label="Any" value=""/>
             {options.map((option) => (
-                <Select.Option key={option.identity_id}
-                               label={`${option.name} (${option.identity_id})`}
-                               value={option.identity_id}/>
+                <Select.Option key={option[queryFilterField]}
+                               label={`${option.name} (${option[queryFilterField]})`}
+                               value={option[queryFilterField]}/>
             ))}
         </Select>
     );

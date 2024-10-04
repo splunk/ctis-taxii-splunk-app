@@ -10,6 +10,7 @@ import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/qu
 import {variables} from "@splunk/themes";
 import SearchableSelect from "./search/SearchableSelect";
 import {generateRegexQueryForFields} from "./search/util";
+import {getIdentities} from "./ApiClient";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -110,8 +111,15 @@ export const IdentitiesSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'identity_id', 'identity_class'];
     const [identityFilter, setIdentityFilter] = useState(null);
     return (
-        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[identityFilter]}>
-            <SearchableSelect prefixLabel="Identity" placeholder={"Identity..."} onQueryChange={setIdentityFilter}/>
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS}
+                   subqueries={[identityFilter]}>
+            <SearchableSelect recordFields={['name', 'identity_id']}
+                              prefixLabel="Identity"
+                              placeholder={"Identity..."}
+                              restGetFunction={getIdentities}
+                              queryFilterField={"identity_id"}
+                              initialSelectionQueryParamName={"identity_id"}
+                              onQueryChange={setIdentityFilter}/>
         </SearchBar>
     );
 }
@@ -122,7 +130,8 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
     const [statusQuery, setStatusQuery] = useState({});
     const [scheduledAtQuery, setScheduledAtQuery] = useState({});
     return (
-        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={[statusQuery, scheduledAtQuery]}>
+        <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS}
+                   subqueries={[statusQuery, scheduledAtQuery]}>
             <SearchFieldDropdown prefixLabel="Status" fieldName="status" onQueryChange={setStatusQuery}
                                  options={[
                                      {label: "SENT", value: "SENT"},
@@ -130,7 +139,8 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
                                      {label: "FAILED", value: "FAILED"},
                                      {label: "CANCELLED", value: "CANCELLED"},
                                  ]}/>
-            <DatetimeRangePicker labelPrefix="Scheduled/Sent At" fieldName={"scheduled_at"} onQueryChange={setScheduledAtQuery}/>
+            <DatetimeRangePicker labelPrefix="Scheduled/Sent At" fieldName={"scheduled_at"}
+                                 onQueryChange={setScheduledAtQuery}/>
         </SearchBar>
     );
 }
