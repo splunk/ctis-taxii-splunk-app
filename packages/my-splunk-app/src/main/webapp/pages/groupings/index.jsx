@@ -95,10 +95,9 @@ function ListGroupings() {
 
 function Router() {
     const queryParams = getUrlQueryParams();
-    if (queryParams.has('grouping_id')) {
+    if (queryParams.has('grouping_id') && queryParams.has('action', 'edit')) {
         const groupingId = queryParams.get('grouping_id');
-        const readOnly = !queryParams.has('action', 'edit')
-        return <GroupingForm readOnly={readOnly} groupingId={groupingId}/>
+        return <GroupingForm groupingId={groupingId}/>
     } else {
         return (
             <ListGroupings/>

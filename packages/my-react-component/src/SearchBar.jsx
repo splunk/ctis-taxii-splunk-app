@@ -10,7 +10,7 @@ import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/qu
 import {variables} from "@splunk/themes";
 import SearchableSelect from "./search/SearchableSelect";
 import {generateRegexQueryForFields} from "./search/util";
-import {getIdentities, getSubmissions} from "./ApiClient";
+import {getGroupings, getIdentities, getSubmissions} from "./ApiClient";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -96,10 +96,19 @@ export const GroupingsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'description', 'grouping_id', 'context'];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
     const [lastSubmittedQuery, setLastSubmittedQuery] = useState(null);
+    const [groupingFilter, setGroupingFilter] = useState(null);
+    const subqueries = [lastUpdatedQuery, lastSubmittedQuery, groupingFilter];
 
-    const subqueries = [lastUpdatedQuery, lastSubmittedQuery];
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
+            <SearchableSelect searchableFields={['name', 'grouping_id']}
+                              prefixLabel="Grouping"
+                              placeholder={"Grouping..."}
+                              restGetFunction={getGroupings}
+                              queryFilterField={"grouping_id"}
+                              initialSelectionQueryParamName={"grouping_id"}
+                              selectOptionLabelFunction={(record) => `${record.name} (${record.grouping_id})`}
+                              onQueryChange={setGroupingFilter}/>
             <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
             <DatetimeRangePicker optional={true} labelPrefix="Last Submitted" fieldName={"last_submission_at"}
                                  onQueryChange={setLastSubmittedQuery}/>

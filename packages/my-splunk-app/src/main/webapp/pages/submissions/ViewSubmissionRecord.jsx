@@ -28,7 +28,7 @@ export const SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER = {
     "Status": (record) => <SubmissionStatusChip status={record.status}/>,
     "Submission ID": (record) => record.submission_id,
     "Grouping ID": (record) => <GroupingIdLink groupingId={record.grouping_id}/>,
-    "Scheduled At (UTC)": (record) => formatScheduledAt(record.scheduled_at),
+    "Sent/Scheduled At (UTC)": (record) => formatScheduledAt(record.scheduled_at),
     "TAXII Config Name": (record) => record.taxii_config_name,
     "TAXII Collection ID": (record) => record.collection_id,
     "Bundle JSON Sent": (record) => {
