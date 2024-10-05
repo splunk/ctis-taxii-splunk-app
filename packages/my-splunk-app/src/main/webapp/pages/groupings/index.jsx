@@ -20,6 +20,7 @@ import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
 import {IndicatorCardLayout} from "@splunk/my-react-component/src/IndicatorCard";
 import {SubmissionCardLayout} from "@splunk/my-react-component/src/SubmissionCard";
+import PropTypes from "prop-types";
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -32,6 +33,10 @@ function SubmitToTaxiiButton({row}) {
     </Tooltip>);
 }
 
+SubmitToTaxiiButton.propTypes = {
+    row: PropTypes.object.isRequired
+}
+
 function GroupingActionButtons({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
     return (<HorizontalActionButtonLayout>
@@ -40,6 +45,10 @@ function GroupingActionButtons({row}) {
         <DeleteIconOnlyButton onClick={handleRequestOpen}/>
         <DeleteGroupingModal open={open} onRequestClose={handleRequestClose} grouping={row}/>
     </HorizontalActionButtonLayout>)
+}
+
+GroupingActionButtons.propTypes = {
+    row: PropTypes.object.isRequired
 }
 
 const mappingOfColumnNameToCellValue = [
@@ -58,7 +67,7 @@ const expansionFieldNameToCellValue = {
     "Modified At (UTC)": (row) => row.modified,
     "Created By": (row) => <IdentityIdLink identityId={row.created_by_ref}/>,
     "Indicators": (row) => <IndicatorCardLayout indicatorIds={row.indicators}/>,
-    "Submissions" : (row) => <SubmissionCardLayout groupingId={row.grouping_id}/>,
+    "Submissions": (row) => <SubmissionCardLayout groupingId={row.grouping_id}/>,
 }
 
 function renderDataTable({records, loading, error}) {
@@ -72,9 +81,10 @@ function renderDataTable({records, loading, error}) {
                                        rowActionPrimary={GroupingActionButtons}
                                        actionsColumnWidth={200}
     />
-    return (
-        error ? errorElement : (loading ? loadingElement : table)
-    );
+    if (error) {
+        return errorElement;
+    }
+    return loading ? loadingElement : table;
 }
 
 function ListGroupings() {
@@ -98,11 +108,11 @@ function Router() {
     if (queryParams.has('grouping_id') && queryParams.has('action', 'edit')) {
         const groupingId = queryParams.get('grouping_id');
         return <GroupingForm groupingId={groupingId}/>
-    } 
-        return (
-            <ListGroupings/>
-        );
-    
+    }
+    return (
+        <ListGroupings/>
+    );
+
 }
 
 layoutWithTheme(
