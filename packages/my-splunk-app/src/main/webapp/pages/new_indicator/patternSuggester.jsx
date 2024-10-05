@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import PropTypes from "prop-types";
 import {getStixPatternSuggestion} from "@splunk/my-react-component/src/ApiClient";
 import {useDebounce} from "@splunk/my-react-component/src/debounce";
 import {useFieldWatchesStateValue} from "../../common/utils";
@@ -22,7 +23,7 @@ export const usePatternSuggester = (indicatorCategory, indicatorValue) => {
     const [suggestedPattern, setSuggestedPattern] = useState(null);
     const debounceIndicatorValue = useDebounce(indicatorValue, 200);
     useEffect(() => {
-        suggestPattern(indicatorCategory, indicatorValue, setSuggestedPattern);
+        suggestPattern(indicatorCategory, debounceIndicatorValue, setSuggestedPattern);
     }, [indicatorCategory, debounceIndicatorValue]);
     return {suggestedPattern};
 }
@@ -31,5 +32,11 @@ export const PatternSuggester = ({indicatorCategory, indicatorValue, stixPattern
     const {suggestedPattern} = usePatternSuggester(indicatorCategory, indicatorValue);
     useFieldWatchesStateValue({fieldName: stixPatternFieldName, stateValue: suggestedPattern});
     return <StixPatternField suggestedPattern={suggestedPattern} fieldName={stixPatternFieldName} {...props}/>;
+}
+
+PatternSuggester.propTypes = {
+    indicatorCategory: PropTypes.string,
+    indicatorValue: PropTypes.string,
+    stixPatternFieldName: PropTypes.string
 }
 
