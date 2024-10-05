@@ -4,17 +4,25 @@ import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
 import React from "react";
+import PropTypes from "prop-types";
 
 const MessageContent = styled.div`
     flex-direction: column;
     display: flex;
 `;
 
-function Loading() {
-    return (<Heading>Loading...<WaitSpinner size="large"/></Heading>);
-
+function Loading({loadingText = "Loading..."}) {
+    return (<Heading>
+        {loadingText}
+        <WaitSpinner size="large"/>
+    </Heading>);
 }
-export default function Loader({error, loading, children}) {
+
+Loading.propTypes = {
+    loadingText: PropTypes.string
+}
+
+export default function Loader({error, loading, children, loadingText = "Loading..."}) {
     return (
         <>
             {error && <Message appearance="fill" type="error">
@@ -27,7 +35,13 @@ export default function Loader({error, loading, children}) {
                     </div>
                 </MessageContent>
             </Message>}
-            {!error && (loading ? <Loading/> : children)}
+            {!error && (loading ? <Loading loadingText={loadingText}/> : children)}
         </>
     )
+}
+Loader.propTypes = {
+    error: PropTypes.string,
+    loading: PropTypes.bool,
+    children: PropTypes.node,
+    loadingText: PropTypes.string
 }

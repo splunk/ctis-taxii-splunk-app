@@ -49,7 +49,9 @@ const newIndicatorObject = ({splunk_field_name = '', indicator_value = ''} = {})
 });
 
 function getErrorsByIndex(errorsArray, index) {
-    if (!errorsArray) {return null;}
+    if (!errorsArray) {
+        return null;
+    }
 
     // Find the error object that matches the given index
     const errorForIndex = errorsArray.find(error => error.index === index);
@@ -167,7 +169,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 {/* // TODO: Move Modal to a separate component */}
                 <Modal open={submitSuccess}>
                     <Modal.Header
-                        title={`Successfully Created New Indicator${  indicators.length > 1 ? "s" : ""}`}
+                        title={`Successfully Created New Indicator${indicators.length > 1 ? "s" : ""}`}
                     />
                     <Modal.Body>
                         <P>To submit to TAXII server, proceed to submit the Grouping.</P>

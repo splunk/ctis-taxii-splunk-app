@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
 import Heading from "@splunk/react-ui/Heading";
-import {getData} from "@splunk/splunk-utils/search";
 import P from "@splunk/react-ui/Paragraph";
+import SearchJob from '@splunk/search-job';
+import Loader from "@splunk/my-react-component/src/Loader";
+import PropTypes from "prop-types";
 import {NewIndicatorForm} from "./NewIndicatorForm";
 import {layoutWithTheme} from "../../common/theme";
 
@@ -22,40 +24,61 @@ function parseInEventMode(urlParams) {
     return {sid, offset}
 }
 
-const useSplunkSearchResults = ({sid, offset, count}) => {
-    const [splunkEvent, setSplunkEvent] = useState({});
+const useSplunkSearchResult = ({sid, offset, count = 1}) => {
+    const [event, setEvent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     useEffect(() => {
-        getData(sid, "results", {offset, count}).then((results) => {
-            console.log(results);
-            setSplunkEvent(results.results[0]);
-        })
-    }, []);
-    return {splunkEvent}
+
+        SearchJob.fromSid(sid).getResults({offset, count}).subscribe({
+            error: (e) => {
+                setError(String(e));
+                setLoading(false);
+            },
+            next: (results) => {
+                setEvent(results.results[0]);
+                setLoading(false);
+            }
+        });
+    }, [sid, offset, count]);
+    return {event, loading, error};
+}
+
+function NewIndicatorFormInWorkflowMode({sid, offset, splunkFieldName, splunkFieldValue}) {
+    const {event, loading, error} = useSplunkSearchResult({sid, offset, count: 1});
+    return <Loader loading={loading} error={error} loadingText="Loading search results...">
+        <NewIndicatorForm event={event} initialSplunkFieldName={splunkFieldName}
+                          initialSplunkFieldValue={splunkFieldValue}/>
+    </Loader>;
+}
+NewIndicatorFormInWorkflowMode.propTypes = {
+    sid: PropTypes.string.isRequired,
+    offset: PropTypes.string.isRequired,
+    splunkFieldName: PropTypes.string,
+    splunkFieldValue: PropTypes.string
 }
 
 function MainComponent() {
     const urlParams = getUrlQueryParams();
-    let splunkFieldName; let splunkFieldValue;
-    let indicatorForm;
-    let splunkEvent;
-    if (urlParams.has("sid")) {
-        const {sid, offset} = parseInEventMode(urlParams);
-        ({splunkEvent} = useSplunkSearchResults({sid, offset, count: 1}));
-        ({splunkFieldName, splunkFieldValue} = queryParamsForFieldWorkflowAction(urlParams));
-        console.log("Form props:", {splunkEvent, splunkFieldName, splunkFieldValue});
-        indicatorForm = <NewIndicatorForm event={splunkEvent} initialSplunkFieldName={splunkFieldName}
-                                          initialSplunkFieldValue={splunkFieldValue}/>;
-    } else {
-        indicatorForm = <NewIndicatorForm/>
-    }
+    const hasSearchId = urlParams.has("sid");
+    const {sid, offset} = parseInEventMode(urlParams);
+    const {splunkFieldName, splunkFieldValue} = queryParamsForFieldWorkflowAction(urlParams);
+    // useEffect(() => {
+    //     if (hasSearchId) {
+    //         const {splunkFieldName, splunkFieldValue} = queryParamsForFieldWorkflowAction(urlParams);
+    //         getSplunkSearchResult({sid, offset, count: 1}).then((event) => {
+    //             setFormProps({event, initialSplunkFieldName: splunkFieldName, initialSplunkFieldValue: splunkFieldValue});
+    //         });
+    //     }
+    // }, [hasSearchId, urlParams]);
+
     return (
         <AppContainer>
             <Heading level={1}>Add Indicators of Compromise (IoC) to Grouping</Heading>
             <P>Add one or more related indicators to an existing grouping.</P>
-            {splunkEvent &&
-                <P>This form has been triggered via a workflow action. Splunk event fields are available in the "Splunk
-                    Field Name" dropdown.</P>}
-            {indicatorForm}
+            {hasSearchId && <NewIndicatorFormInWorkflowMode sid={sid} offset={offset} splunkFieldName={splunkFieldName}
+                                                            splunkFieldValue={splunkFieldValue}/>}
+            {!hasSearchId && <NewIndicatorForm/>}
         </AppContainer>
     )
 }

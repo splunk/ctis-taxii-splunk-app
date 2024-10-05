@@ -78,7 +78,7 @@ export const IndicatorSubForm = ({
         label: `${field} (${splunkEvent[field]})`,
         value: field
     }));
-    const [toggleShowSplunkFieldDropdown, setToggleShowSplunkFieldDropdown] = useState(splunkEvent != null);
+    const [toggleShowSplunkFieldDropdown, setToggleShowSplunkFieldDropdown] = useState(true);
 
     useEffect(() => {
         if (splunkEvent?.hasOwnProperty(splunkFieldName) && toggleShowSplunkFieldDropdown) {
