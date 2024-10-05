@@ -11,14 +11,13 @@ const StixPatternControlGroup = ({
                                      onChange,
                                      help,
                                      error,
-                                     useSuggestedPattern,
+                                     setValueToSuggestedPattern,
                                      suggestedPattern,
                                      ...rest
                                  }) => {
     const onClick = (e) => {
-        console.log(e);
         e.preventDefault();
-        useSuggestedPattern();
+        setValueToSuggestedPattern();
     }
     const suggestionText = (<LinkContainer>
         <Link to='#' onClick={onClick}>
@@ -43,7 +42,9 @@ StixPatternControlGroup.propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
     error: PropTypes.bool,
-    help: PropTypes.string
+    help: PropTypes.string,
+    setValueToSuggestedPattern: PropTypes.func,
+    suggestedPattern: PropTypes.string,
 }
 
 export default StixPatternControlGroup;

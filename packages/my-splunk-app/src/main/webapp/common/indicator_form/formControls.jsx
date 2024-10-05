@@ -6,10 +6,15 @@ import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import {useFormContext} from "react-hook-form";
+import PropTypes from "prop-types";
 import {useFormInputProps} from "../formInputProps";
 
 export function IndicatorIdField({fieldName, ...props}) {
     return <TextControlGroup label="Indicator ID" {...useFormInputProps(fieldName)} {...props}/>
+}
+
+IndicatorIdField.propTypes = {
+    fieldName: PropTypes.string.isRequired
 }
 
 export function SplunkFieldNameDropdown({fieldName, options, ...props}) {
@@ -18,13 +23,22 @@ export function SplunkFieldNameDropdown({fieldName, options, ...props}) {
                                {...props}/>
 }
 
+SplunkFieldNameDropdown.propTypes = {
+    fieldName: PropTypes.string.isRequired,
+    options: PropTypes.array.isRequired
+}
+
 export function ConfidenceField({fieldName, ...props}) {
     return <NumberControlGroup label="Confidence" max={100} min={0} step={1}
                                {...useFormInputProps(fieldName)}
                                {...props}/>
 }
 
-const TLPv1_RATING_OPTIONS = [
+ConfidenceField.propTypes = {
+    fieldName: PropTypes.string.isRequired
+}
+
+const tlpV1RatingOptions = [
     {label: "RED", value: "RED"},
     {label: "AMBER", value: "AMBER"},
     {label: "GREEN", value: "GREEN"},
@@ -34,18 +48,30 @@ const TLPv1_RATING_OPTIONS = [
 
 export function TLPv1RatingField({fieldName, ...props}) {
     return <SelectControlGroup label="TLP v1.0 Rating"
-                               options={TLPv1_RATING_OPTIONS}
+                               options={tlpV1RatingOptions}
                                {...useFormInputProps(fieldName)}
                                {...props}
     />
+}
+
+TLPv1RatingField.propTypes = {
+    fieldName: PropTypes.string.isRequired
 }
 
 export function ValidFromField({fieldName, ...props}) {
     return <DatetimeControlGroup label="Valid From (UTC)" {...useFormInputProps(fieldName)} {...props}/>
 }
 
+ValidFromField.propTypes = {
+    fieldName: PropTypes.string.isRequired
+}
+
 export function IndicatorValueField({fieldName, ...props}) {
     return <TextControlGroup label="Indicator Value" {...useFormInputProps(fieldName)} {...props} />
+}
+
+IndicatorValueField.propTypes = {
+    fieldName: PropTypes.string.isRequired
 }
 
 export function IndicatorCategoryField({fieldName, options, ...props}) {
@@ -55,22 +81,39 @@ export function IndicatorCategoryField({fieldName, options, ...props}) {
                                {...props}/>
 }
 
+IndicatorCategoryField.propTypes = {
+    fieldName: PropTypes.string.isRequired,
+    options: PropTypes.array.isRequired
+}
+
 export function StixPatternField({suggestedPattern, fieldName, ...props}) {
     const formMethods = useFormContext();
     const {setValue} = formMethods;
     return <StixPatternControlGroup label="STIX Pattern"
                                     {...useFormInputProps(fieldName)}
                                     suggestedPattern={suggestedPattern}
-                                    useSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
+                                    setValueToSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
                                     {...props}
     />;
+}
+
+StixPatternField.propTypes = {
+    suggestedPattern: PropTypes.string.isRequired,
+    fieldName: PropTypes.string.isRequired
 }
 
 export function IndicatorNameField({fieldName, ...props}) {
     return <TextControlGroup label="Indicator Name" {...props} {...useFormInputProps(fieldName)}/>
 }
 
+IndicatorNameField.propTypes = {
+    fieldName: PropTypes.string.isRequired
+}
+
 export function IndicatorDescriptionField({fieldName, ...props}) {
     return <TextAreaControlGroup label="Indicator Description" {...props} {...useFormInputProps(fieldName)}/>
 }
 
+IndicatorDescriptionField.propTypes = {
+    fieldName: PropTypes.string.isRequired
+}
