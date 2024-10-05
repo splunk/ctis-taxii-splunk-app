@@ -16,10 +16,10 @@ import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/Horiz
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {IdentitiesSearchBar} from "@splunk/my-react-component/src/SearchBar";
+import PropTypes from "prop-types";
 import {layoutWithTheme} from "../../common/theme";
 import {getUrlQueryParams} from "../../common/queryParams";
 import IdentityForm from "../../common/IdentityForm";
-
 
 function Actions({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
@@ -33,6 +33,10 @@ function Actions({row}) {
                          identity: <strong>{row.name} ({row.identity_id})</strong>?</P>}
         />
     </HorizontalActionButtonLayout>)
+}
+
+Actions.propTypes = {
+    row: PropTypes.object.isRequired
 }
 
 const mappingOfColumnNameToCellValue = [
@@ -49,7 +53,6 @@ const expansionFieldNameToCellValue = {
     "Modified At (UTC)": (row) => row.modified,
 }
 
-
 function renderDataTable({records, loading, error}) {
     // TODO: pass in isLoading, error?
     const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
@@ -60,9 +63,10 @@ function renderDataTable({records, loading, error}) {
                                        mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
                                        rowActionPrimary={Actions}
     />
-    return (
-        error ? errorElement : (loading ? loadingElement : table)
-    );
+    if (error) {
+        return errorElement;
+    }
+    return loading ? loadingElement : table;
 }
 
 function ListIdentities() {
@@ -73,7 +77,7 @@ function ListIdentities() {
             <div>
                 <Button icon={<Plus/>} label="New Identity" appearance="primary" to={NEW_IDENTITY_PAGE}/>
             </div>
-            <IdentitiesSearchBar onQueryChange={setQuery} />
+            <IdentitiesSearchBar onQueryChange={setQuery}/>
             <PaginatedDataTable renderData={renderDataTable} fetchData={getIdentities} query={query} onError={(e) => {
                 createErrorToast(e);
             }}/>
@@ -86,11 +90,11 @@ function Router() {
     if (queryParams.has('action', 'edit') && queryParams.has('identity_id')) {
         const identityId = queryParams.get('identity_id');
         return <IdentityForm editMode identityId={identityId}/>
-    } 
-        return (
-            <ListIdentities/>
-        );
-    
+    }
+    return (
+        <ListIdentities/>
+    );
+
 }
 
 layoutWithTheme(
