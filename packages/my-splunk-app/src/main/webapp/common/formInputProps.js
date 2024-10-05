@@ -1,34 +1,49 @@
 import {useFormContext} from "react-hook-form";
 import {useEffect, useState} from "react";
 
-function findErrorMessage(validationObject, refName) {
-    // Iterate over each key in the flat validation object
-    for (const key in validationObject) {
-        const value = validationObject[key];
-
-        // If the value is an object, check its ref
-        if (typeof value === 'object' && !Array.isArray(value)) {
-            if (value.ref && value.ref.name === refName) {
-                return value.message;
-            }
-        }
-
-        // If the value is an array, iterate through its elements
-        if (Array.isArray(value)) {
-            for (const item of value) {
-                // Check if the item has a matching ref
-                for (const subKey in item) {
-                    const subValue = item[subKey];
-                    if (subValue.ref && subValue.ref.name === refName) {
-                        return subValue.message;
-                    }
-                }
-            }
+function findErrorMessageInFlatObject(flatObject, refName) {
+    // If the value is an object, check its ref
+    if (typeof flatObject === 'object' && !Array.isArray(flatObject)) {
+        if (flatObject?.ref?.name === refName) {
+            return flatObject.message;
         }
     }
-
-    // Return null if no matching refName is found
     return null;
+}
+
+function findErrorMessageInArray(array, refName) {
+    if(!Array.isArray(array)) {
+        return null;
+    }
+    const mapping = array.map((item) => {
+        const findInObject = Object.values(item).map((value) => {
+            const tryFlatObject = findErrorMessageInFlatObject(value, refName);
+            if (tryFlatObject) {
+                return tryFlatObject;
+            }
+            return null;
+        })
+        return findInObject.find((value) => value !== null) || null;
+    });
+    return mapping.find((value) => value !== null) || null;
+}
+
+export function findErrorMessage(validationObject, refName) {
+    const mapping = Object.values(validationObject).map((value) => {
+        const tryFlatObject = findErrorMessageInFlatObject(value, refName);
+        if (tryFlatObject) {
+            return tryFlatObject;
+        }
+
+        if (Array.isArray(value)) {
+            const tryArray = findErrorMessageInArray(value, refName);
+            if (tryArray) {
+                return tryArray;
+            }
+        }
+        return null;
+    });
+    return mapping.find((value) => value !== null) || null;
 }
 
 function generateSetValueHandler(setValue, fieldName) {
@@ -48,7 +63,7 @@ export const useFormInputProps = (fieldName) => {
     const methodsViaHook = useFormContext();
     const [returnProps, setReturnProps] = useState({});
     useEffect(() => {
-        if(methodsViaHook !== null){
+        if (methodsViaHook !== null) {
             const {formState, watch, setValue} = methodsViaHook;
             const {errors} = formState;
             const error = findErrorMessage(errors, fieldName);
@@ -58,6 +73,6 @@ export const useFormInputProps = (fieldName) => {
                 value: watch(fieldName)
             });
         }
-    }, [methodsViaHook]);
+    }, [fieldName, methodsViaHook]);
     return returnProps;
 }
