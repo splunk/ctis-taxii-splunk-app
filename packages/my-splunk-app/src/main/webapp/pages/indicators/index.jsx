@@ -19,10 +19,10 @@ import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
 import Heading from "@splunk/react-ui/Heading";
 import {useViewportBreakpoints} from "@splunk/my-react-component/viewportBreakpoints";
-import Menu from "@splunk/react-ui/Menu";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import PropTypes from "prop-types";
 import {layoutWithTheme} from "../../common/theme";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -56,30 +56,8 @@ const RowActionPrimary = ({row}) => {
         <DeleteIndicatorModal open={open} onRequestClose={handleRequestClose} indicator={row}/>
     </HorizontalActionButtonLayout>);
 }
-const RowActionsSecondary = ({row}) => (
-    <Menu>
-        {/* <Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item> */}
-        {/* <Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item> */}
-    </Menu>
-);
-
-function RenderDataTable({records, loading, error}) {
-    // TODO: pass in isLoading, error?
-    const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
-    const errorElement = <P>{`Error: ${error}`}</P>
-    const columns = useResponsiveColumns();
-    const columnNameToCellValue = mappingOfColumnNameToCellValue.filter((column) => columns.includes(column.columnName));
-    const table = <ExpandableDataTable data={records}
-                                       rowKeyFunction={(row) => row.indicator_id}
-                                       expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={columnNameToCellValue}
-                                       rowActionPrimary={RowActionPrimary}
-        // rowActionsSecondary={RowActionsSecondary}
-                                       actionsColumnWidth={120}
-    />
-    return (
-        error ? errorElement : (loading ? loadingElement : table)
-    );
+RowActionPrimary.propTypes = {
+    row: PropTypes.object.isRequired
 }
 
 function useResponsiveColumns() {
@@ -97,6 +75,31 @@ function useResponsiveColumns() {
         }
     }, [isSmallScreen, isMediumScreen, isLargeScreen, isXLargeScreen]);
     return columns;
+}
+
+function RenderDataTable({records, loading, error}) {
+    // TODO: pass in isLoading, error?
+    const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
+    const errorElement = <P>{`Error: ${error}`}</P>
+    const columns = useResponsiveColumns();
+    const columnNameToCellValue = mappingOfColumnNameToCellValue.filter((column) => columns.includes(column.columnName));
+    const table = <ExpandableDataTable data={records}
+                                       rowKeyFunction={(row) => row.indicator_id}
+                                       expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
+                                       mappingOfColumnNameToCellValue={columnNameToCellValue}
+                                       rowActionPrimary={RowActionPrimary}
+                                       actionsColumnWidth={120}
+    />
+    if (error) {
+        return errorElement;
+    }
+    return loading ? loadingElement : table;
+}
+
+RenderDataTable.propTypes = {
+    records: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired,
+    error: PropTypes.string
 }
 
 function ListIndicators() {
@@ -121,11 +124,11 @@ function Router() {
     if (queryParams.has('indicator_id') && queryParams.has('action', 'edit')) {
         const indicatorId = queryParams.get('indicator_id');
         return <ViewOrEditIndicator editMode indicatorId={indicatorId}/>
-    } 
-        return (
-            <ListIndicators/>
-        );
-    
+    }
+    return (
+        <ListIndicators/>
+    );
+
 }
 
 layoutWithTheme(<AppContainer><Router/></AppContainer>);
