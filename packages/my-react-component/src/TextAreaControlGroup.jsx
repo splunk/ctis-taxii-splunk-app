@@ -17,7 +17,7 @@ const TextAreaControlGroup = ({label, value='', readOnly = false, onChange, help
 
     return (
         <CustomControlGroup label={label} help={help} error={error} value={value} readOnly={readOnly}>
-            <TextArea value={textAreaValue} onChange={handleOnChange} error={error}/>
+            <TextArea value={textAreaValue} onChange={handleOnChange} error={error} {...rest}/>
         </CustomControlGroup>
     );
 
