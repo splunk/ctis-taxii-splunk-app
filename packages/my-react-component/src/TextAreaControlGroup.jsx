@@ -1,18 +1,21 @@
-import {CustomControlGroup} from "./CustomControlGroup";
-import TextArea from "@splunk/react-ui/TextArea";
 import React, {useEffect} from "react";
 import PropTypes from "prop-types";
+import TextArea from "@splunk/react-ui/TextArea";
+import {CustomControlGroup} from "./CustomControlGroup";
 
-const TextAreaControlGroup = ({label, value='', readOnly = false, onChange, help, error, ...rest}) => {
+const TextAreaControlGroup = ({label, value = '', readOnly = false, onChange, help, error, ...rest}) => {
     const [textAreaValue, setTextAreaValue] = React.useState(value);
-    const handleOnChange = (e, {value}) => {
-        setTextAreaValue(value);
-        onChange(e, {value});
+    const handleOnChange = (e, {value: eventValue}) => {
+        setTextAreaValue(eventValue);
+        onChange(e, {value: eventValue});
     }
     useEffect(() => {
-        if(value !== textAreaValue){
-            setTextAreaValue(value);
-        }
+        setTextAreaValue(oldValue => {
+            if (oldValue !== value) {
+                return value;
+            }
+            return oldValue;
+        });
     }, [value]);
 
     return (
@@ -27,7 +30,8 @@ TextAreaControlGroup.propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
     error: PropTypes.bool,
-    help: PropTypes.string
+    help: PropTypes.string,
+    readOnly: PropTypes.bool
 }
 
 export default TextAreaControlGroup;

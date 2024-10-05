@@ -5,14 +5,18 @@ import {CustomControlGroup} from "./CustomControlGroup";
 
 const TextControlGroup = ({label, value='', onChange, help, error, readOnly = false, ...props}) => {
     const [textValue, setTextValue] = useState(value);
-    const handleOnChange = (e, {value}) => {
-        setTextValue(value);
-        onChange(e, {value});
+    const handleOnChange = (e, {value: eventValue}) => {
+        setTextValue(eventValue);
+        onChange(e, {value: eventValue});
     }
+
     useEffect(() => {
-        if(value !== textValue){
-            setTextValue(value);
-        }
+        setTextValue(oldValue => {
+            if (oldValue !== value) {
+                return value;
+            }
+            return oldValue;
+        });
     }, [value]);
     return (
         <CustomControlGroup label={label} help={help} error={error} readOnly={readOnly} value={value}>
@@ -26,7 +30,8 @@ TextControlGroup.propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
     error: PropTypes.bool,
-    help: PropTypes.string
+    help: PropTypes.string,
+    readOnly: PropTypes.bool
 }
 
 export default TextControlGroup;
