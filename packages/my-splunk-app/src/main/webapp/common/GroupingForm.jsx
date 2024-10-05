@@ -23,6 +23,7 @@ import EditButton from "@splunk/my-react-component/src/EditButton";
 import CancelButton from "@splunk/my-react-component/src/CancelButton";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
+import PropTypes from "prop-types";
 import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
 import {useOnFormSubmit} from "./formSubmit";
 
@@ -53,6 +54,9 @@ const ButtonsForViewMode = ({grouping}) => {
         <DeleteGroupingModal open={open} onRequestClose={handleRequestClose} grouping={grouping}/>
     </HorizontalButtonLayout>;
 }
+ButtonsForViewMode.propTypes = {
+    grouping: PropTypes.object.isRequired
+}
 
 function GoToGroupingsButton() {
     return (<Button to={VIEW_GROUPINGS_PAGE} appearance="primary" label="Go to Groupings"/>);
@@ -62,12 +66,17 @@ export function Form({existingGrouping, readOnly = false}) {
     if (readOnly && !existingGrouping) {
         throw new Error("existingGrouping is required when readOnly is true.");
     }
-    const title = existingGrouping ? (readOnly ? "Grouping" : "Editing Grouping") : "Create New Grouping";
+    let title;
+    if (existingGrouping) {
+        title = readOnly ? "Grouping" : "Editing Grouping";
+    } else {
+        title = "Create New Grouping";
+    }
     const submissionSuccessModalTitle = existingGrouping ? "Successfully Edited Grouping" : "Successfully Created New Grouping";
     const methods = useForm({
         mode: 'all',
     });
-    const {register, setValue, handleSubmit, formState, getValues} = methods;
+    const {register, setValue, handleSubmit, formState} = methods;
 
     register(FORM_FIELD_NAME, {required: "Name is required.", value: ""});
     register(FORM_FIELD_CONTEXT, {required: "Context is required.", value: ""});
@@ -87,7 +96,7 @@ export function Form({existingGrouping, readOnly = false}) {
             setValue(FORM_FIELD_DESCRIPTION, existingGrouping.description);
             setValue(FORM_FIELD_CREATED_BY_REF, existingGrouping.created_by_ref);
         }
-    }, [JSON.stringify(existingGrouping)]);
+    }, [setValue, existingGrouping]);
 
     const [identities, setIdentities] = useState([]);
     const optionsIdentities = useMemo(() => identities.map((identity) => ({
@@ -115,9 +124,6 @@ export function Form({existingGrouping, readOnly = false}) {
             console.error(error)
         },
     })
-    useEffect(() => {
-        console.log(getValues());
-    }, [formState]);
 
     const commonProps = {readOnly};
 
@@ -158,6 +164,11 @@ export function Form({existingGrouping, readOnly = false}) {
     )
 }
 
+Form.propTypes = {
+    existingGrouping: PropTypes.object,
+    readOnly: PropTypes.bool
+}
+
 function ExistingGroupingForm({groupingId, readOnly = false}) {
     const {record, loading, error} = useGetRecord({
         restGetFunction: getGrouping,
@@ -170,6 +181,15 @@ function ExistingGroupingForm({groupingId, readOnly = false}) {
     );
 }
 
+ExistingGroupingForm.propTypes = {
+    groupingId: PropTypes.string.isRequired,
+    readOnly: PropTypes.bool
+}
+
 export default function GroupingForm({groupingId, readOnly = false}) {
     return groupingId ? <ExistingGroupingForm readOnly={readOnly} groupingId={groupingId}/> : <Form/>;
+}
+GroupingForm.propTypes = {
+    groupingId: PropTypes.string,
+    readOnly: PropTypes.bool
 }
