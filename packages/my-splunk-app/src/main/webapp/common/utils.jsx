@@ -3,10 +3,10 @@ import {useFormContext} from "react-hook-form";
 
 export const useFieldWatchesStateValue = ({fieldName, stateValue}) => {
     const formMethods = useFormContext();
+    const {setValue} = formMethods;
     useEffect(() => {
-        if (formMethods && stateValue) {
-            const {setValue} = formMethods;
+        if (setValue && stateValue) {
             setValue(fieldName, stateValue, {shouldValidate: true});
         }
-    }, [stateValue]);
+    }, [setValue, fieldName, stateValue]);
 }
