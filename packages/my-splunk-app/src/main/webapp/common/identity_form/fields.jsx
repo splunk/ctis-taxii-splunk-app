@@ -1,7 +1,7 @@
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import {useFormInputProps} from "../formInputProps";
 import React from "react";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
+import {useFormInputProps} from "../formInputProps";
 
 export function IdentityIdField({fieldName, ...props}) {
     return <TextControlGroup label="Identity ID" {...useFormInputProps(fieldName)} {...props}/>

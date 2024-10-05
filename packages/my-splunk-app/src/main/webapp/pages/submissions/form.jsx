@@ -12,7 +12,6 @@ import {
 import Loader from "@splunk/my-react-component/src/Loader";
 import {FormProvider, useForm} from "react-hook-form";
 import styled from "styled-components";
-import {GroupingId, ScheduledAt, TaxiiCollectionId, TaxiiConfigField} from "../../common/submission_form/fields";
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
@@ -24,6 +23,7 @@ import {variables} from "@splunk/themes";
 import moment from "moment";
 import {urlForViewSubmission} from "@splunk/my-react-component/src/urls";
 import Message from "@splunk/react-ui/Message";
+import {GroupingId, ScheduledAt, TaxiiCollectionId, TaxiiConfigField} from "../../common/submission_form/fields";
 
 const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
 const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
@@ -48,7 +48,7 @@ function collectionToOption(collection) {
         label += " [Cannot Write]";
     }
     return {
-        label: label,
+        label,
         value: collection.id,
         disabled: collection.can_write === false
     }

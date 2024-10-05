@@ -18,14 +18,14 @@ import {
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
 import Heading from "@splunk/react-ui/Heading";
-import {getUrlQueryParams} from "../../common/queryParams";
-import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 import {useViewportBreakpoints} from "@splunk/my-react-component/viewportBreakpoints";
-import {layoutWithTheme} from "../../common/theme";
 import Menu from "@splunk/react-ui/Menu";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import {layoutWithTheme} from "../../common/theme";
+import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
+import {getUrlQueryParams} from "../../common/queryParams";
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
@@ -58,8 +58,8 @@ const RowActionPrimary = ({row}) => {
 }
 const RowActionsSecondary = ({row}) => (
     <Menu>
-        {/*<Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item>*/}
-        {/*<Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item>*/}
+        {/* <Menu.Item onClick={() => console.log(row)}>Delete</Menu.Item> */}
+        {/* <Menu.Item onClick={() => console.log(row)}>Something else</Menu.Item> */}
     </Menu>
 );
 
@@ -120,12 +120,12 @@ function Router() {
     const queryParams = getUrlQueryParams();
     if (queryParams.has('indicator_id') && queryParams.has('action', 'edit')) {
         const indicatorId = queryParams.get('indicator_id');
-        return <ViewOrEditIndicator editMode={true} indicatorId={indicatorId}/>
-    } else {
+        return <ViewOrEditIndicator editMode indicatorId={indicatorId}/>
+    } 
         return (
             <ListIndicators/>
         );
-    }
+    
 }
 
 layoutWithTheme(<AppContainer><Router/></AppContainer>);

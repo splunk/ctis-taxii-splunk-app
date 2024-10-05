@@ -1,9 +1,9 @@
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import {useFormInputProps} from "../formInputProps";
 import React from "react";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import moment from "moment";
+import {useFormInputProps} from "../formInputProps";
 
 
 
@@ -16,7 +16,7 @@ export function TaxiiCollectionId({fieldName, options, ...props}) {
 }
 
 export function GroupingId({fieldName, ...props}) {
-    return <TextControlGroup readOnly={true} label="Grouping ID" {...useFormInputProps(fieldName)} {...props}/>
+    return <TextControlGroup readOnly label="Grouping ID" {...useFormInputProps(fieldName)} {...props}/>
 }
 
 export function ScheduledAt({fieldName, ...props}) {

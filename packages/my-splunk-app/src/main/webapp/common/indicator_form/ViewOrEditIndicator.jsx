@@ -1,6 +1,34 @@
 import React, {useEffect} from "react";
 import {editIndicator, getIndicator, useGetRecord} from "@splunk/my-react-component/src/ApiClient";
 import {FormProvider, useForm} from "react-hook-form";
+import Loader from "@splunk/my-react-component/src/Loader";
+import {MyHeading} from "@splunk/my-react-component/MyHeading";
+import {reduceIsoStringPrecisionToSeconds} from "@splunk/my-react-component/src/date_utils";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import EditButton from "@splunk/my-react-component/src/EditButton";
+import {urlForEditIndicator, viewIndicator} from "@splunk/my-react-component/src/urls";
+import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
+import CancelButton from "@splunk/my-react-component/src/CancelButton";
+import Message from "@splunk/react-ui/Message";
+import P from "@splunk/react-ui/Paragraph";
+import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
+import useModal from "@splunk/my-react-component/src/useModal";
+import {useOnFormSubmit} from "../formSubmit";
+import {PatternSuggester} from "../../pages/new_indicator/patternSuggester";
+import useIndicatorCategories from "./indicatorCategories";
+import {
+    ConfidenceField,
+    IndicatorCategoryField,
+    IndicatorDescriptionField,
+    IndicatorIdField,
+    IndicatorNameField,
+    IndicatorValueField,
+    TLPv1RatingField,
+    ValidFromField
+} from "./formControls";
+import {StyledForm} from "./StyledForm";
 import {
     FIELD_CONFIDENCE,
     FIELD_GROUPING_ID,
@@ -14,34 +42,6 @@ import {
     FIELD_VALID_FROM,
     REGISTER_FIELD_OPTIONS
 } from "./fieldNames";
-import {StyledForm} from "./StyledForm";
-import {
-    ConfidenceField,
-    IndicatorCategoryField,
-    IndicatorDescriptionField,
-    IndicatorIdField,
-    IndicatorNameField,
-    IndicatorValueField,
-    TLPv1RatingField,
-    ValidFromField
-} from "./formControls";
-import Loader from "@splunk/my-react-component/src/Loader";
-import {MyHeading} from "@splunk/my-react-component/MyHeading";
-import useIndicatorCategories from "./indicatorCategories";
-import {reduceIsoStringPrecisionToSeconds} from "@splunk/my-react-component/src/date_utils";
-import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
-import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
-import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-import EditButton from "@splunk/my-react-component/src/EditButton";
-import {urlForEditIndicator, viewIndicator} from "@splunk/my-react-component/src/urls";
-import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
-import {PatternSuggester} from "../../pages/new_indicator/patternSuggester";
-import {useOnFormSubmit} from "../formSubmit";
-import CancelButton from "@splunk/my-react-component/src/CancelButton";
-import Message from "@splunk/react-ui/Message";
-import P from "@splunk/react-ui/Paragraph";
-import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
-import useModal from "@splunk/my-react-component/src/useModal";
 import {GroupingIdFieldV2} from "./GroupingsDropdown";
 
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
@@ -52,15 +52,15 @@ const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
 const ButtonsForViewMode = ({indicator}) => {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
     return <HorizontalButtonLayout justifyContent='space-between'>
-        <DeleteButton inline={true} onClick={handleRequestOpen}/>
-        <EditButton inline={true} to={urlForEditIndicator(indicator.indicator_id)}/>
+        <DeleteButton inline onClick={handleRequestOpen}/>
+        <EditButton inline to={urlForEditIndicator(indicator.indicator_id)}/>
         <DeleteIndicatorModal open={open} onRequestClose={handleRequestClose} indicator={indicator}/>
     </HorizontalButtonLayout>;
 }
 const ButtonsForEditMode = ({submitting, submitButtonDisabled}) => {
     return <HorizontalButtonLayout>
         <CancelButton/>
-        <SubmitButton label={"Save Changes"} disabled={submitButtonDisabled} submitting={submitting}/>
+        <SubmitButton label="Save Changes" disabled={submitButtonDisabled} submitting={submitting}/>
     </HorizontalButtonLayout>;
 }
 
@@ -127,7 +127,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                         </div>
                     </Message>}
                     <section>
-                        <IndicatorIdField fieldName={FIELD_INDICATOR_ID} readOnly={readOnly} disabled={true}/>
+                        <IndicatorIdField fieldName={FIELD_INDICATOR_ID} readOnly={readOnly} disabled/>
                         <GroupingIdFieldV2 fieldName={FIELD_GROUPING_ID} readOnly={readOnly}/>
                         <IndicatorNameField fieldName={FIELD_INDICATOR_NAME} readOnly={readOnly}/>
                         <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION} readOnly={readOnly}/>

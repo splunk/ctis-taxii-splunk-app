@@ -25,7 +25,7 @@ export const useOnFormSubmit = ({formMethods, submitToPostEndpoint, submissionSu
                 }
             }, async (error_or_error_response) => {
                 console.error("Error submitting form:", error_or_error_response);
-                let error_object = {};
+                const error_object = {};
                 if (error_or_error_response instanceof Error) {
                     error_object.error = error_or_error_response;
                 }else{

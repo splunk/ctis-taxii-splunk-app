@@ -34,21 +34,21 @@ export const SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER = {
     "Bundle JSON Sent": (record) => {
         if (record.bundle_json_sent === null) {
             return NO_CONTENT;
-        } else {
+        } 
             const formattedCode = JSON.stringify(JSON.parse(record.bundle_json_sent), null, 2);
             return <CollapsiblePanel title="Show JSON" defaultOpen={false}>
                 <Code language='json' value={formattedCode}/>
             </CollapsiblePanel>
-        }
+        
     },
     "Response from TAXII Server": (record) => {
         if (record.response_json === null) {
             return NO_CONTENT;
-        } else {
+        } 
             return <CollapsiblePanel defaultOpen={false} title="Show Response">
                 <code>{record.response_json ?? NO_CONTENT}</code>
             </CollapsiblePanel>;
-        }
+        
     },
     "Error Message": (record) => record.error_message ? <code>{record.error_message}</code> : NO_CONTENT,
 }
@@ -65,7 +65,7 @@ export function ViewSubmissionRecord({submissionId}) {
                 <StyledSection>
                     {Object.entries(SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER).map(([label, value]) => (
                         <CustomControlGroup key={label} labelWidth={180} label={label} value={value(record)}
-                                            readOnly={true}/>
+                                            readOnly/>
                     ))}
                 </StyledSection>
             }

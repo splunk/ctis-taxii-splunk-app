@@ -8,13 +8,13 @@ import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
 import {VIEW_IDENTITIES_PAGE} from "@splunk/my-react-component/src/urls";
 import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
-import {useOnFormSubmit} from "./formSubmit";
 import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
-import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fields";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fields";
+import {useOnFormSubmit} from "./formSubmit";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};

@@ -11,11 +11,16 @@ import PlusCircle from '@splunk/react-icons/PlusCircle';
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
-import {IndicatorSubForm} from "./IndicatorSubForm";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
 import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
-import {ConfidenceField, TLPv1RatingField, ValidFromField} from "../../common/indicator_form/formControls";
+import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
+import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import BaseButton from "@splunk/my-react-component/src/BaseButton";
+import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
+import {StyledForm} from "../../common/indicator_form/StyledForm";
+import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
 import {
     FIELD_CONFIDENCE,
     FIELD_GROUPING_ID,
@@ -24,13 +29,8 @@ import {
     FIELD_VALID_FROM,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
-import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
-import {StyledForm} from "../../common/indicator_form/StyledForm";
-import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
-import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
-import BaseButton from "@splunk/my-react-component/src/BaseButton";
-import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
-import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
+import {ConfidenceField, TLPv1RatingField, ValidFromField} from "../../common/indicator_form/formControls";
+import {IndicatorSubForm} from "./IndicatorSubForm";
 import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
 
 function GotoIndicatorsPageButton() {
@@ -40,8 +40,8 @@ function GotoIndicatorsPageButton() {
 
 // TODO: change this to use a single object with keys as param
 const newIndicatorObject = ({splunk_field_name = '', indicator_value = ''} = {}) => ({
-    splunk_field_name: splunk_field_name,
-    indicator_value: indicator_value,
+    splunk_field_name,
+    indicator_value,
     indicator_category: '',
     stix_pattern: '',
     name: '',
@@ -49,7 +49,7 @@ const newIndicatorObject = ({splunk_field_name = '', indicator_value = ''} = {})
 });
 
 function getErrorsByIndex(errorsArray, index) {
-    if (!errorsArray) return null;
+    if (!errorsArray) {return null;}
 
     // Find the error object that matches the given index
     const errorForIndex = errorsArray.find(error => error.index === index);
@@ -164,10 +164,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 </CollapsiblePanel>
 
 
-                {/*// TODO: Move Modal to a separate component*/}
+                {/* // TODO: Move Modal to a separate component */}
                 <Modal open={submitSuccess}>
                     <Modal.Header
-                        title={"Successfully Created New Indicator" + (indicators.length > 1 ? "s" : "")}
+                        title={`Successfully Created New Indicator${  indicators.length > 1 ? "s" : ""}`}
                     />
                     <Modal.Body>
                         <P>To submit to TAXII server, proceed to submit the Grouping.</P>

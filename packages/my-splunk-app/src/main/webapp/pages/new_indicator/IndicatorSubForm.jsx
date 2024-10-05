@@ -1,6 +1,5 @@
 import {useFormContext} from "react-hook-form";
 import React, {useEffect, useState} from "react";
-import {PatternSuggester} from "./patternSuggester";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
 import styled from "styled-components";
@@ -9,6 +8,7 @@ import P from "@splunk/react-ui/Paragraph";
 import {variables} from '@splunk/themes';
 import Switch from "@splunk/react-ui/Switch";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
+import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
 import {
     IndicatorCategoryField,
     IndicatorDescriptionField,
@@ -26,7 +26,7 @@ import {
     FIELD_STIX_PATTERN,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
-import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
+import {PatternSuggester} from "./patternSuggester";
 
 const HorizontalLayout = styled.div`
     display: flex;

@@ -1,8 +1,8 @@
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import {useFormInputProps} from "../formInputProps";
 import React from "react";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
+import {useFormInputProps} from "../formInputProps";
 
 export function GroupingIdField({fieldName, ...props}) {
     return <TextControlGroup label="Grouping ID" {...useFormInputProps(fieldName)} {...props}/>

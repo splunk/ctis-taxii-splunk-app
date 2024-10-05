@@ -2,8 +2,6 @@ import React from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import Button from "@splunk/react-ui/Button";
-import {getUrlQueryParams} from "../../common/queryParams";
-import GroupingForm from "../../common/GroupingForm";
 import Heading from "@splunk/react-ui/Heading";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
@@ -14,7 +12,6 @@ import {getGroupings} from "@splunk/my-react-component/src/ApiClient";
 import {editGroupingPage, GroupingIdLink, IdentityIdLink, NEW_GROUPING_PAGE} from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
-import {layoutWithTheme} from "../../common/theme";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import Tooltip from "@splunk/react-ui/Tooltip";
@@ -23,6 +20,9 @@ import {GroupingsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
 import {IndicatorCardLayout} from "@splunk/my-react-component/src/IndicatorCard";
 import {SubmissionCardLayout} from "@splunk/my-react-component/src/SubmissionCard";
+import {layoutWithTheme} from "../../common/theme";
+import GroupingForm from "../../common/GroupingForm";
+import {getUrlQueryParams} from "../../common/queryParams";
 
 function SubmitToTaxiiButton({row}) {
     const disabled = row.indicators.length === 0;
@@ -98,11 +98,11 @@ function Router() {
     if (queryParams.has('grouping_id') && queryParams.has('action', 'edit')) {
         const groupingId = queryParams.get('grouping_id');
         return <GroupingForm groupingId={groupingId}/>
-    } else {
+    } 
         return (
             <ListGroupings/>
         );
-    }
+    
 }
 
 layoutWithTheme(

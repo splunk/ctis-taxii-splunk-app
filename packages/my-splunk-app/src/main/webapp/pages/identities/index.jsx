@@ -7,18 +7,18 @@ import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
-import IdentityForm from "../../common/IdentityForm";
 import {editIdentityPage, NEW_IDENTITY_PAGE} from "@splunk/my-react-component/src/urls";
 import Heading from "@splunk/react-ui/Heading";
 import Plus from '@splunk/react-icons/Plus';
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
-import {getUrlQueryParams} from "../../common/queryParams";
 import useModal from "@splunk/my-react-component/src/useModal";
-import {layoutWithTheme} from "../../common/theme";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {IdentitiesSearchBar} from "@splunk/my-react-component/src/SearchBar";
+import {layoutWithTheme} from "../../common/theme";
+import {getUrlQueryParams} from "../../common/queryParams";
+import IdentityForm from "../../common/IdentityForm";
 
 
 function Actions({row}) {
@@ -85,12 +85,12 @@ function Router() {
     const queryParams = getUrlQueryParams();
     if (queryParams.has('action', 'edit') && queryParams.has('identity_id')) {
         const identityId = queryParams.get('identity_id');
-        return <IdentityForm editMode={true} identityId={identityId}/>
-    } else {
+        return <IdentityForm editMode identityId={identityId}/>
+    } 
         return (
             <ListIdentities/>
         );
-    }
+    
 }
 
 layoutWithTheme(

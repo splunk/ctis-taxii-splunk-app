@@ -1,8 +1,8 @@
 import {getAllGroupings} from "@splunk/my-react-component/src/ApiClient";
 import React, {useEffect, useMemo, useState} from "react";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import {useFormInputProps} from "../formInputProps";
 import GroupingSelectControlGroup from "@splunk/my-react-component/src/controls/GroupingSelectControlGroup";
+import {useFormInputProps} from "../formInputProps";
 
 export const useListGroupings = () => {
     const [groupings, setGroupings] = useState([]);

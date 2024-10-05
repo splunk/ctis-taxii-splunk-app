@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {NewIndicatorForm} from "./NewIndicatorForm";
 import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
 import Heading from "@splunk/react-ui/Heading";
 import {getData} from "@splunk/splunk-utils/search";
 import P from "@splunk/react-ui/Paragraph";
+import {NewIndicatorForm} from "./NewIndicatorForm";
 import {layoutWithTheme} from "../../common/theme";
 
 function getUrlQueryParams() {
@@ -35,7 +35,7 @@ const useSplunkSearchResults = ({sid, offset, count}) => {
 
 function MainComponent() {
     const urlParams = getUrlQueryParams();
-    let splunkFieldName, splunkFieldValue;
+    let splunkFieldName; let splunkFieldValue;
     let indicatorForm;
     let splunkEvent;
     if (urlParams.has("sid")) {

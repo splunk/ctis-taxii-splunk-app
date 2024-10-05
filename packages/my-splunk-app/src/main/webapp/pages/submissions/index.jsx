@@ -1,10 +1,6 @@
 import React from 'react';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
-import {layoutWithTheme} from "../../common/theme";
 import Loader from "@splunk/my-react-component/src/Loader";
-import {getUrlQueryParams} from "../../common/queryParams";
-import {Form} from "./form";
-import {formatScheduledAt, SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
 import Heading from "@splunk/react-ui/Heading";
 import {SubmissionsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
@@ -17,6 +13,10 @@ import {CancelSubmissionButton} from "@splunk/my-react-component/src/buttons/Can
 import useModal from "@splunk/my-react-component/src/useModal";
 
 import {CancelSubmissionModal} from "@splunk/my-react-component/src/CancelSubmissionModal";
+import {formatScheduledAt, SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
+import {Form} from "./form";
+import {getUrlQueryParams} from "../../common/queryParams";
+import {layoutWithTheme} from "../../common/theme";
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => row.submission_id},
@@ -52,7 +52,7 @@ function ListSubmissions() {
         <>
             <Heading level={1}>Submissions</Heading>
             <SubmissionsSearchBar onQueryChange={setQuery}/>
-            <PaginatedDataTable renderData={RenderDataTable} fetchData={getSubmissions} sort={'scheduled_at:-1'}
+            <PaginatedDataTable renderData={RenderDataTable} fetchData={getSubmissions} sort="scheduled_at:-1"
                                 query={query} onError={(e) => {
                 createErrorToast(e);
             }}/>
@@ -65,9 +65,9 @@ function Router() {
     if (queryParams.has('grouping_id') && queryParams.has('action', 'submit')) {
         const groupingId = queryParams.get('grouping_id');
         return <Form groupingId={groupingId}/>
-    } else {
+    } 
         return <ListSubmissions/>;
-    }
+    
 }
 
 function MyPage() {

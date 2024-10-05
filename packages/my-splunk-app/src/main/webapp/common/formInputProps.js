@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 
 function findErrorMessage(validationObject, refName) {
     // Iterate over each key in the flat validation object
-    for (let key in validationObject) {
+    for (const key in validationObject) {
         const value = validationObject[key];
 
         // If the value is an object, check its ref
@@ -15,9 +15,9 @@ function findErrorMessage(validationObject, refName) {
 
         // If the value is an array, iterate through its elements
         if (Array.isArray(value)) {
-            for (let item of value) {
+            for (const item of value) {
                 // Check if the item has a matching ref
-                for (let subKey in item) {
+                for (const subKey in item) {
                     const subValue = item[subKey];
                     if (subValue.ref && subValue.ref.name === refName) {
                         return subValue.message;
@@ -53,7 +53,7 @@ export const useFormInputProps = (fieldName) => {
             const {errors} = formState;
             const error = findErrorMessage(errors, fieldName);
             setReturnProps({
-                error: error,
+                error,
                 onChange: generateSetValueHandler(setValue, fieldName),
                 value: watch(fieldName)
             });

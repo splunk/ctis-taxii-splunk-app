@@ -4,9 +4,9 @@ import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGrou
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
-import {useFormInputProps} from "../formInputProps";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import {useFormContext} from "react-hook-form";
+import {useFormInputProps} from "../formInputProps";
 
 export function IndicatorIdField({fieldName, ...props}) {
     return <TextControlGroup label="Indicator ID" {...useFormInputProps(fieldName)} {...props}/>

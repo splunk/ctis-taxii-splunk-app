@@ -13,11 +13,9 @@ import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
 import {urlForEditGrouping, VIEW_GROUPINGS_PAGE} from "@splunk/my-react-component/src/urls";
-import {useOnFormSubmit} from "./formSubmit";
 import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
-import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
@@ -25,6 +23,8 @@ import EditButton from "@splunk/my-react-component/src/EditButton";
 import CancelButton from "@splunk/my-react-component/src/CancelButton";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
+import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
+import {useOnFormSubmit} from "./formSubmit";
 
 const MyForm = styled.form`
     margin-top: ${variables.spacingMedium};
@@ -47,9 +47,9 @@ const GROUPING_CONTEXTS = [
 
 const ButtonsForViewMode = ({grouping}) => {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
-    return <HorizontalButtonLayout justifyContent={'space-between'}>
-        <DeleteButton inline={true} onClick={handleRequestOpen}/>
-        <EditButton inline={true} to={urlForEditGrouping(grouping.grouping_id)}/>
+    return <HorizontalButtonLayout justifyContent="space-between">
+        <DeleteButton inline onClick={handleRequestOpen}/>
+        <EditButton inline to={urlForEditGrouping(grouping.grouping_id)}/>
         <DeleteGroupingModal open={open} onRequestClose={handleRequestClose} grouping={grouping}/>
     </HorizontalButtonLayout>;
 }
