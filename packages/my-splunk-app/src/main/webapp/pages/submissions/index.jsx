@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from "prop-types";
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import Loader from "@splunk/my-react-component/src/Loader";
 import Heading from "@splunk/react-ui/Heading";
@@ -33,6 +34,9 @@ const RowActionPrimary = ({row}) => {
         <CancelSubmissionModal open={open} onRequestClose={handleRequestClose} submission={row}/>
     </HorizontalActionButtonLayout>);
 }
+RowActionPrimary.propTypes = {
+    row: PropTypes.object.isRequired
+}
 
 function RenderDataTable({records, loading, error}) {
     const table = <ExpandableDataTable data={records}
@@ -44,6 +48,12 @@ function RenderDataTable({records, loading, error}) {
     return <Loader error={error} loading={loading}>
         {table}
     </Loader>
+}
+
+RenderDataTable.propTypes = {
+    records: PropTypes.array,
+    loading: PropTypes.bool,
+    error: PropTypes.object
 }
 
 function ListSubmissions() {
@@ -65,9 +75,9 @@ function Router() {
     if (queryParams.has('grouping_id') && queryParams.has('action', 'submit')) {
         const groupingId = queryParams.get('grouping_id');
         return <Form groupingId={groupingId}/>
-    } 
+    }
         return <ListSubmissions/>;
-    
+
 }
 
 function MyPage() {

@@ -1,4 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
+import PropTypes from "prop-types";
 import Heading from "@splunk/react-ui/Heading";
 import {
     errorToText,
@@ -70,10 +71,10 @@ function useTaxiiCollections({selectedTaxiiConfig}) {
                     setCollectionOptions(options);
                     setLoading(false);
                 },
-                errorHandler: async (error_response) => {
-                    const error_text = await error_response.text()
-                    const errMessage = `Error getting TAXII collections: ${error_text}`;
-                    console.error(errMessage, error_response);
+                errorHandler: async (errorResponse) => {
+                    const errorText = await errorResponse.text()
+                    const errMessage = `Error getting TAXII collections: ${errorText}`;
+                    console.error(errMessage, errorResponse);
                     setLoading(false);
                     setError(errMessage);
                 }
@@ -94,9 +95,9 @@ export function Form({groupingId}) {
             [FIELD_SCHEDULED_AT]: null,
         }
     });
-    const {watch, register, trigger, handleSubmit, formState, values, setValue} = methods;
+    const {watch, register, trigger, handleSubmit, formState, setValue} = methods;
 
-    const {loading: loadingGrouping, record: groupingRecord, error: groupingError} = useGetRecord({
+    const {loading: loadingGrouping, error: groupingError} = useGetRecord({
         restGetFunction: getGrouping,
         restFunctionQueryArgs: {groupingId}
     });
@@ -139,6 +140,7 @@ export function Form({groupingId}) {
                         return `Scheduled At must be in the future`;
                     }
                 }
+                return null;
             }
     });
 
@@ -166,9 +168,9 @@ export function Form({groupingId}) {
                 console.log(resp);
                 setSubmitSuccess(true);
                 window.location = urlForViewSubmission(resp.submission.submission_id);
-            }, (error) => {
-                console.error("Error submitting grouping", error);
-                errorToText(error).then(
+            }, (errorResponse) => {
+                console.error("Error submitting grouping", errorResponse);
+                errorToText(errorResponse).then(
                        errorText => {
                            setSubmissionError(errorText);
                        }
@@ -181,7 +183,7 @@ export function Form({groupingId}) {
     }
 
     const handleScheduleSwitchOnClick = () => {
-        setScheduledSubmission((scheduledSubmission) => !scheduledSubmission);
+        setScheduledSubmission(v => !v);
     }
     useEffect(() => {
         if (scheduledSubmission) {
@@ -190,7 +192,7 @@ export function Form({groupingId}) {
         } else {
             setValue(FIELD_SCHEDULED_AT, null, {shouldValidate: true});
         }
-    }, [scheduledSubmission]);
+    }, [scheduledSubmission, setValue]);
 
     return (
         <FormProvider {...methods}>
@@ -232,5 +234,8 @@ export function Form({groupingId}) {
             </StyledForm>
         </FormProvider>
     );
+}
+Form.propTypes = {
+    groupingId: PropTypes.string.isRequired
 }
 

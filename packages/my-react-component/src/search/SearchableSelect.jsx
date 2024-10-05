@@ -39,7 +39,12 @@ export default function SearchableSelect({
         restGetFunction: restGetFunction,
         restFunctionQueryArgs: {
             limit: 100,
-            query: generateRegexQueryForFields(searchableFields, debouncedSearchFilter),
+            query: {
+                "$or" : [
+                    generateRegexQueryForFields(searchableFields, debouncedSearchFilter),
+                    {[queryFilterField]: selectedValue}
+                ]
+            },
         }
     })
     useEffect(() => {
