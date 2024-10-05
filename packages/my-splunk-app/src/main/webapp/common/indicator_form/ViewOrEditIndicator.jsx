@@ -15,6 +15,7 @@ import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
 import useModal from "@splunk/my-react-component/src/useModal";
+import PropTypes from "prop-types";
 import {useOnFormSubmit} from "../formSubmit";
 import {PatternSuggester} from "../../pages/new_indicator/patternSuggester";
 import useIndicatorCategories from "./indicatorCategories";
@@ -57,11 +58,19 @@ const ButtonsForViewMode = ({indicator}) => {
         <DeleteIndicatorModal open={open} onRequestClose={handleRequestClose} indicator={indicator}/>
     </HorizontalButtonLayout>;
 }
+ButtonsForViewMode.propTypes = {
+    indicator: PropTypes.object.isRequired
+}
+
 const ButtonsForEditMode = ({submitting, submitButtonDisabled}) => {
     return <HorizontalButtonLayout>
         <CancelButton/>
         <SubmitButton label="Save Changes" disabled={submitButtonDisabled} submitting={submitting}/>
     </HorizontalButtonLayout>;
+}
+ButtonsForEditMode.propTypes = {
+    submitting: PropTypes.bool.isRequired,
+    submitButtonDisabled: PropTypes.bool.isRequired
 }
 
 export default function ViewOrEditIndicator({indicatorId, editMode}) {
@@ -69,7 +78,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const readOnly = !editMode;
     useEffect(() => {
         document.title = title;
-    }, []);
+    }, [title]);
     const {record, loading, error} = useGetRecord({
         restGetFunction: getIndicator,
         restFunctionQueryArgs: {indicatorId},
@@ -78,23 +87,21 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const methods = useForm({
         mode: 'all',
     })
-    const {watch, register, formState, handleSubmit, setValue, getValues, trigger} = methods;
-    for (const fieldName of FORM_FIELD_NAMES) {
-        register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]);
-    }
+    const {watch, register, formState, handleSubmit, setValue} = methods;
+    FORM_FIELD_NAMES.forEach(fieldName => register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]));
 
     const {onSubmit, submitSuccess, submissionError, submitButtonDisabled} = useOnFormSubmit({
         formMethods: methods,
         submitToPostEndpoint: editIndicator,
         submissionSuccessCallback: (resp) => console.log(resp),
-        submissionErrorCallback: (error) => console.error(error),
+        submissionErrorCallback: (callbackError) => console.error(callbackError),
     })
 
     useEffect(() => {
         if (submitSuccess) {
             window.location = viewIndicator(indicatorId);
         }
-    }, [submitSuccess]);
+    }, [indicatorId, submitSuccess]);
 
     useEffect(() => {
         if (record) {
@@ -109,7 +116,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
             setValue(FIELD_CONFIDENCE, record.confidence);
             setValue(FIELD_TLP_RATING, record.tlp_v1_rating);
         }
-    }, [record]);
+    }, [setValue, record]);
 
     const {indicatorCategories} = useIndicatorCategories();
     const indicatorCategory = watch(FIELD_INDICATOR_CATEGORY);
@@ -123,7 +130,8 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                     {submissionError?.json?.errors && <Message appearance="fill" type="error">
                         <div>
                             <P>Form submission error</P>
-                            {submissionError.json.errors.map(error => <P>{error}</P>)}
+                            {submissionError.json.errors.map(submissionErrorToDisplay =>
+                                <P>{submissionErrorToDisplay}</P>)}
                         </div>
                     </Message>}
                     <section>
@@ -155,4 +163,8 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
         </Loader>
     </div>)
 
+}
+ViewOrEditIndicator.propTypes = {
+    indicatorId: PropTypes.string.isRequired,
+    editMode: PropTypes.bool.isRequired,
 }
