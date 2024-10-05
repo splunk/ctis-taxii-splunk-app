@@ -39,9 +39,9 @@ function GotoIndicatorsPageButton() {
 }
 
 // TODO: change this to use a single object with keys as param
-const newIndicatorObject = ({splunk_field_name = '', indicator_value = ''} = {}) => ({
-    splunk_field_name,
-    indicator_value,
+const newIndicatorObject = ({splunk_field_name: splunkFieldName = '', indicator_value: indicatorValue = ''} = {}) => ({
+    splunk_field_name: splunkFieldName,
+    indicator_value: indicatorValue,
     indicator_category: '',
     stix_pattern: '',
     name: '',
@@ -93,9 +93,9 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         [submitSuccess, formState]);
     const [submissionErrors, setSubmissionErrors] = useState(null);
 
-    for (const fieldName of [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM]) {
+    [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM].forEach(fieldName => {
         register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]);
-    }
+    });
 
     const [indicators, groupingId] = watch([FIELD_INDICATORS, FIELD_GROUPING_ID]);
 
@@ -109,9 +109,9 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 setSubmitSuccess(true);
                 setSubmissionErrors(null);
             }, async (error) => {
-                const error_json = await error.json();
-                console.error("Error creating indicator", error_json);
-                setSubmissionErrors(error_json.errors);
+                const errorJson = await error.json();
+                console.error("Error creating indicator", errorJson);
+                setSubmissionErrors(errorJson.errors);
             });
         } else {
             console.error(formState.errors);
@@ -185,4 +185,5 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
 NewIndicatorForm.propTypes = {
     initialSplunkFieldName: PropTypes.string,
     initialSplunkFieldValue: PropTypes.string,
+    event: PropTypes.object
 };

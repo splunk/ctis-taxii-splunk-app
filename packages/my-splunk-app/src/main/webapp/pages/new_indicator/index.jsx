@@ -51,6 +51,7 @@ function NewIndicatorFormInWorkflowMode({sid, offset, splunkFieldName, splunkFie
                           initialSplunkFieldValue={splunkFieldValue}/>
     </Loader>;
 }
+
 NewIndicatorFormInWorkflowMode.propTypes = {
     sid: PropTypes.string.isRequired,
     offset: PropTypes.string.isRequired,
@@ -63,14 +64,6 @@ function MainComponent() {
     const hasSearchId = urlParams.has("sid");
     const {sid, offset} = parseInEventMode(urlParams);
     const {splunkFieldName, splunkFieldValue} = queryParamsForFieldWorkflowAction(urlParams);
-    // useEffect(() => {
-    //     if (hasSearchId) {
-    //         const {splunkFieldName, splunkFieldValue} = queryParamsForFieldWorkflowAction(urlParams);
-    //         getSplunkSearchResult({sid, offset, count: 1}).then((event) => {
-    //             setFormProps({event, initialSplunkFieldName: splunkFieldName, initialSplunkFieldValue: splunkFieldValue});
-    //         });
-    //     }
-    // }, [hasSearchId, urlParams]);
 
     return (
         <AppContainer>
