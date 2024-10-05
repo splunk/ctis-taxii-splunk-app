@@ -15,12 +15,7 @@ import {IndicatorSubForm} from "./IndicatorSubForm";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
 import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
-import {
-    ConfidenceField,
-    GroupingIdField,
-    TLPv1RatingField,
-    ValidFromField
-} from "../../common/indicator_form/formControls";
+import {ConfidenceField, TLPv1RatingField, ValidFromField} from "../../common/indicator_form/formControls";
 import {
     FIELD_CONFIDENCE,
     FIELD_GROUPING_ID,
@@ -36,6 +31,7 @@ import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalB
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
+import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?
@@ -128,7 +124,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
-                    <GroupingIdField fieldName={FIELD_GROUPING_ID}/>
+                    <GroupingIdFieldV2 fieldName={FIELD_GROUPING_ID}/>
                     <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
                     <TLPv1RatingField fieldName={FIELD_TLP_RATING}/>
                     <ValidFromField fieldName={FIELD_VALID_FROM}/>

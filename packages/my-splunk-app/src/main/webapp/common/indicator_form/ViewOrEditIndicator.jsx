@@ -17,7 +17,6 @@ import {
 import {StyledForm} from "./StyledForm";
 import {
     ConfidenceField,
-    GroupingIdField,
     IndicatorCategoryField,
     IndicatorDescriptionField,
     IndicatorIdField,
@@ -43,6 +42,7 @@ import Message from "@splunk/react-ui/Message";
 import P from "@splunk/react-ui/Paragraph";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
 import useModal from "@splunk/my-react-component/src/useModal";
+import {GroupingIdFieldV2} from "./GroupingsDropdown";
 
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,
@@ -128,7 +128,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                     </Message>}
                     <section>
                         <IndicatorIdField fieldName={FIELD_INDICATOR_ID} readOnly={readOnly} disabled={true}/>
-                        <GroupingIdField fieldName={FIELD_GROUPING_ID} readOnly={readOnly}/>
+                        <GroupingIdFieldV2 fieldName={FIELD_GROUPING_ID} readOnly={readOnly}/>
                         <IndicatorNameField fieldName={FIELD_INDICATOR_NAME} readOnly={readOnly}/>
                         <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION} readOnly={readOnly}/>
                         <ConfidenceField fieldName={FIELD_CONFIDENCE} readOnly={readOnly}/>

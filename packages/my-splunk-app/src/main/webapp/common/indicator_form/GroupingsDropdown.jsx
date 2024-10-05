@@ -2,6 +2,7 @@ import {getAllGroupings} from "@splunk/my-react-component/src/ApiClient";
 import React, {useEffect, useMemo, useState} from "react";
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import {useFormInputProps} from "../formInputProps";
+import GroupingSelectControlGroup from "@splunk/my-react-component/src/controls/GroupingSelectControlGroup";
 
 export const useListGroupings = () => {
     const [groupings, setGroupings] = useState([]);
@@ -25,9 +26,14 @@ export const useListGroupings = () => {
     return {groupings, optionsGroupings, loading};
 }
 
+// TODO: remove unused function
 export function GroupingIdField({fieldName, ...props}) {
     const {optionsGroupings, loading} = useListGroupings();
     const label = "Grouping ID";
     return <SelectControlGroup label={label} loading={loading}
                                options={optionsGroupings} {...useFormInputProps(fieldName)} {...props}/>
+}
+
+export function GroupingIdFieldV2({fieldName, ...props}) {
+    return <GroupingSelectControlGroup label="Grouping" {...useFormInputProps(fieldName)} {...props}/>
 }

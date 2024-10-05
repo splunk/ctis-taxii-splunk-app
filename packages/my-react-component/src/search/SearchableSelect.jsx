@@ -6,29 +6,35 @@ import {generateRegexQueryForFields} from "./util";
 import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 
 export default function SearchableSelect({
-                                             prefixLabel,
+                                             showAnyOption = true,
                                              searchableFields,
                                              queryFilterField,
                                              restGetFunction,
                                              placeholder,
                                              onQueryChange,
+                                             onChange,
+                                             initialSelection = '',
                                              initialSelectionQueryParamName,
-                                             selectOptionLabelFunction
+                                             selectOptionLabelFunction,
+                                             ...props
                                          }) {
-    let initialSelection = '';
+    let initialSelectionValue = initialSelection;
     if (initialSelectionQueryParamName) {
-        initialSelection = getUrlQueryParams().get(initialSelectionQueryParamName) ?? initialSelection;
+        initialSelectionValue = getUrlQueryParams().get(initialSelectionQueryParamName) ?? initialSelection;
     }
-    const [selectedValue, setSelectedValue] = useState(initialSelection);
+    const [selectedValue, setSelectedValue] = useState(initialSelectionValue);
     const handleChange = (e, {value}) => {
         setSelectedValue(value);
+        if (onChange) {
+            onChange(e, {value});
+        }
     };
     const [options, setOptions] = useState([]);
     const [searchFilter, setSearchFilter] = useState('');
     const handleFilterChange = (e, {keyword}) => {
         setSearchFilter(keyword);
     }
-    const debouncedSearchFilter = useDebounce(searchFilter, 300);
+    const debouncedSearchFilter = useDebounce(searchFilter, 200);
     const {loading, record: response, error} = useGetRecord({
         restGetFunction: restGetFunction,
         restFunctionQueryArgs: {
@@ -46,23 +52,27 @@ export default function SearchableSelect({
     }, [response])
 
     useEffect(() => {
-        if (selectedValue) {
-            onQueryChange({[queryFilterField]: selectedValue});
-        } else {
-            onQueryChange({});
+        if (onQueryChange) {
+            if (selectedValue) {
+                onQueryChange({[queryFilterField]: selectedValue});
+            } else {
+                onQueryChange({});
+            }
         }
     }, [selectedValue]);
 
     return (
         <Select
-            prefixLabel={prefixLabel}
             placeholder={placeholder}
             value={selectedValue}
             filter="controlled"
             onChange={handleChange}
             onFilterChange={handleFilterChange}
+            animateLoading={true}
+            isLoadingOptions={loading}
+            {...props}
         >
-            <Select.Option label="Any" value=""/>
+            {showAnyOption && <Select.Option label="Any" value=""/>}
             {options.map((option) => (
                 <Select.Option key={option[queryFilterField]}
                                label={selectOptionLabelFunction(option)}

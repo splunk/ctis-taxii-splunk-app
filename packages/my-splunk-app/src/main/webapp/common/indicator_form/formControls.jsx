@@ -8,10 +8,6 @@ import {useFormInputProps} from "../formInputProps";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import {useFormContext} from "react-hook-form";
 
-
-export {GroupingIdField} from "./GroupingsDropdown";
-
-
 export function IndicatorIdField({fieldName, ...props}) {
     return <TextControlGroup label="Indicator ID" {...useFormInputProps(fieldName)} {...props}/>
 }
