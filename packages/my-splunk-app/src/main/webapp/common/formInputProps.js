@@ -17,11 +17,7 @@ function findErrorMessageInArray(array, refName) {
     }
     const mapping = array.map((item) => {
         const findInObject = Object.values(item).map((value) => {
-            const tryFlatObject = findErrorMessageInFlatObject(value, refName);
-            if (tryFlatObject) {
-                return tryFlatObject;
-            }
-            return null;
+            return findErrorMessageInFlatObject(value, refName);
         })
         return findInObject.find((value) => value !== null) || null;
     });
