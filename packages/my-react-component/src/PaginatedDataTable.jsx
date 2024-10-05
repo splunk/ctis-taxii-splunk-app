@@ -3,6 +3,7 @@ import SearchPaginator from "./paginator";
 import P from '@splunk/react-ui/Paragraph';
 import {useDebounceMultiple} from "./debounce";
 import {v4 as uuidv4} from 'uuid';
+import {SORT_MODIFIED_DESC} from "./ApiClient";
 
 function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort = ""}) {
     const [records, setRecords] = useState([]);
@@ -65,7 +66,7 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort =
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
 const DEFAULT_RESULTS_PER_PAGE = 10;
 
-export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort = ""}) {
+export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort=SORT_MODIFIED_DESC}) {
     const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
     const [pageNum, setPageNum] = useState(1);
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);

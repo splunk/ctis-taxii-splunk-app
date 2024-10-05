@@ -4,11 +4,7 @@ import {layoutWithTheme} from "../../common/theme";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {getUrlQueryParams} from "../../common/queryParams";
 import {Form} from "./form";
-import {
-    formatScheduledAt,
-    SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER,
-    ViewSubmissionRecord
-} from "./ViewSubmissionRecord";
+import {formatScheduledAt, SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
 import Heading from "@splunk/react-ui/Heading";
 import {SubmissionsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";

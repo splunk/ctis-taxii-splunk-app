@@ -156,37 +156,39 @@ export function cancelSubmission({submissionId, successHandler, errorHandler}) {
     return postData('unschedule-submission', {submission_id: submissionId}, successHandler, errorHandler)
 }
 
-export function getIndicators({skip=0, limit=0, successHandler, errorHandler, query, ...rest}) {
+export const SORT_MODIFIED_DESC = "modified:-1";
+
+export function getIndicators({skip=0, limit=0, successHandler, errorHandler, query, sort=SORT_MODIFIED_DESC, ...rest}) {
     return getData({
         endpoint: 'list-indicators',
         queryParams: {
-            skip, limit
+            skip, limit, sort
         }, query, successHandler, errorHandler, ...rest
     })
 }
 
-export function getGroupings({skip=0, limit=0, successHandler, errorHandler, query, ...rest}) {
+export function getGroupings({skip=0, limit=0, successHandler, errorHandler, query, sort=SORT_MODIFIED_DESC, ...rest}) {
     return getData({
         endpoint: 'list-groupings',
         queryParams: {
-            skip, limit
+            skip, limit, sort
         },
         query, successHandler, errorHandler, ...rest
     })
 }
 
-export function getIdentities({skip=0, limit=0, successHandler, errorHandler, query, ...rest}) {
+export function getIdentities({skip=0, limit=0, successHandler, errorHandler, query, sort=SORT_MODIFIED_DESC, ...rest}) {
     return getData({
         endpoint: 'list-identities',
         queryParams: {
-            skip, limit
+            skip, limit, sort
         },
         query, successHandler, errorHandler, ...rest
     })
 }
 
 // Note: fields="" means all fields
-export function getSubmissions({skip=0, limit=0, sort="", fields="", successHandler, errorHandler, query, ...rest}) {
+export function getSubmissions({skip=0, limit=0, sort=SORT_MODIFIED_DESC, fields="", successHandler, errorHandler, query, ...rest}) {
     return getData({
         endpoint: 'list-submissions',
         queryParams: {
