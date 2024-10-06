@@ -7,7 +7,6 @@ import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
 import {VIEW_IDENTITIES_PAGE} from "@splunk/my-react-component/src/urls";
-import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
 import {variables} from "@splunk/themes";
 import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
@@ -100,13 +99,6 @@ export function Form({existingIdentity}) {
                         <GotoIdentitiesPageButton/>
                     </Modal.Body>
                 </Modal>
-                <CollapsiblePanel title="Debug info">
-                    <div style={{color: 'red'}}>
-                        <code>
-                            {JSON.stringify(formState.errors)}
-                        </code>
-                    </div>
-                </CollapsiblePanel>
             </MyForm>
         </FormProvider>
     )

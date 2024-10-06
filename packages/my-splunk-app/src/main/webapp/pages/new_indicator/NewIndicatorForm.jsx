@@ -13,7 +13,6 @@ import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 import SubmitButton from "@splunk/my-react-component/src/SubmitButton";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
-import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
 import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
@@ -148,25 +147,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                                       label={`Create Indicators (${indicators.length})`}/>
                     </HorizontalButtonLayout>
                 </CustomControlGroup>
-
-                <CollapsiblePanel title="Debug info">
-                    <div style={{color: 'green'}}>
-                        <code>
-                            {JSON.stringify(indicators)}
-                        </code>
-                    </div>
-                    <div style={{color: 'red'}}>
-                        <code>
-                            {JSON.stringify(formState.errors)}
-                        </code>
-                    </div>
-                    <div>
-                        {event && <code>{JSON.stringify(event)}</code>}
-                    </div>
-                </CollapsiblePanel>
-
-
-                {/* // TODO: Move Modal to a separate component */}
                 <Modal open={submitSuccess}>
                     <Modal.Header
                         title={`Successfully Created New Indicator${indicators.length > 1 ? "s" : ""}`}
