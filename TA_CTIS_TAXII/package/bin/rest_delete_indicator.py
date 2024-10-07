@@ -24,7 +24,12 @@ class DeleteIndicatorHandler(AbstractRestHandler):
         collection = get_collection_data(collection_name="indicators", session_key=session_key, app=NAMESPACE)
 
         indicator_id = input_json["indicator_id"]
+        indicator = self.query_exactly_one_record(collection=collection,
+                                                  query={"indicator_id": indicator_id})
         self.delete_record(collection=collection, query={"indicator_id": indicator_id})
+
+        grouping_id = indicator["grouping_id"]
+        self.update_grouping_modified_time_to_now(grouping_id=grouping_id, session_key=session_key)
 
         return {}
 

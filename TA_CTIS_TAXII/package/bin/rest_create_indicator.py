@@ -9,7 +9,8 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 try:
     from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
     from server_exception import ServerException
-    from models import IndicatorModelV1, indicator_converter, form_payload_to_indicators
+    from models import IndicatorModelV1, indicator_converter, form_payload_to_indicators, GroupingModelV1, \
+        grouping_converter
     from solnlib._utils import get_collection_data
     import remote_pdb
 except ImportError as e:
@@ -22,7 +23,11 @@ logger = get_logger_for_script(__file__)
 class Handler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         collection = get_collection_data(collection_name="indicators", session_key=session_key, app=NAMESPACE)
-        self.logger.info(f"Collection: {collection}")
+
+        # Verify that the grouping_id exists
+        grouping_id = input_json["grouping_id"]
+        groupings = get_collection_data(collection_name="groupings", session_key=session_key, app=NAMESPACE)
+        self.query_exactly_one_record(collection=groupings, query={"grouping_id": grouping_id})
 
         # TODO: Utility to nicely convert the ClassValidationError to a human-readable error message
         try:
@@ -40,12 +45,13 @@ class Handler(AbstractRestHandler):
             collection.insert(indicator_dict)
             serialized.append(indicator_dict)
 
+        self.update_grouping_modified_time_to_now(grouping_id=grouping_id, session_key=session_key)
+
         response = {
             "status": "success",
             "indicators": serialized,
         }
         return response
-
 
 
 CreateIndicatorHandler = Handler(logger=logger).generate_splunk_server_class()

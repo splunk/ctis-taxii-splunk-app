@@ -24,6 +24,7 @@ import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
 import {getUrlQueryParams} from "../../common/queryParams";
+import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_utils";
 
 function SubmitToTaxiiButton({row}) {
     const disabled = row.indicators.length === 0;
@@ -63,8 +64,8 @@ const expansionFieldNameToCellValue = {
     "Name": (row) => row.name,
     "Description": (row) => row?.description,
     "Context": (row) => row.context,
-    "Created At (UTC)": (row) => row.created,
-    "Modified At (UTC)": (row) => row.modified,
+    "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
+    "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
     "Created By": (row) => <IdentityIdLink identityId={row.created_by_ref}/>,
     "Indicators": (row) => <IndicatorCardLayout indicatorIds={row.indicators}/>,
     "Submissions": (row) => <SubmissionCardLayout groupingId={row.grouping_id}/>,

@@ -178,6 +178,14 @@ class AbstractRestHandler(abc.ABC):
 
         return updated_record_as_dict
 
+    def update_grouping_modified_time_to_now(self, grouping_id: str, session_key: str):
+        groupings = self.get_collection(collection_name="groupings", session_key=session_key)
+        self.update_record(collection=groupings,
+                           query_for_one_record={"grouping_id": grouping_id},
+                           input_json={},
+                           converter=grouping_converter,
+                           model_class=GroupingModelV1)
+
     @staticmethod
     def exception_response(e: Exception, status_code: int) -> dict:
         return {"payload": {"error": str(e)}, "status": status_code}
