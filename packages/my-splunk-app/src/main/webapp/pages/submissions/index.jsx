@@ -14,7 +14,8 @@ import useModal from "@splunk/my-react-component/src/useModal";
 
 import {CancelSubmissionModal} from "@splunk/my-react-component/src/CancelSubmissionModal";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
-import {formatScheduledAt, SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
+import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_utils";
+import {SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
 import {Form} from "./form";
 import {getUrlQueryParams} from "../../common/queryParams";
 import {layoutWithTheme} from "../../common/theme";
@@ -22,7 +23,7 @@ import {usePageTitle} from "../../common/utils";
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => row.submission_id},
-    {columnName: "Scheduled/Sent At (UTC)", getCellContent: (row) => formatScheduledAt(row.scheduled_at)},
+    {columnName: "Scheduled/Sent At (UTC)", getCellContent: (row) => formatTimestampForDisplay(row.scheduled_at)},
     {columnName: "Status", getCellContent: (row) => <SubmissionStatusChip status={row.status}/>},
 ]
 

@@ -23,6 +23,7 @@ export const reduceIsoStringPrecisionToSeconds = (dateIsoString) => {
 export const utcNowIsoStringWithoutTimezone = () => {
     return dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision());
 }
+
 export const formatTimestampForDisplay = (timestampIsoString) => {
     const timestampFormatted = moment.utc(timestampIsoString).format("YYYY-MM-DD HH:mm:ss");
     const fromNow = moment.utc(timestampIsoString).fromNow();

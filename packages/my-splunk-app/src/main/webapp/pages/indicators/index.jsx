@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
 import {IndicatorsSearchBar} from "@splunk/my-react-component/src/SearchBar";
-import Button from "@splunk/react-ui/Button";
 import Plus from '@splunk/react-icons/Plus';
 import {getIndicators} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
@@ -24,6 +23,7 @@ import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/Horiz
 import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
+import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_utils";
 import {layoutWithTheme} from "../../common/theme";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -42,12 +42,12 @@ const expansionFieldNameToCellValue = {
     "Name": (row) => row.name,
     "Description": (row) => row?.description || "No description provided",
     "STIX Pattern": (row) => row.stix_pattern,
-    "Valid From (UTC)": (row) => row.valid_from,
+    "Valid From (UTC)": (row) => formatTimestampForDisplay(row.valid_from),
     "Indicator Category": (row) => row.indicator_category,
     "Indicator Value": (row) => row.indicator_value,
     "TLP Rating": (row) => row.tlp_v1_rating,
-    "Created At (UTC)": (row) => row.created,
-    "Modified At (UTC)": (row) => row.modified,
+    "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
+    "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
 }
 
 const RowActionPrimary = ({row}) => {

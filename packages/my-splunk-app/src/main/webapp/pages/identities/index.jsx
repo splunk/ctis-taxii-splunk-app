@@ -17,6 +17,7 @@ import {IdentitiesSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
+import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_utils";
 import {layoutWithTheme} from "../../common/theme";
 import {getUrlQueryParams} from "../../common/queryParams";
 import IdentityForm from "../../common/IdentityForm";
@@ -49,8 +50,8 @@ const expansionFieldNameToCellValue = {
     "Name": (row) => row.name,
     "Identity Class": (row) => row.identity_class,
     "Identity ID": (row) => row.identity_id,
-    "Created At (UTC)": (row) => row.created,
-    "Modified At (UTC)": (row) => row.modified,
+    "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
+    "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
 }
 
 function renderDataTable({records, loading, error}) {
