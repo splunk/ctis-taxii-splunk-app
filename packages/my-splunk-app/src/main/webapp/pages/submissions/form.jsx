@@ -211,7 +211,7 @@ export function Form({groupingId}) {
                         <TaxiiConfigField fieldName={FIELD_TAXII_CONFIG_NAME} options={taxiiConfigOptions}/>
                         <TaxiiCollectionId loading={collectionOptionsLoading} disabled={selectedTaxiiConfig === null}
                                            fieldName={FIELD_TAXII_COLLECTION_ID} options={collectionOptions}/>
-                        <CustomControlGroup label="Schedule">
+                        <CustomControlGroup label="Scheduled?">
                             <SwitchContainer>
                                 <Switch
                                     key="scheduleSubmissionSwitch"
