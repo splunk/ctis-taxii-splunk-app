@@ -17,15 +17,17 @@ import {
 } from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
-import Heading from "@splunk/react-ui/Heading";
 import {useViewportBreakpoints} from "@splunk/my-react-component/viewportBreakpoints";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import PropTypes from "prop-types";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
+import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {layoutWithTheme} from "../../common/theme";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 import {getUrlQueryParams} from "../../common/queryParams";
+import {usePageTitle} from "../../common/utils";
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
@@ -104,13 +106,15 @@ RenderDataTable.propTypes = {
 
 function ListIndicators() {
     const [query, setQuery] = React.useState({});
+    const title = "Indicators";
+    usePageTitle(title);
 
     return (
         <>
-            <Heading level={1}>Indicators of Compromise (IoC)</Heading>
-            <div>
-                <Button icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
-            </div>
+            <PageHeadingContainer>
+                <PageHeading level={1}>{title}</PageHeading>
+                <BaseButton inline icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
+            </PageHeadingContainer>
             <IndicatorsSearchBar onQueryChange={setQuery}/>
             <PaginatedDataTable renderData={RenderDataTable} fetchData={getIndicators} query={query} onError={(e) => {
                 createErrorToast(e);

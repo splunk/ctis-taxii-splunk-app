@@ -10,3 +10,9 @@ export const useFieldWatchesStateValue = ({fieldName, stateValue}) => {
         }
     }, [setValue, fieldName, stateValue]);
 }
+
+export const usePageTitle = (title) => {
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+}

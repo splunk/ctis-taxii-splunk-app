@@ -1,14 +1,12 @@
 import React from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
-import Button from "@splunk/react-ui/Button";
 import {deleteIdentity, getIdentities} from "@splunk/my-react-component/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {editIdentityPage, NEW_IDENTITY_PAGE} from "@splunk/my-react-component/src/urls";
-import Heading from "@splunk/react-ui/Heading";
 import Plus from '@splunk/react-icons/Plus';
 import DeleteModal from "@splunk/my-react-component/src/DeleteModal";
 import useModal from "@splunk/my-react-component/src/useModal";
@@ -17,6 +15,8 @@ import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconO
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {IdentitiesSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import PropTypes from "prop-types";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
+import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {layoutWithTheme} from "../../common/theme";
 import {getUrlQueryParams} from "../../common/queryParams";
 import IdentityForm from "../../common/IdentityForm";
@@ -73,10 +73,10 @@ function ListIdentities() {
     const [query, setQuery] = React.useState({});
     return (
         <>
-            <Heading level={1}>Identities</Heading>
-            <div>
-                <Button icon={<Plus/>} label="New Identity" appearance="primary" to={NEW_IDENTITY_PAGE}/>
-            </div>
+            <PageHeadingContainer>
+                <PageHeading level={1}>Identities</PageHeading>
+                <BaseButton inline icon={<Plus/>} label="New Identity" appearance="primary" to={NEW_IDENTITY_PAGE}/>
+            </PageHeadingContainer>
             <IdentitiesSearchBar onQueryChange={setQuery}/>
             <PaginatedDataTable renderData={renderDataTable} fetchData={getIdentities} query={query} onError={(e) => {
                 createErrorToast(e);

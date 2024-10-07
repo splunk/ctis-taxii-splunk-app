@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from "prop-types";
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import Loader from "@splunk/my-react-component/src/Loader";
-import Heading from "@splunk/react-ui/Heading";
 import {SubmissionsSearchBar} from "@splunk/my-react-component/src/SearchBar";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {getSubmissions} from "@splunk/my-react-component/src/ApiClient";
@@ -14,10 +13,12 @@ import {CancelSubmissionButton} from "@splunk/my-react-component/src/buttons/Can
 import useModal from "@splunk/my-react-component/src/useModal";
 
 import {CancelSubmissionModal} from "@splunk/my-react-component/src/CancelSubmissionModal";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import {formatScheduledAt, SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
 import {Form} from "./form";
 import {getUrlQueryParams} from "../../common/queryParams";
 import {layoutWithTheme} from "../../common/theme";
+import {usePageTitle} from "../../common/utils";
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => row.submission_id},
@@ -58,9 +59,13 @@ RenderDataTable.propTypes = {
 
 function ListSubmissions() {
     const [query, setQuery] = React.useState({});
+    const title = "Submissions";
+    usePageTitle(title);
     return (
         <>
-            <Heading level={1}>Submissions</Heading>
+            <PageHeadingContainer>
+                <PageHeading level={1}>Submissions</PageHeading>
+            </PageHeadingContainer>
             <SubmissionsSearchBar onQueryChange={setQuery}/>
             <PaginatedDataTable renderData={RenderDataTable} fetchData={getSubmissions} sort="scheduled_at:-1"
                                 query={query} onError={(e) => {
@@ -76,7 +81,7 @@ function Router() {
         const groupingId = queryParams.get('grouping_id');
         return <Form groupingId={groupingId}/>
     }
-        return <ListSubmissions/>;
+    return <ListSubmissions/>;
 
 }
 

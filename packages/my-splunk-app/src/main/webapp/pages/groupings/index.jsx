@@ -1,8 +1,6 @@
 import React from 'react';
 
 import ExpandableDataTable from "@splunk/my-react-component/src/ExpandableDataTable";
-import Button from "@splunk/react-ui/Button";
-import Heading from "@splunk/react-ui/Heading";
 import PaginatedDataTable from "@splunk/my-react-component/src/PaginatedDataTable";
 import {AppContainer, createErrorToast} from "@splunk/my-react-component/src/AppContainer";
 import P from "@splunk/react-ui/Paragraph";
@@ -21,6 +19,8 @@ import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/Submi
 import {IndicatorCardLayout} from "@splunk/my-react-component/src/IndicatorCard";
 import {SubmissionCardLayout} from "@splunk/my-react-component/src/SubmissionCard";
 import PropTypes from "prop-types";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
+import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -89,12 +89,13 @@ function renderDataTable({records, loading, error}) {
 
 function ListGroupings() {
     const [query, setQuery] = React.useState({});
+
     return (
         <>
-            <Heading level={1}>Groupings</Heading>
-            <div>
-                <Button icon={<Plus/>} label="New Grouping" appearance="primary" to={NEW_GROUPING_PAGE}/>
-            </div>
+            <PageHeadingContainer>
+                <PageHeading level={1}>Groupings</PageHeading>
+                <BaseButton inline icon={<Plus/>} label="New Grouping" appearance="primary" to={NEW_GROUPING_PAGE}/>
+            </PageHeadingContainer>
             <GroupingsSearchBar onQueryChange={setQuery}/>
             <PaginatedDataTable renderData={renderDataTable} fetchData={getGroupings} query={query} onError={(e) => {
                 createErrorToast(e);

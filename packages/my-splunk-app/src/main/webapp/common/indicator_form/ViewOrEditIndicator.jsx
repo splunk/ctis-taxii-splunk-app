@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import {editIndicator, getIndicator, useGetRecord} from "@splunk/my-react-component/src/ApiClient";
 import {FormProvider, useForm} from "react-hook-form";
 import Loader from "@splunk/my-react-component/src/Loader";
-import {MyHeading} from "@splunk/my-react-component/MyHeading";
 import {reduceIsoStringPrecisionToSeconds} from "@splunk/my-react-component/src/date_utils";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
 import DeleteButton from "@splunk/my-react-component/src/DeleteButton";
@@ -16,6 +15,7 @@ import P from "@splunk/react-ui/Paragraph";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
 import useModal from "@splunk/my-react-component/src/useModal";
 import PropTypes from "prop-types";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import {useOnFormSubmit} from "../formSubmit";
 import {PatternSuggester} from "../../pages/new_indicator/patternSuggester";
 import useIndicatorCategories from "./indicatorCategories";
@@ -44,6 +44,7 @@ import {
     REGISTER_FIELD_OPTIONS
 } from "./fieldNames";
 import {GroupingIdFieldV2} from "./GroupingsDropdown";
+import {usePageTitle} from "../utils";
 
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,
@@ -76,9 +77,9 @@ ButtonsForEditMode.propTypes = {
 export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const title = editMode ? `Edit Indicator` : `Indicator (${indicatorId})`;
     const readOnly = !editMode;
-    useEffect(() => {
-        document.title = title;
-    }, [title]);
+
+    usePageTitle(title);
+
     const {record, loading, error} = useGetRecord({
         restGetFunction: getIndicator,
         restFunctionQueryArgs: {indicatorId},
@@ -123,7 +124,9 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const indicatorValue = watch(FIELD_INDICATOR_VALUE);
 
     return (<div>
-        <MyHeading level={1}>{title}</MyHeading>
+        <PageHeadingContainer>
+            <PageHeading>{title}</PageHeading>
+        </PageHeadingContainer>
         <Loader loading={loading} error={error}>
             <FormProvider {...methods}>
                 <StyledForm onSubmit={handleSubmit(onSubmit)}>

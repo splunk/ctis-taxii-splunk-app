@@ -22,8 +22,7 @@ const SearchControlContainer = styled.div`
         margin: 0 !important;
     }
 
-    margin-top: ${variables.spacingSmall};
-    margin-bottom: ${variables.spacingSmall};
+    margin-bottom: ${variables.spacingXSmall};
 `;
 
 export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, children}) => {

@@ -7,16 +7,16 @@ import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
 import {VIEW_IDENTITIES_PAGE} from "@splunk/my-react-component/src/urls";
-import {variables} from "@splunk/themes";
-import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
+import PropTypes from "prop-types";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fields";
 import {useOnFormSubmit} from "./formSubmit";
+import {usePageTitle} from "./utils";
 
 const MyForm = styled.form`
-    margin-top: ${variables.spacingMedium};
     max-width: 600px;
 `
 
@@ -38,12 +38,14 @@ function GotoIdentitiesPageButton() {
 }
 
 export function Form({existingIdentity}) {
-    const title = existingIdentity ? "Editing Identity" : "Create New Identity";
+    const title = existingIdentity ? "Edit Identity" : "Create New Identity";
+    usePageTitle(title);
+
     const submissionSuccessModalTitle = existingIdentity ? "Successfully Edited Identity" : "Successfully Created New Identity";
     const methods = useForm({
         mode: 'all',
     });
-    const {register, setValue, handleSubmit, formState, getValues} = methods;
+    const {register, setValue, handleSubmit, formState} = methods;
 
     register(FORM_FIELD_NAME, {required: "Name is required.", value: ""});
     register(FORM_FIELD_IDENTITY_CLASS, {required: "Identity Class is required.", value: ""});
@@ -68,14 +70,13 @@ export function Form({existingIdentity}) {
             console.error(error)
         },
     })
-    useEffect(() => {
-        console.log(getValues());
-    }, [formState]);
 
     return (
         <FormProvider {...methods}>
             <MyForm onSubmit={handleSubmit(onSubmit)}>
-                <Heading>{title}</Heading>
+                <PageHeadingContainer>
+                    <PageHeading>{title}</PageHeading>
+                </PageHeadingContainer>
                 <section>
                     {submissionError && <Message appearance="fill" type="error">
                         {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
@@ -104,6 +105,10 @@ export function Form({existingIdentity}) {
     )
 }
 
+Form.propTypes = {
+    existingIdentity: PropTypes.object,
+}
+
 function EditModeForm({identityId}) {
     const {record: identity, loading, error} = useGetRecord({
         restGetFunction: getIdentity,
@@ -116,6 +121,14 @@ function EditModeForm({identityId}) {
     );
 }
 
+EditModeForm.propTypes = {
+    identityId: PropTypes.string.isRequired,
+}
+
 export default function IdentityForm({editMode, identityId}) {
     return editMode ? <EditModeForm identityId={identityId}/> : <Form/>;
+}
+IdentityForm.propTypes = {
+    editMode: PropTypes.bool,
+    identityId: PropTypes.string,
 }

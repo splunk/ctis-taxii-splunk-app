@@ -5,6 +5,7 @@ import P from "@splunk/react-ui/Paragraph";
 import SearchJob from '@splunk/search-job';
 import Loader from "@splunk/my-react-component/src/Loader";
 import PropTypes from "prop-types";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import {NewIndicatorForm} from "./NewIndicatorForm";
 import {layoutWithTheme} from "../../common/theme";
 
@@ -67,7 +68,9 @@ function MainComponent() {
 
     return (
         <AppContainer>
-            <Heading level={1}>Add Indicators of Compromise (IoC) to Grouping</Heading>
+            <PageHeadingContainer>
+                <PageHeading level={1}>Add Indicators of Compromise (IoC) to Grouping</PageHeading>
+            </PageHeadingContainer>
             <P>Add one or more related indicators to an existing grouping.</P>
             {hasSearchId && <NewIndicatorFormInWorkflowMode sid={sid} offset={offset} splunkFieldName={splunkFieldName}
                                                             splunkFieldValue={splunkFieldValue}/>}

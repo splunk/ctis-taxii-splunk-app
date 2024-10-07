@@ -13,8 +13,6 @@ import Message from "@splunk/react-ui/Message";
 import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
 import {urlForEditGrouping, VIEW_GROUPINGS_PAGE} from "@splunk/my-react-component/src/urls";
-import {variables} from "@splunk/themes";
-import Heading from "@splunk/react-ui/Heading";
 import Loader from "@splunk/my-react-component/src/Loader";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";
@@ -24,11 +22,12 @@ import CancelButton from "@splunk/my-react-component/src/CancelButton";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteGroupingModal} from "@splunk/my-react-component/src/DeleteModal";
 import PropTypes from "prop-types";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
 import {useOnFormSubmit} from "./formSubmit";
+import {usePageTitle} from "./utils";
 
 const MyForm = styled.form`
-    margin-top: ${variables.spacingMedium};
     max-width: 800px;
 `
 
@@ -68,10 +67,12 @@ export function Form({existingGrouping, readOnly = false}) {
     }
     let title;
     if (existingGrouping) {
-        title = readOnly ? "Grouping" : "Editing Grouping";
+        title = readOnly ? "Grouping" : "Edit Grouping";
     } else {
         title = "Create New Grouping";
     }
+    usePageTitle(title);
+
     const submissionSuccessModalTitle = existingGrouping ? "Successfully Edited Grouping" : "Successfully Created New Grouping";
     const methods = useForm({
         mode: 'all',
@@ -130,7 +131,9 @@ export function Form({existingGrouping, readOnly = false}) {
     return (
         <FormProvider {...methods}>
             <MyForm onSubmit={handleSubmit(onSubmit)}>
-                <Heading>{title}</Heading>
+                <PageHeadingContainer>
+                    <PageHeading>{title}</PageHeading>
+                </PageHeadingContainer>
                 <section>
                     {submissionError && <Message appearance="fill" type="error">
                         {submissionError?.json?.error && <code>{submissionError.json.error}</code>}

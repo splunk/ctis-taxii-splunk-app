@@ -1,6 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import PropTypes from "prop-types";
-import Heading from "@splunk/react-ui/Heading";
 import {
     errorToText,
     getGrouping,
@@ -20,11 +19,13 @@ import CollapsiblePanel from "@splunk/react-ui/CollapsiblePanel";
 import Code from '@splunk/react-ui/Code';
 import Switch from "@splunk/react-ui/Switch";
 import {dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
-import {variables} from "@splunk/themes";
 import moment from "moment";
 import {urlForViewSubmission} from "@splunk/my-react-component/src/urls";
 import Message from "@splunk/react-ui/Message";
+import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
+import P from "@splunk/react-ui/Paragraph";
 import {GroupingId, ScheduledAt, TaxiiCollectionId, TaxiiConfigField} from "../../common/submission_form/fields";
+import {usePageTitle} from "../../common/utils";
 
 const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
 const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
@@ -34,9 +35,6 @@ const FIELD_SCHEDULED_AT = 'scheduled_at';
 const StyledForm = styled.form`
     max-width: 1000px;
 `;
-const MyHeading = styled(Heading)`
-    margin-bottom: ${variables.spacingXLarge};
-`
 const SwitchContainer = styled.div`
     flex-grow: 0;
     min-width: fit-content;
@@ -86,6 +84,9 @@ function useTaxiiCollections({selectedTaxiiConfig}) {
 }
 
 export function Form({groupingId}) {
+    const title = "Submit Grouping";
+    usePageTitle(title);
+
     const methods = useForm({
         mode: 'all',
         defaultValues: {
@@ -171,9 +172,9 @@ export function Form({groupingId}) {
             }, (errorResponse) => {
                 console.error("Error submitting grouping", errorResponse);
                 errorToText(errorResponse).then(
-                       errorText => {
-                           setSubmissionError(errorText);
-                       }
+                    errorText => {
+                        setSubmissionError(errorText);
+                    }
                 );
             });
         } else {
@@ -197,7 +198,10 @@ export function Form({groupingId}) {
     return (
         <FormProvider {...methods}>
             <StyledForm name="SubmitGrouping" onSubmit={handleSubmit(onSubmit)}>
-                <MyHeading level={1}>Submit Grouping as STIX Bundle to TAXII Server</MyHeading>
+                <PageHeadingContainer>
+                    <PageHeading level={1}>{title}</PageHeading>
+                </PageHeadingContainer>
+                <P>Submit Grouping as STIX Bundle to TAXII Server</P>
                 <Loader error={error} loading={loading}>
                     {submissionError && <Message appearance="fill" type="error">
                         Error: {JSON.stringify(submissionError)}
@@ -235,6 +239,7 @@ export function Form({groupingId}) {
         </FormProvider>
     );
 }
+
 Form.propTypes = {
     groupingId: PropTypes.string.isRequired
 }
