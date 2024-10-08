@@ -369,7 +369,7 @@ export function listIndicatorCategories(splunkFieldName, indicatorValue, success
     }
     return getData({
         endpoint: 'list-ioc-categories',
-        queryParams: queryParams,
+        queryParams,
         successHandler, errorHandler
     })
 }

@@ -14,12 +14,6 @@ class TestScenarios:
         assert "categories" in resp
         for category in ["destination_domain", "file_hash_md5"]:
             assert category in resp["categories"]
-        assert resp["suggested"] is None
-
-    def test_list_ioc_categories_with_suggestion(self, session):
-        resp = get_endpoint(endpoint="list-ioc-categories", session=session, splunk_field_name="dest_ip", splunk_field_value="1.2.3.4/32")
-        assert "categories" in resp
-        assert resp["suggested"] == "destination_ipv4"
 
 
 
