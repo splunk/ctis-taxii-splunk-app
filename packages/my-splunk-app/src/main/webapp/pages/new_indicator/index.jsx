@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {AppContainer} from "@splunk/my-react-component/src/AppContainer";
-import Heading from "@splunk/react-ui/Heading";
 import P from "@splunk/react-ui/Paragraph";
 import SearchJob from '@splunk/search-job';
 import Loader from "@splunk/my-react-component/src/Loader";

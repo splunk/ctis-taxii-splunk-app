@@ -21,10 +21,10 @@ import {SubmissionCardLayout} from "@splunk/my-react-component/src/SubmissionCar
 import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
+import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_utils";
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
 import {getUrlQueryParams} from "../../common/queryParams";
-import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_utils";
 
 function SubmitToTaxiiButton({row}) {
     const disabled = row.indicators.length === 0;

@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from "react";
+import {useState, useMemo} from "react";
 
 export const useOnFormSubmit = ({formMethods, submitToPostEndpoint, submissionSuccessCallback, submissionErrorCallback}) => {
     const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -23,25 +23,25 @@ export const useOnFormSubmit = ({formMethods, submitToPostEndpoint, submissionSu
                 if(submissionSuccessCallback){
                     submissionSuccessCallback(resp);
                 }
-            }, async (error_or_error_response) => {
-                console.error("Error submitting form:", error_or_error_response);
-                const error_object = {};
-                if (error_or_error_response instanceof Error) {
-                    error_object.error = error_or_error_response;
+            }, async (errorOrErrorResp) => {
+                console.error("Error submitting form:", errorOrErrorResp);
+                const errorObject = {};
+                if (errorOrErrorResp instanceof Error) {
+                    errorObject.error = errorOrErrorResp;
                 }else{
-                    error_object.response = {
-                            status: error_or_error_response.status,
-                            statusText: error_or_error_response.statusText,
-                            ok: error_or_error_response.ok,
+                    errorObject.response = {
+                            status: errorOrErrorResp.status,
+                            statusText: errorOrErrorResp.statusText,
+                            ok: errorOrErrorResp.ok,
                     };
 
-                    if (error_or_error_response?.headers?.get('content-type')?.includes('application/json')) {
-                        error_object.json = await error_or_error_response.json();
+                    if (errorOrErrorResp?.headers?.get('content-type')?.includes('application/json')) {
+                        errorObject.json = await errorOrErrorResp.json();
                     }
                 }
-                setSubmissionError(error_object);
+                setSubmissionError(errorObject);
                 if(submissionErrorCallback){
-                    submissionErrorCallback(error_object);
+                    submissionErrorCallback(errorObject);
                 }
             });
         }else{
