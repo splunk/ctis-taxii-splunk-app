@@ -73,9 +73,8 @@ export function getData({endpoint, queryParams, query, successHandler, errorHand
         .then(resp => {
             if (!resp.ok) {
                 return Promise.reject(resp);
-            } else {
-                return resp.json();
             }
+            return resp.json();
         })
         .then(json => successHandler(json, {requestId}))
         .catch(errorHandler)
@@ -359,17 +358,9 @@ export function getSubmission({submissionId, successHandler, errorHandler}) {
     })
 }
 
-export function listIndicatorCategories(splunkFieldName, indicatorValue, successHandler, errorHandler) {
-    const queryParams = {};
-    if (splunkFieldName) {
-        queryParams.splunk_field_name = splunkFieldName;
-    }
-    if (indicatorValue) {
-        queryParams.indicator_value = indicatorValue;
-    }
+export function listIndicatorCategories(successHandler, errorHandler) {
     return getData({
         endpoint: 'list-ioc-categories',
-        queryParams,
         successHandler, errorHandler
     })
 }
