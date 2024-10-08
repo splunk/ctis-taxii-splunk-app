@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
 import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
@@ -86,9 +86,18 @@ IndicatorCategoryField.propTypes = {
     options: PropTypes.array.isRequired
 }
 
-export function StixPatternField({suggestedPattern, fieldName, ...props}) {
+export function StixPatternField({suggestedPattern, fieldName, error, ...props}) {
     const formMethods = useFormContext();
-    const {setValue} = formMethods;
+    const {setValue, setError, clearErrors} = formMethods;
+
+    useEffect(() => {
+        if(error){
+            setError(fieldName, {type: "custom", message: error});
+        }else{
+            clearErrors(fieldName);
+        }
+    }, [clearErrors, error, setError, fieldName]);
+
     return <StixPatternControlGroup label="STIX Pattern"
                                     {...useFormInputProps(fieldName)}
                                     suggestedPattern={suggestedPattern}
@@ -99,7 +108,8 @@ export function StixPatternField({suggestedPattern, fieldName, ...props}) {
 
 StixPatternField.propTypes = {
     suggestedPattern: PropTypes.string.isRequired,
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
+    error: PropTypes.string
 }
 
 export function IndicatorNameField({fieldName, ...props}) {
