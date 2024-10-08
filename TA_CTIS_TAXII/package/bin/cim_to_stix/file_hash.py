@@ -1,12 +1,11 @@
 import re
 from enum import Enum
-from typing import Optional
 
 from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpression
 from stix2.patterns import _PatternExpression
 
-from .ioc_category import IoCCategory
 from .base_converter import CIMToSTIXConverter
+from .ioc_category import IoCCategory
 
 
 class FileHashType(str, Enum):
@@ -65,7 +64,3 @@ class FileHashConverter(CIMToSTIXConverter):
             return IoCCategory.FILE_HASH_SHA512
         else:
             raise ValueError(f"Invalid file hash: {value}")
-
-    @staticmethod
-    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return file_hash_looks_like(splunk_field_value) is not None

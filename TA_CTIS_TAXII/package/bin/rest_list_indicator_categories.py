@@ -8,7 +8,7 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
     from common import get_logger_for_script, AbstractRestHandler
-    from cim_to_stix import convert_splunk_field_to_category, IoCCategory
+    from cim_to_stix import IoCCategory
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e

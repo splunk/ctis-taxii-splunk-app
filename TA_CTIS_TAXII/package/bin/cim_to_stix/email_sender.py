@@ -2,7 +2,6 @@ from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpressio
 from stix2.patterns import _PatternExpression
 
 from .base_converter import CIMToSTIXConverter
-from . import cim_fields
 from .ioc_category import IoCCategory
 
 
@@ -23,7 +22,3 @@ class EmailSenderConverter(CIMToSTIXConverter):
     @staticmethod
     def category(value: str) -> IoCCategory:
         return IoCCategory.EMAIL_SENDER
-
-    @staticmethod
-    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name == cim_fields.EMAIL

@@ -21,7 +21,3 @@ class DestinationIpv6Converter(CIMToSTIXConverter):
     @staticmethod
     def category(value: str) -> IoCCategory:
         return IoCCategory.DESTINATION_IPV6
-
-    @staticmethod
-    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name == DESTINATION_IP and ip_is_ipv6(splunk_field_value)

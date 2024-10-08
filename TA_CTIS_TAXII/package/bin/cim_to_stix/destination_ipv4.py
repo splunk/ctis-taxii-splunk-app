@@ -22,7 +22,3 @@ class DestinationIpv4Converter(CIMToSTIXConverter):
     @staticmethod
     def category(value: str) -> IoCCategory:
         return IoCCategory.DESTINATION_IPV4
-
-    @staticmethod
-    def supports_field(splunk_field_name:str, splunk_field_value:str) -> bool:
-        return splunk_field_name == DESTINATION_IP and ip_is_ipv4(splunk_field_value)

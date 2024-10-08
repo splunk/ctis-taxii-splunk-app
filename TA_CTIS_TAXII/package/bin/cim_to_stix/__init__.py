@@ -88,15 +88,9 @@ CATEGORY_TO_CONVERTER = {
     IoCCategory.EMAIL_SENDER: EmailSenderConverter
 }
 
+
 def convert_to_stix_pattern(category: IoCCategory, value: str) -> str:
     converter = CATEGORY_TO_CONVERTER.get(category)
     if converter is None:
         raise NotImplementedError(f"Category {category} is not supported")
     return str(converter.convert(value))
-
-def convert_splunk_field_to_category(splunk_field_name: str, splunk_field_value:str) -> IoCCategory:
-    for converter in CONVERTER_CLASSES:
-        if converter.supports_field(splunk_field_name, splunk_field_value):
-            return converter.category(value=splunk_field_value)
-    else:
-        raise ValueError(f"Category conversion for {repr(splunk_field_name)}={repr(splunk_field_value)} is not supported.")

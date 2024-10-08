@@ -16,7 +16,3 @@ class FileNameConverter(CIMToSTIXConverter):
     @staticmethod
     def category(value: str) -> IoCCategory:
         return IoCCategory.FILE_NAME
-
-    @staticmethod
-    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name in ("file_name", "filename")
