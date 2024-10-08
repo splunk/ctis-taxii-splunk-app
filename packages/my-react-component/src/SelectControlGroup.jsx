@@ -17,7 +17,7 @@ const SelectControlGroup = ({
     return (
         <CustomControlGroup label={label} help={help} error={error} value={value} readOnly={readOnly}>
             <Select disabled={disabled} value={value} onChange={onChange} error={error}
-                    animateLoading={true}
+                    animateLoading
                     isLoadingOptions={loading}>
                 {options.map(option => (
                     <Select.Option disabled={option.disabled ?? false} key={option.value} label={option.label} value={option.value}/>

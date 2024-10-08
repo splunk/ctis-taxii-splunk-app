@@ -13,7 +13,7 @@ export const suggestPattern = (indicatorCategory, indicatorValue, setSuggestedPa
         }, (error) => {
             console.error(error);
             setSuggestedPattern(null);
-        });
+        }).then();
     } else {
         setSuggestedPattern(null);
     }

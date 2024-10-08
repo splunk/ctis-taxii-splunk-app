@@ -82,8 +82,11 @@ export const IndicatorSubForm = ({
     const [toggleShowSplunkFieldDropdown, setToggleShowSplunkFieldDropdown] = useState(true);
 
     useEffect(() => {
-        if (splunkEvent?.splunkFieldName && toggleShowSplunkFieldDropdown) {
-            setValue(fieldIndicatorValue, splunkEvent[splunkFieldName], {shouldValidate: true});
+        if(splunkEvent){
+            // https://stackoverflow.com/a/455340/23523267
+            if (Object.prototype.hasOwnProperty.call(splunkEvent, splunkFieldName) && toggleShowSplunkFieldDropdown) {
+                setValue(fieldIndicatorValue, splunkEvent[splunkFieldName], {shouldValidate: true});
+            }
         }
     }, [fieldIndicatorValue, setValue, splunkEvent, splunkFieldName, toggleShowSplunkFieldDropdown]);
 

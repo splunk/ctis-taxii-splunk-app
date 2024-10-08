@@ -132,7 +132,8 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                 </section>
                 <Divider/>
                 {fields.map((field, index) => {
-                    return <IndicatorSubForm field={field} index={index} register={register}
+                    return <IndicatorSubForm field={field}
+                                             index={index}
                                              splunkEvent={event}
                                              removeSelf={() => remove(index)}
                                              indicatorCategories={indicatorCategories}
