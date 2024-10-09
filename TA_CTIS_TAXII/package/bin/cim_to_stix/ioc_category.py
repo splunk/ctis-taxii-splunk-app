@@ -28,3 +28,6 @@ class IoCCategory(Enum):
     FILE_PATH = "file_path"
 
     EMAIL_SENDER = "email_sender"
+    EMAIL_BODY = "email_body"
+    EMAIL_SUBJECT = "email_subject"
+    EMAIL_ATTACHMENT_FILE_NAME = "email_attachment_file_name"

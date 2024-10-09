@@ -2,7 +2,7 @@ from .destination_domain import DestinationDomainConverter
 from .destination_ipv4 import DestinationIpv4Converter
 from .destination_ipv6 import DestinationIpv6Converter
 from .destination_mac import DestinationMacAddressConverter
-from .email_sender import EmailSenderConverter
+from .email import EmailSenderConverter, EmailBodyConverter, EmailSubjectConverter, EmailAttachmentFilenameConverter
 from .file_hash import MD5FileHashConverter, SHA1FileHashConverter, SHA256FileHashConverter, SHA512FileHashConverter
 from .file_name import FileNameConverter
 from .file_path import FilePathConverter
@@ -60,7 +60,10 @@ CATEGORY_TO_CONVERTER = {
     IoCCategory.FILE_NAME: FileNameConverter,
     IoCCategory.FILE_PATH: FilePathConverter,
     IoCCategory.URL: UrlConverter,
-    IoCCategory.EMAIL_SENDER: EmailSenderConverter
+    IoCCategory.EMAIL_SENDER: EmailSenderConverter,
+    IoCCategory.EMAIL_BODY: EmailBodyConverter,
+    IoCCategory.EMAIL_SUBJECT: EmailSubjectConverter,
+    IoCCategory.EMAIL_ATTACHMENT_FILE_NAME: EmailAttachmentFilenameConverter
 }
 
 

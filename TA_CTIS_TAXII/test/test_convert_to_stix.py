@@ -2,10 +2,12 @@ import pytest
 
 from TA_CTIS_TAXII.package.bin.cim_to_stix import IoCCategory, convert_to_stix_pattern
 
+
 class TestLookupConverterByCategory:
     def test_lookup(self):
         category = IoCCategory('destination_domain')
         assert category == IoCCategory.DESTINATION_DOMAIN
+
 
 class TestOther:
     def test_should_throw_error_if_field_name_not_supported(self):
@@ -97,6 +99,20 @@ class TestNetworkTraffic:
         pattern = convert_to_stix_pattern(category=IoCCategory.URL, value="https://example.com")
         assert pattern == "[url:value = 'https://example.com']"
 
+
+class TestEmail:
     def test_email_sender(self):
         pattern = convert_to_stix_pattern(category=IoCCategory.EMAIL_SENDER, value="abc@email.com")
         assert pattern == "[email-message:sender_ref.value = 'abc@email.com']"
+
+    def test_email_subject(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.EMAIL_SUBJECT, value="hello")
+        assert pattern == "[email-message:subject = 'hello']"
+
+    def test_email_body(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.EMAIL_BODY, value="world\n")
+        assert pattern == "[email-message:body = 'world\n']"
+
+    def test_email_attachment_filename(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.EMAIL_ATTACHMENT_FILE_NAME, value="hello.exe")
+        assert pattern == "[email-message:body_multipart[*].body_raw_ref.name = 'hello.exe']"
