@@ -2,6 +2,7 @@ import TextArea from "@splunk/react-ui/TextArea";
 import React from "react";
 import PropTypes from "prop-types";
 import Link from "@splunk/react-ui/Link";
+import Message from "@splunk/react-ui/Message";
 import {CustomControlGroup} from "./CustomControlGroup";
 import {LinkContainer} from "./LinkContainer";
 
@@ -11,6 +12,7 @@ const StixPatternControlGroup = ({
                                      onChange,
                                      help,
                                      error,
+                                     patternApiError,
                                      setValueToSuggestedPattern,
                                      suggestedPattern,
                                      ...rest
@@ -33,6 +35,7 @@ const StixPatternControlGroup = ({
             {
                 (!value || valueIsDiff) && patternExists && suggestionText
             }
+            {patternApiError && <Message type="warning">Warning: {patternApiError}</Message>}
         </CustomControlGroup>
     );
 
@@ -45,6 +48,7 @@ StixPatternControlGroup.propTypes = {
     help: PropTypes.string,
     setValueToSuggestedPattern: PropTypes.func,
     suggestedPattern: PropTypes.string,
+    patternApiError: PropTypes.string
 }
 
 export default StixPatternControlGroup;

@@ -14,11 +14,12 @@ export const usePatternSuggester = (indicatorCategory, indicatorValue) => {
             getStixPatternSuggestion(indicatorCategory, debounceIndicatorValue, (resp) => {
                 console.log("Pattern Suggestion response:", resp);
                 setSuggestedPattern(resp?.pattern);
+                setError(null);
             }, async (errorResp) => {
                 const errorText = await errorToText(errorResp);
                 console.error(errorResp, errorText);
                 setError(errorText);
-                setSuggestedPattern(null);
+                setSuggestedPattern("...");
             }).then();
         } else {
             setSuggestedPattern(null);
@@ -30,7 +31,7 @@ export const usePatternSuggester = (indicatorCategory, indicatorValue) => {
 export const PatternSuggester = ({indicatorCategory, indicatorValue, stixPatternFieldName, ...props}) => {
     const {suggestedPattern, error} = usePatternSuggester(indicatorCategory, indicatorValue);
     useFieldWatchesStateValue({fieldName: stixPatternFieldName, stateValue: suggestedPattern});
-    return <StixPatternField {...props} suggestedPattern={suggestedPattern} fieldName={stixPatternFieldName} error={error}/>;
+    return <StixPatternField {...props} suggestedPattern={suggestedPattern} fieldName={stixPatternFieldName} patternApiError={error}/>;
 }
 
 PatternSuggester.propTypes = {
