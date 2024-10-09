@@ -2,7 +2,6 @@ from stix2 import AndBooleanExpression, EqualityComparisonExpression, ObjectPath
 from stix2.patterns import _PatternExpression
 
 from .base_converter import CIMToSTIXConverter
-from .ioc_category import IoCCategory
 from .stix_constants import MAC_ADDRESS, NETWORK_TRAFFIC
 
 
@@ -14,7 +13,3 @@ class SourceMacAddressConverter(CIMToSTIXConverter):
         ece2 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["src_ref", "value"]), value)
         observation = ObservationExpression(AndBooleanExpression([ece1, ece2]))
         return observation
-
-    @staticmethod
-    def category(value: str) -> IoCCategory:
-        return IoCCategory.SOURCE_MAC_ADDRESS

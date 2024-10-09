@@ -2,7 +2,6 @@ from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpressio
 from stix2.patterns import _PatternExpression
 
 from .base_converter import CIMToSTIXConverter
-from .ioc_category import IoCCategory
 
 
 class EmailSenderConverter(CIMToSTIXConverter):
@@ -18,7 +17,3 @@ class EmailSenderConverter(CIMToSTIXConverter):
         ece = EqualityComparisonExpression(ObjectPath("email-message", ["sender_ref", "value"]), value)
         observation = ObservationExpression(ece)
         return observation
-
-    @staticmethod
-    def category(value: str) -> IoCCategory:
-        return IoCCategory.EMAIL_SENDER

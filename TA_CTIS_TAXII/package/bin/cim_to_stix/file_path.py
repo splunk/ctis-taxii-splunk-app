@@ -2,7 +2,6 @@ from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpressio
 from stix2.patterns import StringConstant, _PatternExpression
 
 from .base_converter import CIMToSTIXConverter
-from .ioc_category import IoCCategory
 
 
 class FilePathConverter(CIMToSTIXConverter):
@@ -13,7 +12,3 @@ class FilePathConverter(CIMToSTIXConverter):
         ece = EqualityComparisonExpression(ObjectPath("file", ["parent_directory_ref", "path"]), file_path)
         observation = ObservationExpression(ece)
         return observation
-
-    @staticmethod
-    def category(value: str) -> IoCCategory:
-        return IoCCategory.FILE_PATH

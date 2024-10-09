@@ -5,7 +5,6 @@ from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpressio
 from stix2.patterns import _PatternExpression
 
 from .base_converter import CIMToSTIXConverter
-from .ioc_category import IoCCategory
 
 
 class FileHashType(str, Enum):
@@ -47,20 +46,16 @@ class FileHashConverter(CIMToSTIXConverter):
         observation = ObservationExpression(ece)
         return observation
 
-    @staticmethod
-    def supports(ioc_category: str, value: str) -> bool:
-        return ioc_category in ("filehash", "file_hash") and file_hash_looks_like(value) is not None
-
-    @staticmethod
-    def category(value: str) -> IoCCategory:
-        hash_type = file_hash_looks_like(value)
-        if hash_type == "MD5":
-            return IoCCategory.FILE_HASH_MD5
-        elif hash_type == "SHA-1":
-            return IoCCategory.FILE_HASH_SHA1
-        elif hash_type == "SHA-256":
-            return IoCCategory.FILE_HASH_SHA256
-        elif hash_type == "SHA-512":
-            return IoCCategory.FILE_HASH_SHA512
-        else:
-            raise ValueError(f"Invalid file hash: {value}")
+    # @staticmethod
+    # def category(value: str) -> IoCCategory:
+    #     hash_type = file_hash_looks_like(value)
+    #     if hash_type == "MD5":
+    #         return IoCCategory.FILE_HASH_MD5
+    #     elif hash_type == "SHA-1":
+    #         return IoCCategory.FILE_HASH_SHA1
+    #     elif hash_type == "SHA-256":
+    #         return IoCCategory.FILE_HASH_SHA256
+    #     elif hash_type == "SHA-512":
+    #         return IoCCategory.FILE_HASH_SHA512
+    #     else:
+    #         raise ValueError(f"Invalid file hash: {value}")
