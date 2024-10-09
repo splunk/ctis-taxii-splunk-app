@@ -99,6 +99,22 @@ class TestNetworkTraffic:
         pattern = convert_to_stix_pattern(category=IoCCategory.URL, value="https://example.com")
         assert pattern == "[url:value = 'https://example.com']"
 
+    def test_dest_tcp_port(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.DESTINATION_TCP_PORT, value="4444")
+        assert pattern == "[network-traffic:dst_port = 4444 AND network-traffic:protocols[*] = 'tcp']"
+
+    def test_source_tcp_port(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.SOURCE_TCP_PORT, value="4444")
+        assert pattern == "[network-traffic:src_port = 4444 AND network-traffic:protocols[*] = 'tcp']"
+
+    def test_dest_udp_port(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.DESTINATION_UDP_PORT, value="4444")
+        assert pattern == "[network-traffic:dst_port = 4444 AND network-traffic:protocols[*] = 'udp']"
+
+    def test_source_udp_port(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.SOURCE_UDP_PORT, value="4444")
+        assert pattern == "[network-traffic:src_port = 4444 AND network-traffic:protocols[*] = 'udp']"
+
 
 class TestEmail:
     def test_email_sender(self):
