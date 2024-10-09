@@ -15,10 +15,10 @@ class FileHashType(str, Enum):
 
 
 HASH_TYPE_TO_STR_LENGTH = {
-    "MD5": 32,
-    "SHA-1": 40,
-    "SHA-256": 64,
-    "SHA-512": 128
+    FileHashType.MD5.value: 32,
+    FileHashType.SHA1.value: 40,
+    FileHashType.SHA256.value: 64,
+    FileHashType.SHA512.value: 128
 }
 
 
@@ -35,27 +35,36 @@ def file_hash_looks_like(filehash: str) -> str:
             return hash_type
 
 
-class FileHashConverter(CIMToSTIXConverter):
+def validate_file_hash(filehash: str, hash_type: FileHashType):
+    if not re.match(FILE_HASH_TYPE_TO_REGEX[hash_type], filehash, flags=re.IGNORECASE):
+        raise ValueError(f"Invalid {hash_type} hash: {filehash}")
 
+
+def generate_observation_expression(filehash: str, hash_type: FileHashType) -> ObservationExpression:
+    validate_file_hash(filehash, hash_type)
+    ece = EqualityComparisonExpression(ObjectPath("file", ["hashes", hash_type.value]), filehash)
+    return ObservationExpression(ece)
+
+
+class MD5FileHashConverter(CIMToSTIXConverter):
     @staticmethod
     def convert(value: str) -> _PatternExpression:
-        hash_type = file_hash_looks_like(value)
-        if hash_type is None:
-            raise ValueError(f"Invalid/unsupported file hash: {value}")
-        ece = EqualityComparisonExpression(ObjectPath("file", ["hashes", hash_type]), value)
-        observation = ObservationExpression(ece)
-        return observation
+        return generate_observation_expression(value, FileHashType.MD5)
 
-    # @staticmethod
-    # def category(value: str) -> IoCCategory:
-    #     hash_type = file_hash_looks_like(value)
-    #     if hash_type == "MD5":
-    #         return IoCCategory.FILE_HASH_MD5
-    #     elif hash_type == "SHA-1":
-    #         return IoCCategory.FILE_HASH_SHA1
-    #     elif hash_type == "SHA-256":
-    #         return IoCCategory.FILE_HASH_SHA256
-    #     elif hash_type == "SHA-512":
-    #         return IoCCategory.FILE_HASH_SHA512
-    #     else:
-    #         raise ValueError(f"Invalid file hash: {value}")
+
+class SHA1FileHashConverter(CIMToSTIXConverter):
+    @staticmethod
+    def convert(value: str) -> _PatternExpression:
+        return generate_observation_expression(value, FileHashType.SHA1)
+
+
+class SHA256FileHashConverter(CIMToSTIXConverter):
+    @staticmethod
+    def convert(value: str) -> _PatternExpression:
+        return generate_observation_expression(value, FileHashType.SHA256)
+
+
+class SHA512FileHashConverter(CIMToSTIXConverter):
+    @staticmethod
+    def convert(value: str) -> _PatternExpression:
+        return generate_observation_expression(value, FileHashType.SHA512)
