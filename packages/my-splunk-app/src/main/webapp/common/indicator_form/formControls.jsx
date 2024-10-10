@@ -1,6 +1,6 @@
 import React from 'react';
 import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGroup";
-import NumberControlGroup from "@splunk/my-react-component/src/NumberControlGroup";
+import ConfidenceControlGroup from "@splunk/my-react-component/src/ConfidenceControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
@@ -28,10 +28,15 @@ SplunkFieldNameDropdown.propTypes = {
     options: PropTypes.array.isRequired
 }
 
+const confidenceFieldTooltip = `
+The confidence property identifies the confidence that the creator has in the correctness of their data. The confidence value MUST be a number in the range of 0-100.
+`;
+
 export function ConfidenceField({fieldName, ...props}) {
-    return <NumberControlGroup label="Confidence" max={100} min={0} step={1}
-                               {...useFormInputProps(fieldName)}
-                               {...props}/>
+    return <ConfidenceControlGroup label="Confidence (0-100)" max={100} min={0} step={5}
+                                   tooltip={confidenceFieldTooltip}
+                                   {...useFormInputProps(fieldName)}
+                                   {...props}/>
 }
 
 ConfidenceField.propTypes = {

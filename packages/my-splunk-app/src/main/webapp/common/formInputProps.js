@@ -16,6 +16,9 @@ function findErrorMessageInArray(array, refName) {
         return null;
     }
     const mapping = array.map((item) => {
+        if(!item){
+            return null;
+        }
         const findInObject = Object.values(item).map((value) => {
             return findErrorMessageInFlatObject(value, refName);
         })

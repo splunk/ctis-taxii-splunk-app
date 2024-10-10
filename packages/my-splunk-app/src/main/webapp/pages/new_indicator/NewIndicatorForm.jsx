@@ -73,7 +73,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         mode: 'all',
         defaultValues: {
             [FIELD_GROUPING_ID]: null,
-            [FIELD_CONFIDENCE]: 100,
+            [FIELD_CONFIDENCE]: 50,
             [FIELD_TLP_RATING]: "GREEN",
             [FIELD_VALID_FROM]: dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision()),
             [FIELD_INDICATORS]: [firstIndicator]
