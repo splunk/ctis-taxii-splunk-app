@@ -13,6 +13,7 @@ from .source_ipv6 import SourceIpv6Converter
 from .source_mac import SourceMacAddressConverter
 from .url import UrlConverter
 from .port_number import DestinationTCPPortConverter, SourceTCPPortConverter, DestinationUDPPortConverter, SourceUDPPortConverter
+from .autonomous_system import AutonomousSystemNumberConverter
 
 """
 Sample of STIX patterns:
@@ -59,6 +60,8 @@ CATEGORY_TO_CONVERTER = {
     IoCCategory.SOURCE_TCP_PORT: SourceTCPPortConverter,
     IoCCategory.DESTINATION_UDP_PORT: DestinationUDPPortConverter,
     IoCCategory.SOURCE_UDP_PORT: SourceUDPPortConverter,
+
+    IoCCategory.AUTONOMOUS_SYSTEM_NUMBER: AutonomousSystemNumberConverter,
 
     IoCCategory.FILE_HASH_MD5: MD5FileHashConverter,
     IoCCategory.FILE_HASH_SHA1: SHA1FileHashConverter,

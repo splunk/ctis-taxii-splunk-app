@@ -24,6 +24,8 @@ class IoCCategory(Enum):
     DESTINATION_UDP_PORT = "destination_udp_port"
     SOURCE_UDP_PORT = "source_udp_port"
 
+    AUTONOMOUS_SYSTEM_NUMBER = "autonomous_system_number"
+
     FILE_HASH_MD5 = "file_hash_md5"
     FILE_HASH_SHA1 = "file_hash_sha1"
     FILE_HASH_SHA256 = "file_hash_sha256"

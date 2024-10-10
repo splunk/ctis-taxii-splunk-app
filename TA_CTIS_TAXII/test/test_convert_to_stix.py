@@ -115,6 +115,9 @@ class TestNetworkTraffic:
         pattern = convert_to_stix_pattern(category=IoCCategory.SOURCE_UDP_PORT, value="4444")
         assert pattern == "[network-traffic:src_port = 4444 AND network-traffic:protocols[*] = 'udp']"
 
+    def test_autonomous_system_number(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.AUTONOMOUS_SYSTEM_NUMBER, value="12345")
+        assert pattern == "[autonomous-system:number = 12345]"
 
 class TestEmail:
     def test_email_sender(self):
