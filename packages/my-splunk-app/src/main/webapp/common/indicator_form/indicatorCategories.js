@@ -5,7 +5,7 @@ export default function useIndicatorCategories() {
     const [indicatorCategories, setIndicatorCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        listIndicatorCategories(null, null, (resp) => {
+        listIndicatorCategories((resp) => {
             console.log(resp);
             setIndicatorCategories(resp.categories.map((category) => ({label: category, value: category})));
             setLoading(false);

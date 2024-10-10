@@ -1,5 +1,5 @@
 import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
 import {FormProvider, useFieldArray, useForm} from "react-hook-form";
 
@@ -116,6 +116,12 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             console.error(formState.errors);
         }
     }
+
+    useEffect(() => {
+        if (formState.errors && Object.keys(formState.errors).length > 0) {
+            console.error(formState.errors)
+        }
+    }, [formState])
 
     const {indicatorCategories} = useIndicatorCategories();
 

@@ -2,7 +2,6 @@ from stix2 import EqualityComparisonExpression, ObjectPath, ObservationExpressio
 from stix2.patterns import _PatternExpression
 
 from .base_converter import CIMToSTIXConverter
-from .ioc_category import IoCCategory
 
 
 class FileNameConverter(CIMToSTIXConverter):
@@ -12,11 +11,3 @@ class FileNameConverter(CIMToSTIXConverter):
         ece = EqualityComparisonExpression(ObjectPath("file", ["name"]), value)
         observation = ObservationExpression(ece)
         return observation
-
-    @staticmethod
-    def category(value: str) -> IoCCategory:
-        return IoCCategory.FILE_NAME
-
-    @staticmethod
-    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name in ("file_name", "filename")

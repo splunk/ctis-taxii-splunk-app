@@ -1,12 +1,8 @@
-from typing import Optional
-
 from stix2 import AndBooleanExpression, EqualityComparisonExpression, ObjectPath, ObservationExpression
 from stix2.patterns import _PatternExpression
+
 from .base_converter import CIMToSTIXConverter
-from .util import ip_is_ipv6
-from .cim_fields import DESTINATION_IP
 from .stix_constants import NETWORK_TRAFFIC
-from .ioc_category import IoCCategory
 
 
 class DestinationIpv6Converter(CIMToSTIXConverter):
@@ -17,11 +13,3 @@ class DestinationIpv6Converter(CIMToSTIXConverter):
         ece2 = EqualityComparisonExpression(ObjectPath(NETWORK_TRAFFIC, ["dst_ref", "value"]), value)
         observation = ObservationExpression(AndBooleanExpression([ece1, ece2]))
         return observation
-
-    @staticmethod
-    def category(value: str) -> IoCCategory:
-        return IoCCategory.DESTINATION_IPV6
-
-    @staticmethod
-    def supports_field(splunk_field_name: str, splunk_field_value: str) -> bool:
-        return splunk_field_name == DESTINATION_IP and ip_is_ipv6(splunk_field_value)

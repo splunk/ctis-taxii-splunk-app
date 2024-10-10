@@ -14,12 +14,12 @@ function deleteData({endpoint, data, successHandler, errorHandler}) {
 export async function errorToText(errorOrResponse) {
     if (errorOrResponse instanceof Response) {
         try {
-            const response_json = await errorOrResponse.json();
-            if(response_json?.error) {
-                return response_json.error;
-            }else{
-                return JSON.stringify(response_json);
+            const responseJson = await errorOrResponse.json();
+            if (responseJson?.error) {
+                return responseJson.error;
             }
+            return JSON.stringify(responseJson);
+
         } catch (e) {
             return String(errorOrResponse);
         }
@@ -52,7 +52,7 @@ function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) 
         .catch(errorHandler);
 }
 
-export function getData({endpoint, queryParams, query, successHandler, errorHandler, requestId=null}) {
+export function getData({endpoint, queryParams, query, successHandler, errorHandler, requestId = null}) {
     const url = createRESTURL(endpoint, {app});
     let allQueryParams = {};
     if (queryParams) {
@@ -73,9 +73,8 @@ export function getData({endpoint, queryParams, query, successHandler, errorHand
         .then(resp => {
             if (!resp.ok) {
                 return Promise.reject(resp);
-            } else {
-                return resp.json();
             }
+            return resp.json();
         })
         .then(json => successHandler(json, {requestId}))
         .catch(errorHandler)
@@ -151,6 +150,7 @@ export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
         errorHandler
     })
 }
+
 export function cancelSubmission({submissionId, successHandler, errorHandler}) {
     console.log('Cancelling submission:', submissionId);
     return postData('unschedule-submission', {submission_id: submissionId}, successHandler, errorHandler)
@@ -158,7 +158,15 @@ export function cancelSubmission({submissionId, successHandler, errorHandler}) {
 
 export const SORT_MODIFIED_DESC = "modified:-1";
 
-export function getIndicators({skip=0, limit=0, successHandler, errorHandler, query, sort=SORT_MODIFIED_DESC, ...rest}) {
+export function getIndicators({
+                                  skip = 0,
+                                  limit = 0,
+                                  successHandler,
+                                  errorHandler,
+                                  query,
+                                  sort = SORT_MODIFIED_DESC,
+                                  ...rest
+                              }) {
     return getData({
         endpoint: 'list-indicators',
         queryParams: {
@@ -167,7 +175,15 @@ export function getIndicators({skip=0, limit=0, successHandler, errorHandler, qu
     })
 }
 
-export function getGroupings({skip=0, limit=0, successHandler, errorHandler, query, sort=SORT_MODIFIED_DESC, ...rest}) {
+export function getGroupings({
+                                 skip = 0,
+                                 limit = 0,
+                                 successHandler,
+                                 errorHandler,
+                                 query,
+                                 sort = SORT_MODIFIED_DESC,
+                                 ...rest
+                             }) {
     return getData({
         endpoint: 'list-groupings',
         queryParams: {
@@ -177,7 +193,15 @@ export function getGroupings({skip=0, limit=0, successHandler, errorHandler, que
     })
 }
 
-export function getIdentities({skip=0, limit=0, successHandler, errorHandler, query, sort=SORT_MODIFIED_DESC, ...rest}) {
+export function getIdentities({
+                                  skip = 0,
+                                  limit = 0,
+                                  successHandler,
+                                  errorHandler,
+                                  query,
+                                  sort = SORT_MODIFIED_DESC,
+                                  ...rest
+                              }) {
     return getData({
         endpoint: 'list-identities',
         queryParams: {
@@ -188,7 +212,16 @@ export function getIdentities({skip=0, limit=0, successHandler, errorHandler, qu
 }
 
 // Note: fields="" means all fields
-export function getSubmissions({skip=0, limit=0, sort=SORT_MODIFIED_DESC, fields="", successHandler, errorHandler, query, ...rest}) {
+export function getSubmissions({
+                                   skip = 0,
+                                   limit = 0,
+                                   sort = SORT_MODIFIED_DESC,
+                                   fields = "",
+                                   successHandler,
+                                   errorHandler,
+                                   query,
+                                   ...rest
+                               }) {
     return getData({
         endpoint: 'list-submissions',
         queryParams: {
@@ -359,17 +392,9 @@ export function getSubmission({submissionId, successHandler, errorHandler}) {
     })
 }
 
-export function listIndicatorCategories(splunkFieldName, indicatorValue, successHandler, errorHandler) {
-    const queryParams = {};
-    if (splunkFieldName) {
-        queryParams.splunk_field_name = splunkFieldName;
-    }
-    if (indicatorValue) {
-        queryParams.indicator_value = indicatorValue;
-    }
+export function listIndicatorCategories(successHandler, errorHandler) {
     return getData({
         endpoint: 'list-ioc-categories',
-        queryParams: queryParams,
         successHandler, errorHandler
     })
 }

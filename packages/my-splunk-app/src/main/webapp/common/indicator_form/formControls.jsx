@@ -86,20 +86,24 @@ IndicatorCategoryField.propTypes = {
     options: PropTypes.array.isRequired
 }
 
-export function StixPatternField({suggestedPattern, fieldName, ...props}) {
+export function StixPatternField({suggestedPattern, fieldName, patternApiError, ...props}) {
     const formMethods = useFormContext();
     const {setValue} = formMethods;
+
     return <StixPatternControlGroup label="STIX Pattern"
                                     {...useFormInputProps(fieldName)}
                                     suggestedPattern={suggestedPattern}
                                     setValueToSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
+                                    patternApiError={patternApiError}
                                     {...props}
     />;
 }
 
 StixPatternField.propTypes = {
     suggestedPattern: PropTypes.string.isRequired,
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
+    error: PropTypes.string,
+    patternApiError: PropTypes.string
 }
 
 export function IndicatorNameField({fieldName, ...props}) {

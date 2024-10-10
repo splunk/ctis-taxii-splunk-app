@@ -1,5 +1,6 @@
 from util import post_endpoint, get_endpoint
 
+
 class TestScenarios:
     def test_pattern_suggestion(self, session):
         file_md5_hash = "5d41402abc4b2a76b9719d911017c592"
@@ -14,18 +15,3 @@ class TestScenarios:
         assert "categories" in resp
         for category in ["destination_domain", "file_hash_md5"]:
             assert category in resp["categories"]
-        assert resp["suggested"] is None
-
-    def test_list_ioc_categories_with_suggestion(self, session):
-        resp = get_endpoint(endpoint="list-ioc-categories", session=session, splunk_field_name="dest_ip", splunk_field_value="1.2.3.4/32")
-        assert "categories" in resp
-        assert resp["suggested"] == "destination_ipv4"
-
-
-
-
-"""
-TODO: Endpoints for:
-- conversion from (splunk field name, splunk field value) to IOC Category
-- optionally: list available IOC Categories?
-"""
