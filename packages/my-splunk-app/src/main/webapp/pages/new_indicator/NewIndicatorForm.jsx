@@ -1,7 +1,7 @@
 import {postCreateIndicator} from "@splunk/my-react-component/src/ApiClient";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import PropTypes from "prop-types";
-import {FormProvider, useFieldArray, useForm} from "react-hook-form";
+import {FormProvider, useForm} from "react-hook-form";
 
 import Button from "@splunk/react-ui/Button";
 import Modal from '@splunk/react-ui/Modal';
@@ -19,6 +19,7 @@ import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
 import Code from "@splunk/react-ui/Code";
+import {v4 as uuidv4} from 'uuid';
 import {StyledForm} from "../../common/indicator_form/StyledForm";
 import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
 import {
@@ -63,6 +64,32 @@ function getErrorsByIndex(errorsArray, index) {
     // Return the errors array for the specified index
     return [...errorForIndex.errors];
 }
+function useIndicatorsData() {
+    const [indicatorIds, setIndicatorIds] = useState([]);
+    const [indicatorIdToData, setIndicatorIdToData] = useState({});
+
+    const addIndicator = useCallback(() => {
+        console.log("Adding indicator");
+        const newId = uuidv4();
+        setIndicatorIds([...indicatorIds, newId]);
+        setIndicatorIdToData({...indicatorIdToData, [newId]: newIndicatorObject()});
+    }, [setIndicatorIdToData, indicatorIdToData, setIndicatorIds, indicatorIds]);
+
+    const removeIndicator = useCallback((id) => {
+        console.log("Removing indicator", id);
+        setIndicatorIds(indicatorIds.filter(indicatorId => indicatorId !== id));
+        const copyOfIndicatorIdToData = {...indicatorIdToData};
+        delete copyOfIndicatorIdToData[id];
+        setIndicatorIdToData(copyOfIndicatorIdToData);
+    }, [setIndicatorIds, indicatorIds, setIndicatorIdToData, indicatorIdToData]);
+
+    const updateIndicator = useCallback((id, delta) => {
+        console.log("Updating indicator", id, delta);
+        const newDelta = {...indicatorIdToData[id], ...delta};
+        setIndicatorIdToData({...indicatorIdToData, [id]: newDelta});
+    }, [indicatorIdToData, setIndicatorIdToData]);
+    return {indicatorIds, setIndicatorIds, indicatorIdToData, setIndicatorIdToData, addIndicator, removeIndicator, updateIndicator};
+}
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
     console.log("NewIndicatorForm", initialSplunkFieldName, initialSplunkFieldValue, event);
@@ -81,25 +108,19 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             ]
         }
     });
-    const {watch, register, trigger, handleSubmit, formState, control, clearErrors} = methods;
-    const {fields, append, remove} = useFieldArray({
-        control,
-        name: FIELD_INDICATORS,
-        rules: {
-            required: "At least one indicator is required."
-        }
-    });
+    const {watch, register, trigger, handleSubmit, formState, clearErrors} = methods;
 
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
     const [submissionErrors, setSubmissionErrors] = useState(null);
 
-    [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM].forEach(fieldName => {
+    [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM, FIELD_INDICATORS].forEach(fieldName => {
         register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]);
     });
 
-    const [indicators, groupingId] = watch([FIELD_INDICATORS, FIELD_GROUPING_ID]);
+    const groupingId = watch(FIELD_GROUPING_ID);
+    const {indicatorIds, indicatorIdToData, addIndicator, removeIndicator, updateIndicator} = useIndicatorsData();
 
     const onSubmit = async (data) => {
         console.log(data);
@@ -140,11 +161,6 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const {indicatorCategories} = useIndicatorCategories();
     const formValues = watch();
 
-    const handleRemove = (index) => {
-        // TODO: BUG when removing an indicator which has errors, the errors persist upon submission
-        //   may be a bug with RHF library
-        remove(index);
-    }
     return (
         <FormProvider {...methods}>
             <StyledForm name="newIndicator" onSubmit={handleSubmit(onSubmit, onFormSubmitError)}>
@@ -157,26 +173,26 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     <ValidFromField fieldName={FIELD_VALID_FROM}/>
                 </section>
                 <Divider/>
-                {fields.map((field, index) => {
-                    return <IndicatorSubForm field={field}
+                {indicatorIds.map((indicatorId, index) => {
+                    return <IndicatorSubForm id={indicatorId}
                                              index={index}
+                                             updateIndicator={(delta) => updateIndicator(indicatorId, delta)}
                                              splunkEvent={event}
-                                             removeSelf={() => handleRemove(index)}
+                                             removeSelf={() => removeIndicator(indicatorId)}
                                              indicatorCategories={indicatorCategories}
                                              submissionErrors={getErrorsByIndex(submissionErrors, index)}/>
-                })
-                }
+                })}
                 <CustomControlGroup>
                     <HorizontalButtonLayout>
                         <BaseButton appearance="secondary" icon={<PlusCircle/>} inline label='Add Another Indicator'
-                                    onClick={() => append(newIndicatorObject())}/>
+                                    onClick={() => addIndicator()}/>
                         <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                      label={`Create Indicators (${indicators?.length})`}/>
+                                      label={`Create Indicators (${indicatorIds?.length})`}/>
                     </HorizontalButtonLayout>
                 </CustomControlGroup>
                 <Modal open={submitSuccess}>
                     <Modal.Header
-                        title={`Successfully Created New Indicator${indicators?.length > 1 ? "s" : ""}`}
+                        title={`Successfully Created New Indicator${indicatorIds?.length > 1 ? "s" : ""}`}
                     />
                     <Modal.Body>
                         <P>To submit to TAXII server, proceed to submit the Grouping.</P>
@@ -184,6 +200,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                         <SubmitGroupingButton groupingId={groupingId}/>
                     </Modal.Body>
                 </Modal>
+                <Heading level={3}>Indicator IDs</Heading>
+                <Code value={JSON.stringify(indicatorIds, null, 2)} language="json"/>
+                <Heading level={3}>Indicator Data</Heading>
+                <Code value={JSON.stringify(indicatorIdToData, null, 2)} language="json"/>
                 <Heading level={3}>Form Values</Heading>
                 <Code value={JSON.stringify(formValues, null, 2)} language="json"/>
                 <Heading level={3}>Errors</Heading>

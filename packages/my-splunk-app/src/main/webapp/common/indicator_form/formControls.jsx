@@ -71,34 +71,35 @@ ValidFromField.propTypes = {
     fieldName: PropTypes.string.isRequired
 }
 
-export function IndicatorValueField({fieldName, ...props}) {
-    return <TextControlGroup label={`Indicator Value - ${fieldName}`} {...useFormInputProps(fieldName)} {...props} />
+export function IndicatorValueField({fieldName, onChangeHook, ...props}) {
+    return <TextControlGroup label="Indicator Value" {...useFormInputProps(fieldName, onChangeHook)} {...props} />
 }
 
 IndicatorValueField.propTypes = {
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
+    onChangeHook: PropTypes.func
 }
 
-export function IndicatorCategoryField({fieldName, options, ...props}) {
+export function IndicatorCategoryField({fieldName, options, onChangeHook, ...props}) {
     return <SelectControlGroup label="Indicator Category"
                                options={options}
-                               {...useFormInputProps(fieldName)}
+                               {...useFormInputProps(fieldName, onChangeHook)}
                                {...props}/>
 }
 
 IndicatorCategoryField.propTypes = {
     fieldName: PropTypes.string.isRequired,
-    options: PropTypes.array.isRequired
+    options: PropTypes.array.isRequired,
+    onChangeHook: PropTypes.func
 }
 
-export function StixPatternField({suggestedPattern, fieldName, patternApiError, ...props}) {
-    const formMethods = useFormContext();
-    const {setValue} = formMethods;
-
+export function StixPatternField({suggestedPattern, fieldName, patternApiError, onChangeHook, ...props}) {
+    const formInputProps = useFormInputProps(fieldName, onChangeHook);
+    const {onChange: formInputPropsOnChange} = formInputProps;
     return <StixPatternControlGroup label="STIX Pattern"
-                                    {...useFormInputProps(fieldName)}
+                                    {...formInputProps}
                                     suggestedPattern={suggestedPattern}
-                                    setValueToSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
+                                    setValueToSuggestedPattern={() => formInputPropsOnChange(null, {value: suggestedPattern})}
                                     patternApiError={patternApiError}
                                     {...props}
     />;
@@ -108,21 +109,25 @@ StixPatternField.propTypes = {
     suggestedPattern: PropTypes.string.isRequired,
     fieldName: PropTypes.string.isRequired,
     error: PropTypes.string,
-    patternApiError: PropTypes.string
+    patternApiError: PropTypes.string,
+    onChangeHook: PropTypes.func
 }
 
-export function IndicatorNameField({fieldName, ...props}) {
-    return <TextControlGroup label="Indicator Name" {...props} {...useFormInputProps(fieldName)}/>
+export function IndicatorNameField({fieldName, onChangeHook, ...props}) {
+    return <TextControlGroup label="Indicator Name" {...props} {...useFormInputProps(fieldName, onChangeHook)
+    }/>
 }
 
 IndicatorNameField.propTypes = {
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
+    onChangeHook: PropTypes.func
 }
 
-export function IndicatorDescriptionField({fieldName, ...props}) {
-    return <TextAreaControlGroup label="Indicator Description" {...props} {...useFormInputProps(fieldName)}/>
+export function IndicatorDescriptionField({fieldName, onChangeHook, ...props}) {
+    return <TextAreaControlGroup label="Indicator Description" {...props} {...useFormInputProps(fieldName, onChangeHook)}/>
 }
 
 IndicatorDescriptionField.propTypes = {
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
+    onChangeHook: PropTypes.func
 }
