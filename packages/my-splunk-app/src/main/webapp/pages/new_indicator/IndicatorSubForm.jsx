@@ -50,7 +50,9 @@ export const IndicatorSubForm = ({
                                      splunkEvent,
                                      indicatorCategories,
                                      removeSelf,
-                                     submissionErrors
+                                     submissionErrors,
+                                     validationSignal,
+                                     onValidationError
                                  }) => {
     const formMethods = useForm({
         mode: 'all',
@@ -63,7 +65,7 @@ export const IndicatorSubForm = ({
             [FIELD_INDICATOR_DESCRIPTION]: ''
         }
     });
-    const {register, watch, setValue, getValues} = formMethods;
+    const {register, watch, setValue, getValues, trigger, formState} = formMethods;
     const splunkFields = Object.keys(splunkEvent || {});
 
     [FIELD_SPLUNK_FIELD_NAME, FIELD_INDICATOR_VALUE, FIELD_INDICATOR_CATEGORY,
@@ -113,6 +115,34 @@ export const IndicatorSubForm = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [splunkFieldName, indicatorValue, indicatorCategory, stixPattern, indicatorName, indicatorDescription]);
 
+    const [onValidationErrorPromise, setOnValidationErrorPromise] = useState(null);
+    useEffect(() => {
+        if (onValidationErrorPromise) {
+            const {errors} = formState;
+            onValidationErrorPromise.resolve(errors);
+            setOnValidationErrorPromise(null);
+        }
+    }, [onValidationErrorPromise, setOnValidationErrorPromise, formState]);
+
+    const performValidation = useCallback(async () => {
+        if (onValidationError) {
+            await trigger();
+            console.log(`Validation complete for indicator ${id}`);
+            return new Promise((resolve) => {
+                setOnValidationErrorPromise({resolve});
+            }).then(x => onValidationError(x));
+        }
+        return null;
+    }, [onValidationError, trigger, id, setOnValidationErrorPromise]);
+
+    const [lastValidationSignal, setLastValidationSignal] = useState(null);
+    useEffect(() => {
+        if (validationSignal > 0 && validationSignal !== lastValidationSignal) {
+            setLastValidationSignal(validationSignal);
+            performValidation().then();
+        }
+    }, [validationSignal, performValidation, lastValidationSignal]);
+
     return <StyledSection key={id}>
         <FormProvider {...formMethods}>
             <HorizontalLayout>
@@ -156,5 +186,7 @@ IndicatorSubForm.propTypes = {
     splunkEvent: PropTypes.object,
     indicatorCategories: PropTypes.array,
     removeSelf: PropTypes.func,
-    submissionErrors: PropTypes.array
+    submissionErrors: PropTypes.array,
+    validationSignal: PropTypes.number,
+    onValidationError: PropTypes.func
 }
