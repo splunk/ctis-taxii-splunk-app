@@ -50,7 +50,6 @@ test('array of objects', () => {
 
 const anotherComplexTestObject = {
     "indicators": [
-        null,
         {
             "name": {
                 "type": "required",
@@ -66,10 +65,15 @@ const anotherComplexTestObject = {
                     "name": "indicators.1.description"
                 }
             }
-        }
+        },
+        null
     ]
 }
-test('First indicator has no error, but second does', () => {
-    expect(findErrorMessage(anotherComplexTestObject, 'indicators.0.description')).toBeNull();
-    expect(findErrorMessage(anotherComplexTestObject, 'indicators.1.description')).toBe('Indicator Description is required.');
+test('Disregard ref.name and lookup via array index', () => {
+    expect(findErrorMessage(anotherComplexTestObject, 'indicators.0.description')).toBe('Indicator Description is required.');
+    expect(findErrorMessage(anotherComplexTestObject, 'indicators.1.description')).toBeNull();
+});
+
+test('Handle blank object for array field', () => {
+    expect(findErrorMessage({}, 'indicators.0.description')).toBeNull();
 });

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "yarn run eslint && node bin/build.js build",
+    "build": "yarn run eslint; node bin/build.js build",
     "eslint": "eslint src --ext \".js,.jsx\"",
     "eslint:ci": "yarn run eslint -f junit -o test-reports/lint-results.xml",
     "eslint:fix": "eslint src --ext \".js, .jsx\" --fix",

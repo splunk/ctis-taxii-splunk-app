@@ -18,6 +18,7 @@ import {HorizontalButtonLayout} from "@splunk/my-react-component/src/HorizontalB
 import BaseButton from "@splunk/my-react-component/src/BaseButton";
 import {CustomControlGroup} from "@splunk/my-react-component/src/CustomControlGroup";
 import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/SubmitGroupingButton";
+import Code from "@splunk/react-ui/Code";
 import {StyledForm} from "../../common/indicator_form/StyledForm";
 import useIndicatorCategories from "../../common/indicator_form/indicatorCategories";
 import {
@@ -37,7 +38,6 @@ function GotoIndicatorsPageButton() {
     return (<Button to={VIEW_INDICATORS_PAGE} appearance="secondary" label="Go to Indicators"/>);
 }
 
-// TODO: change this to use a single object with keys as param
 const newIndicatorObject = ({splunk_field_name: splunkFieldName = '', indicator_value: indicatorValue = ''} = {}) => ({
     splunk_field_name: splunkFieldName,
     indicator_value: indicatorValue,
@@ -65,10 +65,7 @@ function getErrorsByIndex(errorsArray, index) {
 }
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
-    const firstIndicator = newIndicatorObject({
-        splunk_field_name: initialSplunkFieldName,
-        indicator_value: initialSplunkFieldValue
-    })
+    console.log("NewIndicatorForm", initialSplunkFieldName, initialSplunkFieldValue, event);
     const methods = useForm({
         mode: 'all',
         defaultValues: {
@@ -76,10 +73,15 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             [FIELD_CONFIDENCE]: 50,
             [FIELD_TLP_RATING]: "GREEN",
             [FIELD_VALID_FROM]: dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision()),
-            [FIELD_INDICATORS]: [firstIndicator]
+            [FIELD_INDICATORS]: [
+                // newIndicatorObject({
+                //     splunk_field_name: initialSplunkFieldName,
+                //     indicator_value: initialSplunkFieldValue
+                // })
+            ]
         }
     });
-    const {watch, register, trigger, handleSubmit, formState, control} = methods;
+    const {watch, register, trigger, handleSubmit, formState, control, clearErrors} = methods;
     const {fields, append, remove} = useFieldArray({
         control,
         name: FIELD_INDICATORS,
@@ -87,6 +89,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
             required: "At least one indicator is required."
         }
     });
+
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const submitButtonDisabled = useMemo(() => Object.keys(formState.errors).length > 0 || formState.isSubmitting || submitSuccess,
         [submitSuccess, formState]);
@@ -101,6 +104,11 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     const onSubmit = async (data) => {
         console.log(data);
         const formIsValid = await trigger();
+        const {errors} = formState;
+        console.log("Form errors", errors);
+        debugger; // eslint-disable-line no-debugger
+        // TODO: can we check for the phantom errors here?
+
         setSubmissionErrors(null);
         if (formIsValid) {
             await postCreateIndicator(data, (resp) => {
@@ -117,6 +125,12 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
         }
     }
 
+    const onFormSubmitError = async (error) => {
+        console.error("Error submitting form", error);
+        clearErrors();
+        await trigger();
+    }
+
     useEffect(() => {
         if (formState.errors && Object.keys(formState.errors).length > 0) {
             console.error(formState.errors)
@@ -124,10 +138,16 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
     }, [formState])
 
     const {indicatorCategories} = useIndicatorCategories();
+    const formValues = watch();
 
+    const handleRemove = (index) => {
+        // TODO: BUG when removing an indicator which has errors, the errors persist upon submission
+        //   may be a bug with RHF library
+        remove(index);
+    }
     return (
         <FormProvider {...methods}>
-            <StyledForm name="newIndicator" onSubmit={handleSubmit(onSubmit)}>
+            <StyledForm name="newIndicator" onSubmit={handleSubmit(onSubmit, onFormSubmitError)}>
                 <section>
                     <Heading level={2}>Common Properties</Heading>
                     <P>These properties will be shared by all indicators created on this form.</P>
@@ -141,7 +161,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     return <IndicatorSubForm field={field}
                                              index={index}
                                              splunkEvent={event}
-                                             removeSelf={() => remove(index)}
+                                             removeSelf={() => handleRemove(index)}
                                              indicatorCategories={indicatorCategories}
                                              submissionErrors={getErrorsByIndex(submissionErrors, index)}/>
                 })
@@ -151,12 +171,12 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                         <BaseButton appearance="secondary" icon={<PlusCircle/>} inline label='Add Another Indicator'
                                     onClick={() => append(newIndicatorObject())}/>
                         <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                      label={`Create Indicators (${indicators.length})`}/>
+                                      label={`Create Indicators (${indicators?.length})`}/>
                     </HorizontalButtonLayout>
                 </CustomControlGroup>
                 <Modal open={submitSuccess}>
                     <Modal.Header
-                        title={`Successfully Created New Indicator${indicators.length > 1 ? "s" : ""}`}
+                        title={`Successfully Created New Indicator${indicators?.length > 1 ? "s" : ""}`}
                     />
                     <Modal.Body>
                         <P>To submit to TAXII server, proceed to submit the Grouping.</P>
@@ -164,6 +184,10 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                         <SubmitGroupingButton groupingId={groupingId}/>
                     </Modal.Body>
                 </Modal>
+                <Heading level={3}>Form Values</Heading>
+                <Code value={JSON.stringify(formValues, null, 2)} language="json"/>
+                <Heading level={3}>Errors</Heading>
+                <Code value={JSON.stringify(formState.errors, null, 2)} language="json"/>
             </StyledForm>
         </FormProvider>
     );

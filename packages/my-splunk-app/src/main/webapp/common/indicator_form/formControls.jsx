@@ -72,7 +72,7 @@ ValidFromField.propTypes = {
 }
 
 export function IndicatorValueField({fieldName, ...props}) {
-    return <TextControlGroup label="Indicator Value" {...useFormInputProps(fieldName)} {...props} />
+    return <TextControlGroup label={`Indicator Value - ${fieldName}`} {...useFormInputProps(fieldName)} {...props} />
 }
 
 IndicatorValueField.propTypes = {

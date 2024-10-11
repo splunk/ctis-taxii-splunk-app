@@ -3,55 +3,46 @@ import {useEffect, useState} from "react";
 
 function findErrorMessageInFlatObject(flatObject, refName) {
     // If the value is an object, check its ref
-    if (typeof flatObject === 'object' && !Array.isArray(flatObject)) {
-        if (flatObject?.ref?.name === refName) {
-            return flatObject.message;
-        }
+    if (flatObject && typeof flatObject === 'object' && !Array.isArray(flatObject)) {
+        return flatObject?.[refName]?.message || null;
     }
     return null;
 }
 
-function findErrorMessageInArray(array, refName) {
-    if(!Array.isArray(array)) {
-        return null;
-    }
-    const errorMessages = array.map((item) => {
-        if(!item){
+export function findErrorMessage(validationObject, fieldName) {
+    // TODO: rename refName to fieldName
+    // split fieldName by '.' into parts
+    // e.g. indicators.1.description -> ['indicators', '1', 'description']
+    // extract the index and the field name
+    // WARNING: ignore ref.name in the validationObject because it can be misleading in terms of the index number
+    // instead, go by the index in the array
+    const tokens = fieldName.split('.');
+    if (tokens.length === 3) {
+        const arrayFieldName = tokens[0];
+        const index = parseInt(tokens[1], 10);
+        const recordFieldName = tokens[2];
+        if (!validationObject[arrayFieldName]) {
             return null;
         }
-        const findInObject = Object.values(item).map((value) => {
-            return findErrorMessageInFlatObject(value, refName);
-        })
-        return findInObject.find((value) => value !== null) || null;
-    });
-    const nonNullValues = errorMessages.filter((value) => value !== null);
-    let returnValue = null;
-    if(nonNullValues.length > 0){
-        if(nonNullValues.length > 1){
-            console.warn(`Multiple error messages found for ${refName}: ${nonNullValues}`);
-        }
-        [returnValue] = nonNullValues; // take first value
-    }
-    return returnValue;
-}
-
-export function findErrorMessage(validationObject, refName) {
-    const mapping = Object.values(validationObject).map((value) => {
-        const tryFlatObject = findErrorMessageInFlatObject(value, refName);
-        if (tryFlatObject) {
-            return tryFlatObject;
-        }
-
-        if (Array.isArray(value)) {
-            const tryArray = findErrorMessageInArray(value, refName);
-            if (tryArray) {
-                return tryArray;
+        if (Array.isArray(validationObject[arrayFieldName])) {
+            const records = validationObject[arrayFieldName];
+            if (index >= 0 && index < records.length) {
+                const record = records[index];
+                const errorMessage = record?.[recordFieldName]?.message;
+                return errorMessage || null;
             }
+            console.warn(`Index ${index} out of bounds for ${arrayFieldName} in validationObject`);
+            return null;
         }
+        console.warn(`Field ${arrayFieldName} is not an array in validationObject: ${JSON.stringify(validationObject)}`);
         return null;
-    });
-    const retVal =  mapping.find((value) => value !== null) || null;
-    return retVal;
+
+    }
+
+    if (tokens.length === 1) {
+        return findErrorMessageInFlatObject(validationObject, fieldName);
+    }
+    throw new Error(`Invalid fieldName ${fieldName}, expecting either a flat field name (no periods) or an array field name (3 periods)`);
 }
 
 function generateSetValueHandler(setValue, fieldName) {
