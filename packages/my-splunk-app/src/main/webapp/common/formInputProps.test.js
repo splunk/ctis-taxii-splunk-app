@@ -47,3 +47,29 @@ test('array of objects', () => {
     expect(findErrorMessage(sampleComplexErrorObject, 'indicators.0.indicator_value')).toBe('Indicator Value is required.');
     expect(findErrorMessage(sampleComplexErrorObject, 'indicators.0.description')).toBe('Indicator Description is required.');
 });
+
+const anotherComplexTestObject = {
+    "indicators": [
+        null,
+        {
+            "name": {
+                "type": "required",
+                "message": "Indicator Name is required.",
+                "ref": {
+                    "name": "indicators.1.name"
+                }
+            },
+            "description": {
+                "type": "required",
+                "message": "Indicator Description is required.",
+                "ref": {
+                    "name": "indicators.1.description"
+                }
+            }
+        }
+    ]
+}
+test('First indicator has no error, but second does', () => {
+    expect(findErrorMessage(anotherComplexTestObject, 'indicators.0.description')).toBeNull();
+    expect(findErrorMessage(anotherComplexTestObject, 'indicators.1.description')).toBe('Indicator Description is required.');
+});

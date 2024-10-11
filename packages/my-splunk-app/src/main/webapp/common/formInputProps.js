@@ -15,7 +15,7 @@ function findErrorMessageInArray(array, refName) {
     if(!Array.isArray(array)) {
         return null;
     }
-    const mapping = array.map((item) => {
+    const errorMessages = array.map((item) => {
         if(!item){
             return null;
         }
@@ -24,7 +24,15 @@ function findErrorMessageInArray(array, refName) {
         })
         return findInObject.find((value) => value !== null) || null;
     });
-    return mapping.find((value) => value !== null) || null;
+    const nonNullValues = errorMessages.filter((value) => value !== null);
+    let returnValue = null;
+    if(nonNullValues.length > 0){
+        if(nonNullValues.length > 1){
+            console.warn(`Multiple error messages found for ${refName}: ${nonNullValues}`);
+        }
+        [returnValue] = nonNullValues; // take first value
+    }
+    return returnValue;
 }
 
 export function findErrorMessage(validationObject, refName) {
@@ -42,7 +50,8 @@ export function findErrorMessage(validationObject, refName) {
         }
         return null;
     });
-    return mapping.find((value) => value !== null) || null;
+    const retVal =  mapping.find((value) => value !== null) || null;
+    return retVal;
 }
 
 function generateSetValueHandler(setValue, fieldName) {
