@@ -36,6 +36,9 @@ class Handler(AbstractRestHandler):
             self.logger.exception(f"Failed to deserialize input JSON to IndicatorModelV1 instances")
             raise ValueError(repr(exc))
 
+        if len(models) == 0:
+            raise ValueError("No indicators were deserialized from the input JSON")
+
         if errors:
             raise ServerException(message="Validation failed deserializing indicators payload", errors=errors)
         serialized = []
