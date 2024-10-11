@@ -45,7 +45,7 @@ export function findErrorMessage(validationObject, fieldName) {
     throw new Error(`Invalid fieldName ${fieldName}, expecting either a flat field name (no periods) or an array field name (3 periods)`);
 }
 
-function generateSetValueHandler(setValue, fieldName, onChangeHook=null) {
+function generateSetValueHandler(setValue, fieldName) {
     return (e, extra) => {
         // In vanilla JS change events only a single event parameter is passed
         // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/change_event#examples
@@ -55,13 +55,10 @@ function generateSetValueHandler(setValue, fieldName, onChangeHook=null) {
         const value = (extraValue !== null && extraValue !== undefined) ? extraValue : e?.target?.value;
         console.log(e, extra, value)
         setValue(fieldName, value, {shouldValidate: true})
-        if(onChangeHook) {
-            setTimeout(() => onChangeHook(value), 100);
-        }
     };
 }
 
-export const useFormInputProps = (fieldName, onChangeHook=null) => {
+export const useFormInputProps = (fieldName) => {
     const methodsViaHook = useFormContext();
     const [returnProps, setReturnProps] = useState({});
     useEffect(() => {
@@ -71,10 +68,10 @@ export const useFormInputProps = (fieldName, onChangeHook=null) => {
             const error = findErrorMessage(errors, fieldName);
             setReturnProps({
                 error,
-                onChange: generateSetValueHandler(setValue, fieldName, onChangeHook),
+                onChange: generateSetValueHandler(setValue, fieldName),
                 value: watch(fieldName)
             });
         }
-    }, [onChangeHook, fieldName, methodsViaHook]);
+    }, [fieldName, methodsViaHook]);
     return returnProps;
 }

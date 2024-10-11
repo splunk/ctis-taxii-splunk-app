@@ -74,6 +74,9 @@ export const IndicatorSubForm = ({
     const splunkFieldName = watch(FIELD_SPLUNK_FIELD_NAME);
     const indicatorValue = watch(FIELD_INDICATOR_VALUE);
     const indicatorCategory = watch(FIELD_INDICATOR_CATEGORY);
+    const stixPattern = watch(FIELD_STIX_PATTERN);
+    const indicatorName = watch(FIELD_INDICATOR_NAME);
+    const indicatorDescription = watch(FIELD_INDICATOR_DESCRIPTION);
 
     const {suggestedPattern, error: patternApiError} = usePatternSuggester(indicatorCategory, indicatorValue);
 
@@ -102,16 +105,18 @@ export const IndicatorSubForm = ({
     useEffect(() => {
         if (suggestedPattern) {
             setValue(FIELD_STIX_PATTERN, suggestedPattern, {shouldValidate: true});
-            setTimeout(() => updateIndicatorWithFormValues(), 100);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setValue, suggestedPattern]);
 
+    useEffect(() => {
+        updateIndicatorWithFormValues();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [splunkFieldName, indicatorValue, indicatorCategory, stixPattern, indicatorName, indicatorDescription]);
 
     return <StyledSection key={id}>
         <FormProvider {...formMethods}>
             <HorizontalLayout>
-                <StyledHeading level={2}>Indicator to add {`#${indexStartingAtOne}`}</StyledHeading>
+                <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
                 <DeleteButton inline label="Remove" onClick={() => removeSelf()}/>
             </HorizontalLayout>
             {submissionErrors && <Message appearance="fill" type="error">
@@ -132,16 +137,13 @@ export const IndicatorSubForm = ({
             }
             {
                 (!splunkEvent || !toggleShowSplunkFieldDropdown) &&
-                <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE} onChangeHook={updateIndicatorWithFormValues}/>
+                <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE}/>
             }
-            <IndicatorCategoryField options={indicatorCategories} fieldName={FIELD_INDICATOR_CATEGORY}
-                                    onChangeHook={updateIndicatorWithFormValues}/>
+            <IndicatorCategoryField options={indicatorCategories} fieldName={FIELD_INDICATOR_CATEGORY}/>
             <StixPatternField suggestedPattern={suggestedPattern} fieldName={FIELD_STIX_PATTERN}
-                              patternApiError={patternApiError}
-                              onChangeHook={updateIndicatorWithFormValues}/>
-            <IndicatorNameField fieldName={FIELD_INDICATOR_NAME} onChangeHook={updateIndicatorWithFormValues}/>
-            <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION}
-                                       onChangeHook={updateIndicatorWithFormValues}/>
+                              patternApiError={patternApiError}/>
+            <IndicatorNameField fieldName={FIELD_INDICATOR_NAME}/>
+            <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION}/>
             <Divider/>
         </FormProvider>
     </StyledSection>
