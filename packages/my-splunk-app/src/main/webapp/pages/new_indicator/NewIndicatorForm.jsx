@@ -64,6 +64,7 @@ function getErrorsByIndex(errorsArray, index) {
     // Return the errors array for the specified index
     return [...errorForIndex.errors];
 }
+
 function useIndicatorsData() {
     const [indicatorIds, setIndicatorIds] = useState([]);
     const [indicatorIdToData, setIndicatorIdToData] = useState({});
@@ -77,18 +78,26 @@ function useIndicatorsData() {
 
     const removeIndicator = useCallback((id) => {
         console.log("Removing indicator", id);
-        setIndicatorIds(indicatorIds.filter(indicatorId => indicatorId !== id));
+        setIndicatorIds(prev => prev.filter(indicatorId => indicatorId !== id));
         const copyOfIndicatorIdToData = {...indicatorIdToData};
         delete copyOfIndicatorIdToData[id];
         setIndicatorIdToData(copyOfIndicatorIdToData);
-    }, [setIndicatorIds, indicatorIds, setIndicatorIdToData, indicatorIdToData]);
+    }, [setIndicatorIds, setIndicatorIdToData, indicatorIdToData]);
 
     const updateIndicator = useCallback((id, delta) => {
         console.log("Updating indicator", id, delta);
         const newDelta = {...indicatorIdToData[id], ...delta};
         setIndicatorIdToData({...indicatorIdToData, [id]: newDelta});
     }, [indicatorIdToData, setIndicatorIdToData]);
-    return {indicatorIds, setIndicatorIds, indicatorIdToData, setIndicatorIdToData, addIndicator, removeIndicator, updateIndicator};
+    return {
+        indicatorIds,
+        setIndicatorIds,
+        indicatorIdToData,
+        setIndicatorIdToData,
+        addIndicator,
+        removeIndicator,
+        updateIndicator
+    };
 }
 
 export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValue, event}) {
@@ -173,15 +182,16 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     <ValidFromField fieldName={FIELD_VALID_FROM}/>
                 </section>
                 <Divider/>
-                {indicatorIds.map((indicatorId, index) => {
-                    return <IndicatorSubForm id={indicatorId}
-                                             index={index}
-                                             updateIndicator={(delta) => updateIndicator(indicatorId, delta)}
-                                             splunkEvent={event}
-                                             removeSelf={() => removeIndicator(indicatorId)}
-                                             indicatorCategories={indicatorCategories}
-                                             submissionErrors={getErrorsByIndex(submissionErrors, index)}/>
-                })}
+                {indicatorIds.map((indicatorId, index) =>
+                    <IndicatorSubForm key={indicatorId}
+                                      id={indicatorId}
+                                      index={index}
+                                      updateIndicator={(delta) => updateIndicator(indicatorId, delta)}
+                                      splunkEvent={event}
+                                      removeSelf={() => removeIndicator(indicatorId)}
+                                      indicatorCategories={indicatorCategories}
+                                      submissionErrors={getErrorsByIndex(submissionErrors, index)}/>
+                )}
                 <CustomControlGroup>
                     <HorizontalButtonLayout>
                         <BaseButton appearance="secondary" icon={<PlusCircle/>} inline label='Add Another Indicator'

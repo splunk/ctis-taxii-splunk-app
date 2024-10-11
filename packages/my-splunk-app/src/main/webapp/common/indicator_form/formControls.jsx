@@ -5,7 +5,6 @@ import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControl
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
-import {useFormContext} from "react-hook-form";
 import PropTypes from "prop-types";
 import {useFormInputProps} from "../formInputProps";
 
@@ -124,7 +123,8 @@ IndicatorNameField.propTypes = {
 }
 
 export function IndicatorDescriptionField({fieldName, onChangeHook, ...props}) {
-    return <TextAreaControlGroup label="Indicator Description" {...props} {...useFormInputProps(fieldName, onChangeHook)}/>
+    return <TextAreaControlGroup
+        label="Indicator Description" {...props} {...useFormInputProps(fieldName, onChangeHook)}/>
 }
 
 IndicatorDescriptionField.propTypes = {

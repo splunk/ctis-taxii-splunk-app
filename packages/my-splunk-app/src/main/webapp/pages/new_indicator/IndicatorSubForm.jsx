@@ -15,7 +15,8 @@ import {
     IndicatorDescriptionField,
     IndicatorNameField,
     IndicatorValueField,
-    SplunkFieldNameDropdown, StixPatternField
+    SplunkFieldNameDropdown,
+    StixPatternField
 } from "../../common/indicator_form/formControls";
 import {
     FIELD_INDICATOR_CATEGORY,
@@ -26,7 +27,7 @@ import {
     FIELD_STIX_PATTERN,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
-import {PatternSuggester, usePatternSuggester} from "./patternSuggester";
+import {usePatternSuggester} from "./patternSuggester";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -73,7 +74,6 @@ export const IndicatorSubForm = ({
     const splunkFieldName = watch(FIELD_SPLUNK_FIELD_NAME);
     const indicatorValue = watch(FIELD_INDICATOR_VALUE);
     const indicatorCategory = watch(FIELD_INDICATOR_CATEGORY);
-    const stixPattern = watch(FIELD_STIX_PATTERN);
 
     const {suggestedPattern, error: patternApiError} = usePatternSuggester(indicatorCategory, indicatorValue);
 
@@ -100,21 +100,18 @@ export const IndicatorSubForm = ({
 
     // When suggested pattern changes, update the STIX pattern field with new pattern
     useEffect(() => {
-        if(suggestedPattern) {
+        if (suggestedPattern) {
             setValue(FIELD_STIX_PATTERN, suggestedPattern, {shouldValidate: true});
+            setTimeout(() => updateIndicatorWithFormValues(), 100);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setValue, suggestedPattern]);
-
-    // Propagate changes to the STIX pattern field to the parent component
-    useEffect(() => {
-        updateIndicatorWithFormValues();
-    }, [updateIndicatorWithFormValues, stixPattern])
 
 
     return <StyledSection key={id}>
         <FormProvider {...formMethods}>
             <HorizontalLayout>
-                <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`} - {`${id}`}</StyledHeading>
+                <StyledHeading level={2}>Indicator to add {`#${indexStartingAtOne}`}</StyledHeading>
                 <DeleteButton inline label="Remove" onClick={() => removeSelf()}/>
             </HorizontalLayout>
             {submissionErrors && <Message appearance="fill" type="error">
@@ -137,16 +134,15 @@ export const IndicatorSubForm = ({
                 (!splunkEvent || !toggleShowSplunkFieldDropdown) &&
                 <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE} onChangeHook={updateIndicatorWithFormValues}/>
             }
-            <IndicatorCategoryField options={indicatorCategories} fieldName={FIELD_INDICATOR_CATEGORY} onChangeHook={updateIndicatorWithFormValues}/>
-            <StixPatternField suggestedPattern={suggestedPattern} fieldName={FIELD_STIX_PATTERN} patternApiError={patternApiError}
-                                onChangeHook={updateIndicatorWithFormValues}/>
+            <IndicatorCategoryField options={indicatorCategories} fieldName={FIELD_INDICATOR_CATEGORY}
+                                    onChangeHook={updateIndicatorWithFormValues}/>
+            <StixPatternField suggestedPattern={suggestedPattern} fieldName={FIELD_STIX_PATTERN}
+                              patternApiError={patternApiError}
+                              onChangeHook={updateIndicatorWithFormValues}/>
             <IndicatorNameField fieldName={FIELD_INDICATOR_NAME} onChangeHook={updateIndicatorWithFormValues}/>
             <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION}
                                        onChangeHook={updateIndicatorWithFormValues}/>
             <Divider/>
-            <code>
-                {JSON.stringify(watch(), null, 2)}
-            </code>
         </FormProvider>
     </StyledSection>
 }
