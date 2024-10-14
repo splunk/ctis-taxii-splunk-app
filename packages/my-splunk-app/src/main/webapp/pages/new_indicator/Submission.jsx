@@ -24,6 +24,7 @@ import {
     triggerValidationSignal as commonPropsTrigger,
     waitingForValidation as commonPropsWaitingForValidation
 } from "./CommonProperties.slice";
+
 import {FIELD_GROUPING_ID} from "../../common/indicator_form/fieldNames";
 
 const waitingForValidation = createSelector(
@@ -125,7 +126,6 @@ export default function Submission({debugMode=false}) {
                 createErrorToast("The form has errors. Please correct them before submitting.");
                 setSubmitting(false);
             } else {
-                debugger; // eslint-disable-line no-debugger
                 setSendToApiPromise(submitToApi(formData));
             }
         }
@@ -149,6 +149,12 @@ export default function Submission({debugMode=false}) {
                     </HorizontalButtonLayout>
                 </CustomControlGroup>
             </form>
+            <Modal open={submitting}>
+                <Modal.Header title="Submitting form..." />
+                <Modal.Body>
+                    <P>Submitting form, please wait.</P>
+                </Modal.Body>
+            </Modal>
             <Modal open={submitSuccess}>
                 <Modal.Header
                     title={`Successfully Created New Indicator${numIndicators > 1 ? "s" : ""}`}

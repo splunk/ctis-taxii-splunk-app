@@ -110,21 +110,30 @@ DisplayIndicators.propTypes = {
 
 const debugMode = false;
 
+function ComponentWithStoreContext({splunkEvent, initialSplunkFieldName}) {
+    const {indicatorCategories, loading: loadingCategories} = useIndicatorCategories();
+    return <MaxWidthContainer>
+        <Loader loading={loadingCategories}>
+            <CommonPropertiesForm/>
+            <Divider/>
+            <DisplayIndicators splunkEvent={splunkEvent} initialSplunkFieldName={initialSplunkFieldName}
+                               indicatorCategories={indicatorCategories}/>
+            {debugMode && <DisplayState/>}
+            <Submission debugMode={debugMode}/>
+        </Loader>
+    </MaxWidthContainer>
+}
+
+ComponentWithStoreContext.propTypes = {
+    splunkEvent: PropTypes.object,
+    initialSplunkFieldName: PropTypes.string,
+};
+
 export function NewIndicatorFormV2({initialSplunkFieldName, initialSplunkFieldValue, event}) {
     console.log('NewIndicatorFormV2', {initialSplunkFieldName, initialSplunkFieldValue, event});
-    const {indicatorCategories, loading: loadingCategories} = useIndicatorCategories();
     return <>
         <Provider store={store}>
-            <Loader loading={loadingCategories}>
-                <MaxWidthContainer>
-                    <CommonPropertiesForm/>
-                    <Divider/>
-                    <DisplayIndicators splunkEvent={event} initialSplunkFieldName={initialSplunkFieldName}
-                                       indicatorCategories={indicatorCategories}/>
-                    {debugMode && <DisplayState/>}
-                    <Submission debugMode={debugMode}/>
-                </MaxWidthContainer>
-            </Loader>
+            <ComponentWithStoreContext splunkEvent={event} initialSplunkFieldName={initialSplunkFieldName}/>
         </Provider>
 
     </>
