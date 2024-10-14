@@ -13,6 +13,7 @@ import {SubmitGroupingButton} from "@splunk/my-react-component/src/buttons/Submi
 import Button from "@splunk/react-ui/Button";
 import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 import {createToast} from "@splunk/my-react-component/src/AppContainer";
+import PropTypes from "prop-types";
 import {
     triggerValidationSignal as indicatorsTrigger,
     waitingForValidation as indicatorsWaitingForValidation,
@@ -48,8 +49,14 @@ const hasErrorsSelector = createSelector(
 function GotoIndicatorsPageButton() {
     return (<Button to={VIEW_INDICATORS_PAGE} appearance="secondary" label="Go to Indicators"/>);
 }
-
-export default function Submission() {
+const createErrorToast = (message) => {
+    createToast({
+        type: 'error',
+        message,
+        autoDismiss: true
+    })
+}
+export default function Submission({debugMode=false}) {
     const commonProps = useSelector((state) => state.commonProperties.data);
     const groupingId = useSelector((state) => state.commonProperties.data[FIELD_GROUPING_ID]);
 
@@ -73,7 +80,6 @@ export default function Submission() {
         }
     })
     const formData = watch('data');
-    const debugMode = true;
 
     const addSubmissionErrors = useCallback((submissionErrors) => {
         dispatch(clearAllSubmissionErrors());
@@ -89,6 +95,7 @@ export default function Submission() {
     const submitToApi = useCallback(async (data) => {
         await postCreateIndicator(data, (resp) => {
             console.log("Response:", resp);
+            dispatch(clearAllSubmissionErrors());
             setSubmitSuccess(true);
             setSubmitting(false);
             setSendToApiPromise(null);
@@ -96,12 +103,13 @@ export default function Submission() {
             console.error("Error submitting form to API:", errorResponse);
             const errorJson = await errorResponse.json();
             console.error("Error JSON:", errorJson);
+            createErrorToast("There was a problem with the submission. Please fix any errors and try again.");
             addSubmissionErrors(errorJson.errors);
             setSubmitSuccess(false);
             setSubmitting(false);
             setSendToApiPromise(null);
         })
-    }, [addSubmissionErrors]);
+    }, [dispatch, addSubmissionErrors]);
 
     useEffect(() => {
         setValue('data', {
@@ -114,11 +122,7 @@ export default function Submission() {
         if (submitting && !waiting && sendToApiPromise === null) {
             console.log("Finished validation. Errors:", hasErrors);
             if (hasErrors) {
-                createToast({
-                    type: 'error',
-                    message: "The form has errors. Please correct them before submitting.",
-                    autoDismiss: true
-                })
+                createErrorToast("The form has errors. Please correct them before submitting.");
                 setSubmitting(false);
             } else {
                 debugger; // eslint-disable-line no-debugger
@@ -167,4 +171,7 @@ export default function Submission() {
             </div>}
         </section>
     )
+}
+Submission.propTypes = {
+    debugMode: PropTypes.bool
 }

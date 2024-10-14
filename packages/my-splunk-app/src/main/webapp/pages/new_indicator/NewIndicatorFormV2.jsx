@@ -108,7 +108,7 @@ DisplayIndicators.propTypes = {
     indicatorCategories: PropTypes.array
 };
 
-const debugMode = true;
+const debugMode = false;
 
 export function NewIndicatorFormV2({initialSplunkFieldName, initialSplunkFieldValue, event}) {
     console.log('NewIndicatorFormV2', {initialSplunkFieldName, initialSplunkFieldValue, event});
@@ -122,7 +122,7 @@ export function NewIndicatorFormV2({initialSplunkFieldName, initialSplunkFieldVa
                     <DisplayIndicators splunkEvent={event} initialSplunkFieldName={initialSplunkFieldName}
                                        indicatorCategories={indicatorCategories}/>
                     {debugMode && <DisplayState/>}
-                    <Submission/>
+                    <Submission debugMode={debugMode}/>
                 </MaxWidthContainer>
             </Loader>
         </Provider>
