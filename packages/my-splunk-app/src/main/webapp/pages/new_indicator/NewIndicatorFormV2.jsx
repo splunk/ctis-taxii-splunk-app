@@ -6,6 +6,8 @@ import Loader from "@splunk/my-react-component/src/Loader";
 import styled from "styled-components";
 import {variables} from "@splunk/themes";
 import Divider from "@splunk/react-ui/Divider";
+import PlusCircle from "@splunk/react-icons/PlusCircle";
+import {HeadingNoMargin} from "@splunk/my-react-component/MyHeading";
 import CommonPropertiesForm from "./CommonPropertiesForm";
 
 import {addIndicator, indicatorsSlice, removeIndicator} from "./Indicators.slice";
@@ -66,6 +68,30 @@ const DisplayState = () => {
     </div>
 }
 
+const AddAnotherIndicatorContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 100px;
+    border: 1px dotted ${variables.contentColorMuted};
+    margin-bottom: ${variables.spacingMedium};
+    &:hover {
+        cursor: pointer;
+        background-color: ${variables.backgroundColorHover};
+    }
+`
+const AddAnotherIndicator = () => {
+    const dispatch = useDispatch();
+    const onClickHandler = () => dispatch(addIndicator());
+    return <AddAnotherIndicatorContainer onClick={onClickHandler}>
+        <PlusCircle width='30px' height='30px'/>
+        <HeadingNoMargin level={3}>
+            Add another Indicator to this form
+        </HeadingNoMargin>
+    </AddAnotherIndicatorContainer>
+}
+
 const DisplayIndicators = ({splunkEvent, initialSplunkFieldName, indicatorCategories}) => {
     const dispatch = useDispatch();
     const indicators = useSelector((state) => state.indicators.indicators);
@@ -96,9 +122,7 @@ const DisplayIndicators = ({splunkEvent, initialSplunkFieldName, indicatorCatego
                               submissionErrors={submissionErrors[key] || []}
             />
         )}
-        <div>
-            <button type="button" onClick={() => dispatch(addIndicator())}>Add an indicator</button>
-        </div>
+        <AddAnotherIndicator/>
     </>
 }
 
