@@ -31,6 +31,9 @@ const DisplayState = () => {
     const errors = useSelector((state) => state.commonProperties.errors);
     const indicators = useSelector((state) => state.indicators.indicators);
     const indicatorsErrors = useSelector((state) => state.indicators.errors);
+    const submissionErrors = useSelector((state) => state.indicators.submissionErrors);
+    const validationSignal = useSelector((state) => state.indicators.signal);
+    const validationSignalsResponded = useSelector((state) => state.indicators.lastSignalRespondedTo);
     return <div>
         <h2>Common Props - Data</h2>
         <code>
@@ -47,9 +50,18 @@ const DisplayState = () => {
             {JSON.stringify(indicators, null, 2)}
         </code>
 
-        <h2>Indicators - Errors</h2>
+        <h2>Indicators - Validation Errors</h2>
         <code>
             {JSON.stringify(indicatorsErrors, null, 2)}
+        </code>
+        <h2>Indicators - Validation Errors - Signals</h2>
+        <div>Current validation signal: {String(validationSignal)}</div>
+        <code>
+            {JSON.stringify(validationSignalsResponded, null, 2)}
+        </code>
+        <h2>Indicators - Submission Errors</h2>
+        <code>
+            {JSON.stringify(submissionErrors, null, 2)}
         </code>
     </div>
 }
@@ -57,6 +69,7 @@ const DisplayState = () => {
 const DisplayIndicators = ({splunkEvent, initialSplunkFieldName, indicatorCategories}) => {
     const dispatch = useDispatch();
     const indicators = useSelector((state) => state.indicators.indicators);
+    const submissionErrors = useSelector((state) => state.indicators.submissionErrors);
     const numIndicators = Object.keys(indicators).length;
     const [initialised, setInitialised] = useState(false);
 
@@ -80,6 +93,7 @@ const DisplayIndicators = ({splunkEvent, initialSplunkFieldName, indicatorCatego
                               removeSelf={() => dispatch(removeIndicator({id: key}))}
                               splunkEvent={splunkEvent}
                               indicatorCategories={indicatorCategories}
+                              submissionErrors={submissionErrors[key] || []}
             />
         )}
         <div>
@@ -94,7 +108,7 @@ DisplayIndicators.propTypes = {
     indicatorCategories: PropTypes.array
 };
 
-const debugMode = false;
+const debugMode = true;
 
 export function NewIndicatorFormV2({initialSplunkFieldName, initialSplunkFieldValue, event}) {
     console.log('NewIndicatorFormV2', {initialSplunkFieldName, initialSplunkFieldValue, event});

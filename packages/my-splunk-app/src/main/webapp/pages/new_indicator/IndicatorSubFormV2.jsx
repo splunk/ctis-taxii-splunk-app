@@ -48,7 +48,15 @@ const StyledSection = styled.section`
 `;
 const FORM_FIELDS = [FIELD_SPLUNK_FIELD_NAME, FIELD_INDICATOR_VALUE, FIELD_INDICATOR_CATEGORY, FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION];
 
-const IndicatorSubForm = ({id, index, removeSelf, removeSelfEnabled, submissionErrors, splunkEvent, indicatorCategories}) => {
+const IndicatorSubForm = ({
+                              id,
+                              index,
+                              removeSelf,
+                              removeSelfEnabled,
+                              submissionErrors,
+                              splunkEvent,
+                              indicatorCategories
+                          }) => {
     const formMethods = useForm({
         mode: 'all',
         defaultValues: useSelector(state => state.indicators.indicators[id]) || {}
@@ -134,7 +142,7 @@ const IndicatorSubForm = ({id, index, removeSelf, removeSelfEnabled, submissionE
                         <StyledHeading level={2}>New Indicator {`#${index + 1}`}</StyledHeading>
                         <DeleteButton inline disabled={!removeSelfEnabled} label="Remove" onClick={() => removeSelf()}/>
                     </HorizontalLayout>
-                    {submissionErrors && <Message appearance="fill" type="error">
+                    {submissionErrors?.length > 0 && <Message appearance="fill" type="error">
                         {submissionErrors.map(error => <P>{error}</P>)}
                     </Message>}
                     {splunkEvent &&

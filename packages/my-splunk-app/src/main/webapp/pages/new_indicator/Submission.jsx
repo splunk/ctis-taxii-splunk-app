@@ -15,7 +15,9 @@ import {VIEW_INDICATORS_PAGE} from "@splunk/my-react-component/src/urls";
 import {createToast} from "@splunk/my-react-component/src/AppContainer";
 import {
     triggerValidationSignal as indicatorsTrigger,
-    waitingForValidation as indicatorsWaitingForValidation
+    waitingForValidation as indicatorsWaitingForValidation,
+    addSubmissionError,
+    clearAllSubmissionErrors
 } from "./Indicators.slice";
 import {
     triggerValidationSignal as commonPropsTrigger,
@@ -73,19 +75,33 @@ export default function Submission() {
     const formData = watch('data');
     const debugMode = true;
 
+    const addSubmissionErrors = useCallback((submissionErrors) => {
+        dispatch(clearAllSubmissionErrors());
+        submissionErrors.forEach(({index, errors}) => {
+           const indicatorId = Object.keys(indicators)[index];
+           dispatch(addSubmissionError({
+               id: indicatorId,
+               errors
+           }));
+        });
+    }, [indicators, dispatch]);
+
     const submitToApi = useCallback(async (data) => {
         await postCreateIndicator(data, (resp) => {
             console.log("Response:", resp);
             setSubmitSuccess(true);
             setSubmitting(false);
             setSendToApiPromise(null);
-        }, (error) => {
-            console.error("Error submitting form to API:", error);
+        }, async (errorResponse) => {
+            console.error("Error submitting form to API:", errorResponse);
+            const errorJson = await errorResponse.json();
+            console.error("Error JSON:", errorJson);
+            addSubmissionErrors(errorJson.errors);
             setSubmitSuccess(false);
             setSubmitting(false);
             setSendToApiPromise(null);
         })
-    }, []);
+    }, [addSubmissionErrors]);
 
     useEffect(() => {
         setValue('data', {
@@ -105,6 +121,7 @@ export default function Submission() {
                 })
                 setSubmitting(false);
             } else {
+                debugger; // eslint-disable-line no-debugger
                 setSendToApiPromise(submitToApi(formData));
             }
         }

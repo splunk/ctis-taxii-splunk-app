@@ -29,7 +29,7 @@ const CommonPropertiesForm = () => {
         mode: 'all',
         defaultValues: {
             [FIELD_GROUPING_ID]: '',
-            [FIELD_TLP_RATING]: '',
+            [FIELD_TLP_RATING]: 'GREEN',
             [FIELD_CONFIDENCE]: 50,
             [FIELD_VALID_FROM]: dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision())
         }
