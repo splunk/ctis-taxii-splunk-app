@@ -5,6 +5,8 @@ import {useDispatch, useSelector} from 'react-redux'
 
 import P from "@splunk/react-ui/Paragraph";
 import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
+import styled from "styled-components";
+import {variables} from "@splunk/themes";
 import {getValidationSignal, submitData, validationDone} from './CommonProperties.slice'
 import {useRespondToValidationSignal} from "./formUtils";
 import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
@@ -16,6 +18,10 @@ import {
     FIELD_VALID_FROM,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
+
+const StyledSection = styled.section`
+    margin-bottom: ${variables.spacingLarge};
+`
 
 const COMMON_PROPERTIES_FIELDS = [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM];
 const CommonPropertiesForm = () => {
@@ -56,7 +62,7 @@ const CommonPropertiesForm = () => {
     const onSubmit = (data) => console.log(data);
 
     return (
-        <section>
+        <StyledSection>
             <Heading level={2}>Common Properties</Heading>
             <FormProvider {...formMethods}>
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -67,7 +73,7 @@ const CommonPropertiesForm = () => {
                     <ValidFromField fieldName={FIELD_VALID_FROM}/>
                 </form>
             </FormProvider>
-        </section>
+        </StyledSection>
     );
 };
 

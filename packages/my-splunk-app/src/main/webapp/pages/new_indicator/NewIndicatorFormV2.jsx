@@ -5,6 +5,7 @@ import {configureStore} from "@reduxjs/toolkit";
 import Loader from "@splunk/my-react-component/src/Loader";
 import styled from "styled-components";
 import {variables} from "@splunk/themes";
+import Divider from "@splunk/react-ui/Divider";
 import CommonPropertiesForm from "./CommonPropertiesForm";
 
 import {addIndicator, indicatorsSlice, removeIndicator} from "./Indicators.slice";
@@ -53,10 +54,10 @@ const DisplayState = () => {
     </div>
 }
 
-const DisplayIndicators = ({splunkEvent, initialSplunkFieldName}) => {
+const DisplayIndicators = ({splunkEvent, initialSplunkFieldName, indicatorCategories}) => {
     const dispatch = useDispatch();
     const indicators = useSelector((state) => state.indicators.indicators);
-    const {indicatorCategories, loading: loadingCategories} = useIndicatorCategories();
+    const numIndicators = Object.keys(indicators).length;
     const [initialised, setInitialised] = useState(false);
 
     useEffect(() => {
@@ -73,38 +74,43 @@ const DisplayIndicators = ({splunkEvent, initialSplunkFieldName}) => {
     }, [initialised, setInitialised, dispatch, splunkEvent, initialSplunkFieldName]);
 
     return <>
-        <Loader loading={loadingCategories}>
-            {Object.keys(indicators).map((key, index) =>
-                <IndicatorSubForm key={key} index={index} id={key}
-                                  removeSelf={() => dispatch(removeIndicator({id: key}))}
-                                  splunkEvent={splunkEvent}
-                                  indicatorCategories={indicatorCategories}
-                />
-            )}
-            <div>
-                <button type="button" onClick={() => dispatch(addIndicator())}>Add an indicator</button>
-            </div>
-        </Loader>
+        {Object.keys(indicators).map((key, index) =>
+            <IndicatorSubForm key={key} index={index} id={key}
+                              removeSelfEnabled={numIndicators > 1}
+                              removeSelf={() => dispatch(removeIndicator({id: key}))}
+                              splunkEvent={splunkEvent}
+                              indicatorCategories={indicatorCategories}
+            />
+        )}
+        <div>
+            <button type="button" onClick={() => dispatch(addIndicator())}>Add an indicator</button>
+        </div>
     </>
 }
 
 DisplayIndicators.propTypes = {
     splunkEvent: PropTypes.object,
-    initialSplunkFieldName: PropTypes.string
+    initialSplunkFieldName: PropTypes.string,
+    indicatorCategories: PropTypes.array
 };
 
 const debugMode = false;
 
 export function NewIndicatorFormV2({initialSplunkFieldName, initialSplunkFieldValue, event}) {
     console.log('NewIndicatorFormV2', {initialSplunkFieldName, initialSplunkFieldValue, event});
+    const {indicatorCategories, loading: loadingCategories} = useIndicatorCategories();
     return <>
         <Provider store={store}>
-            <MaxWidthContainer>
-                <CommonPropertiesForm/>
-                <DisplayIndicators splunkEvent={event} initialSplunkFieldName={initialSplunkFieldName}/>
-                {debugMode && <DisplayState/>}
-                <Submission/>
-            </MaxWidthContainer>
+            <Loader loading={loadingCategories}>
+                <MaxWidthContainer>
+                    <CommonPropertiesForm/>
+                    <Divider/>
+                    <DisplayIndicators splunkEvent={event} initialSplunkFieldName={initialSplunkFieldName}
+                                       indicatorCategories={indicatorCategories}/>
+                    {debugMode && <DisplayState/>}
+                    <Submission/>
+                </MaxWidthContainer>
+            </Loader>
         </Provider>
 
     </>

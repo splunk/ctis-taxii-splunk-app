@@ -48,7 +48,7 @@ const StyledSection = styled.section`
 `;
 const FORM_FIELDS = [FIELD_SPLUNK_FIELD_NAME, FIELD_INDICATOR_VALUE, FIELD_INDICATOR_CATEGORY, FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION];
 
-const IndicatorSubForm = ({id, index, removeSelf, submissionErrors, splunkEvent, indicatorCategories}) => {
+const IndicatorSubForm = ({id, index, removeSelf, removeSelfEnabled, submissionErrors, splunkEvent, indicatorCategories}) => {
     const formMethods = useForm({
         mode: 'all',
         defaultValues: useSelector(state => state.indicators.indicators[id]) || {}
@@ -71,12 +71,12 @@ const IndicatorSubForm = ({id, index, removeSelf, submissionErrors, splunkEvent,
     const indicatorDescription = watch(FIELD_INDICATOR_DESCRIPTION);
 
     const formValues = useMemo(() => ({
-        splunkFieldName,
-        indicatorValue,
-        indicatorCategory,
-        stixPattern,
-        indicatorName,
-        indicatorDescription
+        [FIELD_SPLUNK_FIELD_NAME]: splunkFieldName,
+        [FIELD_INDICATOR_VALUE]: indicatorValue,
+        [FIELD_INDICATOR_CATEGORY]: indicatorCategory,
+        [FIELD_STIX_PATTERN]: stixPattern,
+        [FIELD_INDICATOR_NAME]: indicatorName,
+        [FIELD_INDICATOR_DESCRIPTION]: indicatorDescription
     }), [
         splunkFieldName,
         indicatorValue,
@@ -132,7 +132,7 @@ const IndicatorSubForm = ({id, index, removeSelf, submissionErrors, splunkEvent,
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <HorizontalLayout>
                         <StyledHeading level={2}>New Indicator {`#${index + 1}`}</StyledHeading>
-                        <DeleteButton inline label="Remove" onClick={() => removeSelf()}/>
+                        <DeleteButton inline disabled={!removeSelfEnabled} label="Remove" onClick={() => removeSelf()}/>
                     </HorizontalLayout>
                     {submissionErrors && <Message appearance="fill" type="error">
                         {submissionErrors.map(error => <P>{error}</P>)}
@@ -171,6 +171,7 @@ IndicatorSubForm.propTypes = {
     index: PropTypes.number.isRequired,
     id: PropTypes.string.isRequired,
     removeSelf: PropTypes.func,
+    removeSelfEnabled: PropTypes.bool,
     submissionErrors: PropTypes.array,
     splunkEvent: PropTypes.object,
     indicatorCategories: PropTypes.array,
