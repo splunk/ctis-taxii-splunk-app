@@ -57,7 +57,7 @@ TLPv2RatingField.propTypes = {
 }
 
 export function ValidFromField({fieldName, ...props}) {
-    return <DatetimeControlGroup label="Valid From (UTC)" {...useFormInputProps(fieldName)} {...props}/>
+    return <DatetimeControlGroup label="Valid From (UTC)" setHelpTextAsRelativeTime {...useFormInputProps(fieldName)} {...props}/>
 }
 
 ValidFromField.propTypes = {

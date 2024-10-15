@@ -2,7 +2,6 @@ import SelectControlGroup from "@splunk/my-react-component/src/SelectControlGrou
 import React from "react";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
-import moment from "moment";
 import PropTypes from "prop-types";
 import {useFormInputProps} from "../formInputProps";
 
@@ -33,13 +32,7 @@ GroupingId.propTypes = {
 }
 
 export function ScheduledAt({fieldName, ...props}) {
-    const formInputProps = useFormInputProps(fieldName);
-    const {value} = formInputProps;
-    let helpText = '';
-    if (value) {
-        helpText = `Approximately ${moment.utc(value).fromNow()}`;
-    }
-    return <DatetimeControlGroup help={helpText} label="Scheduled At (UTC)" {...formInputProps} {...props}/>;
+    return <DatetimeControlGroup setHelpTextAsRelativeTime label="Scheduled At (UTC)" {...useFormInputProps(fieldName)} {...props}/>;
 }
 
 ScheduledAt.propTypes = {
