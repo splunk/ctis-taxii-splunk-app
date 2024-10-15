@@ -188,7 +188,7 @@ export function Form({groupingId}) {
     }
     useEffect(() => {
         if (scheduledSubmission) {
-            const dateInFuture = moment().add(1, 'days').milliseconds(0).toDate();
+            const dateInFuture = moment().add(1, 'days').startOf('minute').toDate();
             setValue(FIELD_SCHEDULED_AT, dateToIsoStringWithoutTimezone(dateInFuture), {shouldValidate: true});
         } else {
             setValue(FIELD_SCHEDULED_AT, null, {shouldValidate: true});
