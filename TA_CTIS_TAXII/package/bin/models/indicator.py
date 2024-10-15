@@ -59,9 +59,10 @@ class IndicatorModelV1(BaseModelV1):
     valid_from: datetime = field()
     confidence: int = field(validator=[validate_confidence])
 
-    def to_stix(self):
+    def to_stix(self, created_by_ref:str = None) -> StixIndicator:
         return StixIndicator(
             id=self.indicator_id,
+            created_by_ref=created_by_ref,
             created=self.created,
             modified=self.modified,
             name=self.name,

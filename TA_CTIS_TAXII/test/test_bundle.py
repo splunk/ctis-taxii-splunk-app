@@ -43,3 +43,8 @@ class TestStixBundle:
         # Only unique TLP ratings should be added to the bundle
         assert object_id_to_type[RED_MARKING_DEFINITION.id] == "marking-definition"
         assert object_id_to_type[GREEN_MARKING_DEFINITION.id] == "marking-definition"
+
+        indicator_id_to_indicator = {x["id"]: x for x in bundle_json["objects"] if x["type"] == "indicator"}
+        assert len(indicator_id_to_indicator) == 3
+        assert indicator_id_to_indicator[indicator1.indicator_id][
+                   "created_by_ref"] == identity.identity_id, "Indicator should have the grouping's identity as the creator"

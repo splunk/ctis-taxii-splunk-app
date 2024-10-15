@@ -6,10 +6,14 @@ from .grouping import GroupingModelV1, grouping_converter
 from .submission import SubmissionModelV1, SubmissionStatus, submission_converter
 from stix2 import Bundle
 
-def bundle_for_grouping(grouping_: GroupingModelV1, grouping_identity: IdentityModelV1, indicators: List[IndicatorModelV1]) -> Bundle:
+
+def bundle_for_grouping(grouping_: GroupingModelV1, grouping_identity: IdentityModelV1,
+                        indicators: List[IndicatorModelV1]) -> Bundle:
     unique_tlp_ratings = set([ind.tlp_v2_rating for ind in indicators])
     object_marking_refs = [x.to_object_marking_ref() for x in unique_tlp_ratings]
-    indicators_as_stix = [ind.to_stix() for ind in indicators]
+
+    indicators_as_stix = [ind.to_stix(created_by_ref=grouping_identity.identity_id) for ind in indicators]
+
     grouping_stix = grouping_.to_stix(object_ids=[ind.id for ind in indicators_as_stix])
     identity_stix = grouping_identity.to_stix()
     objects = [grouping_stix, identity_stix] + indicators_as_stix + object_marking_refs

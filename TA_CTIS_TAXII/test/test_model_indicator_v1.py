@@ -5,7 +5,10 @@ from cattrs import ClassValidationError, transform_error
 
 from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators
 from TA_CTIS_TAXII.package.bin.models.tlp_v2 import TLPv2, GREEN_MARKING_DEFINITION
+
 GROUPING_ID = "grouping--184f5231-02f6-49e8-8230-b740f4b82331"
+IDENTITY_ID = "identity--a463ffb3-1bd9-4d94-b02d-74e4f1658283"
+
 SAMPLE_DICT = {
     "schema_version": 1,
     "grouping_id": GROUPING_ID,
@@ -215,7 +218,7 @@ def test_validate_stix_pattern():
 
 def test_to_stix():
     indicator = new_sample_indicator_instance()
-    stix = indicator.to_stix()
+    stix = indicator.to_stix(created_by_ref=IDENTITY_ID)
     assert stix.id == indicator.indicator_id
     assert stix.created == indicator.created
     assert stix.modified == indicator.modified
@@ -226,6 +229,7 @@ def test_to_stix():
     assert stix.valid_from == indicator.valid_from
     assert stix.confidence == indicator.confidence
     assert stix.object_marking_refs == [GREEN_MARKING_DEFINITION.id]
+    assert stix.created_by_ref == IDENTITY_ID
 
 
 @pytest.mark.parametrize("grouping_id", ["", None, "invalid"])
