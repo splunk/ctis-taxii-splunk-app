@@ -11,6 +11,8 @@ export const NEW_IDENTITY_PAGE = createURL(`/app/${app}/new_identity`);
 export const VIEW_GROUPINGS_PAGE = createURL(`/app/${app}/groupings`);
 export const NEW_GROUPING_PAGE = createURL(`/app/${app}/new_grouping`);
 
+export const VIEW_CONFIGURATION_PAGE = createURL(`/app/${app}/configuration`);
+
 export const viewIndicator = (indicatorId) => createURL(`/app/${app}/indicators`, {
     indicator_id: indicatorId,
 });

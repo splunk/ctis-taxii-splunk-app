@@ -31,7 +31,7 @@ SelectControlGroup.propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
     error: PropTypes.bool,
-    help: PropTypes.string,
+    help: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     options: PropTypes.arrayOf(PropTypes.shape({
         label: PropTypes.string,
         value: PropTypes.string

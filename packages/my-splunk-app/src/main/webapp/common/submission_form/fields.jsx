@@ -3,10 +3,14 @@ import React from "react";
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControlGroup";
 import PropTypes from "prop-types";
+import Link from "@splunk/react-ui/Link";
+import {VIEW_CONFIGURATION_PAGE} from "@splunk/my-react-component/src/urls";
 import {useFormInputProps} from "../formInputProps";
 
 export function TaxiiConfigField({fieldName, options, ...props}) {
-    return <SelectControlGroup label="TAXII Config" {...useFormInputProps(fieldName)} options={options} {...props}/>
+    const helpContent = <Link openInNewContext to={VIEW_CONFIGURATION_PAGE}>Create a New TAXII Configuration</Link>;
+    return <SelectControlGroup label="TAXII Config" help={helpContent} {...useFormInputProps(fieldName)}
+                               options={options} {...props}/>
 }
 
 TaxiiConfigField.propTypes = {
@@ -32,7 +36,8 @@ GroupingId.propTypes = {
 }
 
 export function ScheduledAt({fieldName, ...props}) {
-    return <DatetimeControlGroup setHelpTextAsRelativeTime label="Scheduled At (UTC)" {...useFormInputProps(fieldName)} {...props}/>;
+    return <DatetimeControlGroup setHelpTextAsRelativeTime
+                                 label="Scheduled At (UTC)" {...useFormInputProps(fieldName)} {...props}/>;
 }
 
 ScheduledAt.propTypes = {
