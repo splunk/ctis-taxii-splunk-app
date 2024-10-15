@@ -31,7 +31,7 @@ import {
     FIELD_VALID_FROM,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
-import {ConfidenceField, TLPv1RatingField, ValidFromField} from "../../common/indicator_form/formControls";
+import {ConfidenceField, TLPv2RatingField, ValidFromField} from "../../common/indicator_form/formControls";
 import {IndicatorSubForm} from "./IndicatorSubForm";
 import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
 
@@ -240,7 +240,7 @@ export function NewIndicatorForm({initialSplunkFieldName, initialSplunkFieldValu
                     <P>These properties will be shared by all indicators created on this form.</P>
                     <GroupingIdFieldV2 fieldName={FIELD_GROUPING_ID}/>
                     <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
-                    <TLPv1RatingField fieldName={FIELD_TLP_RATING}/>
+                    <TLPv2RatingField fieldName={FIELD_TLP_RATING}/>
                     <ValidFromField fieldName={FIELD_VALID_FROM}/>
                 </section>
                 <Divider/>

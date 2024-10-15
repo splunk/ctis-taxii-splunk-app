@@ -2,14 +2,15 @@ import React, {useEffect, useState} from 'react';
 import Search from '@splunk/react-ui/Search';
 
 import styled from 'styled-components';
+import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
+import {variables} from "@splunk/themes";
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
 import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
-import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
-import {variables} from "@splunk/themes";
 import SearchableSelect from "./search/SearchableSelect";
 import {generateRegexQueryForFields} from "./search/util";
 import {getGroupings, getIdentities, getIndicators, getSubmissions} from "./ApiClient";
+import {tlpV2RatingOptions} from "./tlpV2Rating";
 
 const SearchControlContainer = styled.div`
     display: flex;
@@ -42,7 +43,7 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
     }
 
     useEffect(() => {
-        let all_subqueries = subqueries.filter(subquery => subquery !== null && Object.keys(subquery).length > 0);
+        const all_subqueries = subqueries.filter(subquery => subquery !== null && Object.keys(subquery).length > 0);
         if (debouncedSearchValue) {
             all_subqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
         }
@@ -80,29 +81,24 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
             <SearchableSelect searchableFields={['name', 'indicator_id']}
                               prefixLabel="Indicator"
-                              placeholder={"Indicator..."}
+                              placeholder="Indicator..."
                               restGetFunction={getIndicators}
-                              queryFilterField={"indicator_id"}
-                              initialSelectionQueryParamName={"indicator_id"}
+                              queryFilterField="indicator_id"
+                              initialSelectionQueryParamName="indicator_id"
                               selectOptionLabelFunction={(record) => `${record.name} (${record.indicator_id})`}
                               onQueryChange={setIndicatorFilter}/>
 
             <SearchableSelect searchableFields={['name', 'grouping_id']}
                               prefixLabel="Grouping"
-                              placeholder={"Grouping..."}
+                              placeholder="Grouping..."
                               restGetFunction={getGroupings}
-                              queryFilterField={"grouping_id"}
-                              initialSelectionQueryParamName={"grouping_id"}
+                              queryFilterField="grouping_id"
+                              initialSelectionQueryParamName="grouping_id"
                               selectOptionLabelFunction={(record) => `${record.name} (${record.grouping_id})`}
                               onQueryChange={setGroupingFilter}/>
-            <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
-            <SearchFieldDropdown prefixLabel="TLP Rating" fieldName="tlp_v1_rating" onQueryChange={setTlpRatingQuery}
-                                 options={[
-                                     {label: "GREEN", value: "GREEN"},
-                                     {label: "RED", value: "RED"},
-                                     {label: "AMBER", value: "AMBER"},
-                                     {label: "WHITE", value: "WHITE"},
-                                 ]}/>
+            <DatetimeRangePicker labelPrefix="Last Updated" fieldName="modified" onQueryChange={setLastUpdatedQuery}/>
+            <SearchFieldDropdown prefixLabel="TLP v2 Rating" fieldName="tlp_v2_rating" onQueryChange={setTlpRatingQuery}
+                                 options={tlpV2RatingOptions}/>
         </SearchBar>
     );
 }
@@ -118,14 +114,14 @@ export const GroupingsSearchBar = ({onQueryChange}) => {
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
             <SearchableSelect searchableFields={['name', 'grouping_id']}
                               prefixLabel="Grouping"
-                              placeholder={"Grouping..."}
+                              placeholder="Grouping..."
                               restGetFunction={getGroupings}
-                              queryFilterField={"grouping_id"}
-                              initialSelectionQueryParamName={"grouping_id"}
+                              queryFilterField="grouping_id"
+                              initialSelectionQueryParamName="grouping_id"
                               selectOptionLabelFunction={(record) => `${record.name} (${record.grouping_id})`}
                               onQueryChange={setGroupingFilter}/>
-            <DatetimeRangePicker labelPrefix="Last Updated" fieldName={"modified"} onQueryChange={setLastUpdatedQuery}/>
-            <DatetimeRangePicker optional={true} labelPrefix="Last Submitted" fieldName={"last_submission_at"}
+            <DatetimeRangePicker labelPrefix="Last Updated" fieldName="modified" onQueryChange={setLastUpdatedQuery}/>
+            <DatetimeRangePicker optional labelPrefix="Last Submitted" fieldName="last_submission_at"
                                  onQueryChange={setLastSubmittedQuery}/>
         </SearchBar>
     );
@@ -139,10 +135,10 @@ export const IdentitiesSearchBar = ({onQueryChange}) => {
                    subqueries={[identityFilter]}>
             <SearchableSelect searchableFields={['name', 'identity_id']}
                               prefixLabel="Identity"
-                              placeholder={"Identity..."}
+                              placeholder="Identity..."
                               restGetFunction={getIdentities}
-                              queryFilterField={"identity_id"}
-                              initialSelectionQueryParamName={"identity_id"}
+                              queryFilterField="identity_id"
+                              initialSelectionQueryParamName="identity_id"
                               selectOptionLabelFunction={(record) => `${record.name} (${record.identity_id})`}
                               onQueryChange={setIdentityFilter}/>
         </SearchBar>
@@ -160,10 +156,10 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
                    subqueries={[statusQuery, scheduledAtQuery, submissionFilter]}>
             <SearchableSelect searchableFields={['submission_id']}
                               prefixLabel="Submission"
-                              placeholder={"Submission..."}
+                              placeholder="Submission..."
                               restGetFunction={getSubmissions}
-                              queryFilterField={"submission_id"}
-                              initialSelectionQueryParamName={"submission_id"}
+                              queryFilterField="submission_id"
+                              initialSelectionQueryParamName="submission_id"
                               selectOptionLabelFunction={(record) => record.submission_id}
                               onQueryChange={setSubmissionFilter}/>
             <SearchFieldDropdown prefixLabel="Status" fieldName="status" onQueryChange={setStatusQuery}
@@ -173,7 +169,7 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
                                      {label: "FAILED", value: "FAILED"},
                                      {label: "CANCELLED", value: "CANCELLED"},
                                  ]}/>
-            <DatetimeRangePicker labelPrefix="Scheduled/Sent At" fieldName={"scheduled_at"}
+            <DatetimeRangePicker labelPrefix="Scheduled/Sent At" fieldName="scheduled_at"
                                  onQueryChange={setScheduledAtQuery}/>
         </SearchBar>
     );

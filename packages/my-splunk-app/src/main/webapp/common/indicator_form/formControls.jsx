@@ -6,6 +6,7 @@ import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import PropTypes from "prop-types";
+import {tlpV2RatingOptions} from "@splunk/my-react-component/src/tlpV2Rating";
 import {useFormInputProps} from "../formInputProps";
 
 export function IndicatorIdField({fieldName, ...props}) {
@@ -42,23 +43,16 @@ ConfidenceField.propTypes = {
     fieldName: PropTypes.string.isRequired
 }
 
-const tlpV1RatingOptions = [
-    {label: "RED", value: "RED"},
-    {label: "AMBER", value: "AMBER"},
-    {label: "GREEN", value: "GREEN"},
-    {label: "WHITE", value: "WHITE"}
 
-];
-
-export function TLPv1RatingField({fieldName, ...props}) {
-    return <SelectControlGroup label="TLP v1.0 Rating"
-                               options={tlpV1RatingOptions}
+export function TLPv2RatingField({fieldName, ...props}) {
+    return <SelectControlGroup label="TLP v2.0 Rating"
+                               options={tlpV2RatingOptions}
                                {...useFormInputProps(fieldName)}
                                {...props}
     />
 }
 
-TLPv1RatingField.propTypes = {
+TLPv2RatingField.propTypes = {
     fieldName: PropTypes.string.isRequired
 }
 

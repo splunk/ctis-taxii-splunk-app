@@ -27,7 +27,7 @@ import {
     IndicatorNameField,
     IndicatorValueField,
     StixPatternField,
-    TLPv1RatingField,
+    TLPv2RatingField,
     ValidFromField
 } from "./formControls";
 import {StyledForm} from "./StyledForm";
@@ -116,7 +116,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
             setValue(FIELD_INDICATOR_CATEGORY, record.indicator_category);
             setValue(FIELD_VALID_FROM, reduceIsoStringPrecisionToSeconds(record.valid_from));
             setValue(FIELD_CONFIDENCE, record.confidence);
-            setValue(FIELD_TLP_RATING, record.tlp_v1_rating);
+            setValue(FIELD_TLP_RATING, record.tlp_v2_rating);
         }
     }, [setValue, record]);
 
@@ -151,7 +151,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                         <IndicatorNameField fieldName={FIELD_INDICATOR_NAME} readOnly={readOnly}/>
                         <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION} readOnly={readOnly}/>
                         <ConfidenceField fieldName={FIELD_CONFIDENCE} readOnly={readOnly}/>
-                        <TLPv1RatingField fieldName={FIELD_TLP_RATING} readOnly={readOnly}/>
+                        <TLPv2RatingField fieldName={FIELD_TLP_RATING} readOnly={readOnly}/>
                         <ValidFromField fieldName={FIELD_VALID_FROM} readOnly={readOnly}/>
                         <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE} readOnly={readOnly}/>
                         <IndicatorCategoryField fieldName={FIELD_INDICATOR_CATEGORY} options={indicatorCategories}

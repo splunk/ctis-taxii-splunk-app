@@ -1,14 +1,38 @@
-from .util import edit_indicator, get_indicators_collection, new_indicator_payload, \
+from .util import create_new_grouping, create_new_identity, edit_indicator, get_groupings_collection, \
+    get_identities_collection, get_indicators_collection, \
+    new_indicator_payload, \
     create_new_indicator, list_indicators, bulk_insert_indicators, create_indicator_form_payload, example_indicator, \
     delete_indicator
 
 
+def new_grouping(session):
+    identity = create_new_identity(session, {
+        "name": "identity-1",
+        "identity_class": "organization",
+    })["identity"]
+    grouping = create_new_grouping(session, {
+        "created_by_ref": identity["identity_id"],
+        "name": "grouping-1",
+        "description": "description-1",
+        "context": "unspecified",
+    })["grouping"]
+    assert grouping["grouping_id"] is not None
+    return grouping
+
+
+def assert_collections_are_empty(session):
+    assert len(get_groupings_collection(session)) == 0
+    assert len(get_identities_collection(session)) == 0
+    assert len(get_indicators_collection(session)) == 0
+
+
 class TestScenarios:
-    def test_scenario_add_new_indicator_writes_to_db(self, session, cleanup_indicators_collection):
-        indicators = get_indicators_collection(session)
-        assert len(indicators) == 0
+    def test_scenario_add_new_indicator_writes_to_db(self, session, cleanup_all_collections):
+        assert_collections_are_empty(session)
+        grouping = new_grouping(session)
+
         # Validation isn't done on grouping_id, but the UI forces a dropdown selection in the Indicator Form
-        payload = create_indicator_form_payload(grouping_id="A", indicators=[example_indicator()])
+        payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=[example_indicator()])
         create_new_indicator(session, payload=payload)
         indicators = get_indicators_collection(session)
         assert len(indicators) == 1
@@ -21,9 +45,11 @@ class TestScenarios:
         assert indicator["created"] is not None
         assert indicator["modified"] is not None
 
-    def test_list_indicators_no_filter(self, session, cleanup_indicators_collection):
+    def test_list_indicators_no_filter(self, session, cleanup_all_collections):
+        assert_collections_are_empty(session)
+        grouping = new_grouping(session)
         indicators_to_add = [example_indicator() for _ in range(5)]
-        payload = create_indicator_form_payload(grouping_id="A", indicators=indicators_to_add)
+        payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=indicators_to_add)
         create_new_indicator(session, payload=payload)
         assert len(get_indicators_collection(session)) == 5
 
@@ -32,28 +58,37 @@ class TestScenarios:
         assert len(indicators_no_filter) == 5
         assert resp_no_filter["total"] == 5
 
-    def test_list_indicators_with_query(self, session, cleanup_indicators_collection):
-        payload_a = create_indicator_form_payload(grouping_id="A", indicators=[example_indicator() for _ in range(3)])
+    def test_list_indicators_with_query(self, session, cleanup_all_collections):
+        assert_collections_are_empty(session)
+        grouping_a = new_grouping(session)
+        grouping_a_id = grouping_a["grouping_id"]
+        grouping_b = new_grouping(session)
+        grouping_b_id = grouping_b["grouping_id"]
+
+        payload_a = create_indicator_form_payload(grouping_id=grouping_a_id,
+                                                  indicators=[example_indicator() for _ in range(3)])
         create_new_indicator(session, payload=payload_a)
-        payload_b = create_indicator_form_payload(grouping_id="B", indicators=[example_indicator() for _ in range(2)])
+        payload_b = create_indicator_form_payload(grouping_id=grouping_b_id,
+                                                  indicators=[example_indicator() for _ in range(2)])
         create_new_indicator(session, payload=payload_b)
         assert len(get_indicators_collection(session)) == 5
 
         resp_with_filter = list_indicators(session, skip=0, limit=100, query={
-            "grouping_id": "A"
+            "grouping_id": grouping_a_id
         })
         indicators_with_filter = resp_with_filter["records"]
         assert len(indicators_with_filter) == 3
         assert resp_with_filter["total"] == 3
 
         resp_with_filter_2 = list_indicators(session, skip=0, limit=100, query={
-            "grouping_id": {"$in": ["A", "B"]}
+            "grouping_id": {"$in": [grouping_a_id, grouping_b_id]}
         })
         indicators_with_filter_2 = resp_with_filter_2["records"]
         assert len(indicators_with_filter_2) == 5
         assert resp_with_filter_2["total"] == 5
 
-    def test_list_indicators_with_60000_records(self, session, cleanup_indicators_collection):
+    def test_list_indicators_with_60000_records(self, session, cleanup_all_collections):
+        assert_collections_are_empty(session)
         # In limits.conf [kvstore]: max_rows_per_query = 50000
         # https://docs.splunk.com/Documentation/Splunk/9.3.0/Admin/Limitsconf#.5Bkvstore.5D
         # See if "total" is accurate for more than 50000 records
@@ -66,8 +101,10 @@ class TestScenarios:
         assert resp["total"] == 60000
         assert len(resp["records"]) == 10
 
-    def test_edit_indicator(self, session, cleanup_indicators_collection):
-        payload = create_indicator_form_payload(grouping_id="A", indicators=[example_indicator()])
+    def test_edit_indicator(self, session, cleanup_all_collections):
+        assert_collections_are_empty(session)
+        grouping = new_grouping(session)
+        payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=[example_indicator()])
         create_new_indicator(session, payload=payload)
         indicators = get_indicators_collection(session)
         assert len(indicators) == 1
@@ -84,8 +121,10 @@ class TestScenarios:
         edited_indicator = indicators_2["records"][0]
         assert edited_indicator["indicator_value"] == "1.2.3.4"
 
-    def test_delete_indicator(self, session, cleanup_indicators_collection):
-        payload = create_indicator_form_payload(grouping_id="A", indicators=[example_indicator()])
+    def test_delete_indicator(self, session, cleanup_all_collections):
+        assert_collections_are_empty(session)
+        payload = create_indicator_form_payload(grouping_id=new_grouping(session)["grouping_id"],
+                                                indicators=[example_indicator()])
         create_new_indicator(session, payload=payload)
 
         indicators = get_indicators_collection(session)

@@ -7,10 +7,11 @@ import P from "@splunk/react-ui/Paragraph";
 import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk/my-react-component/src/date_utils";
 import styled from "styled-components";
 import {variables} from "@splunk/themes";
+import {tlpV2RatingOptions} from "@splunk/my-react-component/src/tlpV2Rating";
 import {getValidationSignal, submitData, validationDone} from './CommonProperties.slice'
 import {useRespondToValidationSignal} from "./formUtils";
 import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
-import {ConfidenceField, TLPv1RatingField, ValidFromField} from "../../common/indicator_form/formControls";
+import {ConfidenceField, TLPv2RatingField, ValidFromField} from "../../common/indicator_form/formControls";
 import {
     FIELD_CONFIDENCE,
     FIELD_GROUPING_ID,
@@ -29,7 +30,7 @@ const CommonPropertiesForm = () => {
         mode: 'all',
         defaultValues: {
             [FIELD_GROUPING_ID]: '',
-            [FIELD_TLP_RATING]: 'GREEN',
+            [FIELD_TLP_RATING]: tlpV2RatingOptions[0].value,
             [FIELD_CONFIDENCE]: 50,
             [FIELD_VALID_FROM]: dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision())
         }
@@ -69,7 +70,7 @@ const CommonPropertiesForm = () => {
                     <P>These properties will be shared by all indicators created on this form.</P>
                     <GroupingIdFieldV2 fieldName={FIELD_GROUPING_ID}/>
                     <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
-                    <TLPv1RatingField fieldName={FIELD_TLP_RATING}/>
+                    <TLPv2RatingField fieldName={FIELD_TLP_RATING}/>
                     <ValidFromField fieldName={FIELD_VALID_FROM}/>
                 </form>
             </FormProvider>

@@ -7,6 +7,10 @@ SPLUNK_USERNAME = os.environ['SPLUNK_USERNAME']
 SPLUNK_PASSWORD = os.environ['SPLUNK_PASSWORD']
 
 @pytest.fixture
+def cleanup_all_collections(cleanup_identities_collection, cleanup_groupings_collection, cleanup_indicators_collection):
+    yield
+
+@pytest.fixture
 def cleanup_indicators_collection(session):
     clear_indicators_collection(session)
     yield

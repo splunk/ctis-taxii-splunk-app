@@ -4,8 +4,7 @@ import pytest
 from cattrs import ClassValidationError, transform_error
 
 from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators
-from TA_CTIS_TAXII.package.bin.models.tlp_v1 import TLPv1
-from stix2 import TLP_GREEN
+from TA_CTIS_TAXII.package.bin.models.tlp_v2 import TLPv2, GREEN_MARKING_DEFINITION
 GROUPING_ID = "grouping--184f5231-02f6-49e8-8230-b740f4b82331"
 SAMPLE_DICT = {
     "schema_version": 1,
@@ -18,7 +17,7 @@ SAMPLE_DICT = {
     "description": "desc",
     "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '100.2.3.4']",
     "confidence": 100,
-    "tlp_v1_rating": "WHITE",
+    "tlp_v2_rating": "TLP:CLEAR",
     "valid_from": "2024-08-14T23:09:21.290",
     "_user": "nobody",
     "_key": "66bd393930444c60800ab750"
@@ -41,7 +40,7 @@ SAMPLE_INDICATOR_INSTANCE = IndicatorModelV1(
     description="desc",
     stix_pattern="[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '1.2.3.4']",
     confidence=42,
-    tlp_v1_rating=TLPv1.GREEN,
+    tlp_v2_rating=TLPv2.GREEN,
     valid_from=datetime(2024, 8, 14, 23, 9, 21, 123456),
     user="nobody",
     key="66bd393930444c60800ab750"
@@ -57,7 +56,7 @@ def new_sample_indicator_instance():
         description="desc",
         stix_pattern="[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '1.2.3.4']",
         confidence=42,
-        tlp_v1_rating=TLPv1.GREEN,
+        tlp_v2_rating=TLPv2.GREEN,
         valid_from=datetime(2024, 8, 14, 23, 9, 21, 123456),
     )
 
@@ -106,7 +105,7 @@ def test_from_valid_dict_with_splunk_reserved_fields():
     assert indicator.name == "name"
     assert indicator.description == "desc"
     assert indicator.stix_pattern == "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '100.2.3.4']"
-    assert indicator.tlp_v1_rating == TLPv1.WHITE
+    assert indicator.tlp_v2_rating == TLPv2.CLEAR
     assert indicator.confidence == 100
     assert indicator.grouping_id == GROUPING_ID
     assert indicator.indicator_id == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
@@ -160,7 +159,7 @@ def test_to_dict():
     assert as_dict["description"] == "desc"
     assert as_dict[
                "stix_pattern"] == "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '1.2.3.4']"
-    assert as_dict["tlp_v1_rating"] == "GREEN"
+    assert as_dict["tlp_v2_rating"] == "TLP:GREEN"
     assert as_dict["confidence"] == 42
     assert as_dict["grouping_id"] == GROUPING_ID
     assert as_dict["indicator_id"] == "indicator--e669f9b4-80b1-4e66-97f1-d00227ac6c59"
@@ -198,9 +197,9 @@ def test_validate_confidence_in_range_0_to_100(confidence):
     assert "confidence must be between 0 and 100" in repr(exc_info.value)
 
 
-def test_validate_tlp_v1_rating():
+def test_validate_tlp_v2_rating():
     indicator_json = get_sample_dict()
-    indicator_json["tlp_v1_rating"] = "INVALID"
+    indicator_json["tlp_v2_rating"] = "INVALID"
     with pytest.raises(ClassValidationError) as exc_info:
         _ = indicator_converter.structure(indicator_json, IndicatorModelV1)
     assert "'INVALID' is not a valid TLP" in repr(exc_info.value)
@@ -226,7 +225,7 @@ def test_to_stix():
     assert stix.pattern_type == "stix2"
     assert stix.valid_from == indicator.valid_from
     assert stix.confidence == indicator.confidence
-    assert stix.object_marking_refs == [TLP_GREEN.id]
+    assert stix.object_marking_refs == [GREEN_MARKING_DEFINITION.id]
 
 
 @pytest.mark.parametrize("grouping_id", ["", None, "invalid"])
@@ -241,7 +240,7 @@ class TestHandleFormPayload:
         payload = {
             "grouping_id": GROUPING_ID,
             "confidence": 100,
-            "tlp_v1_rating": "WHITE",
+            "tlp_v2_rating": "TLP:CLEAR",
             "valid_from": "2024-08-14T23:09:21.290",
             "indicators" : [
                 {
@@ -261,7 +260,7 @@ class TestHandleFormPayload:
         payload = {
             "grouping_id": GROUPING_ID,
             "confidence": 100,
-            "tlp_v1_rating": "WHITE",
+            "tlp_v2_rating": "TLP:CLEAR",
             "valid_from": "2024-08-14T23:09:21.290",
             "indicators" : [
                 {

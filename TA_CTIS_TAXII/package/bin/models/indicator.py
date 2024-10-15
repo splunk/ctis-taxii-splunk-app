@@ -6,7 +6,7 @@ from stix2 import Indicator as StixIndicator
 from stix2patterns.validator import validate as stix_validate
 from uuid import uuid4
 from .base import BaseModelV1, make_base_converter
-from .tlp_v1 import TLPv1
+from .tlp_v2 import TLPv2
 from typing import List, Optional, Tuple
 
 """
@@ -55,7 +55,7 @@ class IndicatorModelV1(BaseModelV1):
     name: str = field()
     description: str = field()
     stix_pattern: str = field(validator=[validate_stix_pattern])
-    tlp_v1_rating: TLPv1 = field()
+    tlp_v2_rating: TLPv2 = field()
     valid_from: datetime = field()
     confidence: int = field(validator=[validate_confidence])
 
@@ -70,7 +70,7 @@ class IndicatorModelV1(BaseModelV1):
             pattern_type="stix2",
             valid_from=self.valid_from,
             confidence=self.confidence,
-            object_marking_refs=self.tlp_v1_rating.to_object_marking_ref(),
+            object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
         )
 
 """
