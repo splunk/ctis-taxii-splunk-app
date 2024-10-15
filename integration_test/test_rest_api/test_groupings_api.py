@@ -180,7 +180,7 @@ class TestScenarios:
         indicators_resp = create_new_indicator(session, {
             "grouping_id": grouping["grouping_id"],
             "confidence": 100,
-            "tlp_v1_rating": "GREEN",
+            "tlp_v2_rating": "TLP:GREEN",
             "valid_from": "2024-09-03T22:51:44.361",
             "indicators": [
                 {

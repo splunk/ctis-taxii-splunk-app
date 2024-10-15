@@ -154,7 +154,7 @@ def create_indicator_form_payload(grouping_id:str, indicators: list) -> dict:
     return {
         "grouping_id": grouping_id,
         "confidence": 100,
-        "tlp_v1_rating": "GREEN",
+        "tlp_v2_rating": "TLP:GREEN",
         "valid_from": "2024-09-03T22:51:44.361",
         "indicators": indicators
     }
@@ -178,7 +178,7 @@ def new_indicator_payload() -> dict:
         "name": "Name",
         "description": "Description",
         "stix_pattern": "[network-traffic:dst_ref.type = 'ipv4-addr' AND network-traffic:dst_ref.value = '127.0.0.1']",
-        "tlp_v1_rating": "WHITE",
+        "tlp_v2_rating": "TLP:WHITE",
         "valid_from": "2024-08-16T23:00:22",
         "confidence": 50
     }

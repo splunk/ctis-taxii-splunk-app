@@ -45,7 +45,7 @@ const expansionFieldNameToCellValue = {
     "Valid From (UTC)": (row) => formatTimestampForDisplay(row.valid_from),
     "Indicator Category": (row) => row.indicator_category,
     "Indicator Value": (row) => row.indicator_value,
-    "TLP Rating": (row) => row.tlp_v1_rating,
+    "TLP v2 Rating": (row) => row.tlp_v2_rating,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
 }
