@@ -5,6 +5,8 @@ class TestTLPv2:
         marking_ref = TLPv2.CLEAR.to_object_marking_ref()
         assert marking_ref["name"] == "TLP:CLEAR"
 
+        assert TLPv2.CLEAR.value == "TLP:CLEAR"
+
     def test_tlp_amber(self):
         marking_ref = TLPv2.AMBER.to_object_marking_ref()
         assert marking_ref["name"] == "TLP:AMBER"
@@ -21,4 +23,4 @@ class TestTLPv2:
         marking_ref = TLPv2.AMBER_STRICT.to_object_marking_ref()
         assert marking_ref["name"] == "TLP:AMBER+STRICT"
         assert marking_ref.id == "marking-definition--939a9414-2ddd-4d32-a0cd-375ea402b003"
-
+        assert TLPv2.AMBER_STRICT.value == "TLP:AMBER+STRICT"

@@ -76,11 +76,11 @@ RED_MARKING_DEFINITION = stix2.parse({
 
 
 class TLPv2(Enum):
-    CLEAR = "CLEAR"
-    AMBER_STRICT = "AMBER+STRICT"
-    AMBER = "AMBER"
-    GREEN = "GREEN"
-    RED = "RED"
+    CLEAR = CLEAR_MARKING_DEFINITION.name
+    AMBER_STRICT = AMBER_STRICT_MARKING_DEFINITION.name
+    AMBER = AMBER_MARKING_DEFINITION.name
+    GREEN = GREEN_MARKING_DEFINITION.name
+    RED = RED_MARKING_DEFINITION.name
 
     def to_object_marking_ref(self) -> MarkingDefinition:
         if self == TLPv2.CLEAR:
