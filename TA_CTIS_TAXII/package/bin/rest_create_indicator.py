@@ -38,6 +38,10 @@ class Handler(AbstractRestHandler):
 
         if errors:
             raise ServerException(message="Validation failed deserializing indicators payload", errors=errors)
+
+        if len(models) == 0:
+            raise ValueError("No indicators were deserialized from the input JSON")
+
         serialized = []
         for model in models:
             indicator_dict = indicator_converter.unstructure(model)

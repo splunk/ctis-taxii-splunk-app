@@ -5,7 +5,6 @@ import DatetimeControlGroup from "@splunk/my-react-component/src/DateTimeControl
 import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
-import {useFormContext} from "react-hook-form";
 import PropTypes from "prop-types";
 import {useFormInputProps} from "../formInputProps";
 
@@ -72,11 +71,11 @@ ValidFromField.propTypes = {
 }
 
 export function IndicatorValueField({fieldName, ...props}) {
-    return <TextControlGroup label={`Indicator Value - ${fieldName}`} {...useFormInputProps(fieldName)} {...props} />
+    return <TextControlGroup label="Indicator Value" {...useFormInputProps(fieldName)} {...props} />
 }
 
 IndicatorValueField.propTypes = {
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
 }
 
 export function IndicatorCategoryField({fieldName, options, ...props}) {
@@ -88,17 +87,16 @@ export function IndicatorCategoryField({fieldName, options, ...props}) {
 
 IndicatorCategoryField.propTypes = {
     fieldName: PropTypes.string.isRequired,
-    options: PropTypes.array.isRequired
+    options: PropTypes.array.isRequired,
 }
 
 export function StixPatternField({suggestedPattern, fieldName, patternApiError, ...props}) {
-    const formMethods = useFormContext();
-    const {setValue} = formMethods;
-
+    const formInputProps = useFormInputProps(fieldName);
+    const {onChange: formInputPropsOnChange} = formInputProps;
     return <StixPatternControlGroup label="STIX Pattern"
-                                    {...useFormInputProps(fieldName)}
+                                    {...formInputProps}
                                     suggestedPattern={suggestedPattern}
-                                    setValueToSuggestedPattern={() => setValue(fieldName, suggestedPattern, {shouldValidate: true})}
+                                    setValueToSuggestedPattern={() => formInputPropsOnChange(null, {value: suggestedPattern})}
                                     patternApiError={patternApiError}
                                     {...props}
     />;
@@ -108,21 +106,23 @@ StixPatternField.propTypes = {
     suggestedPattern: PropTypes.string.isRequired,
     fieldName: PropTypes.string.isRequired,
     error: PropTypes.string,
-    patternApiError: PropTypes.string
+    patternApiError: PropTypes.string,
 }
 
 export function IndicatorNameField({fieldName, ...props}) {
-    return <TextControlGroup label="Indicator Name" {...props} {...useFormInputProps(fieldName)}/>
+    return <TextControlGroup label="Indicator Name" {...props} {...useFormInputProps(fieldName)
+    }/>
 }
 
 IndicatorNameField.propTypes = {
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
 }
 
 export function IndicatorDescriptionField({fieldName, ...props}) {
-    return <TextAreaControlGroup label="Indicator Description" {...props} {...useFormInputProps(fieldName)}/>
+    return <TextAreaControlGroup
+        label="Indicator Description" {...props} {...useFormInputProps(fieldName)}/>
 }
 
 IndicatorDescriptionField.propTypes = {
-    fieldName: PropTypes.string.isRequired
+    fieldName: PropTypes.string.isRequired,
 }

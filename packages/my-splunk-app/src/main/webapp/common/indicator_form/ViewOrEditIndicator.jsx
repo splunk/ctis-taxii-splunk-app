@@ -17,7 +17,7 @@ import useModal from "@splunk/my-react-component/src/useModal";
 import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
 import {useOnFormSubmit} from "../formSubmit";
-import {PatternSuggester} from "../../pages/new_indicator/patternSuggester";
+import {usePatternSuggester} from "../../pages/new_indicator/patternSuggester";
 import useIndicatorCategories from "./indicatorCategories";
 import {
     ConfidenceField,
@@ -26,6 +26,7 @@ import {
     IndicatorIdField,
     IndicatorNameField,
     IndicatorValueField,
+    StixPatternField,
     TLPv1RatingField,
     ValidFromField
 } from "./formControls";
@@ -122,6 +123,13 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const {indicatorCategories} = useIndicatorCategories();
     const indicatorCategory = watch(FIELD_INDICATOR_CATEGORY);
     const indicatorValue = watch(FIELD_INDICATOR_VALUE);
+    const {suggestedPattern, error: patternApiError} = usePatternSuggester(indicatorCategory, indicatorValue);
+
+    useEffect(() => {
+        if(suggestedPattern){
+            setValue(FIELD_STIX_PATTERN, suggestedPattern, {shouldValidate: true});
+        }
+    }, [setValue, suggestedPattern]);
 
     return (<div>
         <PageHeadingContainer>
@@ -148,9 +156,9 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                         <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE} readOnly={readOnly}/>
                         <IndicatorCategoryField fieldName={FIELD_INDICATOR_CATEGORY} options={indicatorCategories}
                                                 readOnly={readOnly}/>
-                        <PatternSuggester indicatorCategory={indicatorCategory}
-                                          indicatorValue={indicatorValue}
-                                          stixPatternFieldName={FIELD_STIX_PATTERN}
+                        <StixPatternField suggestedPattern={suggestedPattern}
+                                          fieldName={FIELD_STIX_PATTERN}
+                                          patternApiError={patternApiError}
                                           readOnly={readOnly}/>
                     </section>
                     <section>

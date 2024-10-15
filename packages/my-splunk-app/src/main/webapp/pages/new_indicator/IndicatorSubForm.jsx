@@ -1,5 +1,5 @@
-import {useFormContext} from "react-hook-form";
-import React, {useEffect, useState} from "react";
+import {FormProvider, useForm} from "react-hook-form";
+import React, {useCallback, useEffect, useState} from "react";
 import Heading from "@splunk/react-ui/Heading";
 import Divider from "@splunk/react-ui/Divider";
 import styled from "styled-components";
@@ -15,19 +15,19 @@ import {
     IndicatorDescriptionField,
     IndicatorNameField,
     IndicatorValueField,
-    SplunkFieldNameDropdown
+    SplunkFieldNameDropdown,
+    StixPatternField
 } from "../../common/indicator_form/formControls";
 import {
     FIELD_INDICATOR_CATEGORY,
     FIELD_INDICATOR_DESCRIPTION,
     FIELD_INDICATOR_NAME,
     FIELD_INDICATOR_VALUE,
-    FIELD_INDICATORS,
     FIELD_SPLUNK_FIELD_NAME,
     FIELD_STIX_PATTERN,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
-import {PatternSuggester} from "./patternSuggester";
+import {usePatternSuggester} from "./patternSuggester";
 
 const HorizontalLayout = styled.div`
     display: flex;
@@ -44,35 +44,43 @@ const StyledSection = styled.section`
 `;
 
 export const IndicatorSubForm = ({
-                                     field,
+                                     id,
                                      index,
+                                     updateIndicator,
                                      splunkEvent,
                                      indicatorCategories,
                                      removeSelf,
-                                     submissionErrors
+                                     submissionErrors,
+                                     validationSignal,
+                                     onValidationError
                                  }) => {
-    // It is assumed that this subform is used within a FormProvider
-    const formMethods = useFormContext();
-    const {register, setValue, watch} = formMethods;
+    const formMethods = useForm({
+        mode: 'all',
+        defaultValues: {
+            [FIELD_SPLUNK_FIELD_NAME]: '',
+            [FIELD_INDICATOR_VALUE]: '',
+            [FIELD_INDICATOR_CATEGORY]: '',
+            [FIELD_STIX_PATTERN]: '',
+            [FIELD_INDICATOR_NAME]: '',
+            [FIELD_INDICATOR_DESCRIPTION]: ''
+        }
+    });
+    const {register, watch, setValue, getValues, trigger, formState} = formMethods;
     const splunkFields = Object.keys(splunkEvent || {});
 
-    const fieldSplunkFieldName = `${FIELD_INDICATORS}.${index}.${FIELD_SPLUNK_FIELD_NAME}`;
-    const fieldIndicatorValue = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_VALUE}`;
-    const fieldIndicatorCategory = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_CATEGORY}`;
-    const fieldIndicatorName = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_NAME}`;
-    const fieldIndicatorDescription = `${FIELD_INDICATORS}.${index}.${FIELD_INDICATOR_DESCRIPTION}`;
-    const fieldStixPattern = `${FIELD_INDICATORS}.${index}.${FIELD_STIX_PATTERN}`;
+    [FIELD_SPLUNK_FIELD_NAME, FIELD_INDICATOR_VALUE, FIELD_INDICATOR_CATEGORY,
+        FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION].forEach(fieldToRegister => {
+        register(fieldToRegister, REGISTER_FIELD_OPTIONS[fieldToRegister]);
+    });
 
-    register(fieldSplunkFieldName, REGISTER_FIELD_OPTIONS[FIELD_SPLUNK_FIELD_NAME]);
-    register(fieldIndicatorValue, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_VALUE]);
-    register(fieldIndicatorCategory, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_CATEGORY]);
-    register(fieldStixPattern, REGISTER_FIELD_OPTIONS[FIELD_STIX_PATTERN]);
-    register(fieldIndicatorName, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_NAME]);
-    register(fieldIndicatorDescription, REGISTER_FIELD_OPTIONS[FIELD_INDICATOR_DESCRIPTION]);
+    const splunkFieldName = watch(FIELD_SPLUNK_FIELD_NAME);
+    const indicatorValue = watch(FIELD_INDICATOR_VALUE);
+    const indicatorCategory = watch(FIELD_INDICATOR_CATEGORY);
+    const stixPattern = watch(FIELD_STIX_PATTERN);
+    const indicatorName = watch(FIELD_INDICATOR_NAME);
+    const indicatorDescription = watch(FIELD_INDICATOR_DESCRIPTION);
 
-    const splunkFieldName = watch(fieldSplunkFieldName);
-    const indicatorValue = watch(fieldIndicatorValue);
-    const indicatorCategory = watch(fieldIndicatorCategory);
+    const {suggestedPattern, error: patternApiError} = usePatternSuggester(indicatorCategory, indicatorValue);
 
     const indexStartingAtOne = index + 1;
     const splunkFieldDropdownOptions = splunkFields.map(splunkField => ({
@@ -82,52 +90,103 @@ export const IndicatorSubForm = ({
     const [toggleShowSplunkFieldDropdown, setToggleShowSplunkFieldDropdown] = useState(true);
 
     useEffect(() => {
-        if(splunkEvent){
+        if (splunkEvent) {
             // https://stackoverflow.com/a/455340/23523267
             if (Object.prototype.hasOwnProperty.call(splunkEvent, splunkFieldName) && toggleShowSplunkFieldDropdown) {
-                setValue(fieldIndicatorValue, splunkEvent[splunkFieldName], {shouldValidate: true});
+                setValue(FIELD_INDICATOR_VALUE, splunkEvent[splunkFieldName], {shouldValidate: true});
             }
         }
-    }, [fieldIndicatorValue, setValue, splunkEvent, splunkFieldName, toggleShowSplunkFieldDropdown]);
+    }, [setValue, splunkEvent, splunkFieldName, toggleShowSplunkFieldDropdown]);
 
-    return <StyledSection key={field.id}>
-        <HorizontalLayout>
-            <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
-            <DeleteButton inline label="Remove" onClick={() => removeSelf()}/>
-        </HorizontalLayout>
-        {submissionErrors && <Message appearance="fill" type="error">
-            {submissionErrors.map(error => <P>{error}</P>)}
-        </Message>}
-        {splunkEvent &&
-            <CustomControlGroup label="Use Splunk Field?">
-                <Switch
-                    key="toggleShowSplunkFieldDropdown"
-                    onClick={() => setToggleShowSplunkFieldDropdown(!toggleShowSplunkFieldDropdown)}
-                    selected={toggleShowSplunkFieldDropdown}
-                    appearance="toggle"
-                />
-            </CustomControlGroup>
+    const updateIndicatorWithFormValues = useCallback(() => {
+        console.log("Updating indicator with form values");
+        updateIndicator(getValues());
+    }, [updateIndicator, getValues]);
+
+    // When suggested pattern changes, update the STIX pattern field with new pattern
+    useEffect(() => {
+        if (suggestedPattern) {
+            setValue(FIELD_STIX_PATTERN, suggestedPattern, {shouldValidate: true});
         }
-        {splunkEvent && toggleShowSplunkFieldDropdown &&
-            <SplunkFieldNameDropdown fieldName={fieldSplunkFieldName} options={splunkFieldDropdownOptions}/>
+    }, [setValue, suggestedPattern]);
+
+    useEffect(() => {
+        updateIndicatorWithFormValues();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [splunkFieldName, indicatorValue, indicatorCategory, stixPattern, indicatorName, indicatorDescription]);
+
+    const [onValidationErrorPromise, setOnValidationErrorPromise] = useState(null);
+    useEffect(() => {
+        if (onValidationErrorPromise) {
+            const {errors} = formState;
+            onValidationErrorPromise.resolve(errors);
+            setOnValidationErrorPromise(null);
         }
-        {
-            (!splunkEvent || !toggleShowSplunkFieldDropdown) && <IndicatorValueField fieldName={fieldIndicatorValue}/>
+    }, [onValidationErrorPromise, setOnValidationErrorPromise, formState]);
+
+    const performValidation = useCallback(async () => {
+        if (onValidationError) {
+            await trigger();
+            console.log(`Validation complete for indicator ${id}`);
+            return new Promise((resolve) => {
+                setOnValidationErrorPromise({resolve});
+            }).then(x => onValidationError(x));
         }
-        <IndicatorCategoryField options={indicatorCategories} fieldName={fieldIndicatorCategory}/>
-        <PatternSuggester indicatorCategory={indicatorCategory} indicatorValue={indicatorValue}
-                          stixPatternFieldName={fieldStixPattern}/>
-        <IndicatorNameField fieldName={fieldIndicatorName}/>
-        <IndicatorDescriptionField fieldName={fieldIndicatorDescription}/>
-        <Divider/>
+        return null;
+    }, [onValidationError, trigger, id, setOnValidationErrorPromise]);
+
+    const [lastValidationSignal, setLastValidationSignal] = useState(null);
+    useEffect(() => {
+        if (validationSignal > 0 && validationSignal !== lastValidationSignal) {
+            setLastValidationSignal(validationSignal);
+            performValidation().then();
+        }
+    }, [validationSignal, performValidation, lastValidationSignal]);
+
+    return <StyledSection key={id}>
+        <FormProvider {...formMethods}>
+            <HorizontalLayout>
+                <StyledHeading level={2}>New Indicator {`#${indexStartingAtOne}`}</StyledHeading>
+                <DeleteButton inline label="Remove" onClick={() => removeSelf()}/>
+            </HorizontalLayout>
+            {submissionErrors && <Message appearance="fill" type="error">
+                {submissionErrors.map(error => <P>{error}</P>)}
+            </Message>}
+            {splunkEvent &&
+                <CustomControlGroup label="Use Splunk Field?">
+                    <Switch
+                        key="toggleShowSplunkFieldDropdown"
+                        onClick={() => setToggleShowSplunkFieldDropdown(!toggleShowSplunkFieldDropdown)}
+                        selected={toggleShowSplunkFieldDropdown}
+                        appearance="toggle"
+                    />
+                </CustomControlGroup>
+            }
+            {splunkEvent && toggleShowSplunkFieldDropdown &&
+                <SplunkFieldNameDropdown fieldName={FIELD_SPLUNK_FIELD_NAME} options={splunkFieldDropdownOptions}/>
+            }
+            {
+                (!splunkEvent || !toggleShowSplunkFieldDropdown) &&
+                <IndicatorValueField fieldName={FIELD_INDICATOR_VALUE}/>
+            }
+            <IndicatorCategoryField options={indicatorCategories} fieldName={FIELD_INDICATOR_CATEGORY}/>
+            <StixPatternField suggestedPattern={suggestedPattern} fieldName={FIELD_STIX_PATTERN}
+                              patternApiError={patternApiError}/>
+            <IndicatorNameField fieldName={FIELD_INDICATOR_NAME}/>
+            <IndicatorDescriptionField fieldName={FIELD_INDICATOR_DESCRIPTION}/>
+            <Divider/>
+        </FormProvider>
     </StyledSection>
 }
 
 IndicatorSubForm.propTypes = {
-    field: PropTypes.object,
+    id: PropTypes.string,
     index: PropTypes.number,
+    updateIndicator: PropTypes.func,
     splunkEvent: PropTypes.object,
     indicatorCategories: PropTypes.array,
     removeSelf: PropTypes.func,
-    submissionErrors: PropTypes.array
+    submissionErrors: PropTypes.array,
+    validationSignal: PropTypes.number,
+    onValidationError: PropTypes.func
 }

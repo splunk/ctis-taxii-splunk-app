@@ -30,9 +30,10 @@ export const REGISTER_FIELD_OPTIONS = {
         required: "Valid from is required."
     },
     [FIELD_INDICATORS]: {
-        rules: {
-            required: "At least one indicator is required."
-        }
+        // TODO: validate at least one array length >= 1
+        // rules: {
+        //     required: "At least one indicator is required."
+        // }
     },
     [FIELD_SPLUNK_FIELD_NAME]: {},
     [FIELD_INDICATOR_VALUE]: {

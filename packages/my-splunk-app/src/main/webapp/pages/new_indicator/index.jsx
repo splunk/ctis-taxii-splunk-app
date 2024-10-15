@@ -5,8 +5,8 @@ import SearchJob from '@splunk/search-job';
 import Loader from "@splunk/my-react-component/src/Loader";
 import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/PageHeading";
-import {NewIndicatorForm} from "./NewIndicatorForm";
 import {layoutWithTheme} from "../../common/theme";
+import {NewIndicatorFormV2} from "./NewIndicatorFormV2";
 
 function getUrlQueryParams() {
     return new URLSearchParams(window.location.search);
@@ -47,7 +47,7 @@ const useSplunkSearchResult = ({sid, offset, count = 1}) => {
 function NewIndicatorFormInWorkflowMode({sid, offset, splunkFieldName, splunkFieldValue}) {
     const {event, loading, error} = useSplunkSearchResult({sid, offset, count: 1});
     return <Loader loading={loading} error={error} loadingText="Loading search results...">
-        <NewIndicatorForm event={event} initialSplunkFieldName={splunkFieldName}
+        <NewIndicatorFormV2 event={event} initialSplunkFieldName={splunkFieldName}
                           initialSplunkFieldValue={splunkFieldValue}/>
     </Loader>;
 }
@@ -73,7 +73,7 @@ function MainComponent() {
             <P>Add one or more related indicators to an existing grouping.</P>
             {hasSearchId && <NewIndicatorFormInWorkflowMode sid={sid} offset={offset} splunkFieldName={splunkFieldName}
                                                             splunkFieldValue={splunkFieldValue}/>}
-            {!hasSearchId && <NewIndicatorForm/>}
+            {!hasSearchId && <NewIndicatorFormV2/>}
         </AppContainer>
     )
 }
