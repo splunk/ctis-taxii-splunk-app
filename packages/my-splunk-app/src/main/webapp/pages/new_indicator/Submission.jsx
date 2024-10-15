@@ -124,7 +124,7 @@ export default function Submission({debugMode=false}) {
             console.log("Finished validation. Errors:", hasErrors);
             if (hasErrors) {
                 createErrorToast("The form has errors. Please correct them before submitting.");
-                setSubmitting(false);
+                setTimeout(() => setSubmitting(false), 1000);
             } else {
                 setSendToApiPromise(submitToApi(formData));
             }

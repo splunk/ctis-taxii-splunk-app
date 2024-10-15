@@ -140,7 +140,7 @@ const IndicatorSubForm = ({
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <HorizontalLayout>
                         <StyledHeading level={2}>New Indicator {`#${index + 1}`}</StyledHeading>
-                        <DeleteButton inline disabled={!removeSelfEnabled} label="Remove" onClick={() => removeSelf()}/>
+                        {removeSelfEnabled && <DeleteButton inline label="Remove" onClick={() => removeSelf()}/>}
                     </HorizontalLayout>
                     {submissionErrors?.length > 0 && <Message appearance="fill" type="error">
                         {submissionErrors.map(error => <P>{error}</P>)}
