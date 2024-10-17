@@ -11,7 +11,7 @@ cd -
 
 # Clean existing apps
 echo "Cleaning existing apps"
-rm ./*.tar.gz
+rm -f ./*.tar.gz
 
 # Package the UCC app
 ucc-gen package --path ../TA_CTIS_TAXII/output/TA_CTIS_TAXII
