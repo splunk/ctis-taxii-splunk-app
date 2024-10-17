@@ -18,6 +18,8 @@ jobs:
       run: pwd && ls -l
     - name: Install UCC
       run: pip install splunk-add-on-ucc-framework && pip freeze
+    - name: Yarn setup
+      run: yarn run setup
     - name: Spin up Splunk docker
       run: cd integration_test && ./spin-up-docker-splunk.sh
       
