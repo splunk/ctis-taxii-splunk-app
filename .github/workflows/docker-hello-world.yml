@@ -18,8 +18,10 @@ jobs:
       run: pwd && ls -l
     - name: Install UCC
       run: pip install splunk-add-on-ucc-framework && pip freeze
+    - name: Build component lib
+      run: pwd && cd packages/my-react-component && yarn run build
     - name: Yarn setup
-      run: yarn run setup
+      run: pwd && yarn run setup
     - name: Spin up Splunk docker
       run: cd integration_test && ./spin-up-docker-splunk.sh
       
