@@ -14,5 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: List
+      run: pwd && ls -l
     - name: Docker Hello World
       run: docker run hello-world
+      
