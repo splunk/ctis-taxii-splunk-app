@@ -16,7 +16,7 @@ import {
 } from "@splunk/my-react-component/src/urls";
 import useModal from "@splunk/my-react-component/src/useModal";
 import {DeleteIndicatorModal} from "@splunk/my-react-component/src/DeleteModal";
-import {useViewportBreakpoints} from "@splunk/my-react-component/viewportBreakpoints";
+import {useViewportBreakpoints} from "@splunk/my-react-component/src/viewportBreakpoints";
 import EditIconOnlyButton from "@splunk/my-react-component/src/buttons/EditIconOnlyButton";
 import DeleteIconOnlyButton from "@splunk/my-react-component/src/buttons/DeleteIconOnlyButton";
 import {HorizontalActionButtonLayout} from "@splunk/my-react-component/src/HorizontalButtonLayout";

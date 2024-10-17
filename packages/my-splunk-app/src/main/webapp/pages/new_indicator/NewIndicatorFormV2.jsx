@@ -7,7 +7,7 @@ import styled from "styled-components";
 import {variables} from "@splunk/themes";
 import Divider from "@splunk/react-ui/Divider";
 import PlusCircle from "@splunk/react-icons/PlusCircle";
-import {HeadingNoMargin} from "@splunk/my-react-component/MyHeading";
+import {HeadingNoMargin} from "@splunk/my-react-component/src/MyHeading";
 import CommonPropertiesForm from "./CommonPropertiesForm";
 
 import {addIndicator, indicatorsSlice, removeIndicator} from "./Indicators.slice";
