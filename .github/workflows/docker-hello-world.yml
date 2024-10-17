@@ -16,6 +16,9 @@ jobs:
     - uses: actions/checkout@v4
     - name: List
       run: pwd && ls -l
+    - name: Install UCC
+      run: pip install splunk-add-on-ucc-framework && pip freeze
+    
     - name: Docker Hello World
       run: docker run hello-world
       
