@@ -18,6 +18,8 @@ jobs:
       run: pwd && ls -l
     - name: Install pytest
       run: pip install pytest
+    - name: Install requirements
+      run: pip install -r TA_CTIS_TAXII/package/lib/requirements.txt
     - name: Run unit tests
       run: python -m pytest TA_CTIS_TAXII/test/
 
