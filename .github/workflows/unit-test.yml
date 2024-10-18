@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
@@ -19,6 +19,6 @@ jobs:
     - name: Install pytest
       run: pip install pytest
     - name: Run unit tests
-      run: cd TA_CTIS_TAXII && pytest test/
+      run: pytest TA_CTIS_TAXII/test/
 
       
