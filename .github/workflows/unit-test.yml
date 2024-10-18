@@ -19,6 +19,6 @@ jobs:
     - name: Install pytest
       run: pip install pytest
     - name: Run unit tests
-      run: pytest TA_CTIS_TAXII/test/
+      run: python -m pytest TA_CTIS_TAXII/test/
 
       
