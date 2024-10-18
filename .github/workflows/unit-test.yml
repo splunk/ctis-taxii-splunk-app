@@ -1,0 +1,22 @@
+name: Docker PoC
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: List
+      run: pwd && ls -l
+    - name: Install pytest
+      run: pip install pytest
+
+      
