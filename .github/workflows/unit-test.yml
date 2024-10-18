@@ -1,4 +1,4 @@
-name: Docker PoC
+name: Run Unit Tests (pytest)
 
 on:
   push:
