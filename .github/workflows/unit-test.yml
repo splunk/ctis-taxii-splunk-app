@@ -18,5 +18,7 @@ jobs:
       run: pwd && ls -l
     - name: Install pytest
       run: pip install pytest
+    - name: Run unit tests
+      run: cd TA_CTIS_TAXII && pytest test/
 
       
