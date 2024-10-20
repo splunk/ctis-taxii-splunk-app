@@ -24,6 +24,9 @@ jobs:
       run: pwd && yarn setup
     - name: Package App
       run: cd integration_test && ./package.sh
+    - uses: actions/upload-artifact@v4
+      with:
+        path: integration_test/ctis.tar.gz
     #- name: Spin up Splunk docker
      # run: cd integration_test && ./spin-up-docker-splunk.sh
       
