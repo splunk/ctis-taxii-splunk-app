@@ -27,6 +27,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         path: integration_test/ctis.tar.gz
+        name: ctis.${{ github.sha }}.tar.gz
     #- name: Spin up Splunk docker
      # run: cd integration_test && ./spin-up-docker-splunk.sh
       
