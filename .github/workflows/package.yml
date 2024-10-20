@@ -1,4 +1,4 @@
-name: Docker PoC
+name: Package App
 
 on:
   push:
@@ -22,6 +22,8 @@ jobs:
       run: pwd && cd packages/my-react-component && npm install
     - name: Yarn setup
       run: pwd && yarn setup
-    - name: Spin up Splunk docker
-      run: cd integration_test && ./spin-up-docker-splunk.sh
+    - name: Package App
+      run: cd integration_test && ./package.sh
+    #- name: Spin up Splunk docker
+     # run: cd integration_test && ./spin-up-docker-splunk.sh
       
