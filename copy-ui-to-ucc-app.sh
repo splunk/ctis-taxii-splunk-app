@@ -11,7 +11,7 @@ ls -l TA_CTIS_TAXII/package/default/data/ui/views
 echo "Listing files in templates"
 ls -l TA_CTIS_TAXII/package/appserver/templates
 
-exit 1
+exit 0 # TODO: remove this line (early exit) after testing
 
 # replace 'my-splunk-app:' with 'TA_CTIS_TAXII:' in all xml views in TA_CTIS_TAXII/package/default/data/ui/views
 echo "Replacing app name in views XML files..."
