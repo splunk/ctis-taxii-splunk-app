@@ -6,7 +6,7 @@
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "integration_test/ctis.tar.gz", "label": "App Build" }
+          { "path": "ctis.tar.gz", "label": "App Build" }
         ]
       }
     ]
