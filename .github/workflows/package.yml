@@ -27,12 +27,8 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         path: integration_test/ctis.tar.gz
-    # - name: Release
-    #   uses: softprops/action-gh-release@v2
-    #   with:
-    #     body: Release ${{github.sha}}
-    #     files: integration_test/ctis.tar.gz
-        
-    #- name: Spin up Splunk docker
-     # run: cd integration_test && ./spin-up-docker-splunk.sh
-      
+    - name: Release
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npx semantic-release
+
