@@ -1,4 +1,4 @@
-name: Package App
+name: Package & Release App
 
 on:
   push:
