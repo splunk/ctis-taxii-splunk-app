@@ -58,6 +58,7 @@ jobs:
   integration-test:
       runs-on: ubuntu-latest
       needs: [package]
+      environment: main
       steps:
           - uses: actions/checkout@v4
           - name: Setup Node.js
