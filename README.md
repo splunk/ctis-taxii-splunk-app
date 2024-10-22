@@ -13,7 +13,6 @@ This app combines SplunkUI Toolkit and UCC Framework to create a custom Splunk a
 - For Mac OS, install gnu-sed: https://formulae.brew.sh/formula/gnu-sed
   - Build scripts used GNU sed syntax: https://stackoverflow.com/a/43453459/23523267
   - Make sure to have `sed` in path refer to the brew version not the default mac version
-# replace 'my-splunk-app:' with 'TA_CTIS_TAXII:' in all xml views in TA_CTIS_TAXII/package/default/data/ui/views
  
 ## Build
 ```bash

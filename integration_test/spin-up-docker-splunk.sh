@@ -12,10 +12,10 @@ if [ -z "$SPLUNK_PASSWORD" ]; then
     exit 1
 fi
 
-RED='\033[1;33m'
+YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-printf "${RED}WARNING: Make sure to package and build the app before running this script!\n${NC}"
+printf "${YELLOW}WARNING: Make sure to package and build the app before running this script!\n${NC}"
 echo "Make sure to check the timestamp of the app file"
 ls -l "$SPLUNK_APP_FILENAME"
 
@@ -53,6 +53,8 @@ function checkIfSplunkIsUp() {
 function checkApiEndpoint() {
     echo "Hitting List Submissions API endpoint"
     if curl -k -u "admin:$SPLUNK_PASSWORD" "https://localhost:8099/servicesNS/-/$APP_NAME/list-submissions?output_mode=json"; then
+        # Check status code is 200
+        # https://superuser.com/a/792841
         return 0
     else
         return 1
