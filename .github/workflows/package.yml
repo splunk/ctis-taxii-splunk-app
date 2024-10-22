@@ -77,6 +77,13 @@ jobs:
             env:
                 SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
                 SPLUNK_APP_FILENAME: ctis.tar.gz
+          - name: Install Pytest
+            run: pip install pytest
+          - name: Run integration tests
+            run: cd integration_test/test_rest_api && python -m pytest -v
+            env:
+                SPLUNK_USERNAME: admin
+                SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
 #          - name: Setup upterm session
 #            uses: lhotari/action-upterm@v1
 #            with:
