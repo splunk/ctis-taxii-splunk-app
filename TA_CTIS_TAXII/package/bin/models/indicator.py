@@ -6,6 +6,7 @@ from stix2 import Indicator as StixIndicator
 from stix2patterns.validator import validate as stix_validate
 from uuid import uuid4
 from .base import BaseModelV1, make_base_converter
+from .common import validate_confidence
 from .tlp_v2 import TLPv2
 from typing import List, Optional, Tuple
 
@@ -26,10 +27,6 @@ def validate_indicator_id(instance, attribute, value):
     except Exception as e:
         raise ValueError(f"Invalid indicator_id: {e}")
 
-
-def validate_confidence(instance, attribute, value: int):
-    if not 0 <= value <= 100:
-        raise ValueError("confidence must be between 0 and 100")
 
 def validate_grouping_id(instance, attribute, value):
     if not value:

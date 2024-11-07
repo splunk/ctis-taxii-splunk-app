@@ -6,6 +6,7 @@ from stix2 import Grouping
 from typing import List, Optional
 
 from .base import BaseModelV1, make_base_converter
+from .common import validate_confidence
 from .tlp_v2 import TLPv2
 
 
@@ -64,6 +65,7 @@ class GroupingModelV1(BaseModelV1):
     description: str = field()
     last_submission_at: Optional[datetime] = field(default=None)
     tlp_v2_rating: TLPv2 = field()
+    confidence: int = field(validator=[validate_confidence], default=100)
 
     def to_stix(self, object_ids: List) -> Grouping:
         assert len(object_ids) > 0, "Grouping must have at least one object_ref such as an Indicator ID."
@@ -77,6 +79,7 @@ class GroupingModelV1(BaseModelV1):
                             description=self.description,
                             object_refs=object_refs,
                             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
+                            confidence=self.confidence,
                             created=self.created,
                             modified=self.modified)
         return grouping
