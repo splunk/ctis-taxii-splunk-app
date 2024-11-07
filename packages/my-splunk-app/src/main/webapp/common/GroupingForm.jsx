@@ -26,6 +26,7 @@ import {PageHeading, PageHeadingContainer} from "@splunk/my-react-component/Page
 import {ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField} from "./grouping_form/fields";
 import {useOnFormSubmit} from "./formSubmit";
 import {usePageTitle} from "./utils";
+import {TLPv2RatingField, FORM_FIELD_TLP_V2_RATING, FORM_FIELD_TLP_V2_RATING_OPTION} from "./tlp";
 
 const MyForm = styled.form`
     max-width: 800px;
@@ -83,6 +84,7 @@ export function Form({existingGrouping, readOnly = false}) {
     register(FORM_FIELD_CONTEXT, {required: "Context is required.", value: ""});
     register(FORM_FIELD_CREATED_BY_REF, {required: "Created By is required.", value: ""});
     register(FORM_FIELD_DESCRIPTION, {required: "Description is required.", value: ""});
+    register(FORM_FIELD_TLP_V2_RATING, FORM_FIELD_TLP_V2_RATING_OPTION);
 
     if (existingGrouping) {
         register(FORM_FIELD_GROUPING_ID, {required: "Grouping ID is required.", value: ""});
@@ -96,6 +98,7 @@ export function Form({existingGrouping, readOnly = false}) {
             setValue(FORM_FIELD_CONTEXT, existingGrouping.context);
             setValue(FORM_FIELD_DESCRIPTION, existingGrouping.description);
             setValue(FORM_FIELD_CREATED_BY_REF, existingGrouping.created_by_ref);
+            setValue(FORM_FIELD_TLP_V2_RATING, existingGrouping.tlp_v2_rating);
         }
     }, [setValue, existingGrouping]);
 
@@ -145,6 +148,7 @@ export function Form({existingGrouping, readOnly = false}) {
                     <DescriptionField {...commonProps} fieldName={FORM_FIELD_DESCRIPTION}/>
                     <ContextField {...commonProps} options={GROUPING_CONTEXTS} fieldName={FORM_FIELD_CONTEXT}/>
                     <CreatedByField {...commonProps} fieldName={FORM_FIELD_CREATED_BY_REF} options={optionsIdentities}/>
+                    <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING}/>
                     <CustomControlGroup>
                         {!readOnly && <HorizontalButtonLayout>
                             <CancelButton/>

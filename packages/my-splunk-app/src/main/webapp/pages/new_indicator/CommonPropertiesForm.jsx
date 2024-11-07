@@ -11,7 +11,7 @@ import {tlpV2RatingOptions} from "@splunk/my-react-component/src/tlpV2Rating";
 import {getValidationSignal, submitData, validationDone} from './CommonProperties.slice'
 import {useRespondToValidationSignal} from "./formUtils";
 import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
-import {ConfidenceField, TLPv2RatingField, ValidFromField} from "../../common/indicator_form/formControls";
+import {ConfidenceField, ValidFromField} from "../../common/indicator_form/formControls";
 import {
     FIELD_CONFIDENCE,
     FIELD_GROUPING_ID,
@@ -19,6 +19,7 @@ import {
     FIELD_VALID_FROM,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
+import {TLPv2RatingField} from "../../common/tlp";
 
 const StyledSection = styled.section`
     margin-bottom: ${variables.spacingLarge};

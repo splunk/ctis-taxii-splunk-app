@@ -6,7 +6,6 @@ import TextControlGroup from "@splunk/my-react-component/src/TextControlGroup";
 import StixPatternControlGroup from "@splunk/my-react-component/src/StixPatternControlGroup";
 import TextAreaControlGroup from "@splunk/my-react-component/src/TextAreaControlGroup";
 import PropTypes from "prop-types";
-import {tlpV2RatingOptions} from "@splunk/my-react-component/src/tlpV2Rating";
 import {useFormInputProps} from "../formInputProps";
 
 export function IndicatorIdField({fieldName, ...props}) {
@@ -43,18 +42,6 @@ ConfidenceField.propTypes = {
     fieldName: PropTypes.string.isRequired
 }
 
-
-export function TLPv2RatingField({fieldName, ...props}) {
-    return <SelectControlGroup label="TLP v2.0 Rating"
-                               options={tlpV2RatingOptions}
-                               {...useFormInputProps(fieldName)}
-                               {...props}
-    />
-}
-
-TLPv2RatingField.propTypes = {
-    fieldName: PropTypes.string.isRequired
-}
 
 export function ValidFromField({fieldName, ...props}) {
     return <DatetimeControlGroup label="Valid From (UTC)" setHelpTextAsRelativeTime {...useFormInputProps(fieldName)} {...props}/>

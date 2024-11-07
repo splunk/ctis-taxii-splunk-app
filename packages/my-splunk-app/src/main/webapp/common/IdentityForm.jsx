@@ -16,12 +16,15 @@ import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fi
 import {useOnFormSubmit} from "./formSubmit";
 import {usePageTitle} from "./utils";
 
+import {FORM_FIELD_TLP_V2_RATING, FORM_FIELD_TLP_V2_RATING_OPTION, TLPv2RatingField} from "./tlp";
+
 const MyForm = styled.form`
     max-width: 600px;
 `
 
 const FORM_FIELD_NAME = "name";
 const FORM_FIELD_IDENTITY_CLASS = "identity_class";
+
 // For edit mode
 const FORM_FIELD_IDENTITY_ID = "identity_id";
 
@@ -49,6 +52,7 @@ export function Form({existingIdentity}) {
 
     register(FORM_FIELD_NAME, {required: "Name is required.", value: ""});
     register(FORM_FIELD_IDENTITY_CLASS, {required: "Identity Class is required.", value: ""});
+    register(FORM_FIELD_TLP_V2_RATING, FORM_FIELD_TLP_V2_RATING_OPTION);
     if (existingIdentity) {
         register(FORM_FIELD_IDENTITY_ID, {required: "Identity ID is required.", value: ""});
     }
@@ -58,6 +62,7 @@ export function Form({existingIdentity}) {
             setValue(FORM_FIELD_IDENTITY_ID, existingIdentity.identity_id);
             setValue(FORM_FIELD_IDENTITY_CLASS, existingIdentity.identity_class);
             setValue(FORM_FIELD_NAME, existingIdentity.name);
+            setValue(FORM_FIELD_TLP_V2_RATING, existingIdentity.tlp_v2_rating);
         }
     }, [existingIdentity, setValue]);
 
@@ -85,6 +90,7 @@ export function Form({existingIdentity}) {
                     {existingIdentity && <IdentityIdField disabled fieldName={FORM_FIELD_IDENTITY_ID}/>}
                     <NameField fieldName={FORM_FIELD_NAME}/>
                     <IdentityClassField fieldName={FORM_FIELD_IDENTITY_CLASS} options={IDENTITY_CLASSES}/>
+                    <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING}/>
                     <CustomControlGroup>
                         <HorizontalButtonLayout>
                             <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
