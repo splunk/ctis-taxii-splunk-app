@@ -22,7 +22,7 @@ def validate_stix_pattern(instance, attribute, value: str):
 
 def validate_indicator_id(instance, attribute, value):
     try:
-        StixIndicator(id=value, pattern_type="stix2", pattern="")
+        StixIndicator(id=value, pattern_type="stix", pattern="[url:value = 'abc']")
     except Exception as e:
         raise ValueError(f"Invalid indicator_id: {e}")
 
@@ -68,7 +68,7 @@ class IndicatorModelV1(BaseModelV1):
             name=self.name,
             description=self.description,
             pattern=self.stix_pattern,
-            pattern_type="stix2",
+            pattern_type="stix",
             valid_from=self.valid_from,
             confidence=self.confidence,
             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
