@@ -74,27 +74,6 @@ class IndicatorModelV1(BaseModelV1):
             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
         )
 
-"""
-Example form payload:
-{
-    "grouping_id": "A",
-    "confidence": 100,
-    "tlp_v1_rating": "GREEN",
-    "valid_from": "2024-09-03T22:51:44.361",
-    "indicators": [
-        {
-            "splunk_field_name": "",
-            "indicator_value": "123.456.1.2",
-            "indicator_category": "source_ipv4",
-            "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '123.456.1.2']",
-            "name": "asdf",
-            "description": "adsf"
-        }
-    ]
-}
-"""
-
-
 indicator_converter = make_base_converter()
 
 def form_payload_to_indicators(form_payload: dict) -> Tuple[list, List[IndicatorModelV1]]:

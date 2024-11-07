@@ -9,7 +9,8 @@ from stix2 import Bundle
 
 def bundle_for_grouping(grouping_: GroupingModelV1, grouping_identity: IdentityModelV1,
                         indicators: List[IndicatorModelV1]) -> Bundle:
-    unique_tlp_ratings = set([ind.tlp_v2_rating for ind in indicators])
+    objects_to_gather_tlp_rating = indicators + [grouping_, grouping_identity]
+    unique_tlp_ratings = set([ind.tlp_v2_rating for ind in objects_to_gather_tlp_rating])
     object_marking_refs = [x.to_object_marking_ref() for x in unique_tlp_ratings]
 
     indicators_as_stix = [ind.to_stix(created_by_ref=grouping_identity.identity_id) for ind in indicators]

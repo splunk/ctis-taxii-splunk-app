@@ -4,6 +4,8 @@ from stix2 import Identity
 from stix2.exceptions import InvalidValueError
 from uuid import uuid4
 
+from .tlp_v2 import TLPv2
+
 
 def validate_identity_id(instance, attribute, value):
     try:
@@ -38,6 +40,7 @@ class IdentityModelV1(BaseModelV1):
 
     name: str = field()
     identity_class: str = field(validator=[validate_identity_class])
+    tlp_v2_rating: TLPv2 = field()
 
     def to_stix(self) -> Identity:
         return Identity(
@@ -46,6 +49,7 @@ class IdentityModelV1(BaseModelV1):
             identity_class=self.identity_class,
             created=self.created,
             modified=self.modified,
+            object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
         )
 
 
