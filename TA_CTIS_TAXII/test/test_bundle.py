@@ -9,7 +9,8 @@ from test_model_indicator_v1 import new_sample_indicator_instance
 
 class TestStixBundle:
     def test_bundling_grouping_of_indicators(self):
-        identity = IdentityModelV1(name="Test Identity", identity_class="organization", tlp_v2_rating=TLPv2.AMBER_STRICT)
+        identity = IdentityModelV1(name="Test Identity", identity_class="organization",
+                                   tlp_v2_rating=TLPv2.AMBER_STRICT)
         grouping = GroupingModelV1(name="Group ABC", description="Group ABC description", context="unspecified",
                                    created_by_ref=identity.identity_id, tlp_v2_rating=TLPv2.AMBER)
         indicator1 = new_sample_indicator_instance()
@@ -37,6 +38,8 @@ class TestStixBundle:
         grouping_object = grouping_objects[0]
         assert grouping_object["created_by_ref"] == identity.identity_id
         assert grouping_object["object_marking_refs"] == [AMBER_MARKING_DEFINITION.id]
+        assert set(grouping_object["object_refs"]) == {indicator1.indicator_id, indicator2.indicator_id,
+                                                       indicator3.indicator_id, identity.identity_id}
 
         identity_objects = [x for x in bundle_json["objects"] if x["type"] == "identity"]
         assert len(identity_objects) == 1
@@ -63,4 +66,3 @@ class TestStixBundle:
         assert len(indicator_id_to_indicator) == 3
         assert indicator_id_to_indicator[indicator1.indicator_id][
                    "created_by_ref"] == identity.identity_id, "Indicator should have the grouping's identity as the creator"
-
