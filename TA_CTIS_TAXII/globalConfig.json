@@ -83,7 +83,6 @@
             "table": {
                 "actions": [
                     "edit",
-                    "enable",
                     "delete",
                     "clone"
                 ],
@@ -132,7 +131,7 @@
         "dashboard": {
             "panels": [
                 {
-                    "name": "errors_in_the_addon"
+                    "name": "default"
                 }
             ]
         }
@@ -140,10 +139,10 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.9.0R3e4bacd",
+        "version": "1.9.0+12b0185",
         "displayName": "CTIS TAXII Add-on",
-        "schemaVersion": "0.0.7",
-        "_uccVersion": "5.49.0",
+        "schemaVersion": "0.0.9",
+        "_uccVersion": "5.52.0",
         "supportedThemes": [
             "dark",
             "light"

@@ -11,7 +11,7 @@ colorama==0.4.6
 cpe==1.3.1
 dataclasses-json==0.6.7
 defusedxml==0.7.1
-dunamai==1.21.2
+dunamai==1.22.0
 exceptiongroup==1.2.2
 fqdn==1.5.1
 idna==3.7
@@ -41,7 +41,7 @@ rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 simplejson==3.19.2
 six==1.16.0
-splunk-add-on-ucc-framework==5.49.0
+splunk-add-on-ucc-framework==5.52.0
 stix2==3.0.1
 stix2-patterns==2.0.0
 stix2-validator==3.1.4
