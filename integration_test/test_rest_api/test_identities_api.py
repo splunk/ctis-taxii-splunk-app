@@ -1,24 +1,29 @@
 from .util import create_new_identity, get_identities_collection, list_identities, edit_identity, delete_identity
 
+def create_new_identity_with_defaults(session, name:str, identity_class:str) -> dict:
+    return create_new_identity(session, {"name": name, "identity_class": identity_class,
+                                         "confidence": 50, "tlp_v2_rating": "TLP:GREEN"})
 
 class TestScenarios:
     def test_add_new_indicator_writes_to_db(self, session, cleanup_identities_collection):
         identities = get_identities_collection(session)
         assert len(identities) == 0
 
-        create_new_identity(session, {"name": "test_identity", "identity_class" : "organization"})
+        create_new_identity_with_defaults(session, name="test_identity", identity_class="organization")
 
         identities = get_identities_collection(session)
         assert len(identities) == 1
         identity = identities[0]
         assert identity["name"] == "test_identity"
         assert identity["identity_class"] == "organization"
+        assert identity["confidence"] == 50
+        assert identity["tlp_v2_rating"] == "TLP:GREEN"
         assert "identity_id" in identity
 
     def test_query_identities(self, session, cleanup_identities_collection):
-        create_new_identity(session, {"name": "org1", "identity_class" : "organization"})
-        create_new_identity(session, {"name": "org2", "identity_class" : "organization"})
-        create_new_identity(session, {"name": "user1", "identity_class" : "individual"})
+        create_new_identity_with_defaults(session, name="org1", identity_class="organization")
+        create_new_identity_with_defaults(session, name="org2", identity_class="organization")
+        create_new_identity_with_defaults(session, name="user1", identity_class="individual")
         identities = get_identities_collection(session)
         assert len(identities) == 3
 
@@ -36,12 +41,12 @@ class TestScenarios:
         assert len(resp3["records"]) == 2
 
     def test_edit_identity(self, session, cleanup_identities_collection):
-        create_new_identity(session, {"name": "user1", "identity_class" : "individual"})
+        create_new_identity_with_defaults(session, name="user1", identity_class="individual")
         identities_1 = get_identities_collection(session)
         assert len(identities_1) == 1
         saved_identity_1 = identities_1[0]
 
-        resp = edit_identity(session, {"identity_id": saved_identity_1["identity_id"], "name": "user2"})
+        edit_identity(session, {"identity_id": saved_identity_1["identity_id"], "name": "user2"})
 
         identities_2 = get_identities_collection(session)
         assert len(identities_2) == 1
@@ -51,7 +56,7 @@ class TestScenarios:
         assert saved_identity_2["modified"] != saved_identity_1["modified"]
 
     def test_delete_identity(self, session, cleanup_identities_collection):
-        create_new_identity(session, {"name": "user1", "identity_class" : "individual"})
+        create_new_identity_with_defaults(session, name="user1", identity_class="individual")
         identities_1 = get_identities_collection(session)
         assert len(identities_1) == 1
         identity = identities_1[0]
