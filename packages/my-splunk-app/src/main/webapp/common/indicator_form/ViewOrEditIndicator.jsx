@@ -20,7 +20,6 @@ import {useOnFormSubmit} from "../formSubmit";
 import {usePatternSuggester} from "../../pages/new_indicator/patternSuggester";
 import useIndicatorCategories from "./indicatorCategories";
 import {
-    ConfidenceField,
     IndicatorCategoryField,
     IndicatorDescriptionField,
     IndicatorIdField,
@@ -46,6 +45,7 @@ import {
 import {GroupingIdFieldV2} from "./GroupingsDropdown";
 import {usePageTitle} from "../utils";
 import {TLPv2RatingField} from "../tlp";
+import {ConfidenceField} from "../confidence";
 
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,

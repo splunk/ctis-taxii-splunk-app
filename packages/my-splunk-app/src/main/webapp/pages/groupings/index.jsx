@@ -65,6 +65,7 @@ const expansionFieldNameToCellValue = {
     "Description": (row) => row?.description,
     "Context": (row) => row.context,
     "TLPv2 Rating": row => row.tlp_v2_rating,
+    "Confidence" : row => row.confidence,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
     "Created By": (row) => <IdentityIdLink identityId={row.created_by_ref}/>,

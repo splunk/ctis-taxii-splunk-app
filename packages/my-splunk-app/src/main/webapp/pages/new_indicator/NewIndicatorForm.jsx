@@ -31,10 +31,11 @@ import {
     FIELD_VALID_FROM,
     REGISTER_FIELD_OPTIONS
 } from "../../common/indicator_form/fieldNames";
-import {ConfidenceField, ValidFromField} from "../../common/indicator_form/formControls";
+import {ValidFromField} from "../../common/indicator_form/formControls";
 import {IndicatorSubForm} from "./IndicatorSubForm";
 import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
 import {TLPv2RatingField} from "../../common/tlp";
+import {ConfidenceField} from "../../common/confidence";
 
 function GotoIndicatorsPageButton() {
     // TODO: this should probs change to viewing the indicator created?

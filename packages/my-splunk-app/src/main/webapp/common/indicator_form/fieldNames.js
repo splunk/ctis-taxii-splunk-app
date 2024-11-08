@@ -1,4 +1,5 @@
 import {FORM_FIELD_TLP_V2_RATING} from "../tlp";
+import {FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION} from "../confidence";
 
 export const FIELD_TLP_RATING = FORM_FIELD_TLP_V2_RATING;
 
@@ -9,7 +10,7 @@ export const FIELD_STIX_PATTERN = "stix_pattern";
 export const FIELD_INDICATOR_NAME = "name";
 export const FIELD_INDICATOR_DESCRIPTION = "description";
 export const FIELD_GROUPING_ID = "grouping_id";
-export const FIELD_CONFIDENCE = "confidence";
+export {FIELD_CONFIDENCE};
 export const FIELD_VALID_FROM = "valid_from";
 export const FIELD_INDICATORS = "indicators";
 
@@ -26,9 +27,7 @@ export const REGISTER_FIELD_OPTIONS = {
     [FIELD_TLP_RATING]: {
         required: "TLPv2 Rating is required."
     },
-    [FIELD_CONFIDENCE]: {
-        required: "Confidence is required."
-    },
+    [FIELD_CONFIDENCE]: FIELD_CONFIDENCE_OPTION,
     [FIELD_VALID_FROM]: {
         required: "Valid from is required."
     },
