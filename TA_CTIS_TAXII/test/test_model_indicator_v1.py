@@ -225,7 +225,7 @@ def test_to_stix():
     assert stix.name == indicator.name
     assert stix.description == indicator.description
     assert stix.pattern == indicator.stix_pattern
-    assert stix.pattern_type == "stix2"
+    assert stix.pattern_type == "stix"
     assert stix.valid_from == indicator.valid_from
     assert stix.confidence == indicator.confidence
     assert stix.object_marking_refs == [GREEN_MARKING_DEFINITION.id]

@@ -182,3 +182,21 @@ def new_indicator_payload() -> dict:
         "valid_from": "2024-08-16T23:00:22",
         "confidence": 50
     }
+
+def new_sample_grouping(session, grouping_name="grouping-1", identity_name="identity-1") -> dict:
+    identity = create_new_identity(session, {
+        "name": identity_name,
+        "identity_class": "organization",
+        "confidence": 100,
+        "tlp_v2_rating": "TLP:CLEAR",
+    })["identity"]
+    grouping = create_new_grouping(session, {
+        "created_by_ref": identity["identity_id"],
+        "name": grouping_name,
+        "description": "description-1",
+        "context": "unspecified",
+        "confidence": 100,
+        "tlp_v2_rating": "TLP:GREEN",
+    })["grouping"]
+    assert grouping["grouping_id"] is not None
+    return grouping

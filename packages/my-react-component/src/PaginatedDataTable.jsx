@@ -78,7 +78,7 @@ export default function PaginatedDataTable({renderData: RenderData, fetchData, o
         sort,
         onError
     });
-    const numPages = useMemo(() => Math.ceil(totalRecords / resultsPerPage), [totalRecords, resultsPerPage]);
+    const numPages = useMemo(() => Math.max(Math.ceil(totalRecords / resultsPerPage), 1), [totalRecords, resultsPerPage]);
 
     useEffect(() => {
         console.log("Setting page num to 1");

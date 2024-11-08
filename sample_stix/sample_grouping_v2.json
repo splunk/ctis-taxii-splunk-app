@@ -1,0 +1,184 @@
+{
+  "type": "bundle",
+  "id": "bundle--ab6b40bc-8dba-4840-b0f1-695747e3b8bb",
+  "objects": [
+    {
+      "type": "grouping",
+      "spec_version": "2.1",
+      "id": "grouping--34aa6261-3857-4f58-aabb-1239a02a8d01",
+      "created_by_ref": "identity--b428a0a2-839c-40bd-a137-e1711758fe31",
+      "created": "2024-11-08T02:43:51.986606Z",
+      "modified": "2024-11-08T02:48:49.797798Z",
+      "name": "Sample Grouping",
+      "description": "Demonstrating Splunk app STIX bundling of IoCs",
+      "context": "unspecified",
+      "object_refs": [
+        "indicator--8c0a84d6-5807-4f78-8493-3f2f655ba2c5",
+        "indicator--2408ae01-aff1-4fa4-a326-02e7f9d66d84",
+        "indicator--8628ac69-bbe9-4ac4-adba-95a6d4866f05",
+        "indicator--f6656ad9-b188-4eda-b2e9-6c965fa4e79e",
+        "indicator--326cde03-0cc1-465b-8df3-403850ab507d",
+        "identity--b428a0a2-839c-40bd-a137-e1711758fe31"
+      ],
+      "confidence": 100,
+      "object_marking_refs": [
+        "marking-definition--bab4a63c-aed9-4cf5-a766-dfca5abac2bb"
+      ]
+    },
+    {
+      "type": "identity",
+      "spec_version": "2.1",
+      "id": "identity--b428a0a2-839c-40bd-a137-e1711758fe31",
+      "created": "2024-11-07T03:50:11.326329Z",
+      "modified": "2024-11-08T02:49:27.144793Z",
+      "name": "XYZ",
+      "identity_class": "organization",
+      "confidence": 100,
+      "object_marking_refs": [
+        "marking-definition--bab4a63c-aed9-4cf5-a766-dfca5abac2bb"
+      ]
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--8c0a84d6-5807-4f78-8493-3f2f655ba2c5",
+      "created_by_ref": "identity--b428a0a2-839c-40bd-a137-e1711758fe31",
+      "created": "2024-11-08T02:47:06.087081Z",
+      "modified": "2024-11-08T02:48:49.298361Z",
+      "name": "Sample Destination IPv4",
+      "description": "Description about sample destination IPv4 Address",
+      "pattern": "[network-traffic:dst_ref.type = 'ipv4-addr' AND network-traffic:dst_ref.value = '1.2.3.4']",
+      "pattern_type": "stix",
+      "pattern_version": "2.1",
+      "valid_from": "2024-11-08T02:43:57Z",
+      "confidence": 60,
+      "object_marking_refs": [
+        "marking-definition--55d920b0-5e8b-4f79-9ee9-91f868d9b421"
+      ]
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--2408ae01-aff1-4fa4-a326-02e7f9d66d84",
+      "created_by_ref": "identity--b428a0a2-839c-40bd-a137-e1711758fe31",
+      "created": "2024-11-08T02:47:06.100692Z",
+      "modified": "2024-11-08T02:47:06.100694Z",
+      "name": "Example source domain name",
+      "description": "Description about example source domain name",
+      "pattern": "[network-traffic:src_ref.type = 'domain-name' AND network-traffic:src_ref.value = 'example.org']",
+      "pattern_type": "stix",
+      "pattern_version": "2.1",
+      "valid_from": "2024-11-08T02:43:57Z",
+      "confidence": 60,
+      "object_marking_refs": [
+        "marking-definition--94868c89-83c2-464b-929b-a1a8aa3c8487"
+      ]
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--8628ac69-bbe9-4ac4-adba-95a6d4866f05",
+      "created_by_ref": "identity--b428a0a2-839c-40bd-a137-e1711758fe31",
+      "created": "2024-11-08T02:47:06.102851Z",
+      "modified": "2024-11-08T02:47:33.937741Z",
+      "name": "Example sender email address",
+      "description": "Description about example sender email address",
+      "pattern": "[email-message:sender_ref.value = 'sender@example.org']",
+      "pattern_type": "stix",
+      "pattern_version": "2.1",
+      "valid_from": "2024-11-08T02:43:57Z",
+      "confidence": 60,
+      "object_marking_refs": [
+        "marking-definition--e828b379-4e03-4974-9ac4-e53a884c97c1"
+      ]
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--f6656ad9-b188-4eda-b2e9-6c965fa4e79e",
+      "created_by_ref": "identity--b428a0a2-839c-40bd-a137-e1711758fe31",
+      "created": "2024-11-08T02:47:06.104432Z",
+      "modified": "2024-11-08T02:47:06.104433Z",
+      "name": "Sample .exe file",
+      "description": "Description about sample .exe file",
+      "pattern": "[file:name = 'file.exe']",
+      "pattern_type": "stix",
+      "pattern_version": "2.1",
+      "valid_from": "2024-11-08T02:43:57Z",
+      "confidence": 60,
+      "object_marking_refs": [
+        "marking-definition--94868c89-83c2-464b-929b-a1a8aa3c8487"
+      ]
+    },
+    {
+      "type": "indicator",
+      "spec_version": "2.1",
+      "id": "indicator--326cde03-0cc1-465b-8df3-403850ab507d",
+      "created_by_ref": "identity--b428a0a2-839c-40bd-a137-e1711758fe31",
+      "created": "2024-11-08T02:47:06.105622Z",
+      "modified": "2024-11-08T02:47:06.105622Z",
+      "name": "MD5 hash of file.exe",
+      "description": "Description about MD5 file hash",
+      "pattern": "[file:hashes.MD5 = '5d41402abc4b2a76b9719d911017c592']",
+      "pattern_type": "stix",
+      "pattern_version": "2.1",
+      "valid_from": "2024-11-08T02:43:57Z",
+      "confidence": 60,
+      "object_marking_refs": [
+        "marking-definition--94868c89-83c2-464b-929b-a1a8aa3c8487"
+      ]
+    },
+    {
+      "type": "marking-definition",
+      "spec_version": "2.1",
+      "id": "marking-definition--e828b379-4e03-4974-9ac4-e53a884c97c1",
+      "created": "2022-10-01T00:00:00.000Z",
+      "name": "TLP:RED",
+      "extensions": {
+        "extension-definition--60a3c5c5-0d10-413e-aab3-9e08dde9e88d": {
+          "extension_type": "property-extension",
+          "tlp_2_0": "red"
+        }
+      }
+    },
+    {
+      "type": "marking-definition",
+      "spec_version": "2.1",
+      "id": "marking-definition--94868c89-83c2-464b-929b-a1a8aa3c8487",
+      "created": "2022-10-01T00:00:00.000Z",
+      "name": "TLP:CLEAR",
+      "extensions": {
+        "extension-definition--60a3c5c5-0d10-413e-aab3-9e08dde9e88d": {
+          "extension_type": "property-extension",
+          "tlp_2_0": "clear"
+        }
+      }
+    },
+    {
+      "type": "marking-definition",
+      "spec_version": "2.1",
+      "id": "marking-definition--bab4a63c-aed9-4cf5-a766-dfca5abac2bb",
+      "created": "2022-10-01T00:00:00.000Z",
+      "name": "TLP:GREEN",
+      "extensions": {
+        "extension-definition--60a3c5c5-0d10-413e-aab3-9e08dde9e88d": {
+          "extension_type": "property-extension",
+          "tlp_2_0": "green"
+        }
+      }
+    },
+    {
+      "type": "marking-definition",
+      "spec_version": "2.1",
+      "id": "marking-definition--55d920b0-5e8b-4f79-9ee9-91f868d9b421",
+      "created": "2022-10-01T00:00:00.000Z",
+      "name": "TLP:AMBER",
+      "extensions": {
+        "extension-definition--60a3c5c5-0d10-413e-aab3-9e08dde9e88d": {
+          "extension_type": "property-extension",
+          "tlp_2_0": "amber"
+        }
+      }
+    }
+  ]
+}

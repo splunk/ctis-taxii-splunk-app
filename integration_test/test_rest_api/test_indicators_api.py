@@ -1,23 +1,6 @@
-from .util import create_new_grouping, create_new_identity, edit_indicator, get_groupings_collection, \
-    get_identities_collection, get_indicators_collection, \
-    new_indicator_payload, \
-    create_new_indicator, list_indicators, bulk_insert_indicators, create_indicator_form_payload, example_indicator, \
-    delete_indicator
-
-
-def new_grouping(session):
-    identity = create_new_identity(session, {
-        "name": "identity-1",
-        "identity_class": "organization",
-    })["identity"]
-    grouping = create_new_grouping(session, {
-        "created_by_ref": identity["identity_id"],
-        "name": "grouping-1",
-        "description": "description-1",
-        "context": "unspecified",
-    })["grouping"]
-    assert grouping["grouping_id"] is not None
-    return grouping
+from .util import bulk_insert_indicators, create_indicator_form_payload, create_new_indicator, delete_indicator, \
+    edit_indicator, example_indicator, get_groupings_collection, get_identities_collection, get_indicators_collection, \
+    list_indicators, new_indicator_payload, new_sample_grouping
 
 
 def assert_collections_are_empty(session):
@@ -29,7 +12,7 @@ def assert_collections_are_empty(session):
 class TestScenarios:
     def test_scenario_add_new_indicator_writes_to_db(self, session, cleanup_all_collections):
         assert_collections_are_empty(session)
-        grouping = new_grouping(session)
+        grouping = new_sample_grouping(session)
 
         # Validation isn't done on grouping_id, but the UI forces a dropdown selection in the Indicator Form
         payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=[example_indicator()])
@@ -47,7 +30,7 @@ class TestScenarios:
 
     def test_list_indicators_no_filter(self, session, cleanup_all_collections):
         assert_collections_are_empty(session)
-        grouping = new_grouping(session)
+        grouping = new_sample_grouping(session)
         indicators_to_add = [example_indicator() for _ in range(5)]
         payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=indicators_to_add)
         create_new_indicator(session, payload=payload)
@@ -60,9 +43,9 @@ class TestScenarios:
 
     def test_list_indicators_with_query(self, session, cleanup_all_collections):
         assert_collections_are_empty(session)
-        grouping_a = new_grouping(session)
+        grouping_a = new_sample_grouping(session)
         grouping_a_id = grouping_a["grouping_id"]
-        grouping_b = new_grouping(session)
+        grouping_b = new_sample_grouping(session)
         grouping_b_id = grouping_b["grouping_id"]
 
         payload_a = create_indicator_form_payload(grouping_id=grouping_a_id,
@@ -103,7 +86,7 @@ class TestScenarios:
 
     def test_edit_indicator(self, session, cleanup_all_collections):
         assert_collections_are_empty(session)
-        grouping = new_grouping(session)
+        grouping = new_sample_grouping(session)
         payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=[example_indicator()])
         create_new_indicator(session, payload=payload)
         indicators = get_indicators_collection(session)
@@ -123,7 +106,7 @@ class TestScenarios:
 
     def test_delete_indicator(self, session, cleanup_all_collections):
         assert_collections_are_empty(session)
-        payload = create_indicator_form_payload(grouping_id=new_grouping(session)["grouping_id"],
+        payload = create_indicator_form_payload(grouping_id=new_sample_grouping(session)["grouping_id"],
                                                 indicators=[example_indicator()])
         create_new_indicator(session, payload=payload)
 

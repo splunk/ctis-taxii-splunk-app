@@ -50,6 +50,8 @@ const expansionFieldNameToCellValue = {
     "Name": (row) => row.name,
     "Identity Class": (row) => row.identity_class,
     "Identity ID": (row) => row.identity_id,
+    "TLPv2 Rating": row => row.tlp_v2_rating,
+    "Confidence" : row => row.confidence,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
 }
