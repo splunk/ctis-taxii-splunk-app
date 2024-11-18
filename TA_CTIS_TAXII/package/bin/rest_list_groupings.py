@@ -34,9 +34,12 @@ class ListGroupingsHandler(AbstractRestHandler):
         self.logger.info(f"grouping_ids: {grouping_ids}")
         indicators_collection = self.get_collection(collection_name="indicators", session_key=session_key)
 
-        indicators_query = query_value_in_list("grouping_id", grouping_ids)
-        self.logger.info(f"indicators_query: {indicators_query}")
-        indicators = indicators_collection.query(fields="grouping_id,indicator_id", query=indicators_query, limit=0, offset=0)
+        indicators = []
+        if grouping_ids:
+            indicators_query = query_value_in_list("grouping_id", grouping_ids)
+            self.logger.info(f"indicators_query: {indicators_query}")
+            indicators = indicators_collection.query(fields="grouping_id,indicator_id", query=indicators_query, limit=0, offset=0)
+
         self.logger.info(f"indicators: {indicators}")
 
         mapping = indicators_to_mapping_of_grouping_id_to_indicators(indicators)
