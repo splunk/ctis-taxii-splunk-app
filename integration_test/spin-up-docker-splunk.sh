@@ -12,6 +12,9 @@ if [ -z "$SPLUNK_PASSWORD" ]; then
     exit 1
 fi
 
+splunk_version="${SPLUNK_VERSION:-latest}"
+echo "Will spin up Splunk docker with SPLUNK_VERSION: $splunk_version"
+
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
@@ -37,7 +40,7 @@ DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --host
   -e 'SPLUNK_START_ARGS=--accept-license' \
   -v "$(pwd):/tmp/test" \
   -e "SPLUNK_APPS_URL=/tmp/test/$SPLUNK_APP_FILENAME" \
-  -it splunk/splunk:latest
+  -it splunk/splunk:"$splunk_version"
 
 
 function checkIfSplunkIsUp() {
