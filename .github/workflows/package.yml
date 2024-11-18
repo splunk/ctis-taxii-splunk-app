@@ -72,6 +72,12 @@ jobs:
         runs-on: ubuntu-latest
         needs: [ package ]
         environment: main
+        strategy:
+            matrix:
+                splunk_version:
+                    - latest
+                    - 9.1
+                    - 9.2
         steps:
             -   uses: actions/checkout@v4
             -   name: Setup Node.js
@@ -90,6 +96,7 @@ jobs:
                 env:
                     SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
                     SPLUNK_APP_FILENAME: ctis.tar.gz
+                    SPLUNK_VERSION: ${{ matrix.splunk_version }}
             -   name: Install Pytest
                 run: pip install pytest
             -   name: Run integration tests
