@@ -91,6 +91,10 @@ jobs:
                     path: integration_test
             -   name: list
                 run: pwd && ls -l
+            -   name: Setup upterm session
+                uses: lhotari/action-upterm@v1
+                with:
+                    limit-access-to-actor: true
             -   name: Spin up Docker Splunk with app
                 run: cd integration_test && ./spin-up-docker-splunk.sh
                 env:
@@ -104,7 +108,3 @@ jobs:
                 env:
                     SPLUNK_USERNAME: admin
                     SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
-#          - name: Setup upterm session
-#            uses: lhotari/action-upterm@v1
-#            with:
-#                limit-access-to-actor: true
