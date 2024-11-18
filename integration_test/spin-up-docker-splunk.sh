@@ -55,7 +55,9 @@ function checkIfSplunkIsUp() {
 
 function checkApiEndpoint() {
     echo "Hitting List Submissions API endpoint"
-    resp_code=$(curl -o /dev/null -w '%{http_code}' -k -u "admin:$SPLUNK_PASSWORD" "https://localhost:8099/servicesNS/-/$APP_NAME/list-submissions?output_mode=json")
+    resp=$(curl -w '\n%{http_code}' -k -u "admin:$SPLUNK_PASSWORD" "https://localhost:8099/servicesNS/-/$APP_NAME/list-submissions?output_mode=json")
+    echo "Response: $resp"
+    resp_code=$(echo "$resp" | tail -n1)
     echo "Response code: $resp_code"
     if [ "$resp_code" = "200" ]; then
         return 0
