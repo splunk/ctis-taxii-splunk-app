@@ -1,10 +1,15 @@
 import os
 import sys
 
+os.environ["PYTHONBUFFERED"] = "1"
+
 sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
 sys.stderr.write(f"updated sys.path: {sys.path}\n")
+
+from remote_pdb import RemotePdb
+RemotePdb('0.0.0.0', 4444).set_trace()
 
 try:
     from common import get_logger_for_script, AbstractRestHandler, NAMESPACE

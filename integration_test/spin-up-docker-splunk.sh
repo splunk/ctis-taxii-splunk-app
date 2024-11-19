@@ -44,6 +44,7 @@ fi
 docker run -d --rm --name splunk-ctis --hostname splunk-ctis \
   -p 8002:8000 \
   -p 8099:8089 \
+  -p 4444:4444 \
   -e "SPLUNK_PASSWORD=$SPLUNK_PASSWORD" \
   -e 'SPLUNK_START_ARGS=--accept-license' \
   -v "$(pwd):/tmp/test" \
