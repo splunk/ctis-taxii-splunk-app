@@ -6,7 +6,7 @@ typing-extensions==4.7.1
 # Latest cattrs version that still supports Python 3.7
 # See: https://github.com/python-attrs/cattrs/pull/424
 cattrs==23.1.2
-attrs
+attrs==24.2.0
 stix2
 stix2-patterns
 splunktaucclib
