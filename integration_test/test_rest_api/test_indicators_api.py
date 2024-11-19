@@ -64,7 +64,7 @@ class TestScenarios:
         assert resp_with_filter["total"] == 3
 
         resp_with_filter_2 = list_indicators(session, skip=0, limit=100, query={
-            "grouping_id": {"$in": [grouping_a_id, grouping_b_id]}
+            "$or" : [{"grouping_id": grouping_a_id}, {"grouping_id": grouping_b_id}]
         })
         indicators_with_filter_2 = resp_with_filter_2["records"]
         assert len(indicators_with_filter_2) == 5

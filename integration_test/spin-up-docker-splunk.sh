@@ -12,6 +12,9 @@ if [ -z "$SPLUNK_PASSWORD" ]; then
     exit 1
 fi
 
+splunk_version="${SPLUNK_VERSION:-latest}"
+echo "Will spin up Splunk docker with SPLUNK_VERSION: $splunk_version"
+
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
@@ -27,17 +30,26 @@ docker ps -q --filter "name=$container_name" | xargs -r docker stop
 sleep 2
 docker ps -aq --filter "name=$container_name" | xargs -r docker rm
 
+# Check if OS is Darwin
+if uname -a | grep -q "Darwin"; then
+    # If OS is Darwin, then we need to use the default platform for docker
+    echo "OS is Darwin, setting DOCKER_DEFAULT_PLATFORM to linux/amd64"
+    export DOCKER_DEFAULT_PLATFORM=linux/amd64
+fi
+
+
 # Run splunk docker with the app installed
 # Web port exposed on localhost:8002
 # Admin port exposed on localhost:8099
-DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --hostname splunk-ctis \
+docker run -d --rm --name splunk-ctis --hostname splunk-ctis \
   -p 8002:8000 \
   -p 8099:8089 \
+  -p 4444:4444 \
   -e "SPLUNK_PASSWORD=$SPLUNK_PASSWORD" \
   -e 'SPLUNK_START_ARGS=--accept-license' \
   -v "$(pwd):/tmp/test" \
   -e "SPLUNK_APPS_URL=/tmp/test/$SPLUNK_APP_FILENAME" \
-  -it splunk/splunk:latest
+  -it splunk/splunk:"$splunk_version"
 
 
 function checkIfSplunkIsUp() {
@@ -52,7 +64,9 @@ function checkIfSplunkIsUp() {
 
 function checkApiEndpoint() {
     echo "Hitting List Submissions API endpoint"
-    resp_code=$(curl -o /dev/null -w '%{http_code}' -k -u "admin:$SPLUNK_PASSWORD" "https://localhost:8099/servicesNS/-/$APP_NAME/list-submissions?output_mode=json")
+    resp=$(curl -w '\n%{http_code}' -k -u "admin:$SPLUNK_PASSWORD" "https://localhost:8099/servicesNS/-/$APP_NAME/list-submissions?output_mode=json")
+    echo "Response: $resp"
+    resp_code=$(echo "$resp" | tail -n1)
     echo "Response code: $resp_code"
     if [ "$resp_code" = "200" ]; then
         return 0

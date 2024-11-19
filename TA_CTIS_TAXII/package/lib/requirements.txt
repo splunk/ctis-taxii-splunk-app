@@ -1,5 +1,12 @@
-cattrs
-attrs
+# Splunk Version 9.1 and 9.2 still use Python 3.7
+# Last supported version of typing-extensions for Python 3.7
+# https://github.com/python/typing_extensions/releases/tag/4.7.1
+typing-extensions==4.7.1
+
+# Latest cattrs version that still supports Python 3.7
+# See: https://github.com/python-attrs/cattrs/pull/424
+cattrs==23.1.2
+attrs==24.2.0
 stix2
 stix2-patterns
 splunktaucclib
