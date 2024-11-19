@@ -30,10 +30,18 @@ docker ps -q --filter "name=$container_name" | xargs -r docker stop
 sleep 2
 docker ps -aq --filter "name=$container_name" | xargs -r docker rm
 
+# Check if OS is Darwin
+if uname -a | grep -q "Darwin"; then
+    # If OS is Darwin, then we need to use the default platform for docker
+    echo "OS is Darwin, setting DOCKER_DEFAULT_PLATFORM to linux/amd64"
+    export DOCKER_DEFAULT_PLATFORM=linux/amd64
+fi
+
+
 # Run splunk docker with the app installed
 # Web port exposed on localhost:8002
 # Admin port exposed on localhost:8099
-DOCKER_DEFAULT_PLATFORM=linux/amd64 docker run -d --rm --name splunk-ctis --hostname splunk-ctis \
+docker run -d --rm --name splunk-ctis --hostname splunk-ctis \
   -p 8002:8000 \
   -p 8099:8089 \
   -e "SPLUNK_PASSWORD=$SPLUNK_PASSWORD" \
