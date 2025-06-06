@@ -82,8 +82,7 @@ jobs:
         strategy:
             matrix:
                 splunk_version:
-                    - latest
-                    - 9.1
+                    - latest                    
                     - 9.2
         steps:
             -   uses: actions/checkout@v4
