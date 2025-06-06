@@ -7,15 +7,13 @@ on:
       - "fix**"
       - "feat**"
       - "test**"
-env:
-  RUNNER_LABEL: "ubuntu-22.04"
 
 jobs:
   unit-test:
     strategy:
       matrix:
         python-version: [ "3.7", "3.9" ]
-    runs-on: ${{ env.RUNNER_LABEL }}
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -31,7 +29,7 @@ jobs:
       - name: Run unit tests
         run: python -m pytest -v TA_CTIS_TAXII/test/ --doctest-modules --junitxml=junit/test-results.xml --cov=TA_CTIS_TAXII/test/ --cov-report=xml --cov-report=html
   package:
-    runs-on: ${{ env.RUNNER_LABEL }}
+    runs-on: ubuntu-22.04
     needs: [ unit-test ]
     permissions:
       contents: write # to be able to publish a GitHub release
@@ -59,7 +57,7 @@ jobs:
   release:
     # Only run when push into main branch
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ${{ env.RUNNER_LABEL }}
+    runs-on: ubuntu-22.04
     needs: [ package ]
     permissions:
       contents: write # to be able to publish a GitHub release
@@ -82,7 +80,7 @@ jobs:
         run: npx semantic-release
 
   integration-test:
-    runs-on: ${{ env.RUNNER_LABEL }}
+    runs-on: ubuntu-22.04
     needs: [ package ]
     environment: main
     strategy:
