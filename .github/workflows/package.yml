@@ -1,117 +1,121 @@
 name: Test, Package & Release App
 
 on:
-    push:
-        branches: [ "main" ]
-    pull_request:
-        branches: [ "main" ]
+  push:
+    branches:
+      - main
+      - "fix**"
+      - "feat**"
+      - "test**"
 
 jobs:
-    unit-test:
-        strategy:
-            matrix:
-                python-version: ["3.7", "3.9"]
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v4
-            -   name: Set up Python ${{ matrix.python-version }}
-                uses: actions/setup-python@v5
-                with:
-                    python-version: ${{ matrix.python-version }}
-            -   name: List
-                run: pwd && ls -l
-            -   name: Install pytest
-                run: pip install pytest pytest-cov
-            -   name: Install requirements
-                run: pip install -r TA_CTIS_TAXII/package/lib/requirements.txt
-            -   name: Run unit tests
-                run: python -m pytest -v TA_CTIS_TAXII/test/ --doctest-modules --junitxml=junit/test-results.xml --cov=TA_CTIS_TAXII/test/ --cov-report=xml --cov-report=html
-    package:
-        runs-on: ubuntu-latest
-        needs: [ unit-test ]
-        permissions:
-            contents: write # to be able to publish a GitHub release
-            issues: write # to be able to comment on released issues
-            pull-requests: write # to be able to comment on released pull requests
-            id-token: write # to enable use of OIDC for npm provenance
-        steps:
-            -   uses: actions/checkout@v4
-            -   name: List
-                run: pwd && ls -l
-            -   name: Install UCC
-                run: pip install splunk-add-on-ucc-framework && pip freeze
-            -   name: Build component lib
-                run: pwd && cd packages/my-react-component && npm install
-            -   name: Yarn setup
-                run: pwd && yarn setup
-            -   name: Package App
-                run: cd integration_test && ./package.sh
-            -   name: Upload app artifact
-                uses: actions/upload-artifact@v4
-                with:
-                    path: integration_test/ctis.tar.gz
-                    name: app
+  unit-test:
+    strategy:
+      matrix:
+        python-version: [ "3.7", "3.9" ]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: List
+        run: pwd && ls -l
+      - name: Install pytest
+        run: pip install pytest pytest-cov
+      - name: Install requirements
+        run: pip install -r TA_CTIS_TAXII/package/lib/requirements.txt
+      - name: Run unit tests
+        run: python -m pytest -v TA_CTIS_TAXII/test/ --doctest-modules --junitxml=junit/test-results.xml --cov=TA_CTIS_TAXII/test/ --cov-report=xml --cov-report=html
+  package:
+    runs-on: ubuntu-22.04
+    needs: [ unit-test ]
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - name: List
+        run: pwd && ls -l
+      - name: Install UCC
+        run: pip install splunk-add-on-ucc-framework && pip freeze
+      - name: Build component lib
+        run: pwd && cd packages/my-react-component && npm install
+      - name: Yarn setup
+        run: pwd && yarn setup
+      - name: Package App
+        run: cd integration_test && ./package.sh
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: integration_test/ctis.tar.gz
+          name: app
 
-    release:
-        runs-on: ubuntu-latest
-        needs: [ package ]
-        permissions:
-            contents: write # to be able to publish a GitHub release
-            issues: write # to be able to comment on released issues
-            pull-requests: write # to be able to comment on released pull requests
-            id-token: write # to enable use of OIDC for npm provenance
-        steps:
-            -   uses: actions/checkout@v4
-            -   name: Setup Node.js
-                uses: actions/setup-node@v3
-                with:
-                    node-version: "lts/*"
-            -   name: Download app artifact
-                uses: actions/download-artifact@v4
-                with:
-                    name: app
-            -   name: Release
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                run: npx semantic-release
+  release:
+    # Only run when push into main branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-22.04
+    needs: [ package ]
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+      - name: Download app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
 
-    integration-test:
-        runs-on: ubuntu-latest
-        needs: [ package ]
-        environment: main
-        strategy:
-            matrix:
-                splunk_version:
-                    - latest
-                    - 9.1
-                    - 9.2
-        steps:
-            -   uses: actions/checkout@v4
-            -   name: Setup Node.js
-                uses: actions/setup-node@v3
-                with:
-                    node-version: "lts/*"
-            -   name: Download app artifact
-                uses: actions/download-artifact@v4
-                with:
-                    name: app
-                    path: integration_test
-            -   name: list
-                run: pwd && ls -l
-#            -   name: Setup upterm session
-#                uses: lhotari/action-upterm@v1
-#                with:
-#                    limit-access-to-actor: true
-            -   name: Spin up Docker Splunk with app
-                run: cd integration_test && ./spin-up-docker-splunk.sh
-                env:
-                    SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
-                    SPLUNK_APP_FILENAME: ctis.tar.gz
-                    SPLUNK_VERSION: ${{ matrix.splunk_version }}
-            -   name: Install Pytest
-                run: pip install pytest
-            -   name: Run integration tests
-                run: cd integration_test/test_rest_api && python -m pytest -v
-                env:
-                    SPLUNK_USERNAME: admin
-                    SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
+  integration-test:
+    runs-on: ubuntu-22.04
+    needs: [ package ]
+    environment: main
+    strategy:
+      matrix:
+        splunk_version:
+          - 9.2
+          - 9.3
+          - 9.4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts/*"
+      - name: Download app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: integration_test
+      - name: list
+        run: pwd && ls -l
+      #            -   name: Setup upterm session
+      #                uses: lhotari/action-upterm@v1
+      #                with:
+      #                    limit-access-to-actor: true
+      - name: Spin up Docker Splunk with app
+        run: cd integration_test && ./spin-up-docker-splunk.sh
+        env:
+          SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
+          SPLUNK_APP_FILENAME: ctis.tar.gz
+          SPLUNK_VERSION: ${{ matrix.splunk_version }}
+      - name: Install Pytest
+        run: pip install pytest
+      - name: Run integration tests
+        run: cd integration_test/test_rest_api && python -m pytest -v
+        env:
+          SPLUNK_USERNAME: admin
+          SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
