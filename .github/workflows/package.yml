@@ -14,14 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: List dir
         run: pwd && ls -lR
-      - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: docs/ctis-taxii-splunk-app/mkdocs.yml
+      - name: List python version
+        run: python --version
+      - name: Install Python dependencies
+        run: pip install mkdocs
+#      - name: Build and deploy documentation
+#        run: mkdocs gh-deploy --config-file docs/cits-taxii-splunk-app/mkdocs.yml
+
   unit-test:
     strategy:
       matrix:
