@@ -21,7 +21,7 @@ jobs:
         run: pip install mkdocs
       - name: Build and deploy documentation
         # Deploys to gh-pages branch by default
-        run: mkdocs gh-deploy --config-file ./docs/cits-taxii-splunk-app/mkdocs.yml
+        run: mkdocs gh-deploy -v --force --config-file ./docs/cits-taxii-splunk-app/mkdocs.yml
 
   unit-test:
     strategy:
