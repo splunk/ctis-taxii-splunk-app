@@ -17,10 +17,6 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
-      - name: List dir
-        run: pwd && ls -lR
-      - name: List python version
-        run: python --version
       - name: Install Python dependencies
         run: pip install mkdocs
       - name: Build and deploy documentation
