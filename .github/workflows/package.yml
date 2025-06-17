@@ -21,8 +21,8 @@ jobs:
         run: python --version
       - name: Install Python dependencies
         run: pip install mkdocs
-#      - name: Build and deploy documentation
-#        run: mkdocs gh-deploy --config-file docs/cits-taxii-splunk-app/mkdocs.yml
+      - name: Build and deploy documentation
+        run: mkdocs gh-deploy --config-file ./docs/cits-taxii-splunk-app/mkdocs.yml
 
   unit-test:
     strategy:
