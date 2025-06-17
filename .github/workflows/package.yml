@@ -9,6 +9,17 @@ on:
       - "test**"
 
 jobs:
+  docs:
+    name: Deploy mkdocs to GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: docs/ctis-taxii-splunk-app/mkdocs.yml
   unit-test:
     strategy:
       matrix:
