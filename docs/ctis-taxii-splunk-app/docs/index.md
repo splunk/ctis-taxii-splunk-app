@@ -16,3 +16,6 @@ This app allows security teams to curate IoCs (Indicators of Compromise) which c
 ## Getting Started
 ### Installation
 See [Installation](installation.md)
+
+### User Guide
+See [User Guide](user_guide.md)
