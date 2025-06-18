@@ -16,3 +16,11 @@ This app allows security teams to curate IoCs (Indicators of Compromise) which c
 ## Getting Started
 ### Installation
 See [Installation](installation.md)
+
+### User Guide
+See [User Guide](user-guide.md)
+
+## Support
+- Limited support is available for this open-source app
+- For questions regarding this app please email `todo@splunk.com`.
+- Alternatively, raise an issue in this Github repo.

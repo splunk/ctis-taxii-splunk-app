@@ -19,10 +19,10 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v4
       - name: Install Python dependencies
-        run: pip install mkdocs
+        run: pip install ./docs/ctis-taxii-splunk-app/requirements.txt
       - name: Build and deploy documentation
         # Deploys to gh-pages branch by default
-        run: mkdocs gh-deploy -v --force --config-file ./docs/cits-taxii-splunk-app/mkdocs.yml
+        run: mkdocs gh-deploy -v --force --config-file ./docs/ctis-taxii-splunk-app/mkdocs.yml
 
   unit-test:
     strategy:

@@ -1,0 +1,12 @@
+site_name: CTIS TAXII Splunk App Documentation
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - User Guide: user-guide.md
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - toc.integrate
