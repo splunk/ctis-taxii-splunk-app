@@ -1,6 +1,6 @@
 # CTIS TAXII Splunk App Documentation
 
-This Splunk app provides threat intelligence sharing capabilities to support the ASD's CTIS program.
+This Splunk app provides threat intelligence sharing capabilities to support the ASD's Cyber Threat Intelligence Sharing (CTIS) program.
 This app allows security teams to curate IoCs (Indicators of Compromise) which can be submitted as STIX v2.1 bundles via the TAXII v2.1 protocol.
 
 ## Supporting Documentation
@@ -9,9 +9,6 @@ This app allows security teams to curate IoCs (Indicators of Compromise) which c
 - [TAXII v2.1 Specification](https://docs.oasis-open.org/cti/taxii/v2.1/os/taxii-v2.1-os.html)
 - [STIX v2.1 Specification](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html)
 - [Australian Signals Directorate’s Cyber Security Partnership Program](https://www.cyber.gov.au/partnershipprogram)
-
-## Example Image
-![IOCs Page](img/indicators_page.png)
 
 ## Getting Started
 ### Installation
@@ -23,4 +20,4 @@ See [User Guide](user-guide.md)
 ## Support
 - Limited support is available for this open-source app
 - For questions regarding this app please email `todo@splunk.com`.
-- Alternatively, raise an issue in this Github repo.
+- For bug reports and feature requests, raise an issue in this Github repo.
