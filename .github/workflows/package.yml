@@ -81,7 +81,9 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: | 
+          npm install @semantic-release/exec
+          npx semantic-release
 
   integration-test:
     runs-on: ubuntu-22.04
