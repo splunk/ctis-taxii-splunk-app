@@ -55,14 +55,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: List
         run: pwd && ls -l
-      - name: Install UCC
-        run: pip install splunk-add-on-ucc-framework && pip freeze
-      - name: Build component lib
-        run: pwd && cd packages/my-react-component && npm install
-      - name: Yarn setup
-        run: pwd && yarn setup
-      - name: Package App
-        run: cd integration_test && ./package.sh
+      - name: Setup Dependencies & Build and Package App
+        run: |
+          ./install_deps_and_package.sh
+#      - name: Install UCC
+#        run: pip install splunk-add-on-ucc-framework && pip freeze
+#      - name: Build component lib
+#        run: pwd && cd packages/my-react-component && npm install
+#      - name: Yarn setup
+#        run: pwd && yarn setup
+#      - name: Package App
+#        run: cd integration_test && ./package.sh
       - name: Upload app artifact
         uses: actions/upload-artifact@v4
         with:

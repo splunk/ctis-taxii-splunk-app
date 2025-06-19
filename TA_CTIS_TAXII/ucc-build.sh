@@ -13,8 +13,12 @@ if [ -d "$local_dir" ]; then
     rsync -a "$local_dir/" "$temp_dir"
 fi
 
+UCC_BUILD_FLAGS="--verbose"
+if [[ -n "${TA_VERSION}" ]]; then
+  UCC_BUILD_FLAGS+=" --ta-version=${TA_VERSION}"
+fi
 # Standard ucc build
-ucc-gen build
+ucc-gen build $UCC_BUILD_FLAGS
 
 # Append package/default/restmap.custom.conf to output app's default/restmap.conf
 for conf_file_name in "restmap" "web"; do
