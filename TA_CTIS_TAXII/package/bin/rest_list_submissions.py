@@ -8,14 +8,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
 sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
-# from remote_pdb import RemotePdb
-# RemotePdb('0.0.0.0', 4444).set_trace()
 
 try:
     from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
     from models import IndicatorModelV1, indicator_converter
     from solnlib._utils import get_collection_data
-    import remote_pdb
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
