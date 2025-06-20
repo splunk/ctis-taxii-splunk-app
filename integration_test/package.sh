@@ -33,3 +33,5 @@ fi
 
 echo "Renaming app to $APP_PACKAGE_FILENAME"
 mv "$path_to_app" "$APP_PACKAGE_FILENAME"
+pwd
+ls -l
