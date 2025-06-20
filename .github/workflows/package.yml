@@ -74,6 +74,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
+      - name: Create dist directory
+        run: mkdir -p dist && pwd && ls -l
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
