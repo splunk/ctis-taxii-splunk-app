@@ -81,6 +81,7 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Using .releaserc.json to configure semantic-release
         run: | 
           npm install @semantic-release/exec
           npx semantic-release
