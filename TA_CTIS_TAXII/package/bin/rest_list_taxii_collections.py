@@ -9,7 +9,6 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 try:
     from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
     from solnlib._utils import get_collection_data
-    import remote_pdb
     from taxii2client.v21 import ApiRoot
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")

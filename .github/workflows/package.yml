@@ -3,10 +3,7 @@ name: Test, Package & Release App
 on:
   push:
     branches:
-      - main
-      - "fix**"
-      - "feat**"
-      - "test**"
+      - "**"
 
 jobs:
   docs:
@@ -46,23 +43,12 @@ jobs:
   package:
     runs-on: ubuntu-22.04
     needs: [ unit-test ]
-    permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
     steps:
       - uses: actions/checkout@v4
       - name: List
         run: pwd && ls -l
-      - name: Install UCC
-        run: pip install splunk-add-on-ucc-framework && pip freeze
-      - name: Build component lib
-        run: pwd && cd packages/my-react-component && npm install
-      - name: Yarn setup
-        run: pwd && yarn setup
-      - name: Package App
-        run: cd integration_test && ./package.sh
+      - name: Setup Dependencies & Build and Package App
+        run: ./install_deps_and_package.sh
       - name: Upload app artifact
         uses: actions/upload-artifact@v4
         with:
@@ -73,7 +59,7 @@ jobs:
     # Only run when push into main branch
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-22.04
-    needs: [ package ]
+    needs: [ unit-test ]
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
@@ -85,14 +71,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-      - name: Download app artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: app
+      - name: Create dist directory
+        run: mkdir -p dist && pwd && ls -l
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        # Using .releaserc.json to configure semantic-release
+        run: | 
+          npm install @semantic-release/exec
+          npx semantic-release
 
   integration-test:
     runs-on: ubuntu-22.04

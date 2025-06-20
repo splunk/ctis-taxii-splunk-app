@@ -26,5 +26,12 @@ if [ "$num_apps" -ne 1 ]; then
   exit 1
 fi
 
-echo "Renaming app to ctis.tar.gz"
-mv "$path_to_app" ./ctis.tar.gz
+if [ -z "$APP_PACKAGE_FILENAME" ]; then
+  echo "APP_PACKAGE_FILENAME is not set. Using default app package filename..."
+  APP_PACKAGE_FILENAME="./ctis.tar.gz"
+fi
+
+echo "Renaming app to $APP_PACKAGE_FILENAME"
+mv "$path_to_app" "$APP_PACKAGE_FILENAME"
+pwd
+ls -l

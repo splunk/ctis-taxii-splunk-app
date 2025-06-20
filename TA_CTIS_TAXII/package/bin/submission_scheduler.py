@@ -15,7 +15,6 @@ try:
     from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
     from models import IndicatorModelV1, indicator_converter, SubmissionModelV1, submission_converter
     from solnlib._utils import get_collection_data
-    import remote_pdb
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
@@ -37,7 +36,6 @@ class SubmissionSchedulerCommand(GeneratingCommand):
         # Example:-
         #    service = self.service
         service = self.service
-        # remote_pdb.RemotePdb(host="0.0.0.0", port=4444).set_trace()
         session_key = service.token  # not sure if this is the right way to get the session key
         handler = MyHandler(logger=logger)
         collection = handler.get_collection(collection_name="submissions", session_key=session_key)

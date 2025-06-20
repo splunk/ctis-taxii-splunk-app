@@ -3,10 +3,16 @@
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "TA_VERSION='${nextRelease.version}' APP_PACKAGE_FILENAME=$GITHUB_WORKSPACE/dist/TA_CTIS_TAXII-${nextRelease.version}.tar.gz ./install_deps_and_package.sh"
+      }
+    ],
+    [
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "ctis.tar.gz", "label": "App Build" }
+          { "path": "dist/*.tar.gz", "label": "App Build" }
         ]
       }
     ]
