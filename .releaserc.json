@@ -12,7 +12,7 @@
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "$GITHUB_WORKSPACE/dist/*.tar.gz", "label": "App Build" }
+          { "path": "dist/*.tar.gz", "label": "App Build" }
         ]
       }
     ]
