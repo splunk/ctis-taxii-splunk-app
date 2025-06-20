@@ -12,7 +12,6 @@ try:
     from models import IndicatorModelV1, indicator_converter, form_payload_to_indicators, GroupingModelV1, \
         grouping_converter
     from solnlib._utils import get_collection_data
-    import remote_pdb
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e

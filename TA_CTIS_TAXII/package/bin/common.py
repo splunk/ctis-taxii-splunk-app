@@ -249,7 +249,6 @@ class AbstractRestHandler(abc.ABC):
             in_string_dict = json.loads(in_string)
             input_json = json.loads(in_string_dict["payload"]) if "payload" in in_string_dict else None
             session_key = in_string_dict["session"]["authtoken"]
-            # remote_pdb.RemotePdb(host="0.0.0.0", port=4444).set_trace()
             query_params_dict = self.parse_query_params(in_string_dict["query"])
             payload = self.handle(input_json=input_json, query_params=query_params_dict, session_key=session_key)
             return {"payload": payload, "status": 200}
