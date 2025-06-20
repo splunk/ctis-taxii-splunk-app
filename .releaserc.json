@@ -5,14 +5,14 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "TA_VERSION='${nextRelease.version}' APP_PACKAGE_FILENAME='TA_CTIS_TAXII_${nextRelease.version}.tar.gz' ./install_deps_and_package.sh"
+        "prepareCmd": "TA_VERSION='${nextRelease.version}' APP_PACKAGE_FILENAME=$GITHUB_WORKSPACE/dist/TA_CTIS_TAXII_${nextRelease.version}.tar.gz ./install_deps_and_package.sh"
       }
     ],
     [
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "TA_CTIS_TAXII_${nextRelease.version}.tar.gz", "label": "App Build" }
+          { "path": "$GITHUB_WORKSPACE/dist/*.tar.gz", "label": "App Build" }
         ]
       }
     ]
