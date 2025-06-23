@@ -11,11 +11,9 @@ This app allows security teams to curate IoCs (Indicators of Compromise) which c
 - [Australian Signals Directorate’s Cyber Security Partnership Program](https://www.cyber.gov.au/partnershipprogram)
 
 ## Getting Started
-### Installation
-See [Installation](installation.md)
-
-### User Guide
-See [User Guide](user-guide.md)
+- For how to install this app in your Splunk environment, see: [Installation](installation.md)
+- For how to configure the app with your desired TAXII server, see: [Configuration](configuration.md)
+- For how to use the app, including curating IoCs for threat intelligence sharing, see: [User Guide](user-guide.md)
 
 ## Support
 - Limited support is available for this open-source app
