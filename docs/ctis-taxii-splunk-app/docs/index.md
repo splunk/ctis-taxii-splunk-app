@@ -1,7 +1,10 @@
 # CTIS TAXII Splunk App Documentation
 
-This Splunk app provides threat intelligence sharing capabilities to support the ASD's Cyber Threat Intelligence Sharing (CTIS) program.
-This app allows security teams to curate IoCs (Indicators of Compromise) which can be submitted as STIX v2.1 bundles via the TAXII v2.1 protocol.
+This Splunk app provides threat intelligence sharing capabilities to support the ASD's Cyber Threat Intelligence Sharing (CTIS) platform.
+This app specifically allows security teams to curate IoCs (Indicators of Compromise) from ingested Splunk events, which can be submitted as STIX v2.1 bundles via the TAXII v2.1 protocol over HTTPS.
+
+## Github Repository
+<https://github.com/splunk/ctis-taxii-splunk-app>
 
 ## Supporting Documentation
 - [Oasis Open - Introduction to STIX](https://oasis-open.github.io/cti-documentation/stix/intro.html)
@@ -9,6 +12,7 @@ This app allows security teams to curate IoCs (Indicators of Compromise) which c
 - [TAXII v2.1 Specification](https://docs.oasis-open.org/cti/taxii/v2.1/os/taxii-v2.1-os.html)
 - [STIX v2.1 Specification](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html)
 - [Australian Signals Directorate’s Cyber Security Partnership Program](https://www.cyber.gov.au/partnershipprogram)
+    - Other links to public ASD CTIS docs...
 
 ## Getting Started
 - For how to install this app in your Splunk environment, see: [Installation](installation.md)
@@ -16,6 +20,6 @@ This app allows security teams to curate IoCs (Indicators of Compromise) which c
 - For how to use the app, including curating IoCs for threat intelligence sharing, see: [User Guide](user-guide.md)
 
 ## Support
-- Limited support is available for this open-source app
-- For questions regarding this app please email `todo@splunk.com`.
-- For bug reports and feature requests, raise an issue in this Github repo.
+- This app is not Splunk Supported. Limited support is available from the developers on a best-effort basis.
+- For questions regarding this app please contact `todo@splunk.com`.
+- For bug reports and feature requests, [raise an issue in the Github repository](https://github.com/splunk/ctis-taxii-splunk-app/issues/new/choose).

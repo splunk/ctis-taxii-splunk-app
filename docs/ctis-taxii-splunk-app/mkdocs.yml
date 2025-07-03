@@ -5,6 +5,7 @@ nav:
   - Configuration: configuration.md
   - User Guide: user-guide.md
   - Troubleshooting: troubleshooting.md
+  - Technical Notes: technical-notes.md
 theme:
   name: material
   features:
