@@ -139,7 +139,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.11.0+b05a48d",
+        "version": "1.11.5+15e7878",
         "displayName": "CTIS TAXII Add-on",
         "schemaVersion": "0.0.9",
         "supportedThemes": [
