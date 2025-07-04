@@ -1,13 +1,15 @@
 # Configuration
 
 ## Network Requirements
-Note that TAXII v2 runs over HTTPS. The TAXII server must be reachable from the Splunk instance, so please consider both:
+Note that TAXII v2 runs over HTTPS and is secured with HTTP Basic Authentication.
+
+The TAXII server must be reachable from the Splunk instance, so please consider:
 
 - Any firewalls which restrict outbound connections from your Splunk Search Head(s)
 - The TAXII server must accept HTTPS traffic from your Splunk Search Head(s).
 - If needed, please contact the ASD CTIS team (or TAXII Server owner) to whitelist your Splunk Search Head(s) IPv4 address(es).
 
-## Configuring connection details for a TAXII Server
+## Setup a TAXII Server Configuration
 
 Start by configuring the TAXII server that will be used to submit STIX bundles.
 

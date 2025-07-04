@@ -1,4 +1,5 @@
 site_name: CTIS TAXII Splunk App Documentation
+repo_url: https://github.com/splunk/ctis-taxii-splunk-app
 nav:
   - Home: index.md
   - Installation: installation.md

@@ -1,6 +1,6 @@
 # CTIS TAXII Splunk App Documentation
 
-This Splunk app provides threat intelligence sharing capabilities to support the ASD's Cyber Threat Intelligence Sharing (CTIS) platform.
+This Splunk app provides threat intelligence sharing capabilities to integrate Splunk Platform with the ASD's Cyber Threat Intelligence Sharing (CTIS) platform.
 This app specifically allows security teams to curate IoCs (Indicators of Compromise) from ingested Splunk events, which can be submitted as STIX v2.1 bundles via the TAXII v2.1 protocol over HTTPS.
 
 ## Github Repository
