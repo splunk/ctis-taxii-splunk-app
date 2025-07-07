@@ -1,16 +1,26 @@
 from splunktaucclib.rest_handler.admin_external import AdminExternalHandler
 from splunktaucclib.rest_handler.error import RestError
 
-from solnlib import conf_manager, log
+from solnlib import log
 import logging
 from const import ADDON_NAME_LOWER
+import requests
 
 logger = log.Logs().get_logger(f"{ADDON_NAME_LOWER}.{__name__}")
 logger.setLevel(logging.INFO)
 
+def get_public_ip_address() -> dict:
+    resp = requests.get('https://api.ipify.org?format=json')
+    resp.raise_for_status()
+    return resp.json()
 
 # https://github.com/oasis-open/cti-taxii-client/tree/master
 def _validate_connection(api_root_url: str, username, password):
+    try:
+        logger.info(f"Public IP address for this Splunk instance: {get_public_ip_address()}")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to retrieve public IP address: {e}")
+
     logger.info(f"Validating connection to {api_root_url} with username={username}")
     try:
         from taxii2client.v21 import ApiRoot
