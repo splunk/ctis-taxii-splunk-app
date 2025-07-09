@@ -87,12 +87,11 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
 export const IndicatorsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'description', 'stix_pattern', 'indicator_value', 'indicator_category', 'indicator_id', 'grouping_id'];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
-    const [groupingQuery, setGroupingQuery] = useState({});
     const [tlpRatingQuery, setTlpRatingQuery] = useState({});
     const [indicatorFilter, setIndicatorFilter] = useState(null);
     const [groupingFilter, setGroupingFilter] = useState(null);
 
-    const subqueries = [lastUpdatedQuery, groupingQuery, tlpRatingQuery, indicatorFilter, groupingFilter];
+    const subqueries = [lastUpdatedQuery, tlpRatingQuery, indicatorFilter, groupingFilter];
 
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
