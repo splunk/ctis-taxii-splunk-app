@@ -1,7 +1,7 @@
-# CTIS TAXII ES Integration App
+# CTIS TAXII Splunk App
 ## Background
 
-App to support threat intelligence (Indicators of Compromise) sharing with TAXII v2 servers.
+Splunk Platform App to support STIX v2 based threat intelligence (Indicators of Compromise) sharing with TAXII v2 servers.
 
 Specifically intended to support contribution to the ASD's CTIS platform.
 
