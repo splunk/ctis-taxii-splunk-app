@@ -60,14 +60,14 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
     }
 
     useEffect(() => {
-        const all_subqueries = subqueries.filter(subquery => subquery !== null && Object.keys(subquery).length > 0);
+        const allSubqueries = subqueries.filter(subquery => subquery !== null && Object.keys(subquery).length > 0);
         if (debouncedSearchValue) {
-            all_subqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
+            allSubqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
         }
-        if (all_subqueries.length === 0) {
+        if (allSubqueries.length === 0) {
             setQuery({});
         } else {
-            setQuery({'$and': all_subqueries});
+            setQuery({'$and': allSubqueries});
         }
     }, [JSON.stringify(subqueries), debouncedSearchValue, initialSearch]);
 
@@ -82,6 +82,12 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
             {children}
         </SearchControlContainer>
     );
+}
+SearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired,
+    fullTextSearchFields: PropTypes.arrayOf(PropTypes.string).isRequired,
+    subqueries: PropTypes.arrayOf(PropTypes.object),
+    children: PropTypes.node
 }
 
 export const IndicatorsSearchBar = ({onQueryChange}) => {
