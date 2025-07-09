@@ -22,7 +22,9 @@ import {layoutWithTheme} from "../../common/theme";
 import {usePageTitle} from "../../common/utils";
 
 const mappingOfColumnNameToCellValue = [
-    {columnName: "Grouping ID", getCellContent: (row) => row.submission_id},
+    {columnName: "Grouping ID", getCellContent: (row) => row.grouping_id},
+    {columnName: "Collection ID", getCellContent: (row) => row.collection_id},
+    {columnName: "TAXII Config Name", getCellContent: (row) => row.taxii_config_name},
     {columnName: "Scheduled/Sent At (UTC)", getCellContent: (row) => formatTimestampForDisplay(row.scheduled_at)},
     {columnName: "Status", getCellContent: (row) => <SubmissionStatusChip status={row.status}/>},
 ]

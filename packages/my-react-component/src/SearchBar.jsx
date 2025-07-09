@@ -4,6 +4,7 @@ import Search from '@splunk/react-ui/Search';
 import styled from 'styled-components';
 import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 import {variables} from "@splunk/themes";
+import PropTypes from "prop-types";
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
 import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
@@ -26,6 +27,22 @@ const SearchControlContainer = styled.div`
     margin-bottom: ${variables.spacingXSmall};
 `;
 
+const GroupingSearchableSelect = ({onQueryChange}) => {
+    return (
+        <SearchableSelect searchableFields={['name', 'grouping_id']}
+                          prefixLabel="Grouping"
+                          placeholder="Grouping..."
+                          restGetFunction={getGroupings}
+                          queryFilterField="grouping_id"
+                          initialSelectionQueryParamName="grouping_id"
+                          selectOptionLabelFunction={(record) => `${record.name} (${record.grouping_id})`}
+                          onQueryChange={onQueryChange}/>
+    );
+}
+GroupingSearchableSelect.propTypes = {
+    onQueryChange: PropTypes.func.isRequired
+}
+
 export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, children}) => {
     if (!fullTextSearchFields) {
         throw new Error("fullTextSearchFields array is required!");
@@ -43,14 +60,14 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
     }
 
     useEffect(() => {
-        const all_subqueries = subqueries.filter(subquery => subquery !== null && Object.keys(subquery).length > 0);
+        const allSubqueries = subqueries.filter(subquery => subquery !== null && Object.keys(subquery).length > 0);
         if (debouncedSearchValue) {
-            all_subqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
+            allSubqueries.push(generateRegexQueryForFields(fullTextSearchFields, debouncedSearchValue));
         }
-        if (all_subqueries.length === 0) {
+        if (allSubqueries.length === 0) {
             setQuery({});
         } else {
-            setQuery({'$and': all_subqueries});
+            setQuery({'$and': allSubqueries});
         }
     }, [JSON.stringify(subqueries), debouncedSearchValue, initialSearch]);
 
@@ -66,16 +83,21 @@ export const SearchBar = ({onQueryChange, fullTextSearchFields, subqueries, chil
         </SearchControlContainer>
     );
 }
+SearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired,
+    fullTextSearchFields: PropTypes.arrayOf(PropTypes.string).isRequired,
+    subqueries: PropTypes.arrayOf(PropTypes.object),
+    children: PropTypes.node
+}
 
 export const IndicatorsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'description', 'stix_pattern', 'indicator_value', 'indicator_category', 'indicator_id', 'grouping_id'];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
-    const [groupingQuery, setGroupingQuery] = useState({});
     const [tlpRatingQuery, setTlpRatingQuery] = useState({});
     const [indicatorFilter, setIndicatorFilter] = useState(null);
     const [groupingFilter, setGroupingFilter] = useState(null);
 
-    const subqueries = [lastUpdatedQuery, groupingQuery, tlpRatingQuery, indicatorFilter, groupingFilter];
+    const subqueries = [lastUpdatedQuery, tlpRatingQuery, indicatorFilter, groupingFilter];
 
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
@@ -88,19 +110,15 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
                               selectOptionLabelFunction={(record) => `${record.name} (${record.indicator_id})`}
                               onQueryChange={setIndicatorFilter}/>
 
-            <SearchableSelect searchableFields={['name', 'grouping_id']}
-                              prefixLabel="Grouping"
-                              placeholder="Grouping..."
-                              restGetFunction={getGroupings}
-                              queryFilterField="grouping_id"
-                              initialSelectionQueryParamName="grouping_id"
-                              selectOptionLabelFunction={(record) => `${record.name} (${record.grouping_id})`}
-                              onQueryChange={setGroupingFilter}/>
+            <GroupingSearchableSelect onQueryChange={setGroupingFilter}/>
             <DatetimeRangePicker labelPrefix="Last Updated" fieldName="modified" onQueryChange={setLastUpdatedQuery}/>
             <SearchFieldDropdown prefixLabel="TLP v2 Rating" fieldName="tlp_v2_rating" onQueryChange={setTlpRatingQuery}
                                  options={tlpV2RatingOptions}/>
         </SearchBar>
     );
+}
+IndicatorsSearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired
 }
 
 export const GroupingsSearchBar = ({onQueryChange}) => {
@@ -112,19 +130,15 @@ export const GroupingsSearchBar = ({onQueryChange}) => {
 
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS} subqueries={subqueries}>
-            <SearchableSelect searchableFields={['name', 'grouping_id']}
-                              prefixLabel="Grouping"
-                              placeholder="Grouping..."
-                              restGetFunction={getGroupings}
-                              queryFilterField="grouping_id"
-                              initialSelectionQueryParamName="grouping_id"
-                              selectOptionLabelFunction={(record) => `${record.name} (${record.grouping_id})`}
-                              onQueryChange={setGroupingFilter}/>
+            <GroupingSearchableSelect onQueryChange={setGroupingFilter}/>
             <DatetimeRangePicker labelPrefix="Last Updated" fieldName="modified" onQueryChange={setLastUpdatedQuery}/>
             <DatetimeRangePicker optional labelPrefix="Last Submitted" fieldName="last_submission_at"
                                  onQueryChange={setLastSubmittedQuery}/>
         </SearchBar>
     );
+}
+GroupingsSearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired
 }
 
 export const IdentitiesSearchBar = ({onQueryChange}) => {
@@ -144,6 +158,9 @@ export const IdentitiesSearchBar = ({onQueryChange}) => {
         </SearchBar>
     );
 }
+IdentitiesSearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired
+}
 
 export const SubmissionsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['submission_id', 'grouping_id', 'status', 'taxii_config_name',
@@ -151,9 +168,11 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
     const [statusQuery, setStatusQuery] = useState({});
     const [scheduledAtQuery, setScheduledAtQuery] = useState({});
     const [submissionFilter, setSubmissionFilter] = useState(null);
+    const [groupingFilter, setGroupingFilter] = useState(null);
+
     return (
         <SearchBar onQueryChange={onQueryChange} fullTextSearchFields={TEXT_SEARCH_FIELDS}
-                   subqueries={[statusQuery, scheduledAtQuery, submissionFilter]}>
+                   subqueries={[statusQuery, scheduledAtQuery, submissionFilter, groupingFilter]}>
             <SearchableSelect searchableFields={['submission_id']}
                               prefixLabel="Submission"
                               placeholder="Submission..."
@@ -162,6 +181,7 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
                               initialSelectionQueryParamName="submission_id"
                               selectOptionLabelFunction={(record) => record.submission_id}
                               onQueryChange={setSubmissionFilter}/>
+            <GroupingSearchableSelect onQueryChange={setGroupingFilter}/>
             <SearchFieldDropdown prefixLabel="Status" fieldName="status" onQueryChange={setStatusQuery}
                                  options={[
                                      {label: "SENT", value: "SENT"},
@@ -173,4 +193,7 @@ export const SubmissionsSearchBar = ({onQueryChange}) => {
                                  onQueryChange={setScheduledAtQuery}/>
         </SearchBar>
     );
+}
+SubmissionsSearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired
 }
