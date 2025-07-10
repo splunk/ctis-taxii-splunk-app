@@ -22,9 +22,15 @@ class TestFileName:
 
 
 class TestFilePath:
-    def test_filepath(self):
+    def test_windows_filepath(self):
         pattern = convert_to_stix_pattern(category=IoCCategory.FILE_PATH, value=r"C:\Windows\System32")
-        assert pattern == r"[file:parent_directory_ref.path = 'C:\Windows\System32']"
+        expected = r"[file:parent_directory_ref.path = 'C:\\Windows\\System32']"
+        assert pattern == expected
+
+    def test_unix_filepath(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.FILE_PATH, value=r"/usr/local/bin")
+        expected = r"[file:parent_directory_ref.path = '/usr/local/bin']"
+        assert pattern == expected
 
 
 class TestFileHashes:

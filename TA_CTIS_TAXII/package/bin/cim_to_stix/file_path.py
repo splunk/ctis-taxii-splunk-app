@@ -8,7 +8,7 @@ class FilePathConverter(CIMToSTIXConverter):
 
     @staticmethod
     def convert(value: str) -> _PatternExpression:
-        file_path = StringConstant(value, from_parse_tree=True)
+        file_path = StringConstant(value, from_parse_tree=False)
         ece = EqualityComparisonExpression(ObjectPath("file", ["parent_directory_ref", "path"]), file_path)
         observation = ObservationExpression(ece)
         return observation
