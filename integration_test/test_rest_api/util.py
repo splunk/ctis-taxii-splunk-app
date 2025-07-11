@@ -1,7 +1,9 @@
 import json
 import uuid
+import os
 
-SPLUNK_ADMIN_URL = 'https://localhost:8099'
+SPLUNK_ADMIN_URL = os.environ.get('SPLUNK_ADMIN_URL', 'https://localhost:8099')
+
 CTIS_APP_NAME = 'TA_CTIS_TAXII'
 """
 List of test scenarios:
