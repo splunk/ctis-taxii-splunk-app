@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <nav>
-    <view name="configuration"/>
+    <view name="configuration" default="true"/>
 <!--    <view name="dashboard"/>-->
     <collection label="Identities">
         <view name="identities"/>
@@ -11,7 +11,7 @@
         <view name="new_grouping"/>
     </collection>
     <collection label="Indicators">
-        <view default="true" name="indicators"/>
+        <view name="indicators"/>
         <view name="new_indicator"/>
     </collection>
     <view name="submissions"/>

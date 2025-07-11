@@ -8,7 +8,7 @@ import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_uti
 const NO_CONTENT = "None";
 export const SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER = {
     "Status": (record) => <SubmissionStatusChip status={record.status}/>,
-    "Submission ID": (record) => record.submission_id,
+    "Internal Submission ID": (record) => record.submission_id,
     "Grouping ID": (record) => <GroupingIdLink groupingId={record.grouping_id}/>,
     "Sent/Scheduled At (UTC)": (record) => formatTimestampForDisplay(record.scheduled_at),
     "TAXII Config Name": (record) => record.taxii_config_name,

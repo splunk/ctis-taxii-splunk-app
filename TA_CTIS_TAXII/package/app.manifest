@@ -1,7 +1,7 @@
 {
     "schemaVersion": "2.0.0",
     "info": {
-        "title": "CTIS TAXII Add-on",
+        "title": "CTIS TAXII App",
         "id": {
             "group": null,
             "name": "TA_CTIS_TAXII",
@@ -15,7 +15,7 @@
             }
         ],
         "releaseDate": null,
-        "description": "CTIS TAXII Add-on",
+        "description": "Provides functionality to curate IOCs and submit STIX v2 based threat intelligence to TAXII v2 servers. Documentation: https://splunk.github.io/ctis-taxii-splunk-app",
         "classification": {
             "intendedAudience": "IT Professionals",
             "categories": [

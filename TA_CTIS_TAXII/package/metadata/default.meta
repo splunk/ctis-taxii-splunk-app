@@ -1,3 +1,6 @@
+[]
+access = read : [ * ], write : [ admin, power ]
+
 [alert_actions]
 export = system
 

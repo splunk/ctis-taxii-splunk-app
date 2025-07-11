@@ -1,9 +1,14 @@
-# CTIS TAXII ES Integration App
+# CTIS TAXII Splunk App
 ## Background
-https://splunk.atlassian.net/browse/FDSE-2250
 
-App to support threat intelligence sharing with CTIS's TAXII/STIX server.
+Splunk Platform App to support STIX v2 based threat intelligence (Indicators of Compromise) sharing with TAXII v2 servers.
 
+Specifically intended to support contribution to the ASD's CTIS platform.
+
+## Splunk Admin/User Documentation
+Please see https://splunk.github.io/ctis-taxii-splunk-app for user-facing documentation.
+
+# Development Notes
 This app combines SplunkUI Toolkit and UCC Framework to create a custom Splunk app.
 
 ## Setup
