@@ -74,7 +74,17 @@
                 }
             ],
             "title": "Configuration",
-            "description": "Set up your add-on"
+            "description": "Add TAXII v2.1 connection configurations.",
+            "subDescription": {
+                "text": "For more information see the [[docsLink]].",
+                "links": [
+                    {
+                        "slug": "docsLink",
+                        "link": "https://splunk.github.io/ctis-taxii-splunk-app",
+                        "linkText": "Documentation"
+                    }
+                ]
+            }
         },
         "inputs": {
             "services": [],
@@ -139,8 +149,8 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.13.0+5812a48",
-        "displayName": "CTIS TAXII Add-on",
+        "version": "1.13.1+2fc7f62",
+        "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.9",
         "supportedThemes": [
             "dark",
