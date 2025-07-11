@@ -1,8 +1,8 @@
-# User Guide
+# User Guide - Curating and Sharing CTI
 Assumes that the app has been [installed](installation.md) and [configured](configuration.md) already.
 
-This guide covers how to use the app to curate IoCs (Indicators of Compromise) for threat intelligence sharing,
-and how to submit them to a TAXII v2 server as a STIX v2 Bundle.
+This guide covers how to use the app to curate IoCs (Indicators of Compromise) for cyber threat intelligence (CTI) sharing,
+and how to submit groupings of IoCs to a TAXII v2 server as a STIX v2 Bundle.
 
 The app provides a UI for creating and managing records that represent Identity, Grouping and Indicator SDOs (STIX Domain Objects)
 within your Splunk environment. These records are stored in KV Store collections belonging to the app.
@@ -11,7 +11,8 @@ A grouping consists of one or more indicators, and can be used to represent a co
 When ready to be shared with the desired TAXII server, the grouping can be submitted as a [STIX Bundle](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_gms872kuzdmg),
 which contains the grouping and related objects.
 
-Generally, the app supports a subset of the STIX v2.1 specification for SDOs which has been coordinated with the CTIS program.
+The app supports a subset of the STIX v2.1 specification for SDOs which has been coordinated with the CTIS program.
+If you believe a particular feature or use-case is missing, please raise a [feature request](index.md#support).
 
 ## Creating Identities
 Reference: [STIX Identity SDO](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_wh296fiwpklp)
@@ -58,8 +59,17 @@ Reference: [STIX Indicator SDO](https://docs.oasis-open.org/cti/stix/v2.1/os/sti
 
 - Via workflow action (context menu) on a Splunk event
   - https://docs.splunk.com/Documentation/Splunk/latest/Knowledge/Controlworkflowactionappearanceinfieldandeventmenus 
+  - Both event-level and field-level workflow actions are supported.
+  - Document how this looks in ES (across all supported versions)
 - Via the New Indicator page
-- 
+
+### STIX Patterns
+
+Note that specifying unicode characters with `\uXXXX` syntax is not supported in the app.
+You can however, paste the unicode character you require in the indicator value field or modify the STIX Pattern directly.
+
+For any non human-readable characters such as <https://unicode-explorer.com/c/200B>, it is recommended to note these in the `description` field of the Indicator.
+
 ## Viewing / Searching Indicators
 
 ## Submitting Groupings
