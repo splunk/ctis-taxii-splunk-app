@@ -112,7 +112,7 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
 
             <GroupingSearchableSelect onQueryChange={setGroupingFilter}/>
             <DatetimeRangePicker labelPrefix="Last Updated" fieldName="modified" onQueryChange={setLastUpdatedQuery}/>
-            <SearchFieldDropdown prefixLabel="TLP v2 Rating" fieldName="tlp_v2_rating" onQueryChange={setTlpRatingQuery}
+            <SearchFieldDropdown prefixLabel="TLP v2.0 Marking" fieldName="tlp_v2_rating" onQueryChange={setTlpRatingQuery}
                                  options={tlpV2RatingOptions}/>
         </SearchBar>
     );
