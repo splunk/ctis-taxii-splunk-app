@@ -14,4 +14,12 @@ For more information on TLP Rating
 As an example, a Grouping might look like this:
 ![Example New Grouping Form](../img/new_grouping_filled_form.png)
 
+
+
 ## Viewing / Searching Groupings
+Thew viewing and searching of Groupings is similar to that of [Identities](identities.md).
+![View Groupings](../img/view_groupings.png)
+
+The search bar lets you search for Groupings by name, description, Grouping ID and context fields.
+
+There are also dropdown filters available for Grouping ID, Last Updated and Last Submitted.
