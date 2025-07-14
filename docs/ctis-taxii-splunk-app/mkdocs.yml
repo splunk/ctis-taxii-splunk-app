@@ -4,7 +4,12 @@ nav:
   - About: index.md
   - Installation: installation.md
   - Configuration: configuration.md
-  - User Guide - Curating and Sharing CTI: user-guide.md
+  - Curating and Sharing CTI:
+    - Overview: cti-mgmt/index.md
+    - Identities: cti-mgmt/identities.md
+    - Groupings: cti-mgmt/groupings.md
+    - Indicators: cti-mgmt/indicators.md
+    - Submissions: cti-mgmt/submissions.md
   - Troubleshooting: troubleshooting.md
   - Technical Notes: technical-notes.md
 theme:
@@ -14,3 +19,7 @@ theme:
     - navigation.expand
     - navigation.path
     - toc.integrate
+
+markdown_extensions:
+  - toc:
+      permalink: true
