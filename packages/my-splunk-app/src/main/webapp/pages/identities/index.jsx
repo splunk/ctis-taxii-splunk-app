@@ -21,6 +21,7 @@ import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_uti
 import {layoutWithTheme} from "../../common/theme";
 import {getUrlQueryParams} from "../../common/queryParams";
 import IdentityForm from "../../common/IdentityForm";
+import {FIELD_LABEL_TLP_V2_MARKING} from "../../common/tlp";
 
 function Actions({row}) {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
@@ -50,7 +51,7 @@ const expansionFieldNameToCellValue = {
     "Name": (row) => row.name,
     "Identity Class": (row) => row.identity_class,
     "Identity ID": (row) => row.identity_id,
-    "TLPv2 Rating": row => row.tlp_v2_rating,
+    [FIELD_LABEL_TLP_V2_MARKING]: row => row.tlp_v2_rating,
     "Confidence" : row => row.confidence,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),

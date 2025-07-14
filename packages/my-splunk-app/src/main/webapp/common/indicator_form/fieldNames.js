@@ -25,7 +25,7 @@ export const REGISTER_FIELD_OPTIONS = {
         required: "Grouping ID is required."
     },
     [FIELD_TLP_RATING]: {
-        required: "TLPv2 Rating is required."
+        required: "TLP v2.0 Marking is required."
     },
     [FIELD_CONFIDENCE]: FIELD_CONFIDENCE_OPTION,
     [FIELD_VALID_FROM]: {

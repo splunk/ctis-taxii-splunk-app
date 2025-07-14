@@ -25,6 +25,7 @@ import {formatTimestampForDisplay} from "@splunk/my-react-component/src/date_uti
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
 import {getUrlQueryParams} from "../../common/queryParams";
+import {FIELD_LABEL_TLP_V2_MARKING} from "../../common/tlp";
 
 function SubmitToTaxiiButton({row}) {
     const disabled = row.indicators.length === 0;
@@ -64,7 +65,7 @@ const expansionFieldNameToCellValue = {
     "Name": (row) => row.name,
     "Description": (row) => row?.description,
     "Context": (row) => row.context,
-    "TLPv2 Rating": row => row.tlp_v2_rating,
+    [FIELD_LABEL_TLP_V2_MARKING]: row => row.tlp_v2_rating,
     "Confidence" : row => row.confidence,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),

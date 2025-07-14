@@ -28,6 +28,7 @@ import {layoutWithTheme} from "../../common/theme";
 import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
 import {getUrlQueryParams} from "../../common/queryParams";
 import {usePageTitle} from "../../common/utils";
+import {FIELD_LABEL_TLP_V2_MARKING} from "../../common/tlp";
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
@@ -45,7 +46,7 @@ const expansionFieldNameToCellValue = {
     "Valid From (UTC)": (row) => formatTimestampForDisplay(row.valid_from),
     "Indicator Category": (row) => row.indicator_category,
     "Indicator Value": (row) => row.indicator_value,
-    "TLP v2 Rating": (row) => row.tlp_v2_rating,
+    [FIELD_LABEL_TLP_V2_MARKING]: (row) => row.tlp_v2_rating,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
 }

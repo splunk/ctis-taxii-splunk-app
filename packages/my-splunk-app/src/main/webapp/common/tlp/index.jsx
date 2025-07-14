@@ -6,9 +6,10 @@ import {useFormInputProps} from "../formInputProps";
 
 export const FORM_FIELD_TLP_V2_RATING = "tlp_v2_rating";
 export const FORM_FIELD_TLP_V2_RATING_OPTION = {required: "TLPv2 Rating is required.", value: ""};
+export const FIELD_LABEL_TLP_V2_MARKING = "TLP v2.0 Marking";
 
 export function TLPv2RatingField({fieldName, ...props}) {
-    return <SelectControlGroup label="TLP v2.0 Rating"
+    return <SelectControlGroup label={FIELD_LABEL_TLP_V2_MARKING}
                                options={tlpV2RatingOptions}
                                {...useFormInputProps(fieldName)}
                                {...props}
