@@ -42,3 +42,9 @@ Note that when you create an Identity, the `Identity ID` is automatically genera
 If you have many Identities, you can use the pagination controls at the bottom of the page to navigate through the records.
 You can also adjust the results per page using the dropdown.
 ![Pagination Example](../img/view_identities_pagination.png)
+
+## Editing Identities
+TODO
+
+## Deleting Identities
+TODO

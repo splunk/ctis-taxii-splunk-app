@@ -23,7 +23,7 @@ Then click on `CTIS: Add IOC field=value to Grouping`:
 ![Splunk Platform Field Workflow Trigger](indicators_img/splunk_search_event_field_workflow_trigger.png)
 
 
-## New Indicator Form
+## New Indicator / Add Indicators of Compromise (IoC) to Grouping Form
 Once the `Add Indicators of Compromise (IoC) to Grouping` form is opened via workflow action, fill in the Common Properties section with your required `Grouping`, `Confidence`, `TLP Marking` and `Valid From` timestamp.
 
 Then, proceed to fill in the details for the new Indicator.
@@ -72,3 +72,6 @@ There are search filter dropdowns for `Indicator ID`, `Grouping ID`, `Last Updat
 
 ![View Indicators](indicators_img/view_indicators.png)
 
+## Editing Indicators
+
+## Deleting Indicators

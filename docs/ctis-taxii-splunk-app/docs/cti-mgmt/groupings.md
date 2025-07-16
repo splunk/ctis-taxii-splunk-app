@@ -24,3 +24,7 @@ The search bar lets you search for Groupings by name, description, Grouping ID a
 There are also dropdown filters available for Grouping ID, Last Updated and Last Submitted.
 ![View Groupings](../img/view_groupings.png)
 
+## Editing Groupings
+
+## Deleting Groupings
+
