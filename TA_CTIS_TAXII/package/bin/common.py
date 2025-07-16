@@ -12,7 +12,7 @@ from stix2 import Bundle
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
 from models import GroupingModelV1, grouping_converter, IndicatorModelV1, indicator_converter, IdentityModelV1, \
-    identity_converter, bundle_for_grouping, submission_converter, SubmissionModelV1, SubmissionStatus
+    identity_converter, bundle_for_grouping, serialize_stix_object, submission_converter, SubmissionModelV1, SubmissionStatus
 from server_exception import ServerException
 from taxii2client.v21 import ApiRoot, Collection
 
@@ -82,7 +82,7 @@ class AbstractRestHandler(abc.ABC):
         try:
             submission = self.query_exactly_one_record(collection=submissions_collection, query={"submission_id": submission_id})
             bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission["grouping_id"], session_key=session_key)
-            bundle_json = bundle.serialize()
+            bundle_json = serialize_stix_object(stix_object=bundle)
 
             taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission["taxii_config_name"])
             taxii_collection_id = submission["collection_id"]

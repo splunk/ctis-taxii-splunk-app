@@ -4,6 +4,7 @@ from cattrs import Converter
 from datetime import datetime
 
 
+# TODO: Fix created and modified fields to use same timestamp on initialization
 @define(slots=False, kw_only=True)
 class BaseModel:
     key: str = None
