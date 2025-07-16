@@ -10,6 +10,7 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 try:
     from common import get_logger_for_script, AbstractRestHandler
     from solnlib._utils import get_collection_data
+    from models import serialize_stix_object
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
@@ -18,6 +19,7 @@ logger = get_logger_for_script(__file__)
 
 
 class GetStixBundleForGroupingHandler(AbstractRestHandler):
+    # This REST endpoint is used to preview the STIX Bundle JSON generated for a specific grouping.
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         if "grouping_id" not in query_params:
             raise ValueError("grouping_id is required as query parameter.")
@@ -25,7 +27,7 @@ class GetStixBundleForGroupingHandler(AbstractRestHandler):
         bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id, session_key=session_key)
 
         return {
-            "bundle": json.loads(bundle.serialize())
+            "bundle": json.loads(serialize_stix_object(stix_object=bundle))
         }
 
 

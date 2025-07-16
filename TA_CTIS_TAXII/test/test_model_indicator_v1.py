@@ -147,9 +147,14 @@ def test_to_dict_without_splunk_reserved_fields():
 
 
 def test_to_dict():
-    indicator = SAMPLE_INDICATOR_INSTANCE
+    indicator = attrs.evolve(SAMPLE_INDICATOR_INSTANCE,
+                             created=datetime(2024, 8, 14, 23, 9, 21, 0),
+                             modified=datetime(2024, 8, 14, 23, 9, 30, 123456))
     as_dict = indicator_converter.unstructure(indicator)
     assert as_dict["schema_version"] == 1
+
+    assert as_dict["created"] == "2024-08-14T23:09:21"
+    assert as_dict["modified"] == "2024-08-14T23:09:30.123456"
 
     # 'key' should be serialized as '_key'
     assert as_dict["_key"] == "66bd393930444c60800ab750"
@@ -215,6 +220,12 @@ def test_validate_stix_pattern():
         _ = indicator_converter.structure(indicator_json, IndicatorModelV1)
 
     assert "Invalid STIX pattern" in repr(exc_info.value)
+
+def test_on_creation_created_and_modified_timestamps_should_be_equal():
+    indicator = new_sample_indicator_instance()
+    created = indicator.created
+    modified = indicator.modified
+    assert created == modified, "On creation, created and modified timestamps should be equal"
 
 def test_to_stix():
     indicator = new_sample_indicator_instance()

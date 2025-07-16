@@ -4,6 +4,7 @@ from TA_CTIS_TAXII.package.bin.models import GroupingModelV1, IdentityModelV1, b
 from TA_CTIS_TAXII.package.bin.models.tlp_v2 import AMBER_MARKING_DEFINITION, AMBER_STRICT_MARKING_DEFINITION, TLPv2, \
     GREEN_MARKING_DEFINITION, \
     RED_MARKING_DEFINITION
+from TA_CTIS_TAXII.package.bin.models import serialize_stix_object
 from test_model_indicator_v1 import new_sample_indicator_instance
 
 
@@ -30,7 +31,7 @@ class TestStixBundle:
 
         bundle = bundle_for_grouping(grouping_=grouping, grouping_identity=identity,
                                      indicators=[indicator1, indicator2, indicator3])
-        bundle_json = json.loads(bundle.serialize())
+        bundle_json = json.loads(serialize_stix_object(stix_object=bundle))
         assert bundle_json["type"] == "bundle"
 
         grouping_objects = [x for x in bundle_json["objects"] if x["type"] == "grouping"]

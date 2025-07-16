@@ -3,17 +3,28 @@ from cattr.gen import make_dict_structure_fn, make_dict_unstructure_fn
 from cattrs import Converter
 from datetime import datetime
 
+def get_datetime_utc_now():
+    # datetime.utcnow() is deprecated since Python version 3.12
+    # Currently, Splunk supports up to Python 3.9 so this might need to be updated in the future.
+    return datetime.utcnow()
 
 @define(slots=False, kw_only=True)
 class BaseModel:
     key: str = None
     user: str = None
     schema_version: int = None
-    created: datetime = field(factory=datetime.utcnow)
-    modified: datetime = field(factory=datetime.utcnow)
+    created: datetime = field(default=None)
+    modified: datetime = field(default=None)
+
+    def __attrs_post_init__(self):
+        now_utc = get_datetime_utc_now()
+        if self.created is None:
+            self.created = now_utc
+        if self.modified is None:
+            self.modified = now_utc
 
     def set_modified_to_now(self):
-        self.modified = datetime.utcnow()
+        self.modified = get_datetime_utc_now()
 
 def validate_schema_version_is_1(instance, attribute, value: int):
     if value != 1:
@@ -25,11 +36,13 @@ class BaseModelV1(BaseModel):
     schema_version: int = field(default=1, validator=[validate_schema_version_is_1])
 
 
+# As a reminder, `unstructure` is used to convert a Python object to a dictionary
+# https://catt.rs/en/stable/
 def unstructure_datetime_hook(val: datetime) -> str:
     """This hook will be registered for `datetime`s."""
     return val.isoformat()
 
-
+# `structure` is used to convert a dictionary to a Python object
 def structure_datetime_hook(value, type) -> datetime:
     """This hook will be registered for `datetime`s."""
     return datetime.fromisoformat(value)
