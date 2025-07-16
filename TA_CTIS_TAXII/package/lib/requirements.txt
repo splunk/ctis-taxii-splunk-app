@@ -13,3 +13,4 @@ splunktaucclib
 splunk-sdk
 solnlib
 taxii2-client
+pytz
