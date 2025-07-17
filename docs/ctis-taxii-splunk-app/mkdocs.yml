@@ -1,8 +1,17 @@
 site_name: CTIS TAXII Splunk App Documentation
+repo_url: https://github.com/splunk/ctis-taxii-splunk-app
 nav:
-  - Home: index.md
+  - About: index.md
   - Installation: installation.md
-  - User Guide: user-guide.md
+  - Configuration: configuration.md
+  - Curating and Sharing CTI:
+    - Overview: cti-mgmt/index.md
+    - Identities: cti-mgmt/identities.md
+    - Groupings: cti-mgmt/groupings.md
+    - Indicators: cti-mgmt/indicators.md
+    - Submissions: cti-mgmt/submissions.md
+  - Troubleshooting: troubleshooting.md
+  - Technical Notes: technical-notes.md
 theme:
   name: material
   features:
@@ -10,3 +19,7 @@ theme:
     - navigation.expand
     - navigation.path
     - toc.integrate
+
+markdown_extensions:
+  - toc:
+      permalink: true

@@ -1,7 +1,7 @@
 import pytest
 import requests
 import os
-from .util import clear_groupings_collection, clear_indicators_collection, clear_identities_collection
+from util import clear_groupings_collection, clear_indicators_collection, clear_identities_collection
 
 SPLUNK_USERNAME = os.environ['SPLUNK_USERNAME']
 SPLUNK_PASSWORD = os.environ['SPLUNK_PASSWORD']
@@ -28,10 +28,13 @@ def cleanup_groupings_collection(session):
     yield
     clear_groupings_collection(session)
 
-@pytest.fixture
-def session():
+def new_session():
     session = requests.Session()
     session.auth = (SPLUNK_USERNAME, SPLUNK_PASSWORD)
     session.verify = False
     return session
+
+@pytest.fixture
+def session():
+    return new_session()
 
