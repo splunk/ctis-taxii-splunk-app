@@ -83,4 +83,5 @@ To edit an existing Indicator, click on the pencil button in the Indicator's row
 
 ## Deleting Indicators
 To delete an existing Indicator, click on the trash can button in the Indicator's row.
+You will be prompted to confirm the deletion.
 ![Delete Indicator Button](indicators_img/delete_indicator_button.png)
