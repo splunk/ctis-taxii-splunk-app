@@ -32,7 +32,7 @@ class IoCCategory(Enum):
     FILE_HASH_SHA512 = "file_hash_sha512"
 
     FILE_NAME = "file_name"
-    FILE_PATH = "file_path"
+    FILE_DIRECTORY = "file_directory"
 
     EMAIL_SENDER = "email_sender"
     EMAIL_BODY = "email_body"
