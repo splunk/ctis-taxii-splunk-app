@@ -25,6 +25,13 @@ Click on the Actions `⌄` downward-caret field button to show the available fie
 Then click on `CTIS: Add IoC field=value to Grouping`:
 ![Splunk Platform Field Workflow Trigger](indicators_img/splunk_search_event_field_workflow_trigger.png)
 
+## New Indicator Form via Navigation Menu
+You can also create a new Indicator via accessing the form directly from the navigation menu.
+Click on `Indicators` > `New Indicator`:
+![New Indicator Form via Navigation Menu](indicators_img/nav_to_new_indicator_form.png)
+
+Note that this form is similar to the one used for creating Indicators via a workflow action, but does not pre-populate the `Splunk Field` dropdown with values from an event.
+
 
 ## New Indicator / Add Indicators of Compromise (IoC) to Grouping Form
 Once the `Add Indicators of Compromise (IoC) to Grouping` form is opened via workflow action, fill in the Common Properties section with your required `Grouping`, `Confidence`, `TLP Marking` and `Valid From` timestamp.
