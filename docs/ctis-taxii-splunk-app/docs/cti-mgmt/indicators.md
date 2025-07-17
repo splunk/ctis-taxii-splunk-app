@@ -1,6 +1,8 @@
 # Indicators
 ## About Indicators
-Reference: [STIX Indicator SDO](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_muftrcpnf89v)
+Indicator objects describe Indicators of Compromise (IoC).
+
+For more information see the STIX specification: [STIX Indicator SDO](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_muftrcpnf89v)
 
 ## New Indicator via Workflow Action
 You can feed a Splunk event or field value into the New Indicator form via a workflow action.
@@ -11,7 +13,8 @@ A workflow action can be triggered from Splunk's Search page on an event or fiel
 For example, given this event, click on the `>` button to expand the event:
 ![Splunk Platform Sample Event](indicators_img/splunk_search_sample_event.png)
 
-Then, click on `Event Actions` to list available workflow actions. Then click on `CTIS: Add IOCs to Grouping`. This will open the form to add new Indicators to a Grouping
+Then, click on `Event Actions` to list available workflow actions. Then click on `CTIS: Add IOCs to Grouping`. This will open the form to add new Indicators to a Grouping.
+In the form you will be able to enter related details for the new Indicator.
 ![Splunk Platform Event Workflow Action Trigger](indicators_img/splunk_search_event_workflow_trigger.png)
 
 ### Field Workflow Action
@@ -19,12 +22,14 @@ Alternatively, you can trigger the workflow action from a field in the event:
 
 Click on the Actions `⌄` downward-caret field button to show the available field level workflow actions.
 
-Then click on `CTIS: Add IOC field=value to Grouping`:
+Then click on `CTIS: Add IoC field=value to Grouping`:
 ![Splunk Platform Field Workflow Trigger](indicators_img/splunk_search_event_field_workflow_trigger.png)
 
 
 ## New Indicator / Add Indicators of Compromise (IoC) to Grouping Form
 Once the `Add Indicators of Compromise (IoC) to Grouping` form is opened via workflow action, fill in the Common Properties section with your required `Grouping`, `Confidence`, `TLP Marking` and `Valid From` timestamp.
+
+The details in the Common Properties are applied to all new Indicators that you create in this form.
 
 Then, proceed to fill in the details for the new Indicator.
 
@@ -40,9 +45,9 @@ Finally, populate a `Indicator Name` and `Indicator Description` for the Indicat
 
 ![New Indicator Form via Workflow](indicators_img/via_workflow_filled_form.png)
 
-Once you are done, click on `Submit` to create the Indicator.
-
 Optionally, you can add multiple indicators by clicking on the `Add another Indicator to this form` button at the bottom of the form.
+
+Once you are done, click on `Submit` to create the Indicator.
 
 ## Indicator Category
 The `Indicator Category` dropdown is used to classify the type of Indicator you are creating and helps with the app's auto-generation of a STIX Pattern via a pattern template.
@@ -53,9 +58,9 @@ The list of available categories includes templates for common IoCs such as IPv4
 If you believe a useful Indicator Category is missing, please [raise an issue on Github](../index.md#support).
 
 ## STIX Patterns
-For more information on STIX Patterns, see the [STIX documentation](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_e8slinrhxcc9).
+For more information on STIX Patterns, see the [STIX documentation](https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_me3pzm77qfnf).
 
-For examples of STIX patterns see [here.](https://docs.oasis-open.org/cti/stix/v2.0/cs01/part5-stix-patterning/stix-v2.0-cs01-part5-stix-patterning.html#_Toc496717759)
+For examples of STIX patterns see [here](https://docs.oasis-open.org/cti/stix/v2.0/cs01/part5-stix-patterning/stix-v2.0-cs01-part5-stix-patterning.html#_Toc496717759).
 
 ### Note on Unicode Characters
 Note that specifying Unicode characters with `\uXXXX` syntax is not supported in the app.
@@ -73,5 +78,9 @@ There are search filter dropdowns for `Indicator ID`, `Grouping ID`, `Last Updat
 ![View Indicators](indicators_img/view_indicators.png)
 
 ## Editing Indicators
+To edit an existing Indicator, click on the pencil button in the Indicator's row.
+![Edit Indicator Button](indicators_img/edit_indicator_button.png)
 
 ## Deleting Indicators
+To delete an existing Indicator, click on the trash can button in the Indicator's row.
+![Delete Indicator Button](indicators_img/delete_indicator_button.png)
