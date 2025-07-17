@@ -25,7 +25,7 @@ Choose to install the app via either Splunk Web or the Command Line Interface (C
 1. From the Splunk Web home screen, click the gear icon next to Apps.
 2. Click Install app from file.
 3. Locate the downloaded app file (.tar.gz) and click Upload.
-4. If Splunk Enterprise prompts you to restart, do so.
+4. Restart Splunk Enterprise.
 5. Verify that the add-on appears in the list of apps and add-ons.
 
 ### Command Line (CLI)
@@ -52,16 +52,3 @@ See the Splunk Cloud documentation for installing private apps:
 
 - [Install a private app on Victoria Experience](https://help.splunk.com/en/splunk-cloud-platform/administer/admin-manual/9.3.2411/manage-apps-and-add-ons-in-splunk-cloud-platform/manage-private-apps-on-your-splunk-cloud-platform-deployment#ariaid-title4)
 - [Install a private app on Classic Experience](https://help.splunk.com/en/splunk-cloud-platform/administer/admin-manual/9.3.2411/manage-apps-and-add-ons-in-splunk-cloud-platform/manage-private-apps-on-your-splunk-cloud-platform-deployment#ariaid-title6)
-
-
-## Uninstall
-TODO
-
-### Export Data
-...
-
-### Remove the App
-...
-
-
-

@@ -44,7 +44,11 @@ You can also adjust the results per page using the dropdown.
 ![Pagination Example](../img/view_identities_pagination.png)
 
 ## Editing Identities
-TODO
+To edit an existing Identity, click on the pencil icon of the Identity you wish to edit in the Identities list view.
+![Edit Button](identities_img/edit_button.png)
 
 ## Deleting Identities
-TODO
+To delete an Identity, click on the trash can icon of the Identity you wish to delete in the Identities list view.
+
+You will be prompted to confirm the deletion.
+![Delete Button](identities_img/delete_button.png)

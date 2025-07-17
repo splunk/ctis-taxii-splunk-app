@@ -25,6 +25,12 @@ There are also dropdown filters available for Grouping ID, Last Updated and Last
 ![View Groupings](../img/view_groupings.png)
 
 ## Editing Groupings
+To edit an existing Grouping, click on the pencil icon of the Grouping you wish to edit in the Groupings list view.
+![Edit Button](groupings_img/edit_button.png)
 
 ## Deleting Groupings
+To delete a Grouping, click on the trash can icon of the Grouping you wish to delete in the Groupings list view.
+
+You will be prompted to confirm the deletion.
+![Delete Button](groupings_img/delete_button.png)
 
