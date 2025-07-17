@@ -22,4 +22,8 @@ Click on the **Add** button to add a new TAXII server configuration.
 
 Clicking on **Add** will verify the connection to the TAXII server including network connectivity and authentication.
 
+## Notes
+Proxy server configuration and disabling TLS/SSL verification is not currently supported in this app.
+
+If these or similar network configurations are required, please [raise an issue in the Github repository](index.md#support).
 
