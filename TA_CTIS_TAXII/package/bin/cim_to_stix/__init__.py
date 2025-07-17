@@ -5,7 +5,7 @@ from .destination_mac import DestinationMacAddressConverter
 from .email import EmailSenderConverter, EmailBodyConverter, EmailSubjectConverter, EmailAttachmentFilenameConverter
 from .file_hash import MD5FileHashConverter, SHA1FileHashConverter, SHA256FileHashConverter, SHA512FileHashConverter
 from .file_name import FileNameConverter
-from .file_path import FilePathConverter
+from .file_directory import FileDirectoryConverter
 from .ioc_category import IoCCategory
 from .source_domain import SourceDomainConverter
 from .source_ipv4 import SourceIpv4Converter
@@ -68,7 +68,7 @@ CATEGORY_TO_CONVERTER = {
     IoCCategory.FILE_HASH_SHA256: SHA256FileHashConverter,
     IoCCategory.FILE_HASH_SHA512: SHA512FileHashConverter,
     IoCCategory.FILE_NAME: FileNameConverter,
-    IoCCategory.FILE_PATH: FilePathConverter,
+    IoCCategory.FILE_DIRECTORY: FileDirectoryConverter,
     IoCCategory.URL: UrlConverter,
     IoCCategory.EMAIL_SENDER: EmailSenderConverter,
     IoCCategory.EMAIL_BODY: EmailBodyConverter,

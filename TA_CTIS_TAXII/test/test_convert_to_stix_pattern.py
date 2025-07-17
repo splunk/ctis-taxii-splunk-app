@@ -21,14 +21,14 @@ class TestFileName:
         assert pattern == "[file:name = 'hello.exe']"
 
 
-class TestFilePath:
-    def test_windows_filepath(self):
-        pattern = convert_to_stix_pattern(category=IoCCategory.FILE_PATH, value=r"C:\Windows\System32")
+class TestFileDirectory:
+    def test_windows_file_directory(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.FILE_DIRECTORY, value=r"C:\Windows\System32")
         expected = r"[file:parent_directory_ref.path = 'C:\\Windows\\System32']"
         assert pattern == expected
 
-    def test_unix_filepath(self):
-        pattern = convert_to_stix_pattern(category=IoCCategory.FILE_PATH, value=r"/usr/local/bin")
+    def test_unix_file_directory(self):
+        pattern = convert_to_stix_pattern(category=IoCCategory.FILE_DIRECTORY, value=r"/usr/local/bin")
         expected = r"[file:parent_directory_ref.path = '/usr/local/bin']"
         assert pattern == expected
 
