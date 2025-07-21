@@ -31,12 +31,12 @@ def debug_requests_on():
     requests_log.propagate = True
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
-    logging.basicConfig(level=logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
+    # debug_requests_on()
     import solnlib
     script_name = os.path.basename(script_filepath)
     app_logger = solnlib.log.Logs().get_logger(f"{NAMESPACE}.{script_name}")
     app_logger.setLevel(logging.DEBUG)
-    debug_requests_on()
     return app_logger
 
 
