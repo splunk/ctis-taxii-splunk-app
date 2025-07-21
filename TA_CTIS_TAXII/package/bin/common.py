@@ -5,7 +5,6 @@ import sys
 import abc
 from typing import Optional, Dict, List
 from collections import defaultdict
-from http.client import HTTPConnection
 from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
 from stix2 import Bundle
@@ -14,7 +13,7 @@ from const import ADDON_NAME, ADDON_NAME_LOWER
 from models import GroupingModelV1, grouping_converter, IndicatorModelV1, indicator_converter, IdentityModelV1, \
     identity_converter, bundle_for_grouping, serialize_stix_object, submission_converter, SubmissionModelV1, SubmissionStatus
 from server_exception import ServerException
-from taxii2client.v21 import ApiRoot, Collection
+from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
@@ -22,17 +21,8 @@ sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 NAMESPACE = os.path.basename(APP_DIR)
 sys.stderr.write(f"NAMESPACE: {NAMESPACE}\n")
 
-def debug_requests_on():
-    # From: https://stackoverflow.com/a/24588289
-    """Switches on logging of the requests module."""
-    HTTPConnection.debuglevel = 1
-    requests_log = logging.getLogger("requests.packages.urllib3")
-    requests_log.setLevel(logging.DEBUG)
-    requests_log.propagate = True
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
-    # logging.basicConfig(level=logging.DEBUG)
-    # debug_requests_on()
     import solnlib
     script_name = os.path.basename(script_filepath)
     app_logger = solnlib.log.Logs().get_logger(f"{NAMESPACE}.{script_name}")
@@ -40,14 +30,14 @@ def get_logger_for_script(script_filepath: str) -> logging.Logger:
     return app_logger
 
 
+def add_request_response_logging_hook(taxii_endpoint: _TAXIIEndpoint, app_logger: logging.Logger):
+    session = taxii_endpoint._conn.session
+    def log_http_response(response, *args, **kwargs):
+        req = response.request
+        app_logger.info(f"HTTP Request: {req.method} {req.url}, body={req.body}")
+        app_logger.info(f"HTTP Response: {response.status_code} {response.reason} for {response.url}")
+    session.hooks["response"].append(log_http_response)
 
-def get_taxii_collection(taxii_config: dict, collection_id: str) -> Collection:
-    api_root = ApiRoot(url=taxii_config["api_root_url"], user=taxii_config["username"],
-                       password=taxii_config["password"])
-    collection_id_to_collection = {c.id: c for c in api_root.collections}
-    if collection_id not in collection_id_to_collection:
-        raise ValueError(f"Collection ID {collection_id} not found in TAXII server.")
-    return collection_id_to_collection[collection_id]
 
 class AbstractRestHandler(abc.ABC):
     def __init__(self, logger):
@@ -85,6 +75,20 @@ class AbstractRestHandler(abc.ABC):
         taxii_config_conf = cfm.get_conf(conf_name)
         return taxii_config_conf.get(stanza_name)
 
+    def get_api_root(self, url: str, user: str, password: str) -> ApiRoot:
+        api_root = ApiRoot(url=url, user=user, password=password)
+        add_request_response_logging_hook(taxii_endpoint=api_root, app_logger=self.logger)
+        return api_root
+
+    def get_taxii_collection(self, taxii_config: dict, collection_id: str) -> Collection:
+        api_root = self.get_api_root(url=taxii_config["api_root_url"], user=taxii_config["username"],
+                                password=taxii_config["password"])
+
+        collection_id_to_collection = {c.id: c for c in api_root.collections}
+        if collection_id not in collection_id_to_collection:
+            raise ValueError(f"Collection ID {collection_id} not found in TAXII server.")
+        return collection_id_to_collection[collection_id]
+
     def submit_grouping(self, session_key: str, submission_id: str) -> dict:
         submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")
         taxii_response_dict = None
@@ -99,7 +103,7 @@ class AbstractRestHandler(abc.ABC):
             taxii_collection_id = submission["collection_id"]
 
             self.logger.info(f"Submitting bundle={bundle_json} to TAXII collection: collection_id={taxii_collection_id}")
-            taxii_collection = get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
+            taxii_collection = self.get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
             taxii_response = taxii_collection.add_objects(bundle_json)
             taxii_response_dict = taxii_response._raw
             self.logger.info(f"taxii_response: {taxii_response_dict}")
