@@ -5,7 +5,7 @@ import sys
 import abc
 from typing import Optional, Dict, List
 from collections import defaultdict
-
+from http.client import HTTPConnection
 from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
 from stix2 import Bundle
@@ -22,11 +22,22 @@ sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 NAMESPACE = os.path.basename(APP_DIR)
 sys.stderr.write(f"NAMESPACE: {NAMESPACE}\n")
 
+def debug_requests_on():
+    # From: https://stackoverflow.com/a/24588289
+    """Switches on logging of the requests module."""
+    HTTPConnection.debuglevel = 1
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
+    logging.basicConfig(level=logging.DEBUG)
     import solnlib
     script_name = os.path.basename(script_filepath)
-    return solnlib.log.Logs().get_logger(f"{NAMESPACE}.{script_name}")
+    app_logger = solnlib.log.Logs().get_logger(f"{NAMESPACE}.{script_name}")
+    app_logger.setLevel(logging.DEBUG)
+    debug_requests_on()
+    return app_logger
 
 
 
