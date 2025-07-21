@@ -24,7 +24,7 @@ class ListTaxiiCollectionsHandler(AbstractRestHandler):
         config_name = query_params.get("config_name")[0]
         self.logger.info(f"config_name: {config_name}")
         config = self.get_taxii_config(session_key=session_key, stanza_name=config_name)
-        api_root = ApiRoot(url=config["api_root_url"], user=config["username"], password=config["password"])
+        api_root = self.get_api_root(url=config["api_root_url"], user=config["username"], password=config["password"])
         collections = api_root.collections
         return {"collections": [x._raw for x in collections]}
 
