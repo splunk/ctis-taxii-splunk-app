@@ -81,6 +81,22 @@ jobs:
           npm install @semantic-release/exec
           npx semantic-release
 
+  app-inspect:
+    runs-on: ubuntu-22.04
+    needs: [ package ]
+    environment: main
+    steps:
+      - name: Download app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+      - name: list
+        run: pwd && ls -l
+      - name: Run Splunk App-Inspect CLI Action
+        uses: splunk/appinspect-cli-action@v1
+        with:
+          app_path: ./ctis.tar.gz
+
   integration-test:
     runs-on: ubuntu-22.04
     needs: [ package ]
