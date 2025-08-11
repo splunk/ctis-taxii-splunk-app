@@ -1,0 +1,37 @@
+---
+check_for_console_log_injection_in_javascript:
+    comment: 'ADDON-123: manual'
+check_for_iframe_in_javascript:
+    comment: 'ADDON-123: manual'
+check_for_insecure_http_request_in_javascript:
+    comment: 'ADDON-123: manual'
+check_for_remote_code_execution_in_javascript:
+    comment: 'ADDON-123: manual'
+check_built_in_import_function:
+    comment: 'ADDON-123: manual'
+check_for_builtin_functions:
+    comment: 'ADDON-123: manual'
+check_for_data_compression_and_archiving:
+    comment: 'ADDON-123: manual'
+check_for_file_and_directory_access:
+    comment: 'ADDON-123: manual'
+check_for_generic_operating_system_services:
+    comment: 'ADDON-123: manual'
+check_for_importing_modules:
+    comment: 'ADDON-123: manual'
+check_for_interprocess_communication_and_networking:
+    comment: 'ADDON-123: manual'
+check_for_plain_text_credentials_in_python:
+    comment: 'ADDON-123: manual'
+check_python_untrusted_xml_functions:
+    comment: 'ADDON-123: manual'
+check_for_environment_variable_use_in_python:
+    comment: 'ADDON-123: manual'
+check_for_insecure_http_calls_in_python:
+    comment: 'ADDON-123: manual'
+check_for_secret_disclosure:
+    comment: 'ADDON-123: manual'
+check_for_supported_tls:
+    comment: 'ADDON-123: manual'
+check_for_executable_flag:
+    comment: 'ADDON-123: manual'

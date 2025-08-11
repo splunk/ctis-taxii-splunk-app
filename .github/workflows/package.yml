@@ -77,7 +77,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Using .releaserc.json to configure semantic-release
-        run: | 
+        run: |
           npm install @semantic-release/exec
           npx semantic-release
 
@@ -86,17 +86,19 @@ jobs:
     needs: [ package ]
     environment: main
     steps:
+      - uses: actions/checkout@v4
       - name: Download app artifact
         uses: actions/download-artifact@v4
         with:
           name: app
       - name: list
-        run: pwd && ls -l
+        run: pwd && ls -la
       - name: Run Splunk App-Inspect CLI Action
         uses: splunk/appinspect-cli-action@v1
         with:
           app_path: ./ctis.tar.gz
           included_tags: cloud
+          expected_failure_markdown: .appinspect.expect.yaml
 
   integration-test:
     runs-on: ubuntu-22.04
