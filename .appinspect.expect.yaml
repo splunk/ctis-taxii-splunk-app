@@ -3,4 +3,4 @@
 # This check was removed in appinspect 4.0.0: https://github.com/splunk/appinspect/commit/02890873603cfaf5d3aba947ac173dacc9418217
 # The appinspect CLI Action is currently using appinspect 3.10.0, which still has this check.
 check_for_binary_files_without_source_code:
-    comment: 'FDSE-2970: This check is no longer relevant, as it was removed in appinspect 4.0.0.'
+    comment: 'ADDON-123: This check is no longer relevant, as it was removed in appinspect 4.0.0.'
