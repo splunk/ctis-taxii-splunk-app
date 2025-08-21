@@ -18,7 +18,8 @@
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "dist/*.tar.gz", "label": "App Build" }
+          { "path": "dist/*.tar.gz", "label": "App Build" },
+          { "path": "docs/ctis-taxii-splunk-app/documentation.pdf", "label": "Documentation" }
         ]
       }
     ]
