@@ -1,5 +1,15 @@
 site_name: CTIS TAXII Splunk App Documentation
 repo_url: https://github.com/splunk/ctis-taxii-splunk-app
+plugins:
+  - exporter:
+      formats:
+        pdf:
+          enabled: !ENV [ MKDOCS_EXPORTER_PDF, true ]
+          aggregator:
+            enabled: true
+            output: documentation.pdf
+            covers: all
+
 nav:
   - About: index.md
   - Installation: installation.md

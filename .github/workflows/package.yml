@@ -20,6 +20,8 @@ jobs:
       - name: Build and deploy documentation
         # Deploys to gh-pages branch by default
         run: mkdocs gh-deploy -v --force --config-file ./docs/ctis-taxii-splunk-app/mkdocs.yml
+        env:
+          MKDOCS_EXPORTER_PDF: false
 
   unit-test:
     strategy:
@@ -78,6 +80,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Using .releaserc.json to configure semantic-release
         run: |
+          pip install -r ./docs/ctis-taxii-splunk-app/requirements.txt
+          playwright install
           npm install @semantic-release/exec
           npx semantic-release
 
