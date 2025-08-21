@@ -81,7 +81,7 @@ jobs:
         # Using .releaserc.json to configure semantic-release
         run: |
           pip install -r ./docs/ctis-taxii-splunk-app/requirements.txt
-          playwright install
+          playwright install chromium --with-deps
           npm install @semantic-release/exec
           npx semantic-release
 
