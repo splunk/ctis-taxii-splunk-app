@@ -19,7 +19,7 @@
       {
         "assets": [
           { "path": "dist/*.tar.gz", "label": "App Build" },
-          { "path": "docs/ctis-taxii-splunk-app/documentation.pdf", "label": "Documentation" }
+          { "path": "docs/ctis-taxii-splunk-app/site/documentation.pdf", "label": "Documentation" }
         ]
       }
     ]
