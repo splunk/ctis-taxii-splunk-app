@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 import stix2
 from stix2 import MarkingDefinition
@@ -74,6 +76,14 @@ RED_MARKING_DEFINITION = stix2.parse({
     }
 })
 
+TLPV2_NAME_TO_RESTRICTIVENESS = {
+    CLEAR_MARKING_DEFINITION.name: 0,
+    GREEN_MARKING_DEFINITION.name: 1,
+    AMBER_MARKING_DEFINITION.name: 2,
+    AMBER_STRICT_MARKING_DEFINITION.name: 3,
+    RED_MARKING_DEFINITION.name: 4,
+}
+
 
 class TLPv2(Enum):
     CLEAR = CLEAR_MARKING_DEFINITION.name
@@ -95,3 +105,15 @@ class TLPv2(Enum):
             return RED_MARKING_DEFINITION
         else:
             raise ValueError(f"Invalid TLPv2 value: {self}")
+
+    @staticmethod
+    def maximum(value1: TLPv2, value2: TLPv2) -> TLPv2:
+        """
+        Return the most restrictive TLPv2 value of the two.
+        """
+        value1_restrictiveness = TLPV2_NAME_TO_RESTRICTIVENESS[value1.value]
+        value2_restrictiveness = TLPV2_NAME_TO_RESTRICTIVENESS[value2.value]
+        if value1_restrictiveness >= value2_restrictiveness:
+            return value1
+        else:
+            return value2
