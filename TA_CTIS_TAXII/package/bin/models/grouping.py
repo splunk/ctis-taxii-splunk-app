@@ -5,6 +5,7 @@ from attrs import define, field
 from stix2 import Grouping
 from typing import List, Optional
 
+from .indicator import IndicatorModelV1, maximum_tlpv2_of_indicators
 from .base import BaseModelV1, make_base_converter
 from .common import validate_confidence
 from .tlp_v2 import TLPv2
@@ -83,6 +84,11 @@ class GroupingModelV1(BaseModelV1):
                             created=self.created,
                             modified=self.modified)
         return grouping
+
+    def update_tlpv2_to_be_at_least_as_restrictive_as_indicators(self, indicators: List[IndicatorModelV1]):
+        indicators_max_tlp_v2 = maximum_tlpv2_of_indicators(indicators)
+        max_tlpv2 = TLPv2.maximum(self.tlp_v2_rating, indicators_max_tlp_v2)
+        self.tlp_v2_rating = max_tlpv2
 
 
 grouping_converter = make_base_converter()

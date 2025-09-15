@@ -6,6 +6,8 @@ from .indicator import IndicatorModelV1, indicator_converter, form_payload_to_in
 from .identity import IdentityModelV1, identity_converter
 from .grouping import GroupingModelV1, grouping_converter
 from .submission import SubmissionModelV1, SubmissionStatus, submission_converter
+from .tlp_v2 import TLPv2
+
 from stix2 import Bundle
 from stix2.v21.base import _STIXBase21
 import stix2.utils
