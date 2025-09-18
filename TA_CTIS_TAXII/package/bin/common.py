@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 
 from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
+from splunklib.client import KVStoreCollectionData
 from stix2 import Bundle
 from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
@@ -70,8 +71,48 @@ class KVStoreObjectDocumentMapping:
         records_structured = [converter.structure(record, model_class) for record in records]
         return records_structured
 
+    def get_exactly_one_record_structured(self, collection_name: CollectionName, query: dict) -> Any:
+        structured_records = self.list_collection_structured(collection_name=collection_name, query=query)
+        num_records = len(structured_records)
+        assert num_records > 0, f"No records found for query: {query}"
+        assert num_records == 1, f"More than one record found for query: {query}"
+        return structured_records[0]
+
     def list_grouping_indicators(self, grouping_id: str) -> List[IndicatorModelV1]:
         return self.list_collection_structured(collection_name=CollectionName.INDICATORS, query={"grouping_id": grouping_id})
+
+class KVStoreCollectionUtils:
+    def __init__(self, logger: logging.Logger):
+        self.logger = logger
+
+    def get_collection_size(self, collection: KVStoreCollectionData, query=None) -> int:
+        #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
+        collection_query_kwargs = {}
+        if query:
+            collection_query_kwargs["query"] = query
+        records = []
+        offset = 0
+        page_size = 50000
+        while True:
+            page_of_records = collection.query(fields="_key", limit=page_size, skip=offset, **collection_query_kwargs)
+            records.extend(page_of_records)
+            if len(page_of_records) == 0:
+                break
+            # TODO: Make this more dynamic, considering custom set max page size in limits.conf
+            #  Consider `offset += len(page_of_records)` instead of fixed page_size
+            offset += page_size
+        total_records = len(records)
+        self.logger.info(f"Total records found: {total_records}")
+        return total_records
+
+    def query_exactly_one_record(self, collection: KVStoreCollectionData, query: dict) -> dict:
+        results = collection.query(query=query)
+        assert type(results) == list
+        num_results = len(results)
+        self.logger.info(f"Querying collection={collection} with query={query}. num_results={num_results}")
+        assert num_results > 0, f"No records found for query: {query}"
+        assert num_results == 1, f"More than one record found for query: {query}"
+        return results[0]
 
 
 
@@ -162,6 +203,9 @@ class AbstractRestHandler(abc.ABC):
                                                 converter=submission_converter, model_class=SubmissionModelV1)
         return updated_submission
 
+    def get_kvstore_collection_utils_instance(self) -> KVStoreCollectionUtils:
+        return KVStoreCollectionUtils(logger=self.logger)
+
     def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
                                 collection_name: str) -> dict:
         self.logger.info(f"input_json: {input_json}")
@@ -175,7 +219,7 @@ class AbstractRestHandler(abc.ABC):
         records = collection.query(**collection_query_kwargs)
         self.logger.info(f"Records found: {len(records)}")
 
-        total_records = self.get_collection_size(collection, query=collection_query_kwargs.get("query"))
+        total_records = self.get_kvstore_collection_utils_instance().get_collection_size(collection=collection, query=collection_query_kwargs.get("query"))
         response = {
             "records": records,
             "total": total_records,
@@ -260,25 +304,6 @@ class AbstractRestHandler(abc.ABC):
             else:
                 return value
 
-    def get_collection_size(self, collection, query=None) -> int:
-        #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
-        collection_query_kwargs = {}
-        if query:
-            collection_query_kwargs["query"] = query
-        records = []
-        offset = 0
-        page_size = 50000
-        while True:
-            page_of_records = collection.query(fields="_key", limit=page_size, skip=offset, **collection_query_kwargs)
-            records.extend(page_of_records)
-            if len(page_of_records) == 0:
-                break
-            # TODO: Make this more dynamic, considering custom set max page size in limits.conf
-            #  Consider `offset += len(page_of_records)` instead of fixed page_size
-            offset += page_size
-        total_records = len(records)
-        self.logger.info(f"Total records found: {total_records}")
-        return total_records
 
     @staticmethod
     def extract_collection_query_kwargs(query_params: dict) -> dict:
@@ -339,22 +364,16 @@ class AbstractRestHandler(abc.ABC):
         return Handler
 
     def generate_stix_bundle_for_grouping(self, grouping_id:str, session_key:str) -> Bundle:
-        groupings_collection = self.get_collection(collection_name="groupings", session_key=session_key)
-        indicators_collection = self.get_collection(collection_name="indicators", session_key=session_key)
-        identities_collection = self.get_collection(collection_name="identities", session_key=session_key)
+        odm = self.get_instance_of_kvstore_odm(session_key=session_key)
 
-        grouping = self.query_exactly_one_record(collection=groupings_collection, query={"grouping_id": grouping_id})
-        grouping_model = grouping_converter.structure(grouping, GroupingModelV1)
-        self.logger.info(f"grouping: {grouping_model}")
+        grouping = odm.get_exactly_one_record_structured(collection_name=CollectionName.GROUPINGS, query={"grouping_id": grouping_id})
+        self.logger.info(f"grouping: {grouping}")
 
-        indicators = indicators_collection.query(query={"grouping_id": grouping_id}, limit=0, offset=0)
-        indicator_models = [indicator_converter.structure(indicator, IndicatorModelV1) for indicator in indicators]
-        self.logger.info(f"indicators: {indicator_models}")
+        indicators = odm.list_grouping_indicators(grouping_id=grouping_id)
+        self.logger.info(f"indicators: {indicators}")
 
-        identity = self.query_exactly_one_record(collection=identities_collection,
-                                                 query={"identity_id": grouping["created_by_ref"]})
-        identity_model = identity_converter.structure(identity, IdentityModelV1)
-        self.logger.info(f"identity: {identity_model}")
+        identity = odm.get_exactly_one_record_structured(collection_name=CollectionName.IDENTITIES, query={"identity_id": grouping.created_by_ref})
+        self.logger.info(f"identity: {identity}")
 
-        bundle = bundle_for_grouping(grouping_=grouping_model, indicators=indicator_models, grouping_identity=identity_model)
+        bundle = bundle_for_grouping(grouping_=grouping, indicators=indicators, grouping_identity=identity)
         return bundle

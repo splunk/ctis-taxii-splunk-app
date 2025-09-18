@@ -24,6 +24,9 @@ class EditGroupingHandler(AbstractRestHandler):
 
         assert "grouping_id" in input_json, "grouping_id is required"
         grouping_id = input_json["grouping_id"]
+
+        # TODO: Validate that tlp_v2_rating is at least as most as constituent indicators' tlp_v2_rating
+
         updated_record = self.update_record(collection=collection, query_for_one_record={"grouping_id": grouping_id},
                                             input_json=input_json, converter=grouping_converter,
                                             model_class=GroupingModelV1)

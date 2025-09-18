@@ -202,3 +202,6 @@ def new_sample_grouping(session, grouping_name="grouping-1", identity_name="iden
     })["grouping"]
     assert grouping["grouping_id"] is not None
     return grouping
+
+def get_stix_bundle_json_preview(session, grouping_id: str) -> dict:
+    return get_endpoint(endpoint="get-stix-bundle-for-grouping", session=session, grouping_id=grouping_id)
