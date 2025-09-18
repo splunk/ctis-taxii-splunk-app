@@ -1,19 +1,22 @@
+import abc
 import json
 import logging
 import os
 import sys
-import abc
-from typing import Optional, Dict, List
 from collections import defaultdict
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
 from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
 from stix2 import Bundle
+from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
-from models import GroupingModelV1, grouping_converter, IndicatorModelV1, indicator_converter, IdentityModelV1, \
-    identity_converter, bundle_for_grouping, serialize_stix_object, submission_converter, SubmissionModelV1, SubmissionStatus
+from models import GroupingModelV1, IdentityModelV1, IndicatorModelV1, SubmissionModelV1, SubmissionStatus, \
+    bundle_for_grouping, grouping_converter, identity_converter, indicator_converter, serialize_stix_object, \
+    submission_converter
 from server_exception import ServerException
-from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
@@ -37,6 +40,39 @@ def add_request_response_logging_hook(taxii_endpoint: _TAXIIEndpoint, app_logger
         app_logger.info(f"HTTP Request: {req.method} {req.url}, body={req.body}")
         app_logger.info(f"HTTP Response: {response.status_code} {response.reason} for {response.url}")
     session.hooks["response"].append(log_http_response)
+
+class CollectionName(Enum):
+    GROUPINGS = "groupings"
+    INDICATORS = "indicators"
+    IDENTITIES = "identities"
+    SUBMISSIONS = "submissions"
+
+class KVStoreObjectDocumentMapping:
+    def __init__(self, logger, session_key: str, app_namespace: str):
+        self.logger = logger
+        self.session_key = session_key
+        self.app_namespace = app_namespace
+        self.collection_name_to_model_and_converter = {
+            CollectionName.GROUPINGS: (GroupingModelV1, grouping_converter),
+            CollectionName.INDICATORS: (IndicatorModelV1, indicator_converter),
+            CollectionName.IDENTITIES: (IdentityModelV1, identity_converter),
+            CollectionName.SUBMISSIONS: (SubmissionModelV1, submission_converter),
+        }
+
+    def get_collection(self, collection_name: str):
+        return get_collection_data(collection_name=collection_name, session_key=self.session_key, app=self.app_namespace)
+
+    def list_collection_structured(self, collection_name: CollectionName, query: dict) -> List[Any]:
+        assert collection_name in self.collection_name_to_model_and_converter
+        model_class, converter = self.collection_name_to_model_and_converter[collection_name]
+        collection = self.get_collection(collection_name=collection_name.value)
+        records = collection.query(query=query, limit=0, skip=0)
+        records_structured = [converter.structure(record, model_class) for record in records]
+        return records_structured
+
+    def list_grouping_indicators(self, grouping_id: str) -> List[IndicatorModelV1]:
+        return self.list_collection_structured(collection_name=CollectionName.INDICATORS, query={"grouping_id": grouping_id})
+
 
 
 class AbstractRestHandler(abc.ABC):
@@ -62,6 +98,9 @@ class AbstractRestHandler(abc.ABC):
         payload_json = in_string_dict["payload"]
         input_payload = json.loads(payload_json)
         return input_payload
+
+    def get_instance_of_kvstore_odm(self, session_key: str) -> KVStoreObjectDocumentMapping:
+        return KVStoreObjectDocumentMapping(session_key=session_key, app_namespace=NAMESPACE, logger=self.logger)
 
     def get_taxii_config(self, session_key: str, stanza_name: str):
         from solnlib import conf_manager
@@ -234,6 +273,8 @@ class AbstractRestHandler(abc.ABC):
             records.extend(page_of_records)
             if len(page_of_records) == 0:
                 break
+            # TODO: Make this more dynamic, considering custom set max page size in limits.conf
+            #  Consider `offset += len(page_of_records)` instead of fixed page_size
             offset += page_size
         total_records = len(records)
         self.logger.info(f"Total records found: {total_records}")
