@@ -43,6 +43,8 @@ services:
     command: [sh, -c, "medallion --host 0.0.0.0 --log-level=DEBUG --debug-mode"]
 """
 
+# TODO: Move this to a function which can be used as a Pytest fixture
+#   Have cleanup which runs `docker compose down`
 with tempfile.TemporaryDirectory() as tmpdirname:
     logger.info(f'Created temporary directory: {tmpdirname}')
     git_clone_process = subprocess.run(["git", "clone", "--depth=1", TAXII_SERVER_REPO, tmpdirname], check=True)
