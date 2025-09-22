@@ -211,6 +211,13 @@ def new_sample_grouping(session, grouping_name="grouping-1", identity_name="iden
 def get_stix_bundle_json_preview(session, grouping_id: str) -> dict:
     return get_endpoint(endpoint="get-stix-bundle-for-grouping", session=session, grouping_id=grouping_id)
 
+def post_submit_grouping_to_taxii_server(session, grouping_id: str, taxii_config_name: str, taxii_collection_id: str) -> dict:
+    return post_endpoint(endpoint="submit-grouping", session=session, payload={
+        "grouping_id": grouping_id,
+        "taxii_config_name": taxii_config_name,
+        "taxii_collection_id": taxii_collection_id
+    })
+
 def create_new_taxii_config(session, taxii_config_name: str, api_root_url:str, username:str, password:str) -> dict:
     resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config', data={
         'name': taxii_config_name,

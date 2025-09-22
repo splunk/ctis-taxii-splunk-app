@@ -1,4 +1,4 @@
-from .util import create_new_identity, get_identities_collection, list_identities, edit_identity, delete_identity
+from util import create_new_identity, get_identities_collection, list_identities, edit_identity, delete_identity
 
 def create_new_identity_with_defaults(session, name:str, identity_class:str) -> dict:
     return create_new_identity(session, {"name": name, "identity_class": identity_class,

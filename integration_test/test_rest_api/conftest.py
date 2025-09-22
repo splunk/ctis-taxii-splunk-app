@@ -40,9 +40,13 @@ def new_session():
 def session():
     return new_session()
 
+@pytest.fixture(scope='module')
+def testing_context_id():
+    return f"test_{random_alnum_string()}"
+
 @pytest.fixture
-def ctis_app_taxii_config(session, taxii2_server):
-    taxii_config_name = f"test_config_{random_alnum_string()}"
+def ctis_app_taxii_config(session, taxii2_server, testing_context_id):
+    taxii_config_name = f"{testing_context_id}_taxii_config"
     create_new_taxii_config(session=session,
                                    taxii_config_name=taxii_config_name,
                                    api_root_url=taxii2_server.default_api_root_url,
