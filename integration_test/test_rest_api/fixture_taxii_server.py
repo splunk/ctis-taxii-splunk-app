@@ -2,13 +2,12 @@ import json
 import logging
 import os
 import pathlib
-import random
-import string
 import subprocess
 import tempfile
-import pytest
 from dataclasses import dataclass
+from util import random_alnum_string
 
+import pytest
 import requests
 
 logger = logging.getLogger(__name__)
@@ -18,11 +17,9 @@ MONGO_DB_PORT = os.environ.get('MONGO_DB_PORT', '27017')
 MONGO_DB_USERNAME = os.environ['MONGO_DB_USERNAME']
 MONGO_DB_PASSWORD = os.environ['MONGO_DB_PASSWORD']
 
-def generate_password(size=20, chars=string.ascii_lowercase + string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
 
 MEDALLION_ADMIN_USERNAME = "admin"
-MEDALLION_ADMIN_PASSWORD = generate_password()
+MEDALLION_ADMIN_PASSWORD = random_alnum_string()
 
 MEDALLION_USERS_JSON = {
     "users" : {
@@ -67,7 +64,7 @@ class Taxii2ServerConnectionInfo:
         # https://github.com/oasis-open/cti-taxii-server/blob/39e76bf18be5371e9570de7e5f340c3937b69c0d/medallion/test/data/default_data.json#L106C24-L106C60
         return f"{self.server_url}/trustgroup1/365fed99-08fa-fdcd-a1b3-fb247eb41d01"
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='module')
 def taxii2_server():
     with tempfile.TemporaryDirectory() as tmpdirname:
         logger.info(f'Created temporary directory: {tmpdirname}')
@@ -108,7 +105,7 @@ def taxii2_server():
         docker_compose_down_cmd = ["docker", "compose", "--project-name", DOCKER_COMPOSE_PROJECT_NAME, "down"]
         subprocess.run(docker_compose_down_cmd, check=True)
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='module')
 def taxii2_server_session(taxii2_server):
     session = requests.Session()
     session.auth = (taxii2_server.username, taxii2_server.password)
