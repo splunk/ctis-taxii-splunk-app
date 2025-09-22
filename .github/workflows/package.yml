@@ -144,3 +144,5 @@ jobs:
         env:
           SPLUNK_USERNAME: admin
           SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
+          MONGO_DB_USERNAME: root
+          MONGO_DB_PASSWORD: ${{ secrets.MONGO_DB_PASSWORD }}
