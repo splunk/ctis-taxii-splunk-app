@@ -2,6 +2,7 @@ import pytest
 import requests
 import os
 from util import clear_groupings_collection, clear_indicators_collection, clear_identities_collection
+from fixture_taxii_server import taxii2_server, taxii2_server_session # noqa: F401
 
 SPLUNK_USERNAME = os.environ['SPLUNK_USERNAME']
 SPLUNK_PASSWORD = os.environ['SPLUNK_PASSWORD']

@@ -14,3 +14,15 @@ name, api_root_url, username, password.
 - Get preview of STIX bundle JSON for grouping via API
 - Submit STIX bundle to TAXII server via API
 """
+
+class TestTaxiiServerConnection:
+    def test_taxii_server_discovery(self, taxii2_server, taxii2_server_session):
+        resp = taxii2_server_session.get(taxii2_server.server_discovery_url)
+        resp.raise_for_status()
+        print(resp.json())
+
+
+    def test_list_collections_for_default_api_root(self, taxii2_server, taxii2_server_session):
+        resp = taxii2_server_session.get(f"{taxii2_server.default_api_root_url}/collections")
+        resp.raise_for_status()
+        print(resp.json())
