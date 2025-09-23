@@ -3,6 +3,11 @@ import random
 import string
 import uuid
 import os
+import logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 SPLUNK_ADMIN_URL = os.environ.get('SPLUNK_ADMIN_URL', 'https://localhost:8099')
 
@@ -218,15 +223,18 @@ def post_submit_grouping_to_taxii_server(session, grouping_id: str, taxii_config
         "taxii_collection_id": taxii_collection_id
     })
 
-def create_new_taxii_config(session, taxii_config_name: str, api_root_url:str, username:str, password:str) -> dict:
+def create_new_taxii_config(session, taxii_config_name: str, api_root_url:str, username:str, password:str) -> Optional[dict]:
     resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config', data={
         'name': taxii_config_name,
         'api_root_url': api_root_url,
         'username': username,
         'password': password,
     }, params=DEFAULT_REQUEST_PARAMS)
+    if resp.ok:
+        return resp.json()
+    logger.error(f"Failed to create TAXII config. Status code: {resp.status_code}, Response text: {resp.text}")
     resp.raise_for_status()
-    return resp.json()
+    return None
 
 def delete_taxii_config(session, taxii_config_name: str) -> dict:
     resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config/{taxii_config_name}', params=DEFAULT_REQUEST_PARAMS)
