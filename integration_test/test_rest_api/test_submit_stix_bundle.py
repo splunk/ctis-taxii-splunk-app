@@ -22,12 +22,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 class TestTaxiiServerConnection:
-    def test_taxii_server_discovery(self, taxii2_server, taxii2_server_session):
+    def test_taxii_server_discovery(self, taxii2_server, taxii2_server_session, taxii2_server_is_reachable):
         resp = taxii2_server_session.get(taxii2_server.server_discovery_url)
         resp.raise_for_status()
         print(resp.json())
 
-    def test_list_collections_for_default_api_root(self, taxii2_server, taxii2_server_session):
+    def test_list_collections_for_default_api_root(self, taxii2_server, taxii2_server_session, taxii2_server_is_reachable):
         resp = taxii2_server_session.get(f"{taxii2_server.default_api_root_url}/collections")
         resp.raise_for_status()
         print(resp.json())

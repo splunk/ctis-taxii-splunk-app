@@ -3,7 +3,7 @@ import requests
 import os
 from util import clear_groupings_collection, clear_indicators_collection, clear_identities_collection, \
     create_new_taxii_config, random_alnum_string, delete_taxii_config
-from fixture_taxii_server import taxii2_server, taxii2_server_session # noqa: F401
+from fixture_taxii_server import taxii2_server, taxii2_server_session, taxii2_server_is_reachable # noqa: F401
 
 SPLUNK_USERNAME = os.environ['SPLUNK_USERNAME']
 SPLUNK_PASSWORD = os.environ['SPLUNK_PASSWORD']

@@ -4,6 +4,7 @@ import os
 import pathlib
 import subprocess
 import tempfile
+import time
 from dataclasses import dataclass
 from util import random_alnum_string
 
@@ -68,6 +69,15 @@ class Taxii2ServerConnectionInfo:
         # https://github.com/oasis-open/cti-taxii-server/blob/39e76bf18be5371e9570de7e5f340c3937b69c0d/medallion/test/data/default_data.json#L106C24-L106C60
         return f"{self.server_url}/trustgroup1/{self.readable_and_writable_collection_id}"
 
+def run_subprocess_and_log_output(cmd, **kwargs):
+    logger.info(f"Running command: {' '.join(cmd)}")
+    process = subprocess.run(cmd, capture_output=True, text=True, **kwargs)
+    logger.info(process.stdout)
+    logger.error(process.stderr)
+    process.check_returncode()
+    return process
+
+
 @pytest.fixture(scope='module')
 def taxii2_server():
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -95,19 +105,16 @@ def taxii2_server():
                                  "-f", str(repo_path / "docker-compose.yml"),
                                  "-f", str(repo_path / "docker-compose.override.yml"),
                                  "up", "--detach", "--wait", "--build"]
-        logger.info(f"Running docker compose with: {docker_compose_up_cmd}")
+        run_subprocess_and_log_output(docker_compose_up_cmd)
 
-        subprocess.run(docker_compose_up_cmd, check=True)
-
-        process_list_containers = subprocess.run(["docker", "compose", "--project-name", DOCKER_COMPOSE_PROJECT_NAME, "ps", "--all"], check=True)
-        logger.info(process_list_containers.stdout)
+        run_subprocess_and_log_output(["docker", "compose", "--project-name", DOCKER_COMPOSE_PROJECT_NAME, "ps", "--all"])
 
         yield Taxii2ServerConnectionInfo(server_url="http://localhost:5000",
                                         username=MEDALLION_ADMIN_USERNAME,
                                         password=MEDALLION_ADMIN_PASSWORD)
 
         docker_compose_down_cmd = ["docker", "compose", "--project-name", DOCKER_COMPOSE_PROJECT_NAME, "down"]
-        subprocess.run(docker_compose_down_cmd, check=True)
+        run_subprocess_and_log_output(docker_compose_down_cmd)
 
 @pytest.fixture(scope='module')
 def taxii2_server_session(taxii2_server):
@@ -117,3 +124,20 @@ def taxii2_server_session(taxii2_server):
         "Accept": "application/taxii+json;version=2.1",
     })
     return session
+
+@pytest.fixture(scope='module')
+def taxii2_server_is_reachable(taxii2_server_session, taxii2_server):
+    MAX_ATTEMPTS = 30
+    POLL_INTERVAL_SECONDS = 2
+    attempts = 0
+    while attempts < MAX_ATTEMPTS:
+        try:
+            resp = taxii2_server_session.get(taxii2_server.server_discovery_url)
+            resp.raise_for_status()
+            logger.info(f"TAXII2 server at {taxii2_server.server_discovery_url} is reachable.")
+            return
+        except requests.exceptions.RequestException:
+            logger.exception("TAXII2 server not reachable yet, retrying soon...")
+            time.sleep(POLL_INTERVAL_SECONDS)
+            attempts += 1
+    raise RuntimeError(f"TAXII2 server at {taxii2_server.server_discovery_url} not reachable within the given time (max_attempts and poll interval).")
