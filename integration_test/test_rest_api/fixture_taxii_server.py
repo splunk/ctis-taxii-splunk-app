@@ -18,6 +18,10 @@ MONGO_DB_PORT = os.environ.get('MONGO_DB_PORT', '27017')
 MONGO_DB_USERNAME = os.environ['MONGO_DB_USERNAME']
 MONGO_DB_PASSWORD = os.environ['MONGO_DB_PASSWORD']
 
+# This should be specified when running Splunk as Docker container
+TAXII_SERVER_HOST = os.environ.get('TAXII_SERVER_HOST', 'localhost')
+TAXII_SERVER_URL = f"http://{TAXII_SERVER_HOST}:5000"
+
 
 MEDALLION_ADMIN_USERNAME = "admin"
 MEDALLION_ADMIN_PASSWORD = random_alnum_string()
@@ -70,7 +74,7 @@ class Taxii2ServerConnectionInfo:
         return f"{self.server_url}/trustgroup1/{self.readable_and_writable_collection_id}"
 
 def run_subprocess_and_log_output(cmd, **kwargs):
-    logger.info(f"Running command: {' '.join(cmd)}")
+    logger.info(f"Running command: {cmd}")
     process = subprocess.run(cmd, capture_output=True, text=True, **kwargs)
     logger.info(process.stdout)
     logger.error(process.stderr)
@@ -109,7 +113,7 @@ def taxii2_server():
 
         run_subprocess_and_log_output(["docker", "compose", "--project-name", DOCKER_COMPOSE_PROJECT_NAME, "ps", "--all"])
 
-        yield Taxii2ServerConnectionInfo(server_url="http://localhost:5000",
+        yield Taxii2ServerConnectionInfo(server_url=TAXII_SERVER_URL,
                                         username=MEDALLION_ADMIN_USERNAME,
                                         password=MEDALLION_ADMIN_PASSWORD)
 

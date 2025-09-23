@@ -137,6 +137,8 @@ jobs:
           SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
           SPLUNK_APP_FILENAME: ctis.tar.gz
           SPLUNK_VERSION: ${{ matrix.splunk_version }}
+      - name: Debug Docker Network
+        run: docker network ls && docker network inspect bridge
       - name: Install Pytest
         run: pip install pytest
       - name: Run integration tests
@@ -146,3 +148,4 @@ jobs:
           SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
           MONGO_DB_USERNAME: root
           MONGO_DB_PASSWORD: ${{ secrets.MONGO_DB_PASSWORD }}
+          TAXII_SERVER_HOST: 172.17.0.1
