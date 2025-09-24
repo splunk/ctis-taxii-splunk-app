@@ -148,4 +148,7 @@ jobs:
           SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}
           MONGO_DB_USERNAME: root
           MONGO_DB_PASSWORD: ${{ secrets.MONGO_DB_PASSWORD }}
+
+          # Host machine can be accessed from docker container using this IP
+          # https://docs.docker.com/engine/network/tutorials/standalone/
           TAXII_SERVER_HOST: 172.17.0.1
