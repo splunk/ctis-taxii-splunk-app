@@ -77,7 +77,8 @@ def run_subprocess_and_log_output(cmd, **kwargs):
     logger.info(f"Running command: {cmd}")
     process = subprocess.run(cmd, capture_output=True, text=True, **kwargs)
     logger.info(process.stdout)
-    logger.error(process.stderr)
+    if process.stderr:
+        logger.error(process.stderr)
     process.check_returncode()
     return process
 
@@ -86,10 +87,7 @@ def run_subprocess_and_log_output(cmd, **kwargs):
 def taxii2_server():
     with tempfile.TemporaryDirectory() as tmpdirname:
         logger.info(f'Created temporary directory: {tmpdirname}')
-        git_clone_process = subprocess.run(["git", "clone", "--depth=1", TAXII_SERVER_REPO, tmpdirname], check=True)
-        logger.info(git_clone_process.stdout)
-        if git_clone_process.stderr:
-            logger.error(git_clone_process.stderr)
+        run_subprocess_and_log_output(["git", "clone", "--depth=1", TAXII_SERVER_REPO, tmpdirname])
 
         repo_path = pathlib.Path(tmpdirname)
 
