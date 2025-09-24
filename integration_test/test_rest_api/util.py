@@ -58,7 +58,7 @@ def get_collection(session, collection_name: str) -> list:
     while True:
         resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/{collection_name}',
                            params={**DEFAULT_REQUEST_PARAMS, "limit": page_size, "skip": offset})
-        resp.raise_for_status()
+        resp_raise_for_status_and_log_response(resp)
         j = resp.json()
         assert type(j) == list
         if len(j) == 0:
@@ -71,7 +71,7 @@ def get_collection(session, collection_name: str) -> list:
 def clear_collection(session, collection_name: str):
     resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/{collection_name}',
                           params=DEFAULT_REQUEST_PARAMS)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
 
 def clear_indicators_collection(session):
     clear_collection(session, "indicators")
@@ -82,6 +82,11 @@ def clear_identities_collection(session):
 def clear_groupings_collection(session):
     clear_collection(session, "groupings")
 
+def resp_raise_for_status_and_log_response(resp):
+    if not resp.ok:
+        logger.error(f"Response status code: {resp.status_code}, Response text: {resp.text}")
+    resp.raise_for_status()
+
 def bulk_insert_indicators(session, indicators: list):
     # do it in batches of 1000
     batches = [indicators[i:i + 1000] for i in range(0, len(indicators), 1000)]
@@ -89,25 +94,25 @@ def bulk_insert_indicators(session, indicators: list):
         resp = session.post(
             f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/indicators/batch_save',
             params=DEFAULT_REQUEST_PARAMS, json=batch)
-        resp.raise_for_status()
+        resp_raise_for_status_and_log_response(resp)
 
 
 def delete_endpoint(endpoint:str, session, payload: dict) -> dict:
     resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params=DEFAULT_REQUEST_PARAMS, json=payload)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 def post_endpoint(endpoint:str, session, payload: dict) -> dict:
     resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params=DEFAULT_REQUEST_PARAMS, json=payload)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 def get_endpoint(endpoint:str, session, **query_params) -> dict:
     resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params={**DEFAULT_REQUEST_PARAMS, **query_params})
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 def create_new_indicator(session, payload: dict) -> dict:
@@ -149,7 +154,7 @@ def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query:
         query_params["query"] = json.dumps(query)
     resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                        params=query_params)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 
@@ -238,5 +243,5 @@ def create_new_taxii_config(session, taxii_config_name: str, api_root_url:str, u
 
 def delete_taxii_config(session, taxii_config_name: str) -> dict:
     resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config/{taxii_config_name}', params=DEFAULT_REQUEST_PARAMS)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()

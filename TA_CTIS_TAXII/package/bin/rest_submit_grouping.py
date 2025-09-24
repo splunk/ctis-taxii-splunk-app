@@ -43,7 +43,7 @@ class SubmitGroupingHandler(AbstractRestHandler):
         self.get_taxii_config(session_key=session_key, stanza_name=taxii_config_name)
 
         # Validates that the grouping exists, along with the indicators and identity objects
-        bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id, session_key=session_key)
+        bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id)
         self.logger.info(f"bundle: {bundle.serialize()}")
 
         submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")

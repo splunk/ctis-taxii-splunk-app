@@ -5,7 +5,7 @@ def create_new_identity_with_defaults(session, name:str, identity_class:str) -> 
                                          "confidence": 50, "tlp_v2_rating": "TLP:GREEN"})
 
 class TestScenarios:
-    def test_add_new_indicator_writes_to_db(self, session, cleanup_identities_collection):
+    def test_add_new_identity_writes_to_db(self, session, cleanup_identities_collection):
         identities = get_identities_collection(session)
         assert len(identities) == 0
 

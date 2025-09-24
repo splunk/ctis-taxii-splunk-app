@@ -4,19 +4,19 @@ import logging
 import os
 import sys
 from collections import defaultdict
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
-from splunklib.client import KVStoreCollectionData
 from stix2 import Bundle
 from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
-from models import GroupingModelV1, IdentityModelV1, IndicatorModelV1, SubmissionModelV1, SubmissionStatus, \
-    bundle_for_grouping, grouping_converter, identity_converter, indicator_converter, serialize_stix_object, \
+from models import GroupingModelV1, SubmissionModelV1, SubmissionStatus, \
+    bundle_for_grouping, grouping_converter, serialize_stix_object, \
     submission_converter
+
+from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -42,83 +42,12 @@ def add_request_response_logging_hook(taxii_endpoint: _TAXIIEndpoint, app_logger
         app_logger.info(f"HTTP Response: {response.status_code} {response.reason} for {response.url}")
     session.hooks["response"].append(log_http_response)
 
-class CollectionName(Enum):
-    GROUPINGS = "groupings"
-    INDICATORS = "indicators"
-    IDENTITIES = "identities"
-    SUBMISSIONS = "submissions"
-
-class KVStoreObjectDocumentMapping:
-    def __init__(self, logger, session_key: str, app_namespace: str):
-        self.logger = logger
-        self.session_key = session_key
-        self.app_namespace = app_namespace
-        self.collection_name_to_model_and_converter = {
-            CollectionName.GROUPINGS: (GroupingModelV1, grouping_converter),
-            CollectionName.INDICATORS: (IndicatorModelV1, indicator_converter),
-            CollectionName.IDENTITIES: (IdentityModelV1, identity_converter),
-            CollectionName.SUBMISSIONS: (SubmissionModelV1, submission_converter),
-        }
-
-    def get_collection(self, collection_name: str):
-        return get_collection_data(collection_name=collection_name, session_key=self.session_key, app=self.app_namespace)
-
-    def list_collection_structured(self, collection_name: CollectionName, query: dict) -> List[Any]:
-        assert collection_name in self.collection_name_to_model_and_converter
-        model_class, converter = self.collection_name_to_model_and_converter[collection_name]
-        collection = self.get_collection(collection_name=collection_name.value)
-        records = collection.query(query=query, limit=0, skip=0)
-        records_structured = [converter.structure(record, model_class) for record in records]
-        return records_structured
-
-    def get_exactly_one_record_structured(self, collection_name: CollectionName, query: dict) -> Any:
-        structured_records = self.list_collection_structured(collection_name=collection_name, query=query)
-        num_records = len(structured_records)
-        assert num_records > 0, f"No records found for query: {query}"
-        assert num_records == 1, f"More than one record found for query: {query}"
-        return structured_records[0]
-
-    def list_grouping_indicators(self, grouping_id: str) -> List[IndicatorModelV1]:
-        return self.list_collection_structured(collection_name=CollectionName.INDICATORS, query={"grouping_id": grouping_id})
-
-class KVStoreCollectionUtils:
-    def __init__(self, logger: logging.Logger):
-        self.logger = logger
-
-    def get_collection_size(self, collection: KVStoreCollectionData, query=None) -> int:
-        #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
-        collection_query_kwargs = {}
-        if query:
-            collection_query_kwargs["query"] = query
-        records = []
-        offset = 0
-        page_size = 50000
-        while True:
-            page_of_records = collection.query(fields="_key", limit=page_size, skip=offset, **collection_query_kwargs)
-            records.extend(page_of_records)
-            if len(page_of_records) == 0:
-                break
-            # TODO: Make this more dynamic, considering custom set max page size in limits.conf
-            #  Consider `offset += len(page_of_records)` instead of fixed page_size
-            offset += page_size
-        total_records = len(records)
-        self.logger.info(f"Total records found: {total_records}")
-        return total_records
-
-    def query_exactly_one_record(self, collection: KVStoreCollectionData, query: dict) -> dict:
-        results = collection.query(query=query)
-        assert type(results) == list
-        num_results = len(results)
-        self.logger.info(f"Querying collection={collection} with query={query}. num_results={num_results}")
-        assert num_results > 0, f"No records found for query: {query}"
-        assert num_results == 1, f"More than one record found for query: {query}"
-        return results[0]
-
-
-
 class AbstractRestHandler(abc.ABC):
     def __init__(self, logger):
         self.logger = logger
+
+        # Lazy Init, generate_response() will set this
+        self.kvstore_collections_context: Optional[KVStoreCollectionsContext] = None
 
     @abc.abstractmethod
     def handle(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str) -> dict:
@@ -139,9 +68,6 @@ class AbstractRestHandler(abc.ABC):
         payload_json = in_string_dict["payload"]
         input_payload = json.loads(payload_json)
         return input_payload
-
-    def get_instance_of_kvstore_odm(self, session_key: str) -> KVStoreObjectDocumentMapping:
-        return KVStoreObjectDocumentMapping(session_key=session_key, app_namespace=NAMESPACE, logger=self.logger)
 
     def get_taxii_config(self, session_key: str, stanza_name: str):
         from solnlib import conf_manager
@@ -176,7 +102,7 @@ class AbstractRestHandler(abc.ABC):
         bundle_json = None
         try:
             submission = self.query_exactly_one_record(collection=submissions_collection, query={"submission_id": submission_id})
-            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission["grouping_id"], session_key=session_key)
+            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission["grouping_id"])
             bundle_json = serialize_stix_object(stix_object=bundle)
 
             taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission["taxii_config_name"])
@@ -203,23 +129,21 @@ class AbstractRestHandler(abc.ABC):
                                                 converter=submission_converter, model_class=SubmissionModelV1)
         return updated_submission
 
-    def get_kvstore_collection_utils_instance(self) -> KVStoreCollectionUtils:
-        return KVStoreCollectionUtils(logger=self.logger)
-
     def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
-                                collection_name: str) -> dict:
+                                collection_name: CollectionName) -> dict:
         self.logger.info(f"input_json: {input_json}")
         self.logger.info(f"query_params: {query_params}")
 
         collection_query_kwargs = self.extract_collection_query_kwargs(query_params)
 
-        collection = self.get_collection(collection_name=collection_name, session_key=session_key)
+        collection = self.get_collection(collection_name=collection_name.value, session_key=session_key)
         self.logger.info(f"Collection: {collection}")
         self.logger.info(f"Collection query kwargs: {collection_query_kwargs}")
         records = collection.query(**collection_query_kwargs)
-        self.logger.info(f"Records found: {len(records)}")
+        self.logger.info(f"Records found for query: {len(records)}")
 
-        total_records = self.get_kvstore_collection_utils_instance().get_collection_size(collection=collection, query=collection_query_kwargs.get("query"))
+        total_records = self.kvstore_collections_context.collections[collection_name].get_collection_size(query=collection_query_kwargs.get("query"))
+        self.logger.info(f"Total records found: {total_records}")
         response = {
             "records": records,
             "total": total_records,
@@ -232,6 +156,7 @@ class AbstractRestHandler(abc.ABC):
         structured = converter.structure(merged, model_class)
         return structured
 
+    # TODO: Deprecated, replace with using KVStoreCollectionsContext
     def query_exactly_one_record(self, collection, query: dict) -> dict:
         results = collection.query(query=query)
         self.logger.info(f"Results: {results}")
@@ -239,11 +164,13 @@ class AbstractRestHandler(abc.ABC):
         assert len(results) == 1, f"More than one record found for query: {query}"
         return results[0]
 
+    # TODO: Replace with method in AbstractKVStoreCollection
     def delete_record(self, collection, query: dict):
         saved_record = self.query_exactly_one_record(collection, query=query)
         self.logger.info(f"Deleting record: {saved_record}")
         collection.delete_by_id(id=saved_record["_key"])
 
+    # TODO: Replace with method in AbstractKVStoreCollection
     def insert_record(self, collection, input_json: dict, converter, model_class) -> dict:
         try:
             structured = converter.structure(input_json, model_class)
@@ -257,6 +184,7 @@ class AbstractRestHandler(abc.ABC):
 
         return record_as_dict
 
+    # TODO: Replace with method in AbstractKVStoreCollection
     def update_record(self, collection, query_for_one_record: dict, input_json: dict, converter, model_class) -> dict:
         saved_record = self.query_exactly_one_record(collection, query=query_for_one_record)
         try:
@@ -276,6 +204,7 @@ class AbstractRestHandler(abc.ABC):
 
         return updated_record_as_dict
 
+    # TODO: Replace with method in GroupingsCollection
     def update_grouping_modified_time_to_now(self, grouping_id: str, session_key: str):
         groupings = self.get_collection(collection_name="groupings", session_key=session_key)
         self.update_record(collection=groupings,
@@ -331,6 +260,9 @@ class AbstractRestHandler(abc.ABC):
             input_json = json.loads(in_string_dict["payload"]) if "payload" in in_string_dict else None
             session_key = in_string_dict["session"]["authtoken"]
             query_params_dict = self.parse_query_params(in_string_dict["query"])
+
+            self.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, logger=self.logger, app_namespace=NAMESPACE)
+
             payload = self.handle(input_json=input_json, query_params=query_params_dict, session_key=session_key)
             return {"payload": payload, "status": 200}
         except (ValueError, AssertionError) as e:
@@ -363,16 +295,14 @@ class AbstractRestHandler(abc.ABC):
 
         return Handler
 
-    def generate_stix_bundle_for_grouping(self, grouping_id:str, session_key:str) -> Bundle:
-        odm = self.get_instance_of_kvstore_odm(session_key=session_key)
-
-        grouping = odm.get_exactly_one_record_structured(collection_name=CollectionName.GROUPINGS, query={"grouping_id": grouping_id})
+    def generate_stix_bundle_for_grouping(self, grouping_id:str) -> Bundle:
+        grouping = self.kvstore_collections_context.groupings.fetch_exactly_one_structured(query={"grouping_id": grouping_id})
         self.logger.info(f"grouping: {grouping}")
 
-        indicators = odm.list_grouping_indicators(grouping_id=grouping_id)
+        indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
         self.logger.info(f"indicators: {indicators}")
 
-        identity = odm.get_exactly_one_record_structured(collection_name=CollectionName.IDENTITIES, query={"identity_id": grouping.created_by_ref})
+        identity = self.kvstore_collections_context.identities.fetch_exactly_one_structured(query={"identity_id" : grouping.created_by_ref})
         self.logger.info(f"identity: {identity}")
 
         bundle = bundle_for_grouping(grouping_=grouping, indicators=indicators, grouping_identity=identity)

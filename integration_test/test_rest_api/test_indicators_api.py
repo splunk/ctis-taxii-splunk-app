@@ -36,7 +36,7 @@ class TestScenarios:
         create_new_indicator(session, payload=payload)
         assert len(get_indicators_collection(session)) == 5
 
-        resp_no_filter = list_indicators(session, skip=0, limit=100, query={})
+        resp_no_filter = list_indicators(session, skip=0, limit=100, query=None)
         indicators_no_filter = resp_no_filter["records"]
         assert len(indicators_no_filter) == 5
         assert resp_no_filter["total"] == 5
