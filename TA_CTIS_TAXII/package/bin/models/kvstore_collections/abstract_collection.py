@@ -1,13 +1,13 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Type, TypeVar
 
 from cattrs import Converter
 from solnlib._utils import get_collection_data
 from splunklib.client import KVStoreCollectionData
 
-from ..base import BaseModelV1
 from .collection_name import CollectionName
+from ..base import BaseModelV1
 
 T = TypeVar("T", bound=BaseModelV1)
 
@@ -37,24 +37,24 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
     def collection(self) -> KVStoreCollectionData:
         return get_collection_data(collection_name=self.collection_name.value, session_key=self.session_key, app=self.app_namespace)
 
-    def fetch_exactly_one_raw(self, query: dict) -> dict:
+    def fetch_exactly_one_raw(self, query: Dict) -> Dict:
         records = list(self.collection.query(query=query))
         assert len(records) > 0, f"No records found for query: {query}"
         assert len(records) == 1, f"More than one record found for query: {query}"
         return records[0]
 
-    def fetch_exactly_one_structured(self, query: dict) -> T:
+    def fetch_exactly_one_structured(self, query: Dict) -> T:
         record = self.fetch_exactly_one_raw(query=query)
         structured = self.model_converter.structure(record, self.model_class)
         return structured
 
-    def fetch_many_raw(self, query: dict, limit=0, skip=0) -> list[dict]:
+    def fetch_many_raw(self, query: Dict, limit=0, skip=0) -> List[Dict]:
         return list(self.collection.query(query=query, limit=limit, skip=skip))
 
-    def fetch_many_structured(self, query: dict) -> list[T]:
+    def fetch_many_structured(self, query: dict) -> List[T]:
         return [self.model_converter.structure(record, self.model_class) for record in self.fetch_many_raw(query=query)]
 
-    def get_collection_size(self, query: Optional[dict] = None) -> int:
+    def get_collection_size(self, query: Optional[Dict] = None) -> int:
         #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
         records = []
         offset = 0
