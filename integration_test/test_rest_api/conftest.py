@@ -1,7 +1,9 @@
 import pytest
 import requests
 import os
-from util import clear_groupings_collection, clear_indicators_collection, clear_identities_collection
+from util import clear_groupings_collection, clear_indicators_collection, clear_identities_collection, \
+    create_new_taxii_config, random_alnum_string, delete_taxii_config
+from fixture_taxii_server import taxii2_server, taxii2_server_session, taxii2_server_is_reachable # noqa: F401
 
 SPLUNK_USERNAME = os.environ['SPLUNK_USERNAME']
 SPLUNK_PASSWORD = os.environ['SPLUNK_PASSWORD']
@@ -38,3 +40,19 @@ def new_session():
 def session():
     return new_session()
 
+@pytest.fixture(scope='module')
+def testing_context_id():
+    return f"test_{random_alnum_string()}"
+
+@pytest.fixture
+def ctis_app_taxii_config(session, taxii2_server, testing_context_id):
+    taxii_config_name = f"{testing_context_id}_taxii_config"
+    create_new_taxii_config(session=session,
+                                   taxii_config_name=taxii_config_name,
+                                   api_root_url=taxii2_server.default_api_root_url,
+                                   username=taxii2_server.username,
+                                   password=taxii2_server.password)
+    yield taxii_config_name
+
+    # cleanup: delete taxii config from app
+    delete_taxii_config(session=session, taxii_config_name=taxii_config_name)
