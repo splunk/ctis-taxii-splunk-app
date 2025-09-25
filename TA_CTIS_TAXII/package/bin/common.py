@@ -118,7 +118,7 @@ class AbstractRestHandler(abc.ABC):
             "bundle_json_sent": bundle_json,
             "response_json": json.dumps(taxii_response_dict) if taxii_response_dict else None,
             "error_message": error,
-            "status": SubmissionStatus.FAILED.value if error else SubmissionStatus.SENT.value,
+            "status": SubmissionStatus.FAILED if error else SubmissionStatus.SENT,
         }
         updated_submission = self.kvstore_collections_context.submissions.update_submission(
             submission_id=submission_id, updates=submission_delta)
