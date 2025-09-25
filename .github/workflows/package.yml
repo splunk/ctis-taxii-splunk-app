@@ -61,7 +61,7 @@ jobs:
     # Only run when push into main branch
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-22.04
-    needs: [ unit-test ]
+    needs: [ unit-test, integration-test ]
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
