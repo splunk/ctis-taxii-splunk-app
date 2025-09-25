@@ -155,12 +155,6 @@ class AbstractRestHandler(abc.ABC):
         return results[0]
 
     # TODO: Replace with method in AbstractKVStoreCollection
-    def delete_record(self, collection, query: dict):
-        saved_record = self.query_exactly_one_record(collection, query=query)
-        self.logger.info(f"Deleting record: {saved_record}")
-        collection.delete_by_id(id=saved_record["_key"])
-
-    # TODO: Replace with method in AbstractKVStoreCollection
     def insert_record(self, collection, input_json: dict, converter, model_class) -> dict:
         try:
             structured = converter.structure(input_json, model_class)

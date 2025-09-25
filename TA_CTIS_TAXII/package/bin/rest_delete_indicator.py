@@ -25,7 +25,8 @@ class DeleteIndicatorHandler(AbstractRestHandler):
         indicator_id = input_json["indicator_id"]
         indicator = self.query_exactly_one_record(collection=collection,
                                                   query={"indicator_id": indicator_id})
-        self.delete_record(collection=collection, query={"indicator_id": indicator_id})
+
+        self.kvstore_collections_context.indicators.delete_indicator(indicator_id=indicator_id)
 
         grouping_id = indicator["grouping_id"]
         self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={})

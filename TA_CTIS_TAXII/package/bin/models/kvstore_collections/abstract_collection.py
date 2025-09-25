@@ -46,6 +46,16 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         assert len(records) == 1, f"More than one record found for query: {query}"
         return records[0]
 
+    def delete_exactly_one(self, query: Dict) -> str:
+        """
+        Return the _key of the deleted record.
+        """
+        record = self.fetch_exactly_one_structured(query=query)
+        delete_http_resp = self.collection.delete_by_id(id=record.key)
+
+        self.logger.info(f"Deleted record with _key: {record.key}, response: {delete_http_resp}")
+        return record.key
+
     def fetch_exactly_one_structured(self, query: Dict) -> T:
         record = self.fetch_exactly_one_raw(query=query)
         structured = self.model_converter.structure(record, self.model_class)
@@ -60,6 +70,7 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
     def update_one_structured(self, query: Dict, updates: Dict) -> T:
         """
         Update a single record identified by the query with the provided updates which is a dict of key-values.
+        Note that the updates are applied to the structured record.
         Has side effect of updating the `modified` field to the current time.
         Returns the updated structured record.
         """
