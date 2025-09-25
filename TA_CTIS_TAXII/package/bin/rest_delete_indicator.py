@@ -28,7 +28,7 @@ class DeleteIndicatorHandler(AbstractRestHandler):
         self.delete_record(collection=collection, query={"indicator_id": indicator_id})
 
         grouping_id = indicator["grouping_id"]
-        self.update_grouping_modified_time_to_now(grouping_id=grouping_id, session_key=session_key)
+        self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={})
 
         return {}
 

@@ -12,10 +12,8 @@ from stix2 import Bundle
 from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
-from models import GroupingModelV1, SubmissionModelV1, SubmissionStatus, \
-    bundle_for_grouping, grouping_converter, serialize_stix_object, \
-    submission_converter
-
+from models import SubmissionStatus, \
+    bundle_for_grouping, serialize_stix_object
 from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException
 
@@ -46,7 +44,7 @@ class AbstractRestHandler(abc.ABC):
     def __init__(self, logger):
         self.logger = logger
 
-        # Lazy Init, generate_response() will set this
+        # Lazy init, generate_response() will set this
         self.kvstore_collections_context: Optional[KVStoreCollectionsContext] = None
 
     @abc.abstractmethod
@@ -96,17 +94,16 @@ class AbstractRestHandler(abc.ABC):
         return collection_id_to_collection[collection_id]
 
     def submit_grouping(self, session_key: str, submission_id: str) -> dict:
-        submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")
         taxii_response_dict = None
         error = None
         bundle_json = None
         try:
-            submission = self.query_exactly_one_record(collection=submissions_collection, query={"submission_id": submission_id})
-            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission["grouping_id"])
+            submission = self.kvstore_collections_context.submissions.get_submission(submission_id=submission_id)
+            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission.grouping_id)
             bundle_json = serialize_stix_object(stix_object=bundle)
 
-            taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission["taxii_config_name"])
-            taxii_collection_id = submission["collection_id"]
+            taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission.taxii_config_name)
+            taxii_collection_id = submission.collection_id
 
             self.logger.info(f"Submitting bundle={bundle_json} to TAXII collection: collection_id={taxii_collection_id}")
             taxii_collection = self.get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
@@ -123,11 +120,10 @@ class AbstractRestHandler(abc.ABC):
             "error_message": error,
             "status": SubmissionStatus.FAILED.value if error else SubmissionStatus.SENT.value,
         }
-        updated_submission = self.update_record(collection=submissions_collection,
-                                                query_for_one_record={"submission_id": submission_id},
-                                                input_json=submission_delta,
-                                                converter=submission_converter, model_class=SubmissionModelV1)
-        return updated_submission
+        updated_submission = self.kvstore_collections_context.submissions.update_submission(
+            submission_id=submission_id, updates=submission_delta)
+        updated_submission_raw = self.kvstore_collections_context.submissions.model_converter.unstructure(updated_submission)
+        return updated_submission_raw
 
     def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
                                 collection_name: CollectionName) -> dict:
@@ -149,12 +145,6 @@ class AbstractRestHandler(abc.ABC):
             "total": total_records,
         }
         return response
-
-    @staticmethod
-    def prepare_merged_model_instance(saved_record: dict, input_json: dict, converter, model_class):
-        merged = {**saved_record, **input_json}
-        structured = converter.structure(merged, model_class)
-        return structured
 
     # TODO: Deprecated, replace with using KVStoreCollectionsContext
     def query_exactly_one_record(self, collection, query: dict) -> dict:
@@ -183,35 +173,6 @@ class AbstractRestHandler(abc.ABC):
         collection.insert(record_as_dict)
 
         return record_as_dict
-
-    # TODO: Replace with method in AbstractKVStoreCollection
-    def update_record(self, collection, query_for_one_record: dict, input_json: dict, converter, model_class) -> dict:
-        saved_record = self.query_exactly_one_record(collection, query=query_for_one_record)
-        try:
-            structured = self.prepare_merged_model_instance(saved_record=saved_record, input_json=input_json,
-                                                            converter=converter, model_class=model_class)
-        except ClassValidationError as exc:
-            self.logger.exception(f"Validation failed on merged model instance: {exc}")
-            raise exc
-
-        structured.set_modified_to_now()
-
-        updated_record_as_dict = converter.unstructure(structured)
-
-        self.logger.info(f"Updating record: {updated_record_as_dict}")
-
-        collection.update(id=structured.key, data=updated_record_as_dict)
-
-        return updated_record_as_dict
-
-    # TODO: Replace with method in GroupingsCollection
-    def update_grouping_modified_time_to_now(self, grouping_id: str, session_key: str):
-        groupings = self.get_collection(collection_name="groupings", session_key=session_key)
-        self.update_record(collection=groupings,
-                           query_for_one_record={"grouping_id": grouping_id},
-                           input_json={},
-                           converter=grouping_converter,
-                           model_class=GroupingModelV1)
 
     @staticmethod
     def exception_response(e: Exception, status_code: int) -> dict:

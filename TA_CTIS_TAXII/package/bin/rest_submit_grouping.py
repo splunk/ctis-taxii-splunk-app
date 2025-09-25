@@ -19,12 +19,10 @@ logger = get_logger_for_script(__file__)
 
 
 class SubmitGroupingHandler(AbstractRestHandler):
-    def update_grouping_last_submission_at(self, grouping_id: str, last_submission_at: datetime, session_key: str):
-        groupings_collection = self.get_collection(session_key=session_key, collection_name="groupings")
-        self.update_record(collection=groupings_collection,
-                           query_for_one_record={"grouping_id": grouping_id},
-                           input_json={"last_submission_at": last_submission_at.isoformat()},
-                           converter=grouping_converter, model_class=GroupingModelV1)
+    def update_grouping_last_submission_at(self, grouping_id: str, last_submission_at: datetime):
+        self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={
+            "last_submission_at": last_submission_at.isoformat()
+        })
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         if "grouping_id" not in input_json:
@@ -66,8 +64,7 @@ class SubmitGroupingHandler(AbstractRestHandler):
         self.insert_record(collection=submissions_collection, input_json=new_submission_dict,
                            converter=submission_converter, model_class=SubmissionModelV1)
 
-        self.update_grouping_last_submission_at(grouping_id=grouping_id, last_submission_at=new_submission.scheduled_at,
-                                                session_key=session_key)
+        self.update_grouping_last_submission_at(grouping_id=grouping_id, last_submission_at=new_submission.scheduled_at)
 
         submission_to_return = new_submission_dict
         if not scheduled_at:

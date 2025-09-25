@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, Generic, List, Optional, Type, TypeVar
 
 from cattrs import Converter
+import attrs
 from solnlib._utils import get_collection_data
 from splunklib.client import KVStoreCollectionData
 
@@ -12,6 +13,8 @@ from ..base import BaseModelV1
 T = TypeVar("T", bound=BaseModelV1)
 
 
+# TODO: Logger should ideally be defined per file (not shared).
+#  Figure out how to setup log handlers to properly to do this.
 class AbstractKVStoreCollection(ABC, Generic[T]):
     def __init__(self, logger: logging.Logger, session_key: str, app_namespace: str):
         self.logger = logger
@@ -53,6 +56,20 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
 
     def fetch_many_structured(self, query: dict) -> List[T]:
         return [self.model_converter.structure(record, self.model_class) for record in self.fetch_many_raw(query=query)]
+
+    def update_one_structured(self, query: Dict, updates: Dict) -> T:
+        """
+        Update a single record identified by the query with the provided updates which is a dict of key-values.
+        Has side effect of updating the `modified` field to the current time.
+        Returns the updated structured record.
+        """
+        record = self.fetch_exactly_one_structured(query=query)
+        self.logger.info(f"Record before update: {record}")
+        record_updated = attrs.evolve(record, **updates)
+        record_updated.set_modified_to_now()
+        self.logger.info(f"Record after update: {record_updated}")
+        self.collection.update(id=record.key, data=self.model_converter.unstructure(record_updated))
+        return record_updated
 
     def get_collection_size(self, query: Optional[Dict] = None) -> int:
         #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D

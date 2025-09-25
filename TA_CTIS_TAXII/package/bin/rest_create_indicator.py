@@ -48,7 +48,8 @@ class Handler(AbstractRestHandler):
             collection.insert(indicator_dict)
             serialized.append(indicator_dict)
 
-        self.update_grouping_modified_time_to_now(grouping_id=grouping_id, session_key=session_key)
+        # Update the grouping's modified time to now
+        self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={})
 
         response = {
             "status": "success",

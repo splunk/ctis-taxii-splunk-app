@@ -25,14 +25,16 @@ class Handler(AbstractRestHandler):
         self.logger.info(f"input_json={input_json}")
 
         indicator_id = input_json["indicator_id"]
-        updated_record = self.update_record(collection, query_for_one_record={"indicator_id": indicator_id},
-                                            input_json=input_json, converter=indicator_converter,
-                                            model_class=IndicatorModelV1)
-        grouping_id = updated_record["grouping_id"]
-        self.update_grouping_modified_time_to_now(grouping_id=grouping_id, session_key=session_key)
+        indicators_collection = self.kvstore_collections_context.indicators
+        updated_indicator = indicators_collection.update_indicator(indicator_id=indicator_id, updates=input_json)
+        updated_indicator_raw = indicators_collection.model_converter.unstructure(updated_indicator)
+
+        # Update the grouping's modified time to now
+        grouping_id = updated_indicator.grouping_id
+        self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={})
 
         response = {
-            "indicator": updated_record,
+            "indicator": updated_indicator_raw,
         }
         return response
 

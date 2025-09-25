@@ -20,19 +20,17 @@ logger = get_logger_for_script(__file__)
 class EditGroupingHandler(AbstractRestHandler):
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        collection = get_collection_data(collection_name="groupings", session_key=session_key, app=NAMESPACE)
-
         assert "grouping_id" in input_json, "grouping_id is required"
         grouping_id = input_json["grouping_id"]
 
         # TODO: Validate that tlp_v2_rating is at least as most as constituent indicators' tlp_v2_rating
 
-        updated_record = self.update_record(collection=collection, query_for_one_record={"grouping_id": grouping_id},
-                                            input_json=input_json, converter=grouping_converter,
-                                            model_class=GroupingModelV1)
+        groupings_collection = self.kvstore_collections_context.groupings
+        updated_record = groupings_collection.update_grouping(grouping_id=grouping_id, updates=input_json)
+        updated_record_raw = groupings_collection.model_converter.unstructure(updated_record)
 
         response = {
-            "grouping": updated_record,
+            "grouping": updated_record_raw,
         }
         return response
 
