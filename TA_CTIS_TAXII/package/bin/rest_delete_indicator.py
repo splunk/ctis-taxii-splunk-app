@@ -20,16 +20,14 @@ logger = get_logger_for_script(__file__)
 class DeleteIndicatorHandler(AbstractRestHandler):
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        collection = get_collection_data(collection_name="indicators", session_key=session_key, app=NAMESPACE)
-
         indicator_id = input_json["indicator_id"]
-        indicator = self.query_exactly_one_record(collection=collection,
-                                                  query={"indicator_id": indicator_id})
+        indicator = self.kvstore_collections_context.indicators.get_indicator(indicator_id=indicator_id)
 
         self.kvstore_collections_context.indicators.delete_indicator(indicator_id=indicator_id)
 
-        grouping_id = indicator["grouping_id"]
-        self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={})
+        # TODO: Replace with a convenience method, since this is repeated across multiple handlers
+        # Update the grouping's modified time to now
+        self.kvstore_collections_context.groupings.update_grouping(grouping_id=indicator.grouping_id, updates={})
 
         return {}
 

@@ -42,8 +42,8 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
 
     def fetch_exactly_one_raw(self, query: Dict) -> Dict:
         records = list(self.collection.query(query=query))
-        assert len(records) > 0, f"No records found for query: {query}"
-        assert len(records) == 1, f"More than one record found for query: {query}"
+        assert len(records) > 0, f"No records found for collection={self.collection_name}, query={query}"
+        assert len(records) == 1, f"More than one record found for collection={self.collection_name}, query={query}"
         return records[0]
 
     def delete_exactly_one(self, query: Dict) -> str:
@@ -55,6 +55,14 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
 
         self.logger.info(f"Deleted record with _key: {record.key}, response: {delete_http_resp}")
         return record.key
+
+    def check_if_exactly_one_exists(self, query: Dict) -> bool:
+        try:
+            self.fetch_exactly_one_structured(query=query)
+            return True
+        except AssertionError:
+            self.logger.exception(f"Record does not exist or more than one record exists for query={query}")
+            return False
 
     def fetch_exactly_one_structured(self, query: Dict) -> T:
         record = self.fetch_exactly_one_raw(query=query)

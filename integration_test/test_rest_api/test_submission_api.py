@@ -62,3 +62,18 @@ class TestStixBundleSubmission:
         taxii_server_resp_json = submission_resp_obj["response_json"]
         taxii_server_resp_obj = json.loads(taxii_server_resp_json)
         assert taxii_server_resp_obj["status"] == "complete"
+
+class TestCrudOperationsOnScheduledSubmission:
+    def test_create_scheduled_submission(self):
+        raise NotImplementedError
+
+    def test_unschedule_scheduled_submission(self):
+        raise NotImplementedError
+
+    def test_edit_scheduled_submission(self):
+        # Edit the scheduled time of the submission
+        raise NotImplementedError
+
+    def test_list_submissions(self):
+        raise NotImplementedError
+

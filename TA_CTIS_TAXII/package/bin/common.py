@@ -146,14 +146,6 @@ class AbstractRestHandler(abc.ABC):
         }
         return response
 
-    # TODO: Deprecated, replace with using KVStoreCollectionsContext
-    def query_exactly_one_record(self, collection, query: dict) -> dict:
-        results = collection.query(query=query)
-        self.logger.info(f"Results: {results}")
-        assert len(results) > 0, f"No records found for query: {query}"
-        assert len(results) == 1, f"More than one record found for query: {query}"
-        return results[0]
-
     # TODO: Replace with method in AbstractKVStoreCollection
     def insert_record(self, collection, input_json: dict, converter, model_class) -> dict:
         try:

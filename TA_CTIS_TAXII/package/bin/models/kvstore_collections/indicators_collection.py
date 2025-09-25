@@ -30,3 +30,6 @@ class IndicatorsCollection(AbstractKVStoreCollection[IndicatorModelV1]):
 
     def delete_indicator(self, indicator_id: str) -> str:
         return self.delete_exactly_one(query={IndicatorsCollection.INDICATOR_ID_FIELD: indicator_id})
+
+    def check_if_indicator_exists(self, indicator_id: str) -> bool:
+        return self.check_if_exactly_one_exists(query={IndicatorsCollection.INDICATOR_ID_FIELD: indicator_id})

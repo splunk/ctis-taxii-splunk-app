@@ -26,3 +26,6 @@ class IdentitiesCollection(AbstractKVStoreCollection[IdentityModelV1]):
 
     def delete_identity(self, identity_id: str) -> str:
         return self.delete_exactly_one(query={IdentitiesCollection.IDENTITY_ID_FIELD: identity_id})
+
+    def check_if_identity_exists(self, identity_id: str) -> bool:
+        return self.check_if_exactly_one_exists(query={IdentitiesCollection.IDENTITY_ID_FIELD: identity_id})

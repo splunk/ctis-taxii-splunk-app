@@ -27,3 +27,6 @@ class GroupingsCollection(AbstractKVStoreCollection[GroupingModelV1]):
 
     def delete_grouping(self, grouping_id: str) -> str:
         return self.delete_exactly_one(query={GroupingsCollection.ID_FIELD: grouping_id})
+
+    def check_if_grouping_exists(self, grouping_id: str) -> bool:
+        return self.check_if_exactly_one_exists(query={GroupingsCollection.ID_FIELD: grouping_id})
