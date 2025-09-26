@@ -142,7 +142,7 @@ jobs:
       - name: Install Pytest
         run: pip install pytest
       - name: Run integration tests
-        run: cd integration_test/test_rest_api && python -m pytest -v
+        run: cd integration_test/test_rest_api && python -m pytest -v --durations=0
         env:
           SPLUNK_USERNAME: admin
           SPLUNK_PASSWORD: ${{ secrets.SPLUNK_PASSWORD }}

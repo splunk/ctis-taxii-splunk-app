@@ -175,6 +175,17 @@ def list_groupings(session, skip: int, limit: int, query: dict = None) -> dict:
 def list_submissions(session, skip: int=0, limit: int=0, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-submissions", session=session, skip=skip, limit=limit, query=query)
 
+def get_submission(session, submission_id: str) -> dict:
+    resp = list_submissions(session=session, skip=0, limit=0, query={"submission_id": submission_id})
+    assert resp["total"] == 1
+    assert len(resp["records"]) == 1
+    return resp["records"][0]
+
+def unschedule_submission(session, submission_id: str) -> dict:
+    return post_endpoint(endpoint="unschedule-submission", session=session, payload={
+        "submission_id": submission_id
+    })
+
 def create_indicator_form_payload(grouping_id:str, indicators: list) -> dict:
     return {
         "grouping_id": grouping_id,
