@@ -46,6 +46,7 @@ class TestScenarios:
         assert len(identities_1) == 1
         saved_identity_1 = identities_1[0]
 
+        # TODO: Test changing an enum value
         edit_identity(session, {"identity_id": saved_identity_1["identity_id"], "name": "user2"})
 
         identities_2 = get_identities_collection(session)

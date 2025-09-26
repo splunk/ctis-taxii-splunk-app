@@ -75,6 +75,7 @@ class TestScenarios:
         assert len(groupings_1) == 1
         assert groupings_1[0]["name"] == "grouping-1"
 
+        # TODO: Test changing an enum value
         edit_grouping(session, {
             "grouping_id": groupings_1[0]["grouping_id"],
             "name": "grouping-a",
