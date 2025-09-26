@@ -21,8 +21,11 @@ class IdentitiesCollection(AbstractKVStoreCollection[IdentityModelV1]):
     def get_identity(self, identity_id: str) -> IdentityModelV1:
         return self.fetch_exactly_one_structured(query={IdentitiesCollection.IDENTITY_ID_FIELD: identity_id})
 
-    def update_identity(self, identity_id: str, updates: Dict) -> IdentityModelV1:
+    def update_identity_structured(self, identity_id: str, updates: Dict) -> IdentityModelV1:
         return self.update_one_structured(query={IdentitiesCollection.IDENTITY_ID_FIELD: identity_id}, updates=updates)
+
+    def update_identity_raw(self, identity_id: str, updates: Dict) -> Dict:
+        return self.update_one_raw(query={IdentitiesCollection.IDENTITY_ID_FIELD: identity_id}, raw_updates=updates)
 
     def delete_identity(self, identity_id: str) -> str:
         return self.delete_exactly_one(query={IdentitiesCollection.IDENTITY_ID_FIELD: identity_id})

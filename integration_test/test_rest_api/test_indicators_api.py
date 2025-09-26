@@ -1,6 +1,6 @@
 from .util import bulk_insert_indicators, create_indicator_form_payload, create_new_indicator, delete_indicator, \
     edit_indicator, example_indicator, get_groupings_collection, get_identities_collection, get_indicators_collection, \
-    list_indicators, new_indicator_payload, new_sample_grouping
+    list_indicators, new_indicator_payload, new_sample_grouping, get_grouping
 
 
 def assert_collections_are_empty(session):
@@ -85,24 +85,36 @@ class TestScenarios:
         assert len(resp["records"]) == 10
 
     def test_edit_indicator(self, session, cleanup_all_collections):
-        assert_collections_are_empty(session)
-        grouping = new_sample_grouping(session)
+        grouping = new_sample_grouping(session, grouping_tlp_rating="TLP:AMBER")
+        assert grouping["tlp_v2_rating"] == "TLP:AMBER"
+
         payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=[example_indicator()])
         create_new_indicator(session, payload=payload)
         indicators = get_indicators_collection(session)
         assert len(indicators) == 1
         indicator = indicators[0]
         assert indicator["indicator_value"] == "123.456.1.2"
+        assert indicator["tlp_v2_rating"] == "TLP:GREEN"
+
+        # Check side-effect of updating grouping's TLP rating to match highest TLP of its indicators
+        grouping_id = grouping["grouping_id"]
+        grouping_after_indicator_create = get_grouping(session, grouping_id=grouping_id)
+        assert grouping_after_indicator_create["tlp_v2_rating"] == "TLP:GREEN"
 
         new_payload = {
             "indicator_id": indicator["indicator_id"],
             "indicator_value": "1.2.3.4",
+            "tlp_v2_rating": "TLP:AMBER",
         }
         edit_indicator(session, payload=new_payload)
         indicators_2 = list_indicators(session, skip=0, limit=100)
         assert len(indicators_2["records"]) == 1
         edited_indicator = indicators_2["records"][0]
         assert edited_indicator["indicator_value"] == "1.2.3.4"
+
+        # Check side-effect of updating grouping's TLP rating to match highest TLP of its indicators
+        grouping_after_indicator_edit = get_grouping(session, grouping_id=grouping_id)
+        assert grouping_after_indicator_edit["tlp_v2_rating"] == "TLP:AMBER"
 
     def test_delete_indicator(self, session, cleanup_all_collections):
         assert_collections_are_empty(session)
@@ -118,3 +130,35 @@ class TestScenarios:
         indicators_2 = list_indicators(session, skip=0, limit=100)
         assert len(indicators_2["records"]) == 0
         assert indicators_2["total"] == 0
+
+    def test_grouping_should_update_tlp_rating_when_indicators_are_edited_or_deleted(self, session, cleanup_all_collections):
+        grouping = new_sample_grouping(session)
+        grouping_id = grouping["grouping_id"]
+
+        payload = create_indicator_form_payload(grouping_id=grouping_id, indicators=[example_indicator(), example_indicator()])
+        assert payload["tlp_v2_rating"] == "TLP:GREEN"
+
+        create_indicators_resp = create_new_indicator(session, payload=payload)
+        indicator_1 = create_indicators_resp["indicators"][0]
+        indicator_2 = create_indicators_resp["indicators"][1]
+
+        edit_indicator(session, payload={
+            "indicator_id": indicator_1["indicator_id"],
+            "tlp_v2_rating": "TLP:AMBER",
+        })
+        edit_indicator(session, payload={
+            "indicator_id": indicator_2["indicator_id"],
+            "tlp_v2_rating": "TLP:RED",
+        })
+        grouping_after_indicator_edits = get_grouping(session, grouping_id=grouping_id)
+        assert grouping_after_indicator_edits["tlp_v2_rating"] == "TLP:RED"
+
+        delete_indicator(session, indicator_id=indicator_2["indicator_id"])
+
+        grouping_after_delete_indicator_2 = get_grouping(session, grouping_id=grouping_id)
+        assert grouping_after_delete_indicator_2["tlp_v2_rating"] == "TLP:AMBER", "Grouping TLP should now match indicator_1 and be TLP:AMBER"
+
+        delete_indicator(session, indicator_id=indicator_1["indicator_id"])
+
+        grouping_after_delete_indicator_1 = get_grouping(session, grouping_id=grouping_id)
+        assert grouping_after_delete_indicator_1["tlp_v2_rating"] == "TLP:AMBER", "No change to grouping TLP since no indicators remain"

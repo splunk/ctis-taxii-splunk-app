@@ -22,8 +22,11 @@ class GroupingsCollection(AbstractKVStoreCollection[GroupingModelV1]):
     def get_grouping(self, grouping_id: str) -> GroupingModelV1:
         return self.fetch_exactly_one_structured(query={GroupingsCollection.ID_FIELD: grouping_id})
 
-    def update_grouping(self, grouping_id: str, updates: Dict) -> GroupingModelV1:
+    def update_grouping_structured(self, grouping_id: str, updates: Dict) -> GroupingModelV1:
         return self.update_one_structured(query={GroupingsCollection.ID_FIELD: grouping_id}, updates=updates)
+
+    def update_grouping_raw(self, grouping_id: str, updates: Dict) -> Dict:
+        return self.update_one_raw(query={GroupingsCollection.ID_FIELD: grouping_id}, raw_updates=updates)
 
     def delete_grouping(self, grouping_id: str) -> str:
         return self.delete_exactly_one(query={GroupingsCollection.ID_FIELD: grouping_id})

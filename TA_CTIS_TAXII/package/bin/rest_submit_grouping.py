@@ -20,7 +20,7 @@ logger = get_logger_for_script(__file__)
 
 class SubmitGroupingHandler(AbstractRestHandler):
     def update_grouping_last_submission_at(self, grouping_id: str, last_submission_at: datetime):
-        self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={
+        self.kvstore_collections_context.groupings.update_grouping_raw(grouping_id=grouping_id, updates={
             "last_submission_at": last_submission_at.isoformat()
         })
 

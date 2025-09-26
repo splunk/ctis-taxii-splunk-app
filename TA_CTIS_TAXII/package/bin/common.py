@@ -13,7 +13,7 @@ from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
 from models import SubmissionStatus, \
-    bundle_for_grouping, serialize_stix_object
+    bundle_for_grouping, serialize_stix_object, maximum_tlpv2_of_indicators
 from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException
 
@@ -254,3 +254,14 @@ class AbstractRestHandler(abc.ABC):
 
         bundle = bundle_for_grouping(grouping_=grouping, indicators=indicators, grouping_identity=identity)
         return bundle
+
+    def update_grouping_tlp_rating_to_match_indicators(self, grouping_id: str):
+        indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
+        self.logger.info(f"Grouping {grouping_id} has indicators: {indicators}")
+        if indicators:
+            max_tlpv2 = maximum_tlpv2_of_indicators(indicators=indicators)
+            self.logger.info(f"Updating grouping {grouping_id} to have TLPv2 rating: {max_tlpv2}")
+            updated_grouping = self.kvstore_collections_context.groupings.update_grouping_structured(grouping_id=grouping_id, updates={"tlp_v2_rating": max_tlpv2})
+            self.logger.info(f"Updated grouping: {updated_grouping}")
+        else:
+            self.logger.info(f"Grouping {grouping_id} has no indicators, not updating TLPv2 rating")

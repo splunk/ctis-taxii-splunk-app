@@ -25,8 +25,11 @@ class IndicatorsCollection(AbstractKVStoreCollection[IndicatorModelV1]):
     def get_indicator(self, indicator_id: str) -> IndicatorModelV1:
         return self.fetch_exactly_one_structured(query={IndicatorsCollection.INDICATOR_ID_FIELD: indicator_id})
 
-    def update_indicator(self, indicator_id: str, updates: Dict) -> IndicatorModelV1:
+    def update_indicator_structured(self, indicator_id: str, updates: Dict) -> IndicatorModelV1:
         return self.update_one_structured(query={IndicatorsCollection.INDICATOR_ID_FIELD: indicator_id}, updates=updates)
+
+    def update_indicator_raw(self, indicator_id: str, updates: Dict) -> Dict:
+        return self.update_one_raw(query={IndicatorsCollection.INDICATOR_ID_FIELD: indicator_id}, raw_updates=updates)
 
     def delete_indicator(self, indicator_id: str) -> str:
         return self.delete_exactly_one(query={IndicatorsCollection.INDICATOR_ID_FIELD: indicator_id})

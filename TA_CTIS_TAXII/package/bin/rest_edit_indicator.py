@@ -20,18 +20,13 @@ logger = get_logger_for_script(__file__)
 class Handler(AbstractRestHandler):
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        collection = get_collection_data(collection_name="indicators", session_key=session_key, app=NAMESPACE)
-        self.logger.info(f"Collection: {collection}")
         self.logger.info(f"input_json={input_json}")
 
         indicator_id = input_json["indicator_id"]
         indicators_collection = self.kvstore_collections_context.indicators
-        updated_indicator = indicators_collection.update_indicator(indicator_id=indicator_id, updates=input_json)
-        updated_indicator_raw = indicators_collection.model_converter.unstructure(updated_indicator)
+        updated_indicator_raw = indicators_collection.update_indicator_raw(indicator_id=indicator_id, updates=input_json)
 
-        # Update the grouping's modified time to now
-        grouping_id = updated_indicator.grouping_id
-        self.kvstore_collections_context.groupings.update_grouping(grouping_id=grouping_id, updates={})
+        self.update_grouping_tlp_rating_to_match_indicators(grouping_id=updated_indicator_raw["grouping_id"])
 
         response = {
             "indicator": updated_indicator_raw,

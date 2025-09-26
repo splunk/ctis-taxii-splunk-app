@@ -26,8 +26,7 @@ class EditGroupingHandler(AbstractRestHandler):
         # TODO: Validate that tlp_v2_rating is at least as most as constituent indicators' tlp_v2_rating
 
         groupings_collection = self.kvstore_collections_context.groupings
-        updated_record = groupings_collection.update_grouping(grouping_id=grouping_id, updates=input_json)
-        updated_record_raw = groupings_collection.model_converter.unstructure(updated_record)
+        updated_record_raw = groupings_collection.update_grouping_raw(grouping_id=grouping_id, updates=input_json)
 
         response = {
             "grouping": updated_record_raw,

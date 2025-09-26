@@ -26,8 +26,7 @@ class Handler(AbstractRestHandler):
 
         identity_id = input_json["identity_id"]
         identities_collection = self.kvstore_collections_context.identities
-        updated_record = identities_collection.update_identity(identity_id=identity_id, updates=input_json)
-        updated_record_raw = identities_collection.model_converter.unstructure(updated_record)
+        updated_record_raw = identities_collection.update_identity_raw(identity_id=identity_id, updates=input_json)
 
         response = {
             "identity": updated_record_raw,

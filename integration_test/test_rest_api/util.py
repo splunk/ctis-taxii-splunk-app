@@ -172,6 +172,12 @@ def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
 def list_groupings(session, skip: int, limit: int, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-groupings", session=session, skip=skip, limit=limit, query=query)
 
+def get_grouping(session, grouping_id: str) -> dict:
+    resp = list_groupings(session=session, skip=0, limit=0, query={"grouping_id": grouping_id})
+    assert resp["total"] == 1
+    assert len(resp["records"]) == 1
+    return resp["records"][0]
+
 def list_submissions(session, skip: int=0, limit: int=0, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-submissions", session=session, skip=skip, limit=limit, query=query)
 
@@ -219,7 +225,7 @@ def new_indicator_payload() -> dict:
         "confidence": 50
     }
 
-def new_sample_grouping(session, grouping_name="grouping-1", identity_name="identity-1") -> dict:
+def new_sample_grouping(session, grouping_name="grouping-1", identity_name="identity-1", grouping_tlp_rating="TLP:GREEN") -> dict:
     identity = create_new_identity(session, {
         "name": identity_name,
         "identity_class": "organization",
@@ -232,7 +238,7 @@ def new_sample_grouping(session, grouping_name="grouping-1", identity_name="iden
         "description": "description-1",
         "context": "unspecified",
         "confidence": 100,
-        "tlp_v2_rating": "TLP:GREEN",
+        "tlp_v2_rating": grouping_tlp_rating,
     })["grouping"]
     assert grouping["grouping_id"] is not None
     return grouping

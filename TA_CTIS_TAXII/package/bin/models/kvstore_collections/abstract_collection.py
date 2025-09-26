@@ -78,17 +78,34 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
     def update_one_structured(self, query: Dict, updates: Dict) -> T:
         """
         Update a single record identified by the query with the provided updates which is a dict of key-values.
-        Note that the updates are applied to the structured record.
+        Note that the updates are applied to the structured record, so keep in mind for any Enums.
         Has side effect of updating the `modified` field to the current time.
         Returns the updated structured record.
         """
         record = self.fetch_exactly_one_structured(query=query)
         self.logger.info(f"Record before update: {record}")
         record_updated = attrs.evolve(record, **updates)
-        record_updated.set_modified_to_now()
-        self.logger.info(f"Record after update: {record_updated}")
-        self.collection.update(id=record.key, data=self.model_converter.unstructure(record_updated))
-        return record_updated
+        return self.update_record(record=record_updated)
+
+    def update_record(self, record: T) -> T:
+        record.set_modified_to_now()
+        self.logger.info(f"Record after update: {record}")
+        self.collection.update(id=record.key, data=self.model_converter.unstructure(record))
+        return record
+
+    def update_one_raw(self, query: Dict, raw_updates: Dict) -> Dict:
+        """
+        Note that any enum values in raw_updates should be the enum values (i.e. strings) and not the enum types.
+        """
+        record = self.fetch_exactly_one_raw(query=query)
+        self.logger.info(f"Record before update: {record}")
+        merged_record_raw = {**record, **raw_updates}
+        self.logger.info(f"Merged raw record: {merged_record_raw}")
+        merged_structured = self.model_converter.structure(merged_record_raw, self.model_class)
+        updated_structured = self.update_record(record=merged_structured)
+        updated_raw = self.model_converter.unstructure(updated_structured)
+        self.logger.info(f"Updated raw record: {updated_raw}")
+        return updated_raw
 
     def get_collection_size(self, query: Optional[Dict] = None) -> int:
         #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
