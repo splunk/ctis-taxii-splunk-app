@@ -25,7 +25,7 @@ class DeleteIdentityHandler(AbstractRestHandler):
         self.logger.info(f"input_json={input_json}")
 
         identity_id = input_json["identity_id"]
-        self.delete_record(collection=collection, query={"identity_id": identity_id})
+        self.kvstore_collections_context.identities.delete_identity(identity_id=identity_id)
 
         response = {
             "identity_id": identity_id,

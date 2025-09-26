@@ -25,8 +25,9 @@ class Handler(AbstractRestHandler):
 
         # Verify that the grouping_id exists
         grouping_id = input_json["grouping_id"]
-        groupings = get_collection_data(collection_name="groupings", session_key=session_key, app=NAMESPACE)
-        self.query_exactly_one_record(collection=groupings, query={"grouping_id": grouping_id})
+
+        if not self.kvstore_collections_context.groupings.check_if_grouping_exists(grouping_id=grouping_id):
+            raise ValueError(f"Grouping not found in groupings collection: {grouping_id}")
 
         # TODO: Utility to nicely convert the ClassValidationError to a human-readable error message
         try:
@@ -48,7 +49,8 @@ class Handler(AbstractRestHandler):
             collection.insert(indicator_dict)
             serialized.append(indicator_dict)
 
-        self.update_grouping_modified_time_to_now(grouping_id=grouping_id, session_key=session_key)
+        # Also has side effect of updating the grouping's modified time to now
+        self.update_grouping_tlp_rating_to_match_indicators(grouping_id=grouping_id)
 
         response = {
             "status": "success",

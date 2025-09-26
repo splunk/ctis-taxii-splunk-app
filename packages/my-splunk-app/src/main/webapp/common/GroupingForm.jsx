@@ -154,7 +154,9 @@ export function Form({existingGrouping, readOnly = false}) {
                     <DescriptionField {...commonProps} fieldName={FORM_FIELD_DESCRIPTION}/>
                     <ContextField {...commonProps} options={GROUPING_CONTEXTS} fieldName={FORM_FIELD_CONTEXT}/>
                     <CreatedByField {...commonProps} fieldName={FORM_FIELD_CREATED_BY_REF} options={optionsIdentities}/>
-                    <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING}/>
+                    <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING}
+                                      help="Note: Grouping TLP marking is automatically updated as you associate Indicators to match the highest Indicator TLP marking."
+                    />
                     <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
                     <CustomControlGroup>
                         {!readOnly && <HorizontalButtonLayout>

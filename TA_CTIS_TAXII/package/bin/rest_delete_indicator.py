@@ -20,15 +20,12 @@ logger = get_logger_for_script(__file__)
 class DeleteIndicatorHandler(AbstractRestHandler):
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        collection = get_collection_data(collection_name="indicators", session_key=session_key, app=NAMESPACE)
-
         indicator_id = input_json["indicator_id"]
-        indicator = self.query_exactly_one_record(collection=collection,
-                                                  query={"indicator_id": indicator_id})
-        self.delete_record(collection=collection, query={"indicator_id": indicator_id})
+        indicator = self.kvstore_collections_context.indicators.get_indicator(indicator_id=indicator_id)
 
-        grouping_id = indicator["grouping_id"]
-        self.update_grouping_modified_time_to_now(grouping_id=grouping_id, session_key=session_key)
+        self.kvstore_collections_context.indicators.delete_indicator(indicator_id=indicator_id)
+
+        self.update_grouping_tlp_rating_to_match_indicators(grouping_id=indicator.grouping_id)
 
         return {}
 

@@ -24,24 +24,18 @@ class UnscheduleSubmissionHandler(AbstractRestHandler):
         if not submission_id:
             raise ValueError("submission_id is required")
 
-        query_for_one_record = {"submission_id": submission_id}
-        collection = get_collection_data(collection_name="submissions", session_key=session_key, app=NAMESPACE)
-        submission = self.query_exactly_one_record(collection=collection, query=query_for_one_record)
-        submission_model = submission_converter.structure(submission, SubmissionModelV1)
+        submission = self.kvstore_collections_context.submissions.get_submission(submission_id=submission_id)
 
-        if submission_model.status != SubmissionStatus.SCHEDULED:
+        if submission.status != SubmissionStatus.SCHEDULED:
             raise ValueError(f"Submission {submission_id} is not scheduled")
 
-        updated_record = self.update_record(collection=collection,
-                                            query_for_one_record=query_for_one_record,
-                                            input_json={
-                                                "status": SubmissionStatus.CANCELLED.value,
-                                            },
-                                            converter=submission_converter,
-                                            model_class=SubmissionModelV1)
+        updated_submission = self.kvstore_collections_context.submissions.update_submission(submission_id=submission_id, updates={
+            "status": SubmissionStatus.CANCELLED,
+        })
+        updated_submission_raw = self.kvstore_collections_context.submissions.model_converter.unstructure(updated_submission)
 
         response = {
-            "submission": updated_record,
+            "submission": updated_submission_raw,
         }
         return response
 

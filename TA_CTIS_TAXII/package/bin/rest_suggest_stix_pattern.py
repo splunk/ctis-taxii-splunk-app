@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 
 sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
@@ -11,6 +12,7 @@ try:
     from cim_to_stix import convert_to_stix_pattern, IoCCategory
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
+    sys.stderr.write(f"Traceback: {traceback.format_exc()}\n")
     raise e
 
 logger = get_logger_for_script(__file__)

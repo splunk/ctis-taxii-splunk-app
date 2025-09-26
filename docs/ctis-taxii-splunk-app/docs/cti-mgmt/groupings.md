@@ -9,6 +9,9 @@ This will take you to the **Create New Grouping** page where you can fill in the
 
 Fill in the required fields. The `Created By` dropdown will be populated with the identities that have been created in the app.
 
+For the TLP v2.0 Marking, set an initial marking.
+Note that once you add indicators to the grouping, this marking will be automatically updated based on the highest TLP marking of indicators associated with the grouping.
+
 For more information on TLP Rating
 
 As an example, a Grouping might look like this:

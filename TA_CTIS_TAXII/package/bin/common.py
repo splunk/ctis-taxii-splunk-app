@@ -1,19 +1,21 @@
+import abc
 import json
 import logging
 import os
 import sys
-import abc
-from typing import Optional, Dict, List
 from collections import defaultdict
+from typing import Dict, List, Optional
+
 from cattrs import ClassValidationError
 from solnlib._utils import get_collection_data
 from stix2 import Bundle
+from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
-from models import GroupingModelV1, grouping_converter, IndicatorModelV1, indicator_converter, IdentityModelV1, \
-    identity_converter, bundle_for_grouping, serialize_stix_object, submission_converter, SubmissionModelV1, SubmissionStatus
+from models import SubmissionStatus, \
+    bundle_for_grouping, serialize_stix_object, maximum_tlpv2_of_indicators
+from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException
-from taxii2client.v21 import ApiRoot, Collection, _TAXIIEndpoint
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
@@ -38,10 +40,12 @@ def add_request_response_logging_hook(taxii_endpoint: _TAXIIEndpoint, app_logger
         app_logger.info(f"HTTP Response: {response.status_code} {response.reason} for {response.url}")
     session.hooks["response"].append(log_http_response)
 
-
 class AbstractRestHandler(abc.ABC):
     def __init__(self, logger):
         self.logger = logger
+
+        # Lazy init, generate_response() will set this
+        self.kvstore_collections_context: Optional[KVStoreCollectionsContext] = None
 
     @abc.abstractmethod
     def handle(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str) -> dict:
@@ -90,17 +94,16 @@ class AbstractRestHandler(abc.ABC):
         return collection_id_to_collection[collection_id]
 
     def submit_grouping(self, session_key: str, submission_id: str) -> dict:
-        submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")
         taxii_response_dict = None
         error = None
         bundle_json = None
         try:
-            submission = self.query_exactly_one_record(collection=submissions_collection, query={"submission_id": submission_id})
-            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission["grouping_id"], session_key=session_key)
+            submission = self.kvstore_collections_context.submissions.get_submission(submission_id=submission_id)
+            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission.grouping_id)
             bundle_json = serialize_stix_object(stix_object=bundle)
 
-            taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission["taxii_config_name"])
-            taxii_collection_id = submission["collection_id"]
+            taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission.taxii_config_name)
+            taxii_collection_id = submission.collection_id
 
             self.logger.info(f"Submitting bundle={bundle_json} to TAXII collection: collection_id={taxii_collection_id}")
             taxii_collection = self.get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
@@ -115,52 +118,35 @@ class AbstractRestHandler(abc.ABC):
             "bundle_json_sent": bundle_json,
             "response_json": json.dumps(taxii_response_dict) if taxii_response_dict else None,
             "error_message": error,
-            "status": SubmissionStatus.FAILED.value if error else SubmissionStatus.SENT.value,
+            "status": SubmissionStatus.FAILED if error else SubmissionStatus.SENT,
         }
-        updated_submission = self.update_record(collection=submissions_collection,
-                                                query_for_one_record={"submission_id": submission_id},
-                                                input_json=submission_delta,
-                                                converter=submission_converter, model_class=SubmissionModelV1)
-        return updated_submission
+        updated_submission = self.kvstore_collections_context.submissions.update_submission(
+            submission_id=submission_id, updates=submission_delta)
+        updated_submission_raw = self.kvstore_collections_context.submissions.model_converter.unstructure(updated_submission)
+        return updated_submission_raw
 
     def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
-                                collection_name: str) -> dict:
+                                collection_name: CollectionName) -> dict:
         self.logger.info(f"input_json: {input_json}")
         self.logger.info(f"query_params: {query_params}")
 
         collection_query_kwargs = self.extract_collection_query_kwargs(query_params)
 
-        collection = self.get_collection(collection_name=collection_name, session_key=session_key)
+        collection = self.get_collection(collection_name=collection_name.value, session_key=session_key)
         self.logger.info(f"Collection: {collection}")
         self.logger.info(f"Collection query kwargs: {collection_query_kwargs}")
         records = collection.query(**collection_query_kwargs)
-        self.logger.info(f"Records found: {len(records)}")
+        self.logger.info(f"Records found for query: {len(records)}")
 
-        total_records = self.get_collection_size(collection, query=collection_query_kwargs.get("query"))
+        total_records = self.kvstore_collections_context.collections[collection_name].get_collection_size(query=collection_query_kwargs.get("query"))
+        self.logger.info(f"Total records found: {total_records}")
         response = {
             "records": records,
             "total": total_records,
         }
         return response
 
-    @staticmethod
-    def prepare_merged_model_instance(saved_record: dict, input_json: dict, converter, model_class):
-        merged = {**saved_record, **input_json}
-        structured = converter.structure(merged, model_class)
-        return structured
-
-    def query_exactly_one_record(self, collection, query: dict) -> dict:
-        results = collection.query(query=query)
-        self.logger.info(f"Results: {results}")
-        assert len(results) > 0, f"No records found for query: {query}"
-        assert len(results) == 1, f"More than one record found for query: {query}"
-        return results[0]
-
-    def delete_record(self, collection, query: dict):
-        saved_record = self.query_exactly_one_record(collection, query=query)
-        self.logger.info(f"Deleting record: {saved_record}")
-        collection.delete_by_id(id=saved_record["_key"])
-
+    # TODO: Replace with method in AbstractKVStoreCollection
     def insert_record(self, collection, input_json: dict, converter, model_class) -> dict:
         try:
             structured = converter.structure(input_json, model_class)
@@ -173,33 +159,6 @@ class AbstractRestHandler(abc.ABC):
         collection.insert(record_as_dict)
 
         return record_as_dict
-
-    def update_record(self, collection, query_for_one_record: dict, input_json: dict, converter, model_class) -> dict:
-        saved_record = self.query_exactly_one_record(collection, query=query_for_one_record)
-        try:
-            structured = self.prepare_merged_model_instance(saved_record=saved_record, input_json=input_json,
-                                                            converter=converter, model_class=model_class)
-        except ClassValidationError as exc:
-            self.logger.exception(f"Validation failed on merged model instance: {exc}")
-            raise exc
-
-        structured.set_modified_to_now()
-
-        updated_record_as_dict = converter.unstructure(structured)
-
-        self.logger.info(f"Updating record: {updated_record_as_dict}")
-
-        collection.update(id=structured.key, data=updated_record_as_dict)
-
-        return updated_record_as_dict
-
-    def update_grouping_modified_time_to_now(self, grouping_id: str, session_key: str):
-        groupings = self.get_collection(collection_name="groupings", session_key=session_key)
-        self.update_record(collection=groupings,
-                           query_for_one_record={"grouping_id": grouping_id},
-                           input_json={},
-                           converter=grouping_converter,
-                           model_class=GroupingModelV1)
 
     @staticmethod
     def exception_response(e: Exception, status_code: int) -> dict:
@@ -221,23 +180,6 @@ class AbstractRestHandler(abc.ABC):
             else:
                 return value
 
-    def get_collection_size(self, collection, query=None) -> int:
-        #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D
-        collection_query_kwargs = {}
-        if query:
-            collection_query_kwargs["query"] = query
-        records = []
-        offset = 0
-        page_size = 50000
-        while True:
-            page_of_records = collection.query(fields="_key", limit=page_size, skip=offset, **collection_query_kwargs)
-            records.extend(page_of_records)
-            if len(page_of_records) == 0:
-                break
-            offset += page_size
-        total_records = len(records)
-        self.logger.info(f"Total records found: {total_records}")
-        return total_records
 
     @staticmethod
     def extract_collection_query_kwargs(query_params: dict) -> dict:
@@ -265,6 +207,9 @@ class AbstractRestHandler(abc.ABC):
             input_json = json.loads(in_string_dict["payload"]) if "payload" in in_string_dict else None
             session_key = in_string_dict["session"]["authtoken"]
             query_params_dict = self.parse_query_params(in_string_dict["query"])
+
+            self.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, logger=self.logger, app_namespace=NAMESPACE)
+
             payload = self.handle(input_json=input_json, query_params=query_params_dict, session_key=session_key)
             return {"payload": payload, "status": 200}
         except (ValueError, AssertionError) as e:
@@ -297,23 +242,26 @@ class AbstractRestHandler(abc.ABC):
 
         return Handler
 
-    def generate_stix_bundle_for_grouping(self, grouping_id:str, session_key:str) -> Bundle:
-        groupings_collection = self.get_collection(collection_name="groupings", session_key=session_key)
-        indicators_collection = self.get_collection(collection_name="indicators", session_key=session_key)
-        identities_collection = self.get_collection(collection_name="identities", session_key=session_key)
+    def generate_stix_bundle_for_grouping(self, grouping_id:str) -> Bundle:
+        grouping = self.kvstore_collections_context.groupings.fetch_exactly_one_structured(query={"grouping_id": grouping_id})
+        self.logger.info(f"grouping: {grouping}")
 
-        grouping = self.query_exactly_one_record(collection=groupings_collection, query={"grouping_id": grouping_id})
-        grouping_model = grouping_converter.structure(grouping, GroupingModelV1)
-        self.logger.info(f"grouping: {grouping_model}")
+        indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
+        self.logger.info(f"indicators: {indicators}")
 
-        indicators = indicators_collection.query(query={"grouping_id": grouping_id}, limit=0, offset=0)
-        indicator_models = [indicator_converter.structure(indicator, IndicatorModelV1) for indicator in indicators]
-        self.logger.info(f"indicators: {indicator_models}")
+        identity = self.kvstore_collections_context.identities.fetch_exactly_one_structured(query={"identity_id" : grouping.created_by_ref})
+        self.logger.info(f"identity: {identity}")
 
-        identity = self.query_exactly_one_record(collection=identities_collection,
-                                                 query={"identity_id": grouping["created_by_ref"]})
-        identity_model = identity_converter.structure(identity, IdentityModelV1)
-        self.logger.info(f"identity: {identity_model}")
-
-        bundle = bundle_for_grouping(grouping_=grouping_model, indicators=indicator_models, grouping_identity=identity_model)
+        bundle = bundle_for_grouping(grouping_=grouping, indicators=indicators, grouping_identity=identity)
         return bundle
+
+    def update_grouping_tlp_rating_to_match_indicators(self, grouping_id: str):
+        indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
+        self.logger.info(f"Grouping {grouping_id} has indicators: {indicators}")
+        if indicators:
+            max_tlpv2 = maximum_tlpv2_of_indicators(indicators=indicators)
+            self.logger.info(f"Updating grouping {grouping_id} to have TLPv2 rating: {max_tlpv2}")
+            updated_grouping = self.kvstore_collections_context.groupings.update_grouping_structured(grouping_id=grouping_id, updates={"tlp_v2_rating": max_tlpv2})
+            self.logger.info(f"Updated grouping: {updated_grouping}")
+        else:
+            self.logger.info(f"Grouping {grouping_id} has no indicators, not updating TLPv2 rating")

@@ -1,6 +1,13 @@
 import json
+import random
+import string
 import uuid
 import os
+import logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 SPLUNK_ADMIN_URL = os.environ.get('SPLUNK_ADMIN_URL', 'https://localhost:8099')
 
@@ -25,6 +32,9 @@ List of test scenarios:
 
 """
 
+def random_alnum_string(size=20, chars=string.ascii_lowercase + string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 DEFAULT_REQUEST_PARAMS = {
     "output_mode": "json"
 }
@@ -39,6 +49,8 @@ def get_identities_collection(session) -> list:
 def get_groupings_collection(session) -> list:
     return get_collection(session, "groupings")
 
+def get_submissions_collection(session) -> list:
+    return get_collection(session, "submissions")
 
 def get_collection(session, collection_name: str) -> list:
     # Handle pagination, limits.conf: max_rows_per_query = 50000
@@ -48,7 +60,7 @@ def get_collection(session, collection_name: str) -> list:
     while True:
         resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/{collection_name}',
                            params={**DEFAULT_REQUEST_PARAMS, "limit": page_size, "skip": offset})
-        resp.raise_for_status()
+        resp_raise_for_status_and_log_response(resp)
         j = resp.json()
         assert type(j) == list
         if len(j) == 0:
@@ -61,7 +73,7 @@ def get_collection(session, collection_name: str) -> list:
 def clear_collection(session, collection_name: str):
     resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/{collection_name}',
                           params=DEFAULT_REQUEST_PARAMS)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
 
 def clear_indicators_collection(session):
     clear_collection(session, "indicators")
@@ -72,6 +84,14 @@ def clear_identities_collection(session):
 def clear_groupings_collection(session):
     clear_collection(session, "groupings")
 
+def clear_submissions_collection(session):
+    clear_collection(session, "submissions")
+
+def resp_raise_for_status_and_log_response(resp):
+    if not resp.ok:
+        logger.error(f"Response status code: {resp.status_code}, Response text: {resp.text}")
+    resp.raise_for_status()
+
 def bulk_insert_indicators(session, indicators: list):
     # do it in batches of 1000
     batches = [indicators[i:i + 1000] for i in range(0, len(indicators), 1000)]
@@ -79,25 +99,25 @@ def bulk_insert_indicators(session, indicators: list):
         resp = session.post(
             f'{SPLUNK_ADMIN_URL}/servicesNS/nobody/{CTIS_APP_NAME}/storage/collections/data/indicators/batch_save',
             params=DEFAULT_REQUEST_PARAMS, json=batch)
-        resp.raise_for_status()
+        resp_raise_for_status_and_log_response(resp)
 
 
 def delete_endpoint(endpoint:str, session, payload: dict) -> dict:
     resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params=DEFAULT_REQUEST_PARAMS, json=payload)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 def post_endpoint(endpoint:str, session, payload: dict) -> dict:
     resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params=DEFAULT_REQUEST_PARAMS, json=payload)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 def get_endpoint(endpoint:str, session, **query_params) -> dict:
     resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                         params={**DEFAULT_REQUEST_PARAMS, **query_params})
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 def create_new_indicator(session, payload: dict) -> dict:
@@ -139,7 +159,7 @@ def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query:
         query_params["query"] = json.dumps(query)
     resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/{endpoint}',
                        params=query_params)
-    resp.raise_for_status()
+    resp_raise_for_status_and_log_response(resp)
     return resp.json()
 
 
@@ -151,6 +171,26 @@ def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
 
 def list_groupings(session, skip: int, limit: int, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-groupings", session=session, skip=skip, limit=limit, query=query)
+
+def get_grouping(session, grouping_id: str) -> dict:
+    resp = list_groupings(session=session, skip=0, limit=0, query={"grouping_id": grouping_id})
+    assert resp["total"] == 1
+    assert len(resp["records"]) == 1
+    return resp["records"][0]
+
+def list_submissions(session, skip: int=0, limit: int=0, query: dict = None) -> dict:
+    return query_collection_endpoint(endpoint="list-submissions", session=session, skip=skip, limit=limit, query=query)
+
+def get_submission(session, submission_id: str) -> dict:
+    resp = list_submissions(session=session, skip=0, limit=0, query={"submission_id": submission_id})
+    assert resp["total"] == 1
+    assert len(resp["records"]) == 1
+    return resp["records"][0]
+
+def unschedule_submission(session, submission_id: str) -> dict:
+    return post_endpoint(endpoint="unschedule-submission", session=session, payload={
+        "submission_id": submission_id
+    })
 
 def create_indicator_form_payload(grouping_id:str, indicators: list) -> dict:
     return {
@@ -185,7 +225,7 @@ def new_indicator_payload() -> dict:
         "confidence": 50
     }
 
-def new_sample_grouping(session, grouping_name="grouping-1", identity_name="identity-1") -> dict:
+def new_sample_grouping(session, grouping_name="grouping-1", identity_name="identity-1", grouping_tlp_rating="TLP:GREEN") -> dict:
     identity = create_new_identity(session, {
         "name": identity_name,
         "identity_class": "organization",
@@ -198,7 +238,39 @@ def new_sample_grouping(session, grouping_name="grouping-1", identity_name="iden
         "description": "description-1",
         "context": "unspecified",
         "confidence": 100,
-        "tlp_v2_rating": "TLP:GREEN",
+        "tlp_v2_rating": grouping_tlp_rating,
     })["grouping"]
     assert grouping["grouping_id"] is not None
     return grouping
+
+def get_stix_bundle_json_preview(session, grouping_id: str) -> dict:
+    return get_endpoint(endpoint="get-stix-bundle-for-grouping", session=session, grouping_id=grouping_id)
+
+def post_submit_grouping_to_taxii_server(session, grouping_id: str, taxii_config_name: str, taxii_collection_id: str, scheduled_at:str=None) -> dict:
+    payload = {
+        "grouping_id": grouping_id,
+        "taxii_config_name": taxii_config_name,
+        "taxii_collection_id": taxii_collection_id
+    }
+    if scheduled_at is not None:
+        payload["scheduled_at"] = scheduled_at
+
+    return post_endpoint(endpoint="submit-grouping", session=session, payload=payload)
+
+def create_new_taxii_config(session, taxii_config_name: str, api_root_url:str, username:str, password:str) -> Optional[dict]:
+    resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config', data={
+        'name': taxii_config_name,
+        'api_root_url': api_root_url,
+        'username': username,
+        'password': password,
+    }, params=DEFAULT_REQUEST_PARAMS)
+    if resp.ok:
+        return resp.json()
+    logger.error(f"Failed to create TAXII config. Status code: {resp.status_code}, Response text: {resp.text}")
+    resp.raise_for_status()
+    return None
+
+def delete_taxii_config(session, taxii_config_name: str) -> dict:
+    resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config/{taxii_config_name}', params=DEFAULT_REQUEST_PARAMS)
+    resp_raise_for_status_and_log_response(resp)
+    return resp.json()

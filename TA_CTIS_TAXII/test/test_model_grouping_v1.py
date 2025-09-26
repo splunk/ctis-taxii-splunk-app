@@ -4,6 +4,8 @@ import pytest
 
 from TA_CTIS_TAXII.package.bin.models import GroupingModelV1, grouping_converter
 from TA_CTIS_TAXII.package.bin.models.tlp_v2 import TLPv2, GREEN_MARKING_DEFINITION
+from sample_indicator import new_sample_indicator_instance
+import attrs
 
 IDENTITY_ID = "identity--a463ffb3-1bd9-4d94-b02d-74e4f1658283"
 INDICATOR_ID = "indicator--26ffb872-1dd9-446e-b6f5-d58527e5b5d2"
@@ -86,3 +88,22 @@ def test_validate_context():
         GroupingModelV1(name="Group ABC", description="description",
                         context="invalid", created_by_ref=IDENTITY_ID, tlp_v2_rating=TLPv2.GREEN)
     assert "Invalid context" in str(exc_info.value)
+
+def test_update_tlp_v2_rating_as_at_least_as_restrictive_as_indicators():
+    grouping = GroupingModelV1(name="Group ABC", description="Group ABC description", created_by_ref=IDENTITY_ID,
+                               context="unspecified", tlp_v2_rating=TLPv2.CLEAR)
+    assert grouping.tlp_v2_rating == TLPv2.CLEAR
+
+    indicators = [
+        attrs.evolve(new_sample_indicator_instance(), tlp_v2_rating=TLPv2.AMBER),
+        attrs.evolve(new_sample_indicator_instance(), tlp_v2_rating=TLPv2.AMBER_STRICT),
+        attrs.evolve(new_sample_indicator_instance(), tlp_v2_rating=TLPv2.GREEN),
+    ]
+    # Should increase the restrictiveness to be at least as restrictive as the most restrictive indicator
+    grouping.update_tlpv2_to_be_at_least_as_restrictive_as_indicators(indicators)
+    assert grouping.tlp_v2_rating == TLPv2.AMBER_STRICT
+
+    # Should not decrease the grouping's restrictiveness
+    grouping.tlp_v2_rating = TLPv2.RED
+    grouping.update_tlpv2_to_be_at_least_as_restrictive_as_indicators(indicators)
+    assert grouping.tlp_v2_rating == TLPv2.RED

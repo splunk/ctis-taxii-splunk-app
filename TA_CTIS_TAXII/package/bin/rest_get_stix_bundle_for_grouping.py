@@ -24,7 +24,7 @@ class GetStixBundleForGroupingHandler(AbstractRestHandler):
         if "grouping_id" not in query_params:
             raise ValueError("grouping_id is required as query parameter.")
         grouping_id = query_params["grouping_id"][0]
-        bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id, session_key=session_key)
+        bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id)
 
         return {
             "bundle": json.loads(serialize_stix_object(stix_object=bundle))

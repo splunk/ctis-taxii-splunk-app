@@ -1,7 +1,7 @@
 .python-version
 integration_test/ctis.tar.gz
 
-.docker.env
+*.env
 node_modules/
 
 TA_CTIS_TAXII/output

@@ -18,6 +18,19 @@ This app combines SplunkUI Toolkit and UCC Framework to create a custom Splunk a
 - For Mac OS, install gnu-sed: https://formulae.brew.sh/formula/gnu-sed
   - Build scripts used GNU sed syntax: https://stackoverflow.com/a/43453459/23523267
   - Make sure to have `sed` in path refer to the brew version not the default mac version
+
+### Run Unit Tests Locally
+```bash
+# Assuming you have a Python virtual environment already set up (3.9+)
+
+# Includes pytest & pytest-cov
+pip install -r dev-requirements.txt
+
+# Includes all dependencies to run the app
+pip install -r TA_CTIS_TAXII/package/lib/requirements.txt
+
+python -m pytest -v TA_CTIS_TAXII/test/ --cov=TA_CTIS_TAXII/test/
+```
  
 ## Build
 ```bash

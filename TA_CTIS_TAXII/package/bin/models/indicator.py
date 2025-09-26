@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from attrs import define, field
@@ -9,6 +11,7 @@ from .base import BaseModelV1, make_base_converter
 from .common import validate_confidence
 from .tlp_v2 import TLPv2
 from typing import List, Optional, Tuple
+from functools import reduce
 
 """
 # This Indicator Model represents fields required to generate a STIX 2.1 Indicator object
@@ -71,6 +74,7 @@ class IndicatorModelV1(BaseModelV1):
             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
         )
 
+
 indicator_converter = make_base_converter()
 
 def form_payload_to_indicators(form_payload: dict) -> Tuple[list, List[IndicatorModelV1]]:
@@ -87,3 +91,8 @@ def form_payload_to_indicators(form_payload: dict) -> Tuple[list, List[Indicator
         except ClassValidationError as e:
             errors.append({"index": index, "errors": [str(x) for x in e.exceptions]})
     return errors, indicator_models
+
+def maximum_tlpv2_of_indicators(indicators: List[IndicatorModelV1]) -> TLPv2:
+    if not indicators:
+        raise ValueError("Must provide non-empty list of indicators")
+    return reduce(TLPv2.maximum, [ind.tlp_v2_rating for ind in indicators])
