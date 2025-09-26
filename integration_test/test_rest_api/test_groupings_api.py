@@ -70,20 +70,22 @@ class TestScenarios:
 
     def test_edit_grouping(self, session, cleanup_groupings_collection, cleanup_identities_collection):
         assert len(get_groupings_collection(session)) == 0
-        new_sample_grouping(session, grouping_name="grouping-1", identity_name="identity-1")
+        new_sample_grouping(session, grouping_name="grouping-1", identity_name="identity-1", grouping_tlp_rating="TLP:GREEN")
         groupings_1 = get_groupings_collection(session)
         assert len(groupings_1) == 1
         assert groupings_1[0]["name"] == "grouping-1"
+        assert groupings_1[0]["tlp_v2_rating"] == "TLP:GREEN"
 
-        # TODO: Test changing an enum value
         edit_grouping(session, {
             "grouping_id": groupings_1[0]["grouping_id"],
             "name": "grouping-a",
+            "tlp_v2_rating": "TLP:RED",
         })
 
         groupings_2 = get_groupings_collection(session)
         assert len(groupings_2) == 1
         assert groupings_2[0]["name"] == "grouping-a"
+        assert groupings_2[0]["tlp_v2_rating"] == "TLP:RED"
 
     def test_delete_grouping(self, session, cleanup_all_collections):
         assert len(get_groupings_collection(session)) == 0
