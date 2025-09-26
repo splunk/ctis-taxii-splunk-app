@@ -12,7 +12,7 @@ Please see https://splunk.github.io/ctis-taxii-splunk-app for user-facing docume
 This app combines SplunkUI Toolkit and UCC Framework to create a custom Splunk app.
 
 ## Setup
-- Install `splunk-add-on-ucc-framework` pip package. See https://splunk.github.io/addonfactory-ucc-generator/#installation
+- Install dev requirements with `pip install -r dev-requirements.txt`
 - SplunkUI Toolkit requirements: https://splunkui.splunk.com/Toolkits/SUIT/Overview
 - rsync is required for the `copy-ui-to-ucc-app.sh` script
 - For Mac OS, install gnu-sed: https://formulae.brew.sh/formula/gnu-sed
