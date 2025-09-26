@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 working_dir=$(pwd)
-pip install splunk-add-on-ucc-framework
+pip install -r dev-requirements.txt
 
 pip freeze # for debugging purposes
 

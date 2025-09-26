@@ -12,8 +12,6 @@ Fill in the required fields. The `Created By` dropdown will be populated with th
 For the TLP v2.0 Marking, set an initial marking.
 Note that once you add indicators to the grouping, this marking will be automatically updated based on the highest TLP marking of indicators associated with the grouping.
 
-For more information on TLP Rating
-
 As an example, a Grouping might look like this:
 ![Example New Grouping Form](../img/new_grouping_filled_form.png)
 
