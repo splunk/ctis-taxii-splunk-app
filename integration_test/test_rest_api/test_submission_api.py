@@ -15,11 +15,14 @@ name, api_root_url, username, password.
 - Submit STIX bundle to TAXII server via API
 """
 import json
-
-from util import example_indicator, new_sample_grouping, create_new_indicator, create_indicator_form_payload, post_submit_grouping_to_taxii_server
 import logging
+import time
+from datetime import datetime, timedelta
+
+from util import list_submissions, post_submit_grouping_to_taxii_server
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 class TestTaxiiServerConnection:
     def test_taxii_server_discovery(self, taxii2_server, taxii2_server_session, taxii2_server_is_reachable):
@@ -32,27 +35,28 @@ class TestTaxiiServerConnection:
         resp.raise_for_status()
         print(resp.json())
 
+def datetime_in_one_minute() -> datetime:
+    now = datetime.utcnow()
+    return now + timedelta(minutes=1)
 
-class TestStixBundleSubmission:
-    def test_end_to_end(self, session, taxii2_server, ctis_app_taxii_config, testing_context_id):
-        print(ctis_app_taxii_config)
-        grouping = new_sample_grouping(session=session, identity_name=f"{testing_context_id}_identity", grouping_name=f"{testing_context_id}_grouping")
-        print(grouping)
+def timestamp_in_one_minute() -> str:
+    dt = datetime_in_one_minute()
+    # No timezone info is expected, UTC is assumed.
+    timestamp = dt.isoformat(timespec="seconds")
+    return timestamp
 
-        grouping_id = grouping["grouping_id"]
-        logger.info(f"Created grouping with ID: {grouping_id}")
 
-        indicator = example_indicator()
-        create_indicators_payload = create_indicator_form_payload(grouping_id=grouping_id, indicators=[indicator])
-        create_indicators_resp = create_new_indicator(session, payload=create_indicators_payload)
-        print(create_indicators_resp)
-        logger.info(f"Created indicator: {create_indicators_resp}")
+class TestStixBundleSubmissionToTaxiiServer:
+    def test_immediate_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
+        grouping_id = taxii_server_setup_and_grouping.grouping_id
+        ctis_app_taxii_config = taxii_server_setup_and_grouping.taxii_config_name
+        taxii2_server_details = taxii_server_setup_and_grouping.taxii2_server
 
         logger.info("Submitting bundle/grouping to TAXII server...")
         submission_resp = post_submit_grouping_to_taxii_server(session=session,
                                              grouping_id=grouping_id,
                                              taxii_config_name=ctis_app_taxii_config,
-                                             taxii_collection_id=taxii2_server.readable_and_writable_collection_id)
+                                             taxii_collection_id=taxii2_server_details.readable_and_writable_collection_id)
         logger.info(f"Submission response: {submission_resp}")
         submission_resp_obj = submission_resp["submission"]
         assert submission_resp_obj["status"] == "SENT"
@@ -63,17 +67,49 @@ class TestStixBundleSubmission:
         taxii_server_resp_obj = json.loads(taxii_server_resp_json)
         assert taxii_server_resp_obj["status"] == "complete"
 
-class TestCrudOperationsOnScheduledSubmission:
-    def test_create_scheduled_submission(self):
+    def test_scheduled_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
+        grouping_id = taxii_server_setup_and_grouping.grouping_id
+        ctis_app_taxii_config = taxii_server_setup_and_grouping.taxii_config_name
+        taxii2_server_details = taxii_server_setup_and_grouping.taxii2_server
+
+        # Note that the endpoint accepts ISO 8601 formatted timestamp WITHOUT timezone info. UTC is assumed.
+        timestamp = timestamp_in_one_minute()
+        submission_resp = post_submit_grouping_to_taxii_server(session=session,
+                                             grouping_id=grouping_id,
+                                             taxii_config_name=ctis_app_taxii_config,
+                                             taxii_collection_id=taxii2_server_details.readable_and_writable_collection_id,
+                                             scheduled_at=timestamp)
+        submission_resp_obj = submission_resp["submission"]
+        assert submission_resp_obj["status"] == "SCHEDULED"
+        assert submission_resp_obj["grouping_id"] == grouping_id
+        assert submission_resp_obj["taxii_config_name"] == ctis_app_taxii_config
+        assert submission_resp_obj["scheduled_at"] == timestamp
+
+        submission_id = submission_resp_obj["submission_id"]
+
+        # Wait for about one minute and check the status again to ensure it was sent.
+        for _ in range(90):
+            list_submissions_resp = list_submissions(session=session, query={"submission_id": submission_id}, skip=0, limit=0)
+            submissions = list_submissions_resp["records"]
+            assert len(submissions) == 1
+            assert list_submissions_resp["total"] == 1
+            submission = submissions[0]
+            if submission["status"] == "SENT":
+                logger.info(f"Submission was sent successfully: {submission}")
+                break
+            logger.info(f"Still waiting for scheduled submission {submission_id} to be sent... status={submission['status']}")
+            time.sleep(1)
+        else:
+            raise AssertionError(f"Scheduled submission {submission_id} was not sent within expected time.")
+
+
+    def test_unschedule_scheduled_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
         raise NotImplementedError
 
-    def test_unschedule_scheduled_submission(self):
-        raise NotImplementedError
-
-    def test_edit_scheduled_submission(self):
+    def test_edit_scheduled_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
         # Edit the scheduled time of the submission
         raise NotImplementedError
 
-    def test_list_submissions(self):
+    def test_list_submissions(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
         raise NotImplementedError
 

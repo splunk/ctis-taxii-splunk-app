@@ -49,6 +49,8 @@ def get_identities_collection(session) -> list:
 def get_groupings_collection(session) -> list:
     return get_collection(session, "groupings")
 
+def get_submissions_collection(session) -> list:
+    return get_collection(session, "submissions")
 
 def get_collection(session, collection_name: str) -> list:
     # Handle pagination, limits.conf: max_rows_per_query = 50000
@@ -81,6 +83,9 @@ def clear_identities_collection(session):
 
 def clear_groupings_collection(session):
     clear_collection(session, "groupings")
+
+def clear_submissions_collection(session):
+    clear_collection(session, "submissions")
 
 def resp_raise_for_status_and_log_response(resp):
     if not resp.ok:
@@ -167,6 +172,9 @@ def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
 def list_groupings(session, skip: int, limit: int, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-groupings", session=session, skip=skip, limit=limit, query=query)
 
+def list_submissions(session, skip: int=0, limit: int=0, query: dict = None) -> dict:
+    return query_collection_endpoint(endpoint="list-submissions", session=session, skip=skip, limit=limit, query=query)
+
 def create_indicator_form_payload(grouping_id:str, indicators: list) -> dict:
     return {
         "grouping_id": grouping_id,
@@ -221,12 +229,16 @@ def new_sample_grouping(session, grouping_name="grouping-1", identity_name="iden
 def get_stix_bundle_json_preview(session, grouping_id: str) -> dict:
     return get_endpoint(endpoint="get-stix-bundle-for-grouping", session=session, grouping_id=grouping_id)
 
-def post_submit_grouping_to_taxii_server(session, grouping_id: str, taxii_config_name: str, taxii_collection_id: str) -> dict:
-    return post_endpoint(endpoint="submit-grouping", session=session, payload={
+def post_submit_grouping_to_taxii_server(session, grouping_id: str, taxii_config_name: str, taxii_collection_id: str, scheduled_at:str=None) -> dict:
+    payload = {
         "grouping_id": grouping_id,
         "taxii_config_name": taxii_config_name,
         "taxii_collection_id": taxii_collection_id
-    })
+    }
+    if scheduled_at is not None:
+        payload["scheduled_at"] = scheduled_at
+
+    return post_endpoint(endpoint="submit-grouping", session=session, payload=payload)
 
 def create_new_taxii_config(session, taxii_config_name: str, api_root_url:str, username:str, password:str) -> Optional[dict]:
     resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config', data={
