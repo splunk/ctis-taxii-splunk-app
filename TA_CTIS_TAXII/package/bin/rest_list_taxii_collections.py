@@ -1,6 +1,8 @@
-from common import AbstractRestHandler, get_logger_for_script
+from common import AbstractRestHandler
+import logging
 
-logger = get_logger_for_script(__file__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class ListTaxiiCollectionsHandler(AbstractRestHandler):
@@ -8,7 +10,7 @@ class ListTaxiiCollectionsHandler(AbstractRestHandler):
         if "config_name" not in query_params:
             raise ValueError("config_name is a required query parameter")
         config_name = query_params.get("config_name")[0]
-        self.logger.info(f"config_name: {config_name}")
+        logger.info(f"config_name: {config_name}")
         config = self.get_taxii_config(session_key=session_key, stanza_name=config_name)
         api_root = self.get_api_root(url=config["api_root_url"], user=config["username"], password=config["password"])
         collections = api_root.collections

@@ -1,7 +1,5 @@
 from cim_to_stix import IoCCategory, convert_to_stix_pattern
-from common import AbstractRestHandler, get_logger_for_script
-
-logger = get_logger_for_script(__file__)
+from common import AbstractRestHandler
 
 class SuggestStixPatternHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params:dict, session_key: str) -> dict:

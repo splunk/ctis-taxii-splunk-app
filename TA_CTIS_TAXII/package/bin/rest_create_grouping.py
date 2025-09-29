@@ -1,8 +1,6 @@
-from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
+from common import AbstractRestHandler, NAMESPACE
 from models import GroupingModelV1, grouping_converter
 from solnlib._utils import get_collection_data
-
-logger = get_logger_for_script(__file__)
 
 
 class CreateGroupingHandler(AbstractRestHandler):

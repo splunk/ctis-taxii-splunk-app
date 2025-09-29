@@ -1,9 +1,7 @@
 import json
 
-from common import AbstractRestHandler, get_logger_for_script
+from common import AbstractRestHandler
 from models import serialize_stix_object
-
-logger = get_logger_for_script(__file__)
 
 
 class GetStixBundleForGroupingHandler(AbstractRestHandler):

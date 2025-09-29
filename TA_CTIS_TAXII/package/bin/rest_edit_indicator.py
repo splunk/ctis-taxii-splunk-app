@@ -1,10 +1,13 @@
-from common import AbstractRestHandler, get_logger_for_script
+import logging
 
-logger = get_logger_for_script(__file__)
+from common import AbstractRestHandler
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class EditIndicatorHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        self.logger.info(f"input_json={input_json}")
+        logger.info(f"input_json={input_json}")
         indicator_id = input_json["indicator_id"]
         indicators_collection = self.kvstore_collections_context.indicators
         updated_indicator_raw = indicators_collection.update_indicator_raw(indicator_id=indicator_id, updates=input_json)

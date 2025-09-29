@@ -1,7 +1,5 @@
-from common import AbstractRestHandler, get_logger_for_script
+from common import AbstractRestHandler
 from models import SubmissionStatus
-
-logger = get_logger_for_script(__file__)
 
 
 class UnscheduleSubmissionHandler(AbstractRestHandler):

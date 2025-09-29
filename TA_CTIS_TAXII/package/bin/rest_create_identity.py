@@ -1,14 +1,18 @@
-from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
-from models import IdentityModelV1, identity_converter
+import logging
+
 from solnlib._utils import get_collection_data
 
-logger = get_logger_for_script(__file__)
+from common import AbstractRestHandler, NAMESPACE
+from models import IdentityModelV1, identity_converter
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class CreateIdentityHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         collection = get_collection_data(collection_name="identities", session_key=session_key, app=NAMESPACE)
-        self.logger.info(f"Collection: {collection}")
+        logger.info(f"Collection: {collection}")
 
         """
         TODO:
@@ -19,11 +23,11 @@ class CreateIdentityHandler(AbstractRestHandler):
         try:
             identity = identity_converter.structure(input_json, IdentityModelV1)
         except Exception as exc:
-            self.logger.exception(f"Failed to convert input JSON to Identity Model")
+            logger.exception(f"Failed to convert input JSON to Identity Model")
             raise ValueError(repr(exc))
 
         identity_dict = identity_converter.unstructure(identity)
-        self.logger.info(f"Inserting identity: {identity_dict}")
+        logger.info(f"Inserting identity: {identity_dict}")
         collection.insert(identity_dict)
 
         response = {

@@ -1,6 +1,4 @@
-from common import AbstractRestHandler, get_logger_for_script
-
-logger = get_logger_for_script(__file__)
+from common import AbstractRestHandler
 
 
 class DeleteGroupingHandler(AbstractRestHandler):

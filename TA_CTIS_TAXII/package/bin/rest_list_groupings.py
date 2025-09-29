@@ -1,11 +1,12 @@
+import logging
 from collections import defaultdict
 
-from common import AbstractRestHandler, get_logger_for_script
+from common import AbstractRestHandler
 from models import CollectionName
 from query import query_value_in_list
 
-logger = get_logger_for_script(__file__)
-
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def indicators_to_mapping_of_grouping_id_to_indicators(indicators: list) -> dict:
     mapping = defaultdict(list)
@@ -19,16 +20,16 @@ class ListGroupingsHandler(AbstractRestHandler):
         # Gather all indicators and group by grouping_id
         resp = self.handle_query_collection(input_json=input_json, query_params=query_params, session_key=session_key, collection_name=CollectionName.GROUPINGS)
         grouping_ids = list(set([x["grouping_id"] for x in resp["records"]]))
-        self.logger.info(f"grouping_ids: {grouping_ids}")
+        logger.info(f"grouping_ids: {grouping_ids}")
         indicators_collection = self.get_collection(collection_name="indicators", session_key=session_key)
 
         indicators = []
         if grouping_ids:
             indicators_query = query_value_in_list("grouping_id", grouping_ids)
-            self.logger.info(f"indicators_query: {indicators_query}")
+            logger.info(f"indicators_query: {indicators_query}")
             indicators = indicators_collection.query(fields="grouping_id,indicator_id", query=indicators_query, limit=0, offset=0)
 
-        self.logger.info(f"indicators: {indicators}")
+        logger.info(f"indicators: {indicators}")
 
         mapping = indicators_to_mapping_of_grouping_id_to_indicators(indicators)
 

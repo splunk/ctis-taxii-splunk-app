@@ -3,9 +3,10 @@ from solnlib._utils import get_collection_data
 from common import AbstractRestHandler, NAMESPACE, get_logger_for_script
 from models import form_payload_to_indicators, indicator_converter
 from server_exception import ServerException
+import logging
 
-logger = get_logger_for_script(__file__)
-
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class CreateIndicatorHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
@@ -21,7 +22,7 @@ class CreateIndicatorHandler(AbstractRestHandler):
         try:
             errors, models = form_payload_to_indicators(input_json)
         except Exception as exc:
-            self.logger.exception(f"Failed to deserialize input JSON to IndicatorModelV1 instances")
+            logger.exception(f"Failed to deserialize input JSON to IndicatorModelV1 instances")
             raise ValueError(repr(exc))
 
         if errors:
@@ -33,7 +34,7 @@ class CreateIndicatorHandler(AbstractRestHandler):
         serialized = []
         for model in models:
             indicator_dict = indicator_converter.unstructure(model)
-            self.logger.info(f"Inserting indicator: {indicator_dict}")
+            logger.info(f"Inserting indicator: {indicator_dict}")
             collection.insert(indicator_dict)
             serialized.append(indicator_dict)
 
