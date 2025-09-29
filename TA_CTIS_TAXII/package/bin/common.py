@@ -228,20 +228,6 @@ class AbstractRestHandler(abc.ABC):
             self.logger.exception("Server error")
             return self.exception_response(e, 500)
 
-    def generate_splunk_server_class(self):
-        from splunk.persistconn.application import PersistentServerConnectionApplication
-        outer_self = self
-
-        # https://dev.splunk.com/enterprise/docs/devtools/customrestendpoints/customrestscript
-        class Handler(PersistentServerConnectionApplication):
-            def __init__(cls_self, _command_line, _command_arg):
-                super(PersistentServerConnectionApplication, cls_self).__init__()
-
-            def handle(cls_self, in_string):
-                return outer_self.generate_response(in_string)
-
-        return Handler
-
     def generate_stix_bundle_for_grouping(self, grouping_id:str) -> Bundle:
         grouping = self.kvstore_collections_context.groupings.fetch_exactly_one_structured(query={"grouping_id": grouping_id})
         self.logger.info(f"grouping: {grouping}")
