@@ -16,6 +16,7 @@ from models import SubmissionStatus, \
     bundle_for_grouping, serialize_stix_object, maximum_tlpv2_of_indicators
 from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException
+from solnlib.log import Logs
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -26,6 +27,11 @@ sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 NAMESPACE = os.path.basename(APP_DIR)
 sys.stderr.write(f"NAMESPACE: {NAMESPACE}\n")
 
+def setup_root_logger(root_logger_log_file:str):
+    root_logger = logging.getLogger()
+    if len(root_logger.handlers) >= 2:
+        raise RuntimeError(f"Multiple handlers found for root logger. Handlers: {root_logger.handlers}")
+    Logs.set_context(namespace=NAMESPACE, root_logger_log_file=root_logger_log_file)
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
     import solnlib

@@ -1,9 +1,10 @@
+import logging
+
 from solnlib._utils import get_collection_data
 
-from common import AbstractRestHandler, NAMESPACE, get_logger_for_script
+from common import AbstractRestHandler, NAMESPACE
 from models import form_payload_to_indicators, indicator_converter
 from server_exception import ServerException
-import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

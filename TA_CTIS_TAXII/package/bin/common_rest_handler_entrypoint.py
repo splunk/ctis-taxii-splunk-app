@@ -1,7 +1,6 @@
 import os
 import sys
 import traceback
-import logging
 
 sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
@@ -10,7 +9,7 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
     from solnlib.log import Logs
-    from common import get_logger_for_script, NAMESPACE
+    from common import NAMESPACE, setup_root_logger
 
     from rest_list_identities import ListIdentitiesHandler
     from rest_suggest_stix_pattern import SuggestStixPatternHandler
@@ -40,6 +39,8 @@ except ImportError as e:
     sys.stderr.write(f"Failed to import one or more REST handlers: {e} {tb}\n")
     raise e
 
+setup_root_logger(root_logger_log_file="rest_handlers")
+
 from splunk.persistconn.application import PersistentServerConnectionApplication
 
 # https://dev.splunk.com/enterprise/docs/devtools/customrestendpoints/customrestscript
@@ -51,12 +52,6 @@ class Handler(PersistentServerConnectionApplication):
         self.handler_name = _command_arg
         try:
             handler_class = globals().get(self.handler_name)
-
-            # TODO: Investigate duplicate log entries
-            root_logger = logging.getLogger()
-            if len(root_logger.handlers) >= 2:
-                raise RuntimeError(f"Multiple handlers found for root logger. Handlers: {root_logger.handlers}")
-            Logs.set_context(namespace=NAMESPACE, root_logger_log_file=self.handler_name)
 
             self.handler_instance = handler_class()
         except AttributeError:

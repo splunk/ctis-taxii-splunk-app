@@ -13,7 +13,7 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration
 
 try:
-    from common import AbstractRestHandler, NAMESPACE
+    from common import AbstractRestHandler, NAMESPACE, setup_root_logger
     from models import KVStoreCollectionsContext, SubmissionStatus
     from solnlib._utils import get_collection_data
     from solnlib.log import Logs
@@ -21,8 +21,8 @@ except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
 
-Logs.set_context(namespace=NAMESPACE, root_logger_log_file="submission_scheduler")
-
+# For the REST endpoints this is set by common_rest_handler_entrypoint.py. Need to do same here since this is not a REST endpoint.
+setup_root_logger(root_logger_log_file="submission_scheduler")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
