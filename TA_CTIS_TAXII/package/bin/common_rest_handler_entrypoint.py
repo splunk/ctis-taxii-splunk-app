@@ -1,6 +1,9 @@
 import os
 import sys
 import traceback
+import contextvars
+import logging
+from datetime import datetime
 
 sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
@@ -39,7 +42,20 @@ except ImportError as e:
     sys.stderr.write(f"Failed to import one or more REST handlers: {e} {tb}\n")
     raise e
 
-setup_root_logger(root_logger_log_file="rest_handlers")
+ctx_request_time_utc = contextvars.ContextVar("request_time_utc", default=None)
+ctx_rest_handler = contextvars.ContextVar("rest_handler", default=None)
+
+class RequestMetadataFilter(logging.Filter):
+    def filter(self, record):
+        record.request_time_utc = ctx_request_time_utc.get()
+        record.rest_handler = ctx_rest_handler.get()
+        return True
+
+LOG_FORMAT = "%(asctime)s log_level=%(levelname)s pid=%(process)d tid=%(threadName)s file=%(filename)s:%(funcName)s:%(lineno)d request_time_utc=%(request_time_utc)s rest_handler=%(rest_handler)s | %(message)s"
+setup_root_logger(root_logger_log_file="rest_handlers", log_format=LOG_FORMAT)
+root_logger = logging.getLogger()
+assert len(root_logger.handlers) == 1, "Expected exactly one handler on root logger"
+root_logger.handlers[0].addFilter(RequestMetadataFilter())
 
 from splunk.persistconn.application import PersistentServerConnectionApplication
 
@@ -58,4 +74,6 @@ class Handler(PersistentServerConnectionApplication):
             raise ValueError(f"Handler class {self.handler_name} not found")
 
     def handle(self, in_string):
+        ctx_request_time_utc.set(datetime.utcnow().isoformat(timespec="microseconds"))
+        ctx_rest_handler.set(self.handler_name)
         return self.handler_instance.generate_response(in_string)

@@ -27,11 +27,11 @@ sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 NAMESPACE = os.path.basename(APP_DIR)
 sys.stderr.write(f"NAMESPACE: {NAMESPACE}\n")
 
-def setup_root_logger(root_logger_log_file:str):
+def setup_root_logger(root_logger_log_file:str, **kwargs):
     root_logger = logging.getLogger()
     if len(root_logger.handlers) >= 2:
         raise RuntimeError(f"Multiple handlers found for root logger. Handlers: {root_logger.handlers}")
-    Logs.set_context(namespace=NAMESPACE, root_logger_log_file=root_logger_log_file)
+    Logs.set_context(namespace=NAMESPACE, root_logger_log_file=root_logger_log_file, **kwargs)
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
     import solnlib
