@@ -1,19 +1,7 @@
 import json
-import os
-import sys
 
-sys.stderr.write(f"original sys.path: {sys.path}\n")
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
-sys.stderr.write(f"updated sys.path: {sys.path}\n")
-
-try:
-    from common import get_logger_for_script, AbstractRestHandler
-    from solnlib._utils import get_collection_data
-    from models import serialize_stix_object
-except ImportError as e:
-    sys.stderr.write(f"ImportError: {e}\n")
-    raise e
+from common import AbstractRestHandler, get_logger_for_script
+from models import serialize_stix_object
 
 logger = get_logger_for_script(__file__)
 
@@ -29,6 +17,3 @@ class GetStixBundleForGroupingHandler(AbstractRestHandler):
         return {
             "bundle": json.loads(serialize_stix_object(stix_object=bundle))
         }
-
-
-Handler = GetStixBundleForGroupingHandler(logger=logger).generate_splunk_server_class()

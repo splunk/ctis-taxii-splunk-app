@@ -1,23 +1,8 @@
-import os
-import sys
 from collections import defaultdict
-import traceback
 
-sys.stderr.write(f"original sys.path: {sys.path}\n")
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
-sys.stderr.write(f"updated sys.path: {sys.path}\n")
-
-# TODO: Create shared import handler class which acts as REST Handler entrypoint for restmap.conf
-try:
-    from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
-    from models import CollectionName
-    from query import query_value_in_list
-    from solnlib._utils import get_collection_data
-except ImportError as e:
-    sys.stderr.write(f"ImportError: {e}\n")
-    sys.stderr.write(f"Traceback: {traceback.format_exc()}\n")
-    raise e
+from common import AbstractRestHandler, get_logger_for_script
+from models import CollectionName
+from query import query_value_in_list
 
 logger = get_logger_for_script(__file__)
 
@@ -55,6 +40,3 @@ class ListGroupingsHandler(AbstractRestHandler):
 
         resp["records"] = new_records
         return resp
-
-
-Handler = ListGroupingsHandler(logger=logger).generate_splunk_server_class()
