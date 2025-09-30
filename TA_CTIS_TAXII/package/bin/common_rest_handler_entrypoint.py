@@ -57,6 +57,8 @@ def setup_logging():
     root_logger = logging.getLogger()
     if not root_logger.hasHandlers():
         setup_root_logger(root_logger_log_file="rest_handlers", log_format=LOG_FORMAT)
+    else:
+        root_logger.info(f"Root logger already has handlers: {root_logger.handlers}, pid={os.getpid()}")
 
     if len(root_logger.handlers) > 1:
         root_logger.warning(f"More than one handler found on root logger. handlers={root_logger.handlers}")
