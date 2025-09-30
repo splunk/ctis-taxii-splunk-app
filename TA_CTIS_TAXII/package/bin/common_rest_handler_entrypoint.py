@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 sys.stderr.write(f"updated sys.path: {sys.path}\n")
 
 try:
+    from splunk.persistconn.application import PersistentServerConnectionApplication
     from solnlib.log import Logs
     from common import NAMESPACE, setup_root_logger
 
@@ -52,16 +53,23 @@ class RequestMetadataFilter(logging.Filter):
         return True
 
 LOG_FORMAT = "%(asctime)s log_level=%(levelname)s pid=%(process)d tid=%(threadName)s file=%(filename)s:%(funcName)s:%(lineno)d request_time_utc=%(request_time_utc)s rest_handler=%(rest_handler)s | %(message)s"
-setup_root_logger(root_logger_log_file="rest_handlers", log_format=LOG_FORMAT)
-root_logger = logging.getLogger()
-assert len(root_logger.handlers) == 1, "Expected exactly one handler on root logger"
-root_logger.handlers[0].addFilter(RequestMetadataFilter())
+def setup_logging():
+    root_logger = logging.getLogger()
 
-from splunk.persistconn.application import PersistentServerConnectionApplication
+    # This already has checks to avoid multiple handlers for same log file
+    setup_root_logger(root_logger_log_file="rest_handlers", log_format=LOG_FORMAT)
+
+    if len(root_logger.handlers) > 1:
+        root_logger.warning(f"More than one handler found on root logger. handlers={root_logger.handlers}")
+
+    for handler in root_logger.handlers:
+        handler.addFilter(RequestMetadataFilter())
+
 
 # https://dev.splunk.com/enterprise/docs/devtools/customrestendpoints/customrestscript
 class Handler(PersistentServerConnectionApplication):
     def __init__(self, _command_line, _command_arg):
+        setup_logging()
         PersistentServerConnectionApplication.__init__(self)
 
         # Set via restmap.conf stanza property 'script.param'
