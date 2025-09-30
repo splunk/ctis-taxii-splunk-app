@@ -17,6 +17,7 @@ from models import SubmissionStatus, \
 from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException
 from solnlib.log import Logs
+from solnlib.splunkenv import make_splunkhome_path
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,9 +30,19 @@ sys.stderr.write(f"NAMESPACE: {NAMESPACE}\n")
 
 def setup_root_logger(root_logger_log_file:str, **kwargs):
     root_logger = logging.getLogger()
-    if len(root_logger.handlers) >= 2:
-        raise RuntimeError(f"Multiple handlers found for root logger. Handlers: {root_logger.handlers}")
-    Logs.set_context(namespace=NAMESPACE, root_logger_log_file=root_logger_log_file, **kwargs)
+    if len(root_logger.handlers) >= 1:
+        sys.stderr.write(f"DEBUG: Root logger already has handlers: {root_logger.handlers}, pid={os.getpid()}\n")
+    directory = make_splunkhome_path(["var", "log", "splunk", NAMESPACE])
+    log_file = Logs._get_log_file(root_logger_log_file)
+    for handler in root_logger.handlers:
+        sys.stderr.write(f"Handler: {handler}, {vars(handler)}\n")
+        if getattr(handler, "baseFilename", None) == log_file:
+            sys.stderr.write(f"Root logger already has handler for log_file={log_file}, not adding another one.\n")
+            break
+    else:
+        sys.stderr.write(f"Setting up root logger to log to file: {log_file}\n")
+        Logs.set_context(namespace=NAMESPACE, directory=directory, root_logger_log_file=root_logger_log_file, **kwargs)
+        sys.stderr.write(f"Root logger handlers now: {root_logger.handlers}\n")
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
     import solnlib
