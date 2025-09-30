@@ -33,9 +33,16 @@ def setup_root_logger(root_logger_log_file:str, **kwargs):
         root_logger = logging.getLogger()
         if len(root_logger.handlers) >= 1:
             sys.stderr.write(f"DEBUG: Root logger already has handlers: {root_logger.handlers}, pid={os.getpid()}\n")
+
+        # Make app log dir if not exists already
         directory = make_splunkhome_path(["var", "log", "splunk", NAMESPACE])
         os.makedirs(directory, exist_ok=True)
+
+        # Set namespace and directory for log context, so that _get_log_file works correctly
+        Logs.set_context(namespace=NAMESPACE, directory=directory)
         log_file = Logs._get_log_file(root_logger_log_file)
+
+        sys.stderr.write(f"Trying to set up root logger to log to file: {log_file}\n")
         for handler in root_logger.handlers:
             sys.stderr.write(f"Handler: {handler}, {vars(handler)}\n")
             if getattr(handler, "baseFilename", None) == log_file:
