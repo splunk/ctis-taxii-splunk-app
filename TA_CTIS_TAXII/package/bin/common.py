@@ -16,6 +16,10 @@ from models import SubmissionStatus, \
     bundle_for_grouping, serialize_stix_object, maximum_tlpv2_of_indicators
 from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException
+from solnlib.log import Logs
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 APP_DIR = os.path.dirname(os.path.dirname(__file__))
 sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
@@ -23,6 +27,11 @@ sys.stderr.write(f"APP_DIR: {APP_DIR}\n")
 NAMESPACE = os.path.basename(APP_DIR)
 sys.stderr.write(f"NAMESPACE: {NAMESPACE}\n")
 
+def setup_root_logger(root_logger_log_file:str, **kwargs):
+    root_logger = logging.getLogger()
+    if len(root_logger.handlers) >= 2:
+        raise RuntimeError(f"Multiple handlers found for root logger. Handlers: {root_logger.handlers}")
+    Logs.set_context(namespace=NAMESPACE, root_logger_log_file=root_logger_log_file, **kwargs)
 
 def get_logger_for_script(script_filepath: str) -> logging.Logger:
     import solnlib
@@ -41,9 +50,7 @@ def add_request_response_logging_hook(taxii_endpoint: _TAXIIEndpoint, app_logger
     session.hooks["response"].append(log_http_response)
 
 class AbstractRestHandler(abc.ABC):
-    def __init__(self, logger):
-        self.logger = logger
-
+    def __init__(self):
         # Lazy init, generate_response() will set this
         self.kvstore_collections_context: Optional[KVStoreCollectionsContext] = None
 
@@ -75,13 +82,13 @@ class AbstractRestHandler(abc.ABC):
             ADDON_NAME,
             realm=f"__REST_CREDENTIAL__#{ADDON_NAME}#configs/conf-{conf_name}",
         )
-        self.logger.info(f"Getting conf_file={conf_name} stanza={stanza_name}")
+        logger.info(f"Getting conf_file={conf_name} stanza={stanza_name}")
         taxii_config_conf = cfm.get_conf(conf_name)
         return taxii_config_conf.get(stanza_name)
 
     def get_api_root(self, url: str, user: str, password: str) -> ApiRoot:
         api_root = ApiRoot(url=url, user=user, password=password)
-        add_request_response_logging_hook(taxii_endpoint=api_root, app_logger=self.logger)
+        add_request_response_logging_hook(taxii_endpoint=api_root, app_logger=logger)
         return api_root
 
     def get_taxii_collection(self, taxii_config: dict, collection_id: str) -> Collection:
@@ -105,13 +112,13 @@ class AbstractRestHandler(abc.ABC):
             taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission.taxii_config_name)
             taxii_collection_id = submission.collection_id
 
-            self.logger.info(f"Submitting bundle={bundle_json} to TAXII collection: collection_id={taxii_collection_id}")
+            logger.info(f"Submitting bundle={bundle_json} to TAXII collection: collection_id={taxii_collection_id}")
             taxii_collection = self.get_taxii_collection(taxii_config=taxii_config, collection_id=taxii_collection_id)
             taxii_response = taxii_collection.add_objects(bundle_json)
             taxii_response_dict = taxii_response._raw
-            self.logger.info(f"taxii_response: {taxii_response_dict}")
+            logger.info(f"taxii_response: {taxii_response_dict}")
         except Exception as e:
-            self.logger.exception(f"Failed to submit to TAXII collection: {e}")
+            logger.exception(f"Failed to submit to TAXII collection: {e}")
             error = str(e)
 
         submission_delta = {
@@ -127,19 +134,19 @@ class AbstractRestHandler(abc.ABC):
 
     def handle_query_collection(self, input_json: Optional[dict], query_params: Dict[str, List], session_key: str,
                                 collection_name: CollectionName) -> dict:
-        self.logger.info(f"input_json: {input_json}")
-        self.logger.info(f"query_params: {query_params}")
+        logger.info(f"input_json: {input_json}")
+        logger.info(f"query_params: {query_params}")
 
         collection_query_kwargs = self.extract_collection_query_kwargs(query_params)
 
         collection = self.get_collection(collection_name=collection_name.value, session_key=session_key)
-        self.logger.info(f"Collection: {collection}")
-        self.logger.info(f"Collection query kwargs: {collection_query_kwargs}")
+        logger.info(f"Collection: {collection}")
+        logger.info(f"Collection query kwargs: {collection_query_kwargs}")
         records = collection.query(**collection_query_kwargs)
-        self.logger.info(f"Records found for query: {len(records)}")
+        logger.info(f"Records found for query: {len(records)}")
 
         total_records = self.kvstore_collections_context.collections[collection_name].get_collection_size(query=collection_query_kwargs.get("query"))
-        self.logger.info(f"Total records found: {total_records}")
+        logger.info(f"Total records found: {total_records}")
         response = {
             "records": records,
             "total": total_records,
@@ -151,11 +158,11 @@ class AbstractRestHandler(abc.ABC):
         try:
             structured = converter.structure(input_json, model_class)
         except Exception as exc:
-            self.logger.exception(f"Failed to convert input JSON to Model")
+            logger.exception(f"Failed to convert input JSON to Model")
             raise ValueError(repr(exc))
 
         record_as_dict = converter.unstructure(structured)
-        self.logger.info(f"Inserting record into collection {collection}: {record_as_dict}")
+        logger.info(f"Inserting record into collection {collection}: {record_as_dict}")
         collection.insert(record_as_dict)
 
         return record_as_dict
@@ -202,66 +209,52 @@ class AbstractRestHandler(abc.ABC):
 
     def generate_response(self, in_string: str) -> dict:
         try:
-            self.logger.info(f"Handling request with input: {in_string}")
+            logger.info(f"Handling request with input: {in_string}")
             in_string_dict = json.loads(in_string)
             input_json = json.loads(in_string_dict["payload"]) if "payload" in in_string_dict else None
             session_key = in_string_dict["session"]["authtoken"]
             query_params_dict = self.parse_query_params(in_string_dict["query"])
 
-            self.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, logger=self.logger, app_namespace=NAMESPACE)
+            self.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, app_namespace=NAMESPACE)
 
             payload = self.handle(input_json=input_json, query_params=query_params_dict, session_key=session_key)
             return {"payload": payload, "status": 200}
         except (ValueError, AssertionError) as e:
-            self.logger.exception("Client error")
+            logger.exception("Client error")
             return self.exception_response(e, 400)
         except ServerException as e:
-            self.logger.exception(e)
+            logger.exception(e)
             return {"payload": {"error": str(e), "errors": e.errors}, "status": 400}
         except ClassValidationError as e:
-            self.logger.exception("Validation Error")
+            logger.exception("Validation Error")
             return {"payload":
                         {"error": f"Validation Error: {e}",
                          "errors": [str(err) for err in e.exceptions] },
                     "status": 400 }
         except Exception as e:
-            self.logger.exception("Server error")
+            logger.exception("Server error")
             return self.exception_response(e, 500)
-
-    def generate_splunk_server_class(self):
-        from splunk.persistconn.application import PersistentServerConnectionApplication
-        outer_self = self
-
-        # https://dev.splunk.com/enterprise/docs/devtools/customrestendpoints/customrestscript
-        class Handler(PersistentServerConnectionApplication):
-            def __init__(cls_self, _command_line, _command_arg):
-                super(PersistentServerConnectionApplication, cls_self).__init__()
-
-            def handle(cls_self, in_string):
-                return outer_self.generate_response(in_string)
-
-        return Handler
 
     def generate_stix_bundle_for_grouping(self, grouping_id:str) -> Bundle:
         grouping = self.kvstore_collections_context.groupings.fetch_exactly_one_structured(query={"grouping_id": grouping_id})
-        self.logger.info(f"grouping: {grouping}")
+        logger.info(f"grouping: {grouping}")
 
         indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
-        self.logger.info(f"indicators: {indicators}")
+        logger.info(f"indicators: {indicators}")
 
         identity = self.kvstore_collections_context.identities.fetch_exactly_one_structured(query={"identity_id" : grouping.created_by_ref})
-        self.logger.info(f"identity: {identity}")
+        logger.info(f"identity: {identity}")
 
         bundle = bundle_for_grouping(grouping_=grouping, indicators=indicators, grouping_identity=identity)
         return bundle
 
     def update_grouping_tlp_rating_to_match_indicators(self, grouping_id: str):
         indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
-        self.logger.info(f"Grouping {grouping_id} has indicators: {indicators}")
+        logger.info(f"Grouping {grouping_id} has indicators: {indicators}")
         if indicators:
             max_tlpv2 = maximum_tlpv2_of_indicators(indicators=indicators)
-            self.logger.info(f"Updating grouping {grouping_id} to have TLPv2 rating: {max_tlpv2}")
+            logger.info(f"Updating grouping {grouping_id} to have TLPv2 rating: {max_tlpv2}")
             updated_grouping = self.kvstore_collections_context.groupings.update_grouping_structured(grouping_id=grouping_id, updates={"tlp_v2_rating": max_tlpv2})
-            self.logger.info(f"Updated grouping: {updated_grouping}")
+            logger.info(f"Updated grouping: {updated_grouping}")
         else:
-            self.logger.info(f"Grouping {grouping_id} has no indicators, not updating TLPv2 rating")
+            logger.info(f"Grouping {grouping_id} has no indicators, not updating TLPv2 rating")

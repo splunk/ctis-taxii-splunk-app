@@ -1,21 +1,11 @@
-import os
-import sys
+import logging
 from datetime import datetime
 
-sys.stderr.write(f"original sys.path: {sys.path}\n")
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
-sys.stderr.write(f"updated sys.path: {sys.path}\n")
+from common import AbstractRestHandler
+from models import SubmissionModelV1, SubmissionStatus, submission_converter
 
-try:
-    from common import get_logger_for_script, AbstractRestHandler
-    from models import GroupingModelV1, grouping_converter, SubmissionModelV1, SubmissionStatus, submission_converter
-    from solnlib._utils import get_collection_data
-except ImportError as e:
-    sys.stderr.write(f"ImportError: {e}\n")
-    raise e
-
-logger = get_logger_for_script(__file__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class SubmitGroupingHandler(AbstractRestHandler):
@@ -42,7 +32,7 @@ class SubmitGroupingHandler(AbstractRestHandler):
 
         # Validates that the grouping exists, along with the indicators and identity objects
         bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id)
-        self.logger.info(f"bundle: {bundle.serialize()}")
+        logger.info(f"bundle: {bundle.serialize()}")
 
         submissions_collection = self.get_collection(session_key=session_key, collection_name="submissions")
 
@@ -60,7 +50,7 @@ class SubmitGroupingHandler(AbstractRestHandler):
             **scheduled_at_kwargs
         )
         new_submission_dict = submission_converter.unstructure(new_submission)
-        self.logger.info(f"new_submission_dict: {new_submission_dict}")
+        logger.info(f"new_submission_dict: {new_submission_dict}")
         self.insert_record(collection=submissions_collection, input_json=new_submission_dict,
                            converter=submission_converter, model_class=SubmissionModelV1)
 
@@ -74,6 +64,3 @@ class SubmitGroupingHandler(AbstractRestHandler):
         return {
             "submission": submission_to_return
         }
-
-
-Handler = SubmitGroupingHandler(logger=logger).generate_splunk_server_class()

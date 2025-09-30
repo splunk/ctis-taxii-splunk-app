@@ -4,6 +4,7 @@ import os
 import sys
 import time
 from datetime import datetime
+import logging
 
 sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
@@ -12,14 +13,16 @@ sys.stderr.write(f"updated sys.path: {sys.path}\n")
 from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration
 
 try:
-    from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
+    from common import AbstractRestHandler, NAMESPACE, setup_root_logger
     from models import KVStoreCollectionsContext, SubmissionStatus
-    from solnlib._utils import get_collection_data
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
 
-logger = get_logger_for_script(__file__)
+# For the REST endpoints this is set by common_rest_handler_entrypoint.py. Need to do same here since this is not a REST endpoint.
+setup_root_logger(root_logger_log_file="submission_scheduler")
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class MyHandler(AbstractRestHandler):
@@ -37,10 +40,10 @@ class SubmissionSchedulerCommand(GeneratingCommand):
         #    service = self.service
         service = self.service
         session_key = service.token  # not sure if this is the right way to get the session key
-        handler = MyHandler(logger=logger)
+        handler = MyHandler()
 
         # Need to manually set the kvstore_collections_context since we are not using the REST handler's infrastructure
-        handler.kvstore_collections_context = KVStoreCollectionsContext(logger=logger, session_key=session_key, app_namespace=NAMESPACE)
+        handler.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, app_namespace=NAMESPACE)
 
         now_as_isostring = datetime.utcnow().isoformat()
         query = {

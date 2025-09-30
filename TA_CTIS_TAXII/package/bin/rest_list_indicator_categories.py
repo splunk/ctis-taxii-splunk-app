@@ -1,26 +1,9 @@
-import os
-import sys
-
-sys.stderr.write(f"original sys.path: {sys.path}\n")
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
-sys.stderr.write(f"updated sys.path: {sys.path}\n")
-
-try:
-    from common import get_logger_for_script, AbstractRestHandler
-    from cim_to_stix import IoCCategory
-except ImportError as e:
-    sys.stderr.write(f"ImportError: {e}\n")
-    raise e
-
-logger = get_logger_for_script(__file__)
+from cim_to_stix import IoCCategory
+from common import AbstractRestHandler
 
 
-class Handler(AbstractRestHandler):
+class ListIndicatorCategoriesHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         return {
             "categories": [x.value for x in IoCCategory],
         }
-
-
-ListIndicatorCategoriesHandler = Handler(logger=logger).generate_splunk_server_class()

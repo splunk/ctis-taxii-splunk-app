@@ -1,25 +1,15 @@
-import os
-import sys
+import logging
 
-sys.stderr.write(f"original sys.path: {sys.path}\n")
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "lib")))
-sys.stderr.write(f"updated sys.path: {sys.path}\n")
+from solnlib._utils import get_collection_data
 
-try:
-    from common import get_logger_for_script, AbstractRestHandler, NAMESPACE
-    from server_exception import ServerException
-    from models import IndicatorModelV1, indicator_converter, form_payload_to_indicators, GroupingModelV1, \
-        grouping_converter
-    from solnlib._utils import get_collection_data
-except ImportError as e:
-    sys.stderr.write(f"ImportError: {e}\n")
-    raise e
+from common import AbstractRestHandler, NAMESPACE
+from models import form_payload_to_indicators, indicator_converter
+from server_exception import ServerException
 
-logger = get_logger_for_script(__file__)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-
-class Handler(AbstractRestHandler):
+class CreateIndicatorHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         collection = get_collection_data(collection_name="indicators", session_key=session_key, app=NAMESPACE)
 
@@ -33,7 +23,7 @@ class Handler(AbstractRestHandler):
         try:
             errors, models = form_payload_to_indicators(input_json)
         except Exception as exc:
-            self.logger.exception(f"Failed to deserialize input JSON to IndicatorModelV1 instances")
+            logger.exception(f"Failed to deserialize input JSON to IndicatorModelV1 instances")
             raise ValueError(repr(exc))
 
         if errors:
@@ -45,7 +35,7 @@ class Handler(AbstractRestHandler):
         serialized = []
         for model in models:
             indicator_dict = indicator_converter.unstructure(model)
-            self.logger.info(f"Inserting indicator: {indicator_dict}")
+            logger.info(f"Inserting indicator: {indicator_dict}")
             collection.insert(indicator_dict)
             serialized.append(indicator_dict)
 
@@ -57,6 +47,3 @@ class Handler(AbstractRestHandler):
             "indicators": serialized,
         }
         return response
-
-
-CreateIndicatorHandler = Handler(logger=logger).generate_splunk_server_class()
