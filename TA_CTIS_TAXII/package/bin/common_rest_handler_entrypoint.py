@@ -55,10 +55,9 @@ class RequestMetadataFilter(logging.Filter):
 LOG_FORMAT = "%(asctime)s log_level=%(levelname)s pid=%(process)d tid=%(threadName)s file=%(filename)s:%(funcName)s:%(lineno)d request_time_utc=%(request_time_utc)s rest_handler=%(rest_handler)s | %(message)s"
 def setup_logging():
     root_logger = logging.getLogger()
-    if not root_logger.hasHandlers():
-        setup_root_logger(root_logger_log_file="rest_handlers", log_format=LOG_FORMAT)
-    else:
-        root_logger.info(f"Root logger already has handlers: {root_logger.handlers}, pid={os.getpid()}")
+
+    # This already has checks to avoid multiple handlers for same log file
+    setup_root_logger(root_logger_log_file="rest_handlers", log_format=LOG_FORMAT)
 
     if len(root_logger.handlers) > 1:
         root_logger.warning(f"More than one handler found on root logger. handlers={root_logger.handlers}")
