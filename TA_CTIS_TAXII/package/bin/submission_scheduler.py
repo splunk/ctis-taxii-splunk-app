@@ -15,8 +15,6 @@ from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration
 try:
     from common import AbstractRestHandler, NAMESPACE, setup_root_logger
     from models import KVStoreCollectionsContext, SubmissionStatus
-    from solnlib._utils import get_collection_data
-    from solnlib.log import Logs
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
