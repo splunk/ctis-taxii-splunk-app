@@ -1,5 +1,6 @@
 # Development Notes
 This app combines SplunkUI Toolkit and UCC Framework to create a custom Splunk app.
+**Note: This document needs updating**
 
 ## Setup
 - Install dev requirements with `pip install -r dev-requirements.txt`
