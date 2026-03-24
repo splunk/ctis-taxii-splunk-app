@@ -208,7 +208,13 @@
                             },
                             "help": "Default TAXII configuration to use for submissions",
                             "field": "default_taxii_config"
-                        }
+                        },
+                      {
+                        "type": "checkbox",
+                        "label": "Use UUIDv5 for Indicator id",
+                        "field": "use_uuid_v5",
+                        "defaultValue": false
+                      }
                     ],
                     "title": "Advanced Settings"
                 },
