@@ -199,12 +199,6 @@
                 },
                 {
                     "name": "advanced_settings",
-                    "warning": {
-                        "create": {
-                            "message": "Warning: Only a single Advanced Settings configuration is allowed. Edit the existing configuration if it already exists.",
-                            "alwaysDisplay": true
-                        }
-                    },
                     "entity": [
                         {
                             "type": "singleSelect",
@@ -388,7 +382,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.20.0+a6c31cc",
+        "version": "1.21.2+951b3b4",
         "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.9",
         "supportedThemes": [
