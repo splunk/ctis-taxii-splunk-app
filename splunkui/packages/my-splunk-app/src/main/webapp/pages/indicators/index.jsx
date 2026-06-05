@@ -41,7 +41,7 @@ const expansionFieldNameToCellValue = {
     "Indicator ID": (row) => <IndicatorIdLink indicatorId={row.indicator_id}/>,
     "Grouping ID": (row) => <GroupingIdLink groupingId={row.grouping_id}/>,
     "Name": (row) => row.name,
-    "Description": (row) => row?.description || "No description provided",
+    "Description": (row) => row.description,
     "STIX Pattern": (row) => row.stix_pattern,
     "Valid From (UTC)": (row) => formatTimestampForDisplay(row.valid_from),
     "Indicator Category": (row) => row.indicator_category,
@@ -49,6 +49,7 @@ const expansionFieldNameToCellValue = {
     [FIELD_LABEL_TLP_V2_MARKING]: (row) => row.tlp_v2_rating,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
+    "Confidence": (row) => row.confidence,
 }
 
 const RowActionPrimary = ({row}) => {
