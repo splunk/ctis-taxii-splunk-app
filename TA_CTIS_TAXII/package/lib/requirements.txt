@@ -7,11 +7,14 @@ typing-extensions==4.7.1
 # See: https://github.com/python-attrs/cattrs/pull/424
 cattrs==23.1.2
 attrs==24.2.0
-stix2
-stix2-patterns
+
+# Latest versions which supports Python 3.9
+stix2==3.0.1
+stix2-patterns==2.0.0
+
 splunktaucclib
 splunk-sdk
 solnlib
-taxii2-client
+taxii2-client==2.3.0
 pytz
 # remote-pdb
