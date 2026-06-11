@@ -19,6 +19,10 @@ class IndicatorsCollection(AbstractKVStoreCollection[IndicatorModelV1]):
     def collection_name(self) -> CollectionName:
         return CollectionName.INDICATORS
 
+    @property
+    def primary_key(self) -> str:
+        return IndicatorsCollection.INDICATOR_ID_FIELD
+
     def fetch_many_by_grouping_id(self, grouping_id: str) -> List[IndicatorModelV1]:
         return self.fetch_many_structured(query={"grouping_id": grouping_id})
 

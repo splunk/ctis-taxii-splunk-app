@@ -19,6 +19,10 @@ class GroupingsCollection(AbstractKVStoreCollection[GroupingModelV1]):
     def collection_name(self) -> CollectionName:
         return CollectionName.GROUPINGS
 
+    @property
+    def primary_key(self) -> str:
+        return GroupingsCollection.ID_FIELD
+
     def get_grouping(self, grouping_id: str) -> GroupingModelV1:
         return self.fetch_exactly_one_structured(query={GroupingsCollection.ID_FIELD: grouping_id})
 

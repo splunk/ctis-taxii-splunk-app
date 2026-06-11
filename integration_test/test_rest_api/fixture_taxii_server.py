@@ -5,18 +5,14 @@ import pathlib
 import subprocess
 import tempfile
 import time
-from dataclasses import dataclass
 from util import random_alnum_string
+from taxii_server_connection_info import Taxii2ServerConnectionInfo
 
 import pytest
 import requests
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
-MONGO_DB_PORT = os.environ.get('MONGO_DB_PORT', '27017')
-MONGO_DB_USERNAME = os.environ['MONGO_DB_USERNAME']
-MONGO_DB_PASSWORD = os.environ['MONGO_DB_PASSWORD']
 
 # This should be specified when running Splunk as Docker container
 TAXII_SERVER_HOST = os.environ.get('TAXII_SERVER_HOST', 'localhost')
@@ -32,13 +28,6 @@ MEDALLION_USERS_JSON = {
     }
 }
 
-MEDALLION_BACKEND_CONFIG = {
-  "backend": {
-    "module_class": "MongoBackend",
-    "uri": f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@mongo:{MONGO_DB_PORT}/",
-    "filename": "medallion/test/data/default_data.json"
-  }
-}
 
 # TODO: Since we are now using a fork of the original cti-taxii-server repo, we can remove some of the overrides
 TAXII_SERVER_REPO = "https://github.com/bliew-splunk/cti-taxii-server.git"
@@ -53,28 +42,6 @@ services:
       AUTH_TYPE: basic
 """
 
-@dataclass
-class Taxii2ServerConnectionInfo:
-    server_url: str
-    username: str
-    password: str
-
-    @property
-    def server_discovery_url(self) -> str:
-        return f"{self.server_url}/taxii2"
-
-    @property
-    def default_api_root_url(self) -> str:
-        return f"{self.server_url}/trustgroup1"
-
-    @property
-    def readable_and_writable_collection_id(self) -> str:
-        return "365fed99-08fa-fdcd-a1b3-fb247eb41d01"
-
-    @property
-    def readable_and_writable_collection_url(self) -> str:
-        # https://github.com/oasis-open/cti-taxii-server/blob/39e76bf18be5371e9570de7e5f340c3937b69c0d/medallion/test/data/default_data.json#L106C24-L106C60
-        return f"{self.server_url}/trustgroup1/{self.readable_and_writable_collection_id}"
 
 def run_subprocess_and_log_output(cmd, **kwargs):
     logger.info(f"Running command: {cmd}")
@@ -88,6 +55,16 @@ def run_subprocess_and_log_output(cmd, **kwargs):
 
 @pytest.fixture(scope='module')
 def taxii2_server():
+    MONGO_DB_PORT = os.environ.get('MONGO_DB_PORT', '27017')
+    MONGO_DB_USERNAME = os.environ['MONGO_DB_USERNAME']
+    MONGO_DB_PASSWORD = os.environ['MONGO_DB_PASSWORD']
+    MEDALLION_BACKEND_CONFIG = {
+        "backend": {
+            "module_class": "MongoBackend",
+            "uri": f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@mongo:{MONGO_DB_PORT}/",
+            "filename": "medallion/test/data/default_data.json"
+        }
+    }
     with tempfile.TemporaryDirectory() as tmpdirname:
         logger.info(f'Created temporary directory: {tmpdirname}')
         run_subprocess_and_log_output(["git", "clone", "--depth=1", TAXII_SERVER_REPO, tmpdirname])
