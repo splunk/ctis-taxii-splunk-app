@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {FormProvider, useForm} from "react-hook-form";
 import SubmitButton from "@splunk/my-page/src/SubmitButton";
 import {editIdentity, getIdentity, postCreateIdentity, useGetRecord} from "@splunk/my-page/src/ApiClient";
@@ -12,6 +12,7 @@ import {CustomControlGroup} from "@splunk/my-page/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-page/src/HorizontalButtonLayout";
 import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
+import Switch from '@splunk/react-ui/Switch';
 import {IdentityClassField, IdentityIdField, NameField} from "./identity_form/fields";
 import {useOnFormSubmit} from "./formSubmit";
 import {usePageTitle} from "./utils";
@@ -41,18 +42,45 @@ function GotoIdentitiesPageButton() {
     return (<Button to={VIEW_IDENTITIES_PAGE} appearance="primary" label="Go to Identities"/>);
 }
 
+function RenderIdentityIdField({ hasExistingIdentity, shouldAutogenerateId }) {
+    if (hasExistingIdentity) {
+        return <IdentityIdField disabled fieldName={FORM_FIELD_IDENTITY_ID} />;
+    }
+    if (!shouldAutogenerateId) {
+        return <IdentityIdField fieldName={FORM_FIELD_IDENTITY_ID} />;
+    }
+    return null;
+}
+
+RenderIdentityIdField.propTypes = {
+    hasExistingIdentity: PropTypes.bool,
+    shouldAutogenerateId: PropTypes.bool,
+}
+
+function validateIdentityId(value){
+    if(!String(value).startsWith("identity--")){
+        return "Should start with 'identity--'";
+    }
+    const regex = /^identity--[a-zA-Z0-9-]{36}$/;
+    if(!regex.test(value)){
+        return "Should be in format of 'identity--{UUIDv4}'";
+    }
+    return null;
+}
+
 export function Form({existingIdentity}) {
     const title = existingIdentity ? "Edit Identity" : "Create New Identity";
     usePageTitle(title);
 
     const submissionSuccessModalTitle = existingIdentity ? "Successfully Edited Identity" : "Successfully Created New Identity";
+    const [autogenerateId, setAutogenerateId] = useState(true);
     const methods = useForm({
         mode: 'all',
         defaultValues: {
             [FIELD_CONFIDENCE]: 100,
         }
     });
-    const {register, setValue, handleSubmit, formState} = methods;
+    const {register, unregister, setValue, handleSubmit, formState} = methods;
 
     register(FORM_FIELD_NAME, {required: "Name is required.", value: ""});
     register(FORM_FIELD_IDENTITY_CLASS, {required: "Identity Class is required.", value: ""});
@@ -73,6 +101,20 @@ export function Form({existingIdentity}) {
         }
     }, [existingIdentity, setValue]);
 
+    useEffect(() => {
+        if(!existingIdentity) {
+            if (!autogenerateId) {
+                register(FORM_FIELD_IDENTITY_ID, {
+                    required: 'Identity ID is required.',
+                    value: '',
+                    validate: validateIdentityId,
+                });
+            } else {
+                unregister(FORM_FIELD_IDENTITY_ID);
+            }
+        }
+    }, [autogenerateId, existingIdentity, register, unregister]);
+
     const postEndpointFunction = existingIdentity ? editIdentity : postCreateIdentity;
     const {submitSuccess, submissionError, onSubmit, submitButtonDisabled} = useOnFormSubmit({
         formMethods: methods,
@@ -87,36 +129,61 @@ export function Form({existingIdentity}) {
         <FormProvider {...methods}>
             <MyForm onSubmit={handleSubmit(onSubmit)}>
                 <PageHeadingContainer>
-                    <PageHeading>{title}</PageHeading>
+                    <PageHeading level={2}>{title}</PageHeading>
                 </PageHeadingContainer>
                 <section>
-                    {submissionError && <Message appearance="fill" type="error">
-                        {submissionError?.json?.error && <code>{submissionError.json.error}</code>}
-                        {submissionError?.error && <code>{submissionError.error.toString()}</code>}
-                    </Message>}
-                    {existingIdentity && <IdentityIdField disabled fieldName={FORM_FIELD_IDENTITY_ID}/>}
-                    <NameField fieldName={FORM_FIELD_NAME}/>
-                    <IdentityClassField fieldName={FORM_FIELD_IDENTITY_CLASS} options={IDENTITY_CLASSES}/>
-                    <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING}/>
-                    <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
+                    {submissionError && (
+                        <Message appearance="fill" type="error">
+                            {submissionError?.json?.error && (
+                                <code>{submissionError.json.error}</code>
+                            )}
+                            {submissionError?.error && (
+                                <code>{submissionError.error.toString()}</code>
+                            )}
+                        </Message>
+                    )}
+                    {!existingIdentity && (
+                        <CustomControlGroup>
+                            <Switch
+                                appearance="toggle"
+                                selected={autogenerateId}
+                                onClick={() => setAutogenerateId(!autogenerateId)}
+                            >
+                                Auto-generate ID
+                            </Switch>
+                        </CustomControlGroup>
+                    )}
+                    <RenderIdentityIdField
+                        hasExistingIdentity={!!existingIdentity}
+                        shouldAutogenerateId={autogenerateId}
+                    />
+                    <NameField fieldName={FORM_FIELD_NAME} />
+                    <IdentityClassField
+                        fieldName={FORM_FIELD_IDENTITY_CLASS}
+                        options={IDENTITY_CLASSES}
+                    />
+                    <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING} />
+                    <ConfidenceField fieldName={FIELD_CONFIDENCE} />
                     <CustomControlGroup>
                         <HorizontalButtonLayout>
-                            <SubmitButton inline disabled={submitButtonDisabled} submitting={formState.isSubmitting}
-                                          label={existingIdentity ? "Edit Identity" : "Create Identity"}/>
+                            <SubmitButton
+                                inline
+                                disabled={submitButtonDisabled}
+                                submitting={formState.isSubmitting}
+                                label={existingIdentity ? 'Edit Identity' : 'Create Identity'}
+                            />
                         </HorizontalButtonLayout>
                     </CustomControlGroup>
                 </section>
                 <Modal open={submitSuccess}>
-                    <Modal.Header
-                        title={submissionSuccessModalTitle}
-                    />
+                    <Modal.Header title={submissionSuccessModalTitle} />
                     <Modal.Body>
-                        <GotoIdentitiesPageButton/>
+                        <GotoIdentitiesPageButton />
                     </Modal.Body>
                 </Modal>
             </MyForm>
         </FormProvider>
-    )
+    );
 }
 
 Form.propTypes = {
