@@ -17,7 +17,7 @@ export default function ActionModal({
                                         endpointFunction,
                                         endpointFunctionArgs,
                                         modalBodyContent,
-                                        actionSuccessUrl,
+                                        actionSuccessUrl = null,
                                     }) {
     const [loading, setLoading] = useState(false);
     const ActionButton = actionButtonComponent;
@@ -30,7 +30,11 @@ export default function ActionModal({
                 setLoading(false);
                 onRequestClose();
                 // Refresh the page or redirect to a new page
-                window.location = actionSuccessUrl ?? window.location;
+                if(actionSuccessUrl){
+                    window.location = actionSuccessUrl;
+                }else{
+                    window.location.reload();
+                }
             },
             errorHandler: (e) => {
                 console.error(e);

@@ -1,6 +1,6 @@
 import React from "react";
-import DeleteButton from "./DeleteButton";
 import P from "@splunk/react-ui/Paragraph";
+import DeleteButton from "./DeleteButton";
 import {deleteGrouping, deleteIndicator} from "./ApiClient";
 import {VIEW_GROUPINGS_PAGE, VIEW_INDICATORS_PAGE} from "./urls";
 import ActionModal from "./ActionModal";
