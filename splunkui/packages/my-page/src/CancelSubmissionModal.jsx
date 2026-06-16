@@ -1,7 +1,7 @@
+import React from "react";
+import P from "@splunk/react-ui/Paragraph";
 import ActionModal from "./ActionModal";
 import {cancelSubmission} from "./ApiClient";
-import P from "@splunk/react-ui/Paragraph";
-import React from "react";
 import {CancelSubmissionButton} from "./buttons/CancelSubmissionButton";
 
 export function CancelSubmissionModal({open, onRequestClose, submission}) {

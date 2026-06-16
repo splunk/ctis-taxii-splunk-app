@@ -10,7 +10,8 @@ from util import clear_groupings_collection, clear_submissions_collection, clear
     create_indicator_form_payload, create_new_indicator, create_new_taxii_config, example_indicator, \
     new_sample_grouping, random_alnum_string, \
     delete_taxii_config
-from fixture_taxii_server import Taxii2ServerConnectionInfo, taxii2_server, taxii2_server_session, taxii2_server_is_reachable  # noqa: F401
+from taxii_server_connection_info import Taxii2ServerConnectionInfo
+from fixture_taxii_server import taxii2_server, taxii2_server_session, taxii2_server_is_reachable  # noqa: F401
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

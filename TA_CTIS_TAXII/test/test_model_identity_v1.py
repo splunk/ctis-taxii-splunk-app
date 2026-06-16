@@ -39,6 +39,23 @@ def test_structure_identity():
     assert identity.tlp_v2_rating == TLPv2.AMBER
     assert identity.confidence == 1
 
+def test_structure_identity_with_provided_identity_id():
+    identity_id =  "identity--1f6ee067-1632-45d4-9ecb-d217475a81de"
+    as_dict = {
+        "name": "Org ABC",
+        "identity_id" : identity_id,
+        "identity_class": "organization",
+        "tlp_v2_rating": "TLP:AMBER",
+        "confidence" : 1,
+    }
+    identity = identity_converter.structure(as_dict, IdentityModelV1)
+    assert identity.name == "Org ABC"
+    assert identity.identity_id == identity_id
+    assert identity.identity_class == "organization"
+    assert identity.tlp_v2_rating == TLPv2.AMBER
+    assert identity.confidence == 1
+
+
 
 def test_to_stix():
     identity = IdentityModelV1(name="Org ABC", identity_class="organization", tlp_v2_rating=TLPv2.AMBER_STRICT,

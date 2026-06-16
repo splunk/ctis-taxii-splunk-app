@@ -37,6 +37,11 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         pass
 
     @property
+    @abstractmethod
+    def primary_key(self) -> str:
+        pass
+
+    @property
     def collection(self) -> KVStoreCollectionData:
         return get_collection_data(collection_name=self.collection_name.value, session_key=self.session_key, app=self.app_namespace)
 
@@ -64,6 +69,10 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
             logger.exception(f"Record does not exist or more than one record exists for query={query}")
             return False
 
+    def check_if_any_exists(self, primary_key_value: str) -> bool:
+        fetched = self.fetch_many_raw(query={self.primary_key: primary_key_value})
+        return len(fetched) > 0
+
     def fetch_exactly_one_structured(self, query: Dict) -> T:
         record = self.fetch_exactly_one_raw(query=query)
         structured = self.model_converter.structure(record, self.model_class)
@@ -86,6 +95,16 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         logger.info(f"Record before update: {record}")
         record_updated = attrs.evolve(record, **updates)
         return self.update_record(record=record_updated)
+
+    def insert_record(self, record: T) -> dict:
+        primary_key_value = getattr(record, self.primary_key)
+        assert primary_key_value is not None, f"Primary key of {self.primary_key} on {record} does not exist"
+        if self.check_if_any_exists(primary_key_value=primary_key_value):
+            raise ValueError(f"Record in collection={self.collection_name} with {self.primary_key}={primary_key_value} already exists.")
+        unstructured = self.model_converter.unstructure(record)
+        self.collection.insert(unstructured)
+        logger.info(f"Record inserted into collection={self.collection_name}: structured={record} unstructured={unstructured}")
+        return unstructured
 
     def update_record(self, record: T) -> T:
         record.set_modified_to_now()

@@ -18,6 +18,10 @@ class IdentitiesCollection(AbstractKVStoreCollection[IdentityModelV1]):
     def collection_name(self) -> CollectionName:
         return CollectionName.IDENTITIES
 
+    @property
+    def primary_key(self) -> str:
+        return IdentitiesCollection.IDENTITY_ID_FIELD
+
     def get_identity(self, identity_id: str) -> IdentityModelV1:
         return self.fetch_exactly_one_structured(query={IdentitiesCollection.IDENTITY_ID_FIELD: identity_id})
 
