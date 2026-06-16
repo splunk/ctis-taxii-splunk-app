@@ -61,11 +61,29 @@ function validateIdentityId(value){
     if(!String(value).startsWith("identity--")){
         return "Should start with 'identity--'";
     }
-    const regex = /^identity--[a-zA-Z0-9-]{36}$/;
+    const regex = /^identity--[a-f0-9-]{36}$/;
     if(!regex.test(value)){
-        return "Should be in format of 'identity--{UUIDv4}'";
+        return "Should be in format of 'identity--{UUIDv4}'. Lowercase only.";
     }
     return null;
+}
+
+function SwitchForShouldAutogenerateId({autogenerateId, setAutogenerateId}){
+    return (
+        <CustomControlGroup>
+            <Switch
+                appearance="toggle"
+                selected={autogenerateId}
+                onClick={() => setAutogenerateId(!autogenerateId)}
+            >
+                Auto-generate ID
+            </Switch>
+        </CustomControlGroup>
+    );
+}
+SwitchForShouldAutogenerateId.propTypes = {
+    autogenerateId: PropTypes.string,
+    setAutogenerateId: PropTypes.func,
 }
 
 export function Form({existingIdentity}) {
@@ -142,17 +160,7 @@ export function Form({existingIdentity}) {
                             )}
                         </Message>
                     )}
-                    {!existingIdentity && (
-                        <CustomControlGroup>
-                            <Switch
-                                appearance="toggle"
-                                selected={autogenerateId}
-                                onClick={() => setAutogenerateId(!autogenerateId)}
-                            >
-                                Auto-generate ID
-                            </Switch>
-                        </CustomControlGroup>
-                    )}
+                    {!existingIdentity && <SwitchForShouldAutogenerateId autogenerateId={autogenerateId} setAutogenerateId={setAutogenerateId}/>}
                     <RenderIdentityIdField
                         hasExistingIdentity={!!existingIdentity}
                         shouldAutogenerateId={autogenerateId}

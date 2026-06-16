@@ -9,7 +9,7 @@ logger.setLevel(logging.INFO)
 
 class CreateIdentityHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        # TODO: Utility to nicely convert the ClassValidationError to a human-readable error message
+        # TODO: Add validation on identity_id that it should be lowercase
         try:
             identity = identity_converter.structure(input_json, IdentityModelV1)
         except Exception as exc:
