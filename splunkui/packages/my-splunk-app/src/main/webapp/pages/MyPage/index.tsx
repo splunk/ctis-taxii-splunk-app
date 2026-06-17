@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import layout from '@splunk/react-page/18';
 import { getUserTheme } from '@splunk/splunk-utils/themes';
 import Button from '@splunk/react-ui/Button';
@@ -8,12 +8,44 @@ import Text from '@splunk/react-ui/Text';
 import Heading from '@splunk/react-ui/Heading';
 
 
-import { StyledContainer, ContentContainer } from './Styles';
+// @ts-ignore
+import { postCreateIndicator } from '@splunk/my-page/src/ApiClient.js';
+import { ContentContainer, StyledContainer } from './Styles';
+
+function generateCreateIndicatorsPayload(groupingId: String, n: Number = 10) {
+    const indicator = {
+        indicator_value: '111.122.133.144',
+        indicator_category: 'source_ipv4',
+        stix_pattern:
+            "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '111.122.133.144']",
+        name: 'ipv4',
+        description: 'ipv4',
+    };
+    // @ts-ignore
+    const indicators = Array.from({ length: n }, () => ({ ...indicator }));
+    return {
+        grouping_id: groupingId,
+        tlp_v2_rating: 'TLP:AMBER',
+        confidence: 50,
+        valid_from: '2026-06-17T04:37:37.000',
+        indicators,
+    };
+}
 
 function Component(){
     const [groupingId, setGroupingId] = useState<string>('');
     const handleTextChange = (e:any) => {
         setGroupingId(e.target.value);
+    }
+
+    async function handleButtonClick() {
+        console.log('button clicked');
+        await postCreateIndicator(
+            generateCreateIndicatorsPayload(groupingId),
+            (resp: Object) => {
+                console.log(resp);
+            },
+        );
     }
 
     return (
@@ -30,6 +62,7 @@ function Component(){
                         label={`Add 10 indicators to grouping ${groupingId}`}
                         disabled={!groupingId}
                         appearance="primary"
+                        onClick={handleButtonClick}
                     />
                 </ControlGroup>
             </ContentContainer>
