@@ -38,6 +38,8 @@ export function IndicatorCardLayout({indicatorIds}) {
     if (indicatorIds.length === 0) {
         return <StyledParagraph>No indicators</StyledParagraph>;
     }
+    // TODO: Pass in groupingId as prop and perform a single request to GET list-indicators (getIndicators).
+    //  This would save on bandwidth, and scale better for groupings with 100+ indicators
     return <CardContainer>
         {indicatorIds.map(indicatorId => (
             <IndicatorCard key={indicatorId} indicatorId={indicatorId}/>
