@@ -32,20 +32,16 @@ function generateCreateIndicatorsPayload(groupingId: String, n: Number = 10) {
     };
 }
 
+const createIndicatorsForGrouping = async (groupingId: String) => {
+    await postCreateIndicator(generateCreateIndicatorsPayload(groupingId, 10), (resp: Object) => {
+        console.log(resp);
+    });
+};
+
 function Component(){
     const [groupingId, setGroupingId] = useState<string>('');
     const handleTextChange = (e:any) => {
         setGroupingId(e.target.value);
-    }
-
-    async function handleButtonClick() {
-        console.log('button clicked');
-        await postCreateIndicator(
-            generateCreateIndicatorsPayload(groupingId),
-            (resp: Object) => {
-                console.log(resp);
-            },
-        );
     }
 
     return (
@@ -57,12 +53,21 @@ function Component(){
                 <ControlGroup label="Grouping ID">
                     <Text canClear value={groupingId} onChange={handleTextChange} />
                 </ControlGroup>
-                <ControlGroup label="Operations on grouping">
+                <Heading level={3}>Operations</Heading>
+                <ControlGroup label="Add indicators to grouping">
                     <Button
-                        label={`Add 10 indicators to grouping ${groupingId}`}
+                        label={`Add 10 indicators to grouping: ${groupingId}`}
                         disabled={!groupingId}
                         appearance="primary"
-                        onClick={handleButtonClick}
+                        onClick={() => createIndicatorsForGrouping(groupingId)}
+                    />
+                </ControlGroup>
+                <ControlGroup label="Purge indicators on grouping">
+                    <Button
+                        label={`Delete all indicators in grouping: ${groupingId}`}
+                        disabled={!groupingId}
+                        appearance="destructive"
+                        onClick={() => console.warn('TODO')}
                     />
                 </ControlGroup>
             </ContentContainer>
