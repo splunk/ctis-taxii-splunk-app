@@ -1,8 +1,12 @@
 from common import AbstractRestHandler
 
-
 class DeleteIndicatorHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
+        payload_grouping_id = input_json.get('grouping_id')
+        if payload_grouping_id is not None:
+            query = {"grouping_id": payload_grouping_id}
+            return {"response" : self.kvstore_collections_context.indicators.delete_many(query=query)}
+
         payload_indicator_id = input_json["indicator_id"]
         assert isinstance(payload_indicator_id, str) or isinstance(payload_indicator_id, list), "Expected indicator_id to be either a string or an array of strings"
 

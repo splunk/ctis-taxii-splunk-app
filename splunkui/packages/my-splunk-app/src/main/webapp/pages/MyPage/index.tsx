@@ -9,10 +9,10 @@ import Heading from '@splunk/react-ui/Heading';
 
 
 // @ts-ignore
-import { postCreateIndicator } from '@splunk/my-page/src/ApiClient.js';
+import { postCreateIndicator, deleteIndicatorsInGrouping } from '@splunk/my-page/src/ApiClient.js';
 import { ContentContainer, StyledContainer } from './Styles';
 
-function generateCreateIndicatorsPayload(groupingId: String, n: Number = 10) {
+function generateCreateIndicatorsPayload(groupingId: String, n: Number = 100) {
     const indicator = {
         indicator_value: '111.122.133.144',
         indicator_category: 'source_ipv4',
@@ -33,10 +33,20 @@ function generateCreateIndicatorsPayload(groupingId: String, n: Number = 10) {
 }
 
 const createIndicatorsForGrouping = async (groupingId: String) => {
-    await postCreateIndicator(generateCreateIndicatorsPayload(groupingId, 10), (resp: Object) => {
+    await postCreateIndicator(generateCreateIndicatorsPayload(groupingId, 100), (resp: Object) => {
         console.log(resp);
     });
 };
+
+const handleOnClickDeleteIndicators = async(groupingId: String) => {
+    console.log(groupingId);
+    await deleteIndicatorsInGrouping({
+        groupingId,
+        successHandler: (resp:any) => {
+            console.log(resp);
+        }
+    })
+}
 
 function Component(){
     const [groupingId, setGroupingId] = useState<string>('');
@@ -56,7 +66,7 @@ function Component(){
                 <Heading level={3}>Operations</Heading>
                 <ControlGroup label="Add indicators to grouping">
                     <Button
-                        label={`Add 10 indicators to grouping: ${groupingId}`}
+                        label={`Add 100 indicators to grouping: ${groupingId}`}
                         disabled={!groupingId}
                         appearance="primary"
                         onClick={() => createIndicatorsForGrouping(groupingId)}
@@ -67,7 +77,7 @@ function Component(){
                         label={`Delete all indicators in grouping: ${groupingId}`}
                         disabled={!groupingId}
                         appearance="destructive"
-                        onClick={() => console.warn('TODO')}
+                        onClick={() => handleOnClickDeleteIndicators(groupingId)}
                     />
                 </ControlGroup>
             </ContentContainer>
