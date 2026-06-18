@@ -4,7 +4,7 @@ import string
 import uuid
 import os
 import logging
-from typing import Optional
+from typing import Optional, List
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -148,6 +148,10 @@ def delete_grouping(session, grouping_id: str) -> dict:
         "grouping_id": grouping_id
     })
 
+def delete_indicators(session, indicator_ids: List[str]) -> dict:
+    return delete_endpoint(endpoint="delete-indicator", session=session, payload={
+        "indicator_id": indicator_ids
+    })
 def delete_indicator(session, indicator_id: str) -> dict:
     return delete_endpoint(endpoint="delete-indicator", session=session, payload={
         "indicator_id": indicator_id
