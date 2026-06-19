@@ -151,6 +151,15 @@ export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
         errorHandler
     })
 }
+export function deleteIndicatorsInGrouping({ groupingId, successHandler, errorHandler }) {
+    console.log('Deleting indicators in grouping:', groupingId);
+    return deleteData({
+        endpoint: 'delete-indicator',
+        data: { grouping_id: groupingId },
+        successHandler,
+        errorHandler,
+    });
+}
 
 export function cancelSubmission({submissionId, successHandler, errorHandler}) {
     console.log('Cancelling submission:', submissionId);

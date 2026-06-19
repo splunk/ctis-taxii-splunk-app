@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from typing import Dict, Generic, List, Optional, Type, TypeVar
+import json
 
 from cattrs import Converter
 import attrs
@@ -56,10 +57,15 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         Return the _key of the deleted record.
         """
         record = self.fetch_exactly_one_structured(query=query)
+        # https://github.com/splunk/splunk-sdk-python/blob/2.1.1/splunklib/client.py#L4077
         delete_http_resp = self.collection.delete_by_id(id=record.key)
 
         logger.info(f"Deleted record with _key: {record.key}, response: {delete_http_resp}")
         return record.key
+
+    def delete_many(self, query: Dict):
+        delete_http_resp = self.collection.delete(query=json.dumps(query))
+        return str(delete_http_resp)
 
     def check_if_exactly_one_exists(self, query: Dict) -> bool:
         try:

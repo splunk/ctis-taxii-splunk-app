@@ -72,7 +72,7 @@ const expansionFieldNameToCellValue = {
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
     "Created By": (row) => <IdentityIdLink identityId={row.created_by_ref}/>,
-    "Indicators": (row) => <IndicatorCardLayout indicatorIds={row.indicators}/>,
+    "Indicators": (row) => <IndicatorCardLayout groupingId={row.grouping_id}/>,
     "Submissions": (row) => <SubmissionCardLayout groupingId={row.grouping_id}/>,
 }
 
