@@ -90,6 +90,7 @@ getUserTheme()
             <Component />,
             {
                 theme,
+                pageTitle: 'Internal Testing Tool',
             }
         );
     })
