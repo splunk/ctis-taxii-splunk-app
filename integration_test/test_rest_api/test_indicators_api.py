@@ -1,5 +1,5 @@
 from .util import bulk_insert_indicators, create_indicator_form_payload, create_new_indicator, delete_indicator, \
-    delete_indicators, \
+    delete_indicators, delete_indicators_by_grouping_id, \
     edit_indicator, example_indicator, get_groupings_collection, get_identities_collection, get_indicators_collection, \
     list_indicators, new_indicator_payload, new_sample_grouping, get_grouping
 
@@ -153,6 +153,29 @@ class TestScenarios:
         assert indicators_2["total"] == 1
         # Check that the last remaining is indeed indicator3
         assert indicators_2["records"][0]["indicator_id"] == indicator3["indicator_id"]
+
+    def test_delete_bulk_by_grouping_id(self, session, cleanup_all_collections):
+        assert_collections_are_empty(session)
+        grouping_id_1 = new_sample_grouping(session)["grouping_id"]
+        grouping_id_2 = new_sample_grouping(session)["grouping_id"]
+
+        payload_1 = create_indicator_form_payload(grouping_id=grouping_id_1, indicators=[example_indicator(), example_indicator()])
+        create_new_indicator(session, payload=payload_1)
+
+        payload_2 = create_indicator_form_payload(grouping_id=grouping_id_2, indicators=[example_indicator(), example_indicator()])
+        create_new_indicator(session, payload=payload_2)
+
+        indicators = list_indicators(session, skip=0, limit=0)
+        assert len(indicators["records"]) == 4
+
+        # delete all indicators belonging to grouping_id_1
+        delete_indicators_by_grouping_id(session, grouping_id=grouping_id_1)
+
+        indicators = list_indicators(session, skip=0, limit=0)
+        assert len(indicators["records"]) == 2
+        for indicator in indicators["records"]:
+            # We should be left with indicators in grouping_id_2 only
+            assert indicator["grouping_id"] == grouping_id_2
 
     def test_grouping_should_update_tlp_rating_when_indicators_are_edited_or_deleted(self, session, cleanup_all_collections):
         grouping = new_sample_grouping(session)

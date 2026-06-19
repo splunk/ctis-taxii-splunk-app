@@ -148,6 +148,11 @@ def delete_grouping(session, grouping_id: str) -> dict:
         "grouping_id": grouping_id
     })
 
+def delete_indicators_by_grouping_id(session, grouping_id: str) -> dict:
+    return delete_endpoint(endpoint="delete-indicator", session=session, payload={
+        "grouping_id": grouping_id
+    })
+
 def delete_indicators(session, indicator_ids: List[str]) -> dict:
     return delete_endpoint(endpoint="delete-indicator", session=session, payload={
         "indicator_id": indicator_ids
@@ -167,7 +172,7 @@ def query_collection_endpoint(endpoint:str, session, skip:int, limit:int, query:
     return resp.json()
 
 
-def list_indicators(session, skip: int, limit: int, query: dict = None) -> dict:
+def list_indicators(session, skip: int=0, limit: int=0, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-indicators", session=session, skip=skip, limit=limit, query=query)
 
 def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
