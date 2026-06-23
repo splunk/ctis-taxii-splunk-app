@@ -40,6 +40,7 @@ try:
     from rest_submit_grouping import SubmitGroupingHandler
     from rest_list_taxii_collections import ListTaxiiCollectionsHandler
     from rest_get_taxii_collection import GetTaxiiCollectionHandler
+    from rest_create_sighting import CreateSightingHandler
 
 except ImportError as e:
     tb = traceback.format_exc()
