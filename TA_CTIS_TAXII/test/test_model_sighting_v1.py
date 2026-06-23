@@ -9,13 +9,15 @@ IDENTITY_ID = "identity--a463ffb3-1bd9-4d94-b02d-74e4f1658283"
 SIGHTING_ID_1 = "sighting--ee20065d-2555-424f-ad9e-0f8428623c75"
 SIGHTING_ID_2 = "sighting--5f301ebe-faf9-4e0e-aee9-ed8cf60641d0"
 
+
 def sample_minimal_sighting_dict_with_sighting_id():
     return {
-      "sighting_id": SIGHTING_ID_1,
-      "created": "2016-04-06T20:08:31.000",
-      "modified": "2016-04-06T20:09:31.000",
-      "sighting_of_ref": INDICATOR_ID
+        "sighting_id": SIGHTING_ID_1,
+        "created": "2016-04-06T20:08:31.000",
+        "modified": "2016-04-06T20:09:31.000",
+        "sighting_of_ref": INDICATOR_ID
     }
+
 
 def sample_maximal_sighting_dict_with_sighting_id():
     return {
@@ -27,12 +29,13 @@ def sample_maximal_sighting_dict_with_sighting_id():
         "first_seen": "2016-04-06T20:08:31.000",
         "last_seen": "2016-04-06T20:09:31.000",
         "count": 1,
-        "where_sighted_refs": [ IDENTITY_ID ],
+        "where_sighted_refs": [IDENTITY_ID],
         "created_by_ref": IDENTITY_ID,
         "summary": True,
         "tlp_v2_rating": TLPv2.CLEAR,
         "confidence": 90,
     }
+
 
 def sample_maximal_sighting_object() -> SightingModelV1:
     return SightingModelV1(
@@ -95,7 +98,6 @@ class TestStructureFromDict:
         assert isinstance(sighting.sighting_id, str)
         assert sighting.sighting_id.startswith("sighting--"), "sighting_id should be auto-generated."
 
-
     def test_maximal_dict(self):
         as_dict = sample_maximal_sighting_dict_with_sighting_id()
         sighting = sighting_converter.structure(as_dict, SightingModelV1)
@@ -112,6 +114,7 @@ class TestStructureFromDict:
         assert sighting.summary is True
         assert sighting.tlp_v2_rating == TLPv2.CLEAR
         assert sighting.confidence == 90
+
 
 class TestUnstructureToDict:
     def test_maximal_object_to_dict(self):
@@ -132,6 +135,7 @@ class TestUnstructureToDict:
         assert as_dict["summary"] is False
         assert isinstance(as_dict["created"], str)
         assert isinstance(as_dict["modified"], str)
+
 
 class TestValidators:
     @pytest.mark.parametrize("confidence_value", [0, 10, 50, 100])
@@ -164,7 +168,6 @@ class TestValidators:
             )
         assert "Invalid sighting_id" in str(exc_info.value)
 
-
     def test_validate_sighting_of_ref_empty(self):
         with pytest.raises(ValueError) as exc_info:
             SightingModelV1(
@@ -174,7 +177,6 @@ class TestValidators:
             )
         assert "sighting_of_ref must be provided" in str(exc_info.value)
 
-
     def test_validate_sighting_of_ref_invalid_format(self):
         with pytest.raises(ValueError) as exc_info:
             SightingModelV1(
@@ -183,7 +185,6 @@ class TestValidators:
                 tlp_v2_rating=TLPv2.CLEAR,
             )
         assert "sighting_of_ref must be a valid STIX indicator identifier" in str(exc_info.value)
-
 
     def test_validate_count_negative(self):
         with pytest.raises(ValueError) as exc_info:
@@ -206,7 +207,6 @@ class TestValidators:
             )
         assert "first_seen must be <= last_seen" in str(exc_info.value)
 
-
     def test_validate_temporal_order_valid(self):
         sighting = SightingModelV1(
             sighting_of_ref=INDICATOR_ID,
@@ -216,7 +216,6 @@ class TestValidators:
             tlp_v2_rating=TLPv2.CLEAR,
         )
         assert sighting.first_seen <= sighting.last_seen
-
 
     def test_validate_where_sighted_refs_invalid_format(self):
         with pytest.raises(ValueError) as exc_info:
@@ -228,6 +227,7 @@ class TestValidators:
             )
         assert "Invalid STIX identifier" in str(exc_info.value)
 
+
 class TestConvertToStix2Object:
     def test_to_stix_minimal_example(self):
         sighting = SightingModelV1(
@@ -237,8 +237,6 @@ class TestConvertToStix2Object:
         stix_obj = sighting.to_stix()
         assert stix_obj.id == sighting.sighting_id
         assert stix_obj.sighting_of_ref == sighting.sighting_of_ref
-
-
 
     def test_to_stix_maximal_example(self):
         sighting = sample_maximal_sighting_object()
