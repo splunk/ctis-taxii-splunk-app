@@ -94,9 +94,11 @@ class SightingModelV1(BaseModelV1):
             "created": self.created,
             "modified": self.modified,
             "confidence": self.confidence,
-            "object_marking_refs": self.tlp_v2_rating.to_object_marking_ref(),
             "summary": self.summary,
         }
+
+        if self.tlp_v2_rating is not None:
+            kwargs["object_marking_refs"] = self.tlp_v2_rating.to_object_marking_ref()
 
         if self.created_by_ref:
             kwargs["created_by_ref"] = self.created_by_ref

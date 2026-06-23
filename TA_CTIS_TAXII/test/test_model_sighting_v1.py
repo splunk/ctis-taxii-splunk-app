@@ -2,7 +2,7 @@ from datetime import datetime
 import pytest
 
 from TA_CTIS_TAXII.package.bin.models import SightingModelV1, sighting_converter, TLPv2
-from TA_CTIS_TAXII.package.bin.models.tlp_v2 import CLEAR_MARKING_DEFINITION, GREEN_MARKING_DEFINITION, AMBER_MARKING_DEFINITION, RED_MARKING_DEFINITION
+from TA_CTIS_TAXII.package.bin.models.tlp_v2 import GREEN_MARKING_DEFINITION
 
 INDICATOR_ID = "indicator--26ffb872-1dd9-446e-b6f5-d58527e5b5d2"
 IDENTITY_ID = "identity--a463ffb3-1bd9-4d94-b02d-74e4f1658283"
@@ -22,8 +22,32 @@ def sample_maximal_sighting_dict_with_sighting_id():
         "sighting_id": SIGHTING_ID_2,
         "created": "2016-04-06T20:08:31.000",
         "modified": "2016-04-06T20:09:31.000",
-        "sighting_of_ref": INDICATOR_ID
+        "sighting_of_ref": INDICATOR_ID,
+        "description": "Test sighting",
+        "first_seen": "2016-04-06T20:08:31.000",
+        "last_seen": "2016-04-06T20:09:31.000",
+        "count": 1,
+        "where_sighted_refs": [ IDENTITY_ID ],
+        "created_by_ref": IDENTITY_ID,
+        "summary": True,
+        "tlp_v2_rating": TLPv2.CLEAR,
+        "confidence": 90,
     }
+
+def sample_maximal_sighting_object() -> SightingModelV1:
+    return SightingModelV1(
+        sighting_id=SIGHTING_ID_1,
+        sighting_of_ref=INDICATOR_ID,
+        where_sighted_refs=[IDENTITY_ID],
+        created_by_ref=IDENTITY_ID,
+        description="Test sighting",
+        first_seen=datetime(2024, 1, 1, 12, 0, 0),
+        last_seen=datetime(2024, 1, 2, 13, 0, 0),
+        count=5,
+        tlp_v2_rating=TLPv2.GREEN,
+        confidence=75,
+        summary=False,
+    )
 
 
 def new_sample_sighting_instance():
@@ -76,240 +100,42 @@ class TestStructureFromDict:
         as_dict = sample_maximal_sighting_dict_with_sighting_id()
         sighting = sighting_converter.structure(as_dict, SightingModelV1)
         assert sighting.sighting_id == SIGHTING_ID_2
+        assert sighting.sighting_of_ref == INDICATOR_ID
+        assert sighting.created == datetime(2016, 4, 6, 20, 8, 31)
+        assert sighting.modified == datetime(2016, 4, 6, 20, 9, 31)
+        assert sighting.description == "Test sighting"
+        assert sighting.first_seen == datetime(2016, 4, 6, 20, 8, 31)
+        assert sighting.last_seen == datetime(2016, 4, 6, 20, 9, 31)
+        assert sighting.count == 1
+        assert sighting.where_sighted_refs == [IDENTITY_ID]
+        assert sighting.created_by_ref == IDENTITY_ID
+        assert sighting.summary is True
+        assert sighting.tlp_v2_rating == TLPv2.CLEAR
+        assert sighting.confidence == 90
 
+class TestUnstructureToDict:
+    def test_maximal_object_to_dict(self):
+        sighting = sample_maximal_sighting_object()
 
+        as_dict = sighting_converter.unstructure(sighting)
 
+        assert as_dict["sighting_id"].startswith("sighting--")
+        assert as_dict["sighting_of_ref"] == INDICATOR_ID
+        assert as_dict["where_sighted_refs"] == [IDENTITY_ID]
+        assert as_dict["created_by_ref"] == IDENTITY_ID
+        assert as_dict["description"] == "Test sighting"
+        assert as_dict["first_seen"] == "2024-01-01T12:00:00"
+        assert as_dict["last_seen"] == "2024-01-02T13:00:00"
+        assert as_dict["count"] == 5
+        assert as_dict["tlp_v2_rating"] == "TLP:GREEN"
+        assert as_dict["confidence"] == 75
+        assert as_dict["summary"] is False
+        assert isinstance(as_dict["created"], str)
+        assert isinstance(as_dict["modified"], str)
 
-
-def test_unstructure_to_dict():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Test sighting",
-        first_seen=datetime(2024, 1, 1, 12, 0, 0),
-        last_seen=datetime(2024, 1, 2, 12, 0, 0),
-        count=5,
-        tlp_v2_rating=TLPv2.GREEN,
-        confidence=75,
-        summary=True,
-    )
-
-    as_dict = sighting_converter.unstructure(sighting)
-
-    assert as_dict["sighting_id"].startswith("sighting--")
-    assert as_dict["sighting_of_ref"] == INDICATOR_ID
-    assert as_dict["description"] == "Test sighting"
-    assert as_dict["first_seen"] == "2024-01-01T12:00:00"
-    assert as_dict["last_seen"] == "2024-01-02T12:00:00"
-    assert as_dict["count"] == 5
-    assert as_dict["tlp_v2_rating"] == "TLP:GREEN"
-    assert as_dict["confidence"] == 75
-    assert as_dict["summary"] is True
-
-
-def test_structure_unstructure_roundtrip():
-    original_dict = sample_minimal_sighting_dict_with_sighting_id()
-    sighting = sighting_converter.structure(original_dict, SightingModelV1)
-    result_dict = sighting_converter.unstructure(sighting)
-
-    assert result_dict["sighting_of_ref"] == original_dict["sighting_of_ref"]
-    assert result_dict["description"] == original_dict["description"]
-    assert result_dict["count"] == original_dict["count"]
-    assert result_dict["confidence"] == original_dict["confidence"]
-
-
-# B. Validator Tests
-
-def test_validate_sighting_id_invalid():
-    with pytest.raises(ValueError) as exc_info:
-        SightingModelV1(
-            sighting_id="not-valid-id",
-            sighting_of_ref=INDICATOR_ID,
-            description="Test",
-            tlp_v2_rating=TLPv2.CLEAR,
-        )
-    assert "Invalid sighting_id" in str(exc_info.value)
-
-
-def test_validate_sighting_of_ref_empty():
-    with pytest.raises(ValueError) as exc_info:
-        SightingModelV1(
-            sighting_of_ref="",
-            description="Test",
-            tlp_v2_rating=TLPv2.CLEAR,
-        )
-    assert "sighting_of_ref must be provided" in str(exc_info.value)
-
-
-def test_validate_sighting_of_ref_invalid_format():
-    with pytest.raises(ValueError) as exc_info:
-        SightingModelV1(
-            sighting_of_ref="invalid-no-double-dash",
-            description="Test",
-            tlp_v2_rating=TLPv2.CLEAR,
-        )
-    assert "must be a valid STIX identifier" in str(exc_info.value)
-
-
-def test_validate_count_negative():
-    with pytest.raises(ValueError) as exc_info:
-        SightingModelV1(
-            sighting_of_ref=INDICATOR_ID,
-            description="Test",
-            count=0,
-            tlp_v2_rating=TLPv2.CLEAR,
-        )
-    assert "count must be >= 1" in str(exc_info.value)
-
-
-def test_validate_count_positive():
-    sighting1 = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Test",
-        count=1,
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting1.count == 1
-
-    sighting5 = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Test",
-        count=5,
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting5.count == 5
-
-
-def test_validate_temporal_order_first_after_last():
-    with pytest.raises(ValueError) as exc_info:
-        SightingModelV1(
-            sighting_of_ref=INDICATOR_ID,
-            description="Bad temporal order",
-            first_seen=datetime(2024, 1, 2, 12, 0, 0),
-            last_seen=datetime(2024, 1, 1, 12, 0, 0),
-            tlp_v2_rating=TLPv2.CLEAR,
-        )
-    assert "first_seen must be <= last_seen" in str(exc_info.value)
-
-
-def test_validate_temporal_order_valid():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Valid temporal order",
-        first_seen=datetime(2024, 1, 1, 12, 0, 0),
-        last_seen=datetime(2024, 1, 2, 12, 0, 0),
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting.first_seen <= sighting.last_seen
-
-
-def test_validate_where_sighted_refs_invalid_format():
-    with pytest.raises(ValueError) as exc_info:
-        SightingModelV1(
-            sighting_of_ref=INDICATOR_ID,
-            description="Test",
-            where_sighted_refs=["invalid-format"],
-            tlp_v2_rating=TLPv2.CLEAR,
-        )
-    assert "Invalid STIX identifier" in str(exc_info.value)
-
-
-def test_validate_where_sighted_refs_valid():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Test",
-        where_sighted_refs=[IDENTITY_ID, "location--aaaaaaaa-1234-1234-1234-123456789012"],
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert len(sighting.where_sighted_refs) == 2
-
-
-# C. STIX Conversion Tests
-
-def test_to_stix_minimal():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Minimal sighting",
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-
-    stix_obj = sighting.to_stix(created_by_ref=IDENTITY_ID)
-
-    assert stix_obj.type == "sighting"
-    assert stix_obj.id == sighting.sighting_id
-    assert stix_obj.sighting_of_ref == INDICATOR_ID
-    assert stix_obj.created_by_ref == IDENTITY_ID
-    assert stix_obj.object_marking_refs == [CLEAR_MARKING_DEFINITION.id]
-    assert stix_obj.confidence == 100
-    assert stix_obj.summary is False
-
-
-def test_to_stix_with_all_fields():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Complete sighting",
-        first_seen=datetime(2024, 1, 1, 12, 0, 0),
-        last_seen=datetime(2024, 1, 2, 12, 0, 0),
-        count=10,
-        where_sighted_refs=[IDENTITY_ID],
-        summary=True,
-        tlp_v2_rating=TLPv2.AMBER,
-        confidence=85,
-    )
-
-    stix_obj = sighting.to_stix(created_by_ref=IDENTITY_ID)
-
-    assert stix_obj.type == "sighting"
-    assert stix_obj.description == "Complete sighting"
-    assert stix_obj.first_seen == datetime(2024, 1, 1, 12, 0, 0)
-    assert stix_obj.last_seen == datetime(2024, 1, 2, 12, 0, 0)
-    assert stix_obj.count == 10
-    assert stix_obj.where_sighted_refs == [IDENTITY_ID]
-    assert stix_obj.summary is True
-    assert stix_obj.confidence == 85
-
-
-def test_to_stix_without_created_by_ref():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="No creator",
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-
-    stix_obj = sighting.to_stix()
-
-    assert stix_obj.type == "sighting"
-    assert not hasattr(stix_obj, "created_by_ref") or stix_obj.created_by_ref is None
-
-
-def test_to_stix_tlp_marking():
-    test_cases = [
-        (TLPv2.CLEAR, CLEAR_MARKING_DEFINITION.id),
-        (TLPv2.GREEN, GREEN_MARKING_DEFINITION.id),
-        (TLPv2.AMBER, AMBER_MARKING_DEFINITION.id),
-        (TLPv2.RED, RED_MARKING_DEFINITION.id),
-    ]
-
-    for tlp_rating, expected_marking_id in test_cases:
-        sighting = SightingModelV1(
-            sighting_of_ref=INDICATOR_ID,
-            description="TLP test",
-            tlp_v2_rating=tlp_rating,
-        )
-        stix_obj = sighting.to_stix()
-        assert stix_obj.object_marking_refs == [expected_marking_id]
-
-
-# D. Edge Case Tests
-
-@pytest.mark.parametrize("confidence_value,should_pass", [
-    (0, True),
-    (50, True),
-    (100, True),
-    (-1, False),
-    (101, False),
-])
-def test_confidence_boundaries(confidence_value, should_pass):
-    if should_pass:
+class TestValidators:
+    @pytest.mark.parametrize("confidence_value", [0, 10, 50, 100])
+    def test_valid_confidence_values(self, confidence_value):
         sighting = SightingModelV1(
             sighting_of_ref=INDICATOR_ID,
             description="Test",
@@ -317,7 +143,9 @@ def test_confidence_boundaries(confidence_value, should_pass):
             confidence=confidence_value,
         )
         assert sighting.confidence == confidence_value
-    else:
+
+    @pytest.mark.parametrize("confidence_value", [-1, 101])
+    def test_invalid_confidence_values(self, confidence_value):
         with pytest.raises(ValueError):
             SightingModelV1(
                 sighting_of_ref=INDICATOR_ID,
@@ -326,67 +154,107 @@ def test_confidence_boundaries(confidence_value, should_pass):
                 confidence=confidence_value,
             )
 
-
-def test_count_none_allowed():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="No count",
-        count=None,
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting.count is None
-
-
-def test_temporal_fields_none_allowed():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="No temporal fields",
-        first_seen=None,
-        last_seen=None,
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting.first_seen is None
-    assert sighting.last_seen is None
+    def test_validate_sighting_id_invalid(self):
+        with pytest.raises(ValueError) as exc_info:
+            SightingModelV1(
+                sighting_id="not-valid-id",
+                sighting_of_ref=INDICATOR_ID,
+                description="Test",
+                tlp_v2_rating=TLPv2.CLEAR,
+            )
+        assert "Invalid sighting_id" in str(exc_info.value)
 
 
-def test_temporal_only_first_seen():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Only first_seen",
-        first_seen=datetime(2024, 1, 1, 12, 0, 0),
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting.first_seen == datetime(2024, 1, 1, 12, 0, 0)
-    assert sighting.last_seen is None
+    def test_validate_sighting_of_ref_empty(self):
+        with pytest.raises(ValueError) as exc_info:
+            SightingModelV1(
+                sighting_of_ref="",
+                description="Test",
+                tlp_v2_rating=TLPv2.CLEAR,
+            )
+        assert "sighting_of_ref must be provided" in str(exc_info.value)
 
 
-def test_temporal_only_last_seen():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Only last_seen",
-        last_seen=datetime(2024, 1, 2, 12, 0, 0),
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting.first_seen is None
-    assert sighting.last_seen == datetime(2024, 1, 2, 12, 0, 0)
+    def test_validate_sighting_of_ref_invalid_format(self):
+        with pytest.raises(ValueError) as exc_info:
+            SightingModelV1(
+                sighting_of_ref="invalid-no-double-dash",
+                description="Test",
+                tlp_v2_rating=TLPv2.CLEAR,
+            )
+        assert "sighting_of_ref must be a valid STIX indicator identifier" in str(exc_info.value)
 
 
-def test_summary_default_false():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Default summary",
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert sighting.summary is False
+    def test_validate_count_negative(self):
+        with pytest.raises(ValueError) as exc_info:
+            SightingModelV1(
+                sighting_of_ref=INDICATOR_ID,
+                description="Test",
+                count=0,
+                tlp_v2_rating=TLPv2.CLEAR,
+            )
+        assert "count must be >= 1" in str(exc_info.value)
+
+    def test_validate_temporal_order_first_after_last(self):
+        with pytest.raises(ValueError) as exc_info:
+            SightingModelV1(
+                sighting_of_ref=INDICATOR_ID,
+                description="Bad temporal order",
+                first_seen=datetime(2024, 1, 2, 12, 0, 0),
+                last_seen=datetime(2024, 1, 1, 12, 0, 0),
+                tlp_v2_rating=TLPv2.CLEAR,
+            )
+        assert "first_seen must be <= last_seen" in str(exc_info.value)
 
 
-def test_auto_generate_timestamps():
-    sighting = SightingModelV1(
-        sighting_of_ref=INDICATOR_ID,
-        description="Auto timestamps",
-        tlp_v2_rating=TLPv2.CLEAR,
-    )
-    assert type(sighting.created) is datetime
-    assert type(sighting.modified) is datetime
-    assert sighting.created is not None
-    assert sighting.modified is not None
+    def test_validate_temporal_order_valid(self):
+        sighting = SightingModelV1(
+            sighting_of_ref=INDICATOR_ID,
+            description="Valid temporal order",
+            first_seen=datetime(2024, 1, 1, 12, 0, 0),
+            last_seen=datetime(2024, 1, 2, 12, 0, 0),
+            tlp_v2_rating=TLPv2.CLEAR,
+        )
+        assert sighting.first_seen <= sighting.last_seen
+
+
+    def test_validate_where_sighted_refs_invalid_format(self):
+        with pytest.raises(ValueError) as exc_info:
+            SightingModelV1(
+                sighting_of_ref=INDICATOR_ID,
+                description="Test",
+                where_sighted_refs=["invalid-format"],
+                tlp_v2_rating=TLPv2.CLEAR,
+            )
+        assert "Invalid STIX identifier" in str(exc_info.value)
+
+class TestConvertToStix2Object:
+    def test_to_stix_minimal_example(self):
+        sighting = SightingModelV1(
+            sighting_of_ref=INDICATOR_ID,
+            sighting_id=SIGHTING_ID_1,
+        )
+        stix_obj = sighting.to_stix()
+        assert stix_obj.id == sighting.sighting_id
+        assert stix_obj.sighting_of_ref == sighting.sighting_of_ref
+
+
+
+    def test_to_stix_maximal_example(self):
+        sighting = sample_maximal_sighting_object()
+        assert sighting.tlp_v2_rating == TLPv2.GREEN
+        stix_obj = sighting.to_stix()
+
+        assert stix_obj.id == sighting.sighting_id
+        assert stix_obj.type == "sighting"
+        assert stix_obj.sighting_of_ref == sighting.sighting_of_ref
+        assert stix_obj.where_sighted_refs == sighting.where_sighted_refs
+        assert stix_obj.description == sighting.description
+        assert stix_obj.first_seen == sighting.first_seen
+        assert stix_obj.last_seen == sighting.last_seen
+        assert stix_obj.count == 5
+        assert stix_obj.confidence == 75
+        assert stix_obj.summary is False
+
+        # Marking definition for TLPv2 GREEN
+        assert stix_obj.object_marking_refs == [GREEN_MARKING_DEFINITION.id]
