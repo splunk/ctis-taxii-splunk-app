@@ -41,6 +41,7 @@ try:
     from rest_list_taxii_collections import ListTaxiiCollectionsHandler
     from rest_get_taxii_collection import GetTaxiiCollectionHandler
     from rest_create_sighting import CreateSightingHandler
+    from rest_list_sightings import ListSightingsHandler
 
 except ImportError as e:
     tb = traceback.format_exc()
@@ -78,12 +79,10 @@ class Handler(PersistentServerConnectionApplication):
 
         # Set via restmap.conf stanza property 'script.param'
         self.handler_name = _command_arg
-        try:
-            handler_class = globals().get(self.handler_name)
-
-            self.handler_instance = handler_class()
-        except AttributeError:
-            raise ValueError(f"Handler class {self.handler_name} not found")
+        handler_class = globals().get(self.handler_name)
+        if handler_class is None:
+            raise RuntimeError(f"Unknown handler: {self.handler_name}")
+        self.handler_instance = handler_class()
 
     def handle(self, in_string):
         ctx_request_time_utc.set(datetime.now(timezone.utc).isoformat(timespec="microseconds"))
