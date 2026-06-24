@@ -120,6 +120,7 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
 
     def update_one_raw(self, query: Dict, raw_updates: Dict) -> Dict:
         updated_structured = self.preview_updated_structured(query=query, raw_updates=raw_updates)
+        self.update_record(record=updated_structured)
         updated_raw = self.model_converter.unstructure(updated_structured)
         logger.info(f"Updated raw record: {updated_raw}")
         return updated_raw
