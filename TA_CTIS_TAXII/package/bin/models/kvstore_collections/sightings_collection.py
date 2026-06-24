@@ -37,6 +37,9 @@ class SightingsCollection(AbstractKVStoreCollection[SightingModelV1]):
     def update_sighting_raw(self, sighting_id: str, updates: Dict) -> Dict:
         return self.update_one_raw(query={SightingsCollection.SIGHTING_ID_FIELD: sighting_id}, raw_updates=updates)
 
+    def preview_updated_sighting(self, sighting_id: str, updates: Dict) -> SightingModelV1:
+        return self.preview_updated_structured(query={SightingsCollection.SIGHTING_ID_FIELD: sighting_id}, raw_updates=updates)
+
     def delete_sighting(self, sighting_id: str) -> str:
         return self.delete_exactly_one(query={SightingsCollection.SIGHTING_ID_FIELD: sighting_id})
 

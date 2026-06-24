@@ -119,6 +119,12 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         return record
 
     def update_one_raw(self, query: Dict, raw_updates: Dict) -> Dict:
+        updated_structured = self.preview_updated_structured(query=query, raw_updates=raw_updates)
+        updated_raw = self.model_converter.unstructure(updated_structured)
+        logger.info(f"Updated raw record: {updated_raw}")
+        return updated_raw
+
+    def preview_updated_structured(self, query: Dict, raw_updates: Dict) -> T:
         """
         Note that any enum values in raw_updates should be the enum values (i.e. strings) and not the enum types.
         """
@@ -126,11 +132,7 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         logger.info(f"Record before update: {record}")
         merged_record_raw = {**record, **raw_updates}
         logger.info(f"Merged raw record: {merged_record_raw}")
-        merged_structured = self.model_converter.structure(merged_record_raw, self.model_class)
-        updated_structured = self.update_record(record=merged_structured)
-        updated_raw = self.model_converter.unstructure(updated_structured)
-        logger.info(f"Updated raw record: {updated_raw}")
-        return updated_raw
+        return self.model_converter.structure(merged_record_raw, self.model_class)
 
     def get_collection_size(self, query: Optional[Dict] = None) -> int:
         #  https://docs.splunk.com/Documentation/Splunk/latest/RESTREF/RESTkvstore#storage.2Fcollections.2Fdata.2F.7Bcollection.7D

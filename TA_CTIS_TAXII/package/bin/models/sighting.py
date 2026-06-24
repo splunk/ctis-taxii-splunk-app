@@ -15,7 +15,7 @@ def validate_created_by(instance, attribute, value):
     if value is not None:
         assert isinstance(value, str), "created_by_ref must be a string"
         if not value.startswith("identity--"):
-            raise ValueError("Invalid created_by")
+            raise ValueError("Invalid created_by_ref. Expected an identity identifier.")
 
 def validate_sighting_id(instance, attribute, value):
     try:

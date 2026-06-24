@@ -42,6 +42,7 @@ try:
     from rest_get_taxii_collection import GetTaxiiCollectionHandler
     from rest_create_sighting import CreateSightingHandler
     from rest_list_sightings import ListSightingsHandler
+    from rest_edit_sighting import EditSightingHandler
 
 except ImportError as e:
     tb = traceback.format_exc()
