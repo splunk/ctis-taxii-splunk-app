@@ -127,6 +127,7 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
 
     def preview_updated_structured(self, query: Dict, raw_updates: Dict) -> T:
         """
+        Fetch exactly one record and returns an updated structured record without writing any changes to the database.
         Note that any enum values in raw_updates should be the enum values (i.e. strings) and not the enum types.
         """
         record = self.fetch_exactly_one_raw(query=query)

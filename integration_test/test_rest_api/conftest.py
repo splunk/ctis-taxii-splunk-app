@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass
 
 from util import clear_groupings_collection, clear_submissions_collection, clear_indicators_collection, clear_identities_collection, \
-    create_indicator_form_payload, create_new_indicator, create_new_taxii_config, example_indicator, \
+    clear_sightings_collection, create_indicator_form_payload, create_new_indicator, create_new_taxii_config, example_indicator, \
     new_sample_grouping, random_alnum_string, \
     delete_taxii_config
 from taxii_server_connection_info import Taxii2ServerConnectionInfo
@@ -20,7 +20,7 @@ SPLUNK_USERNAME = os.environ['SPLUNK_USERNAME']
 SPLUNK_PASSWORD = os.environ['SPLUNK_PASSWORD']
 
 @pytest.fixture
-def cleanup_all_collections(cleanup_identities_collection, cleanup_groupings_collection, cleanup_indicators_collection, cleanup_submissions_collection):
+def cleanup_all_collections(cleanup_identities_collection, cleanup_groupings_collection, cleanup_indicators_collection, cleanup_submissions_collection, cleanup_sightings_collection):
     yield
 
 @pytest.fixture
@@ -46,6 +46,12 @@ def cleanup_submissions_collection(session):
     clear_submissions_collection(session)
     yield
     clear_submissions_collection(session)
+
+@pytest.fixture
+def cleanup_sightings_collection(session):
+    clear_sightings_collection(session)
+    yield
+    clear_sightings_collection(session)
 
 def new_session():
     session = requests.Session()
