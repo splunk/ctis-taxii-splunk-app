@@ -7,6 +7,7 @@ from .indicators_collection import IndicatorsCollection
 from .sightings_collection import SightingsCollection
 from .submissions_collection import SubmissionsCollection
 
+from ..grouping import GroupingModelV1
 from ..sighting import SightingModelV1
 
 COLLECTION_NAME_TO_COLLECTION_CLASS = {
@@ -44,3 +45,6 @@ class KVStoreCollectionsContext:
 
         for identity_id in sighting.where_sighted_refs:
             assert self.identities.check_if_identity_exists(identity_id=identity_id), f"Identity {identity_id} not found in identities collection"
+
+    def validate_grouping_references(self, grouping: GroupingModelV1):
+        assert self.identities.check_if_identity_exists(identity_id=grouping.created_by_ref), f"Identity {grouping.created_by_ref} not found in identities collection"

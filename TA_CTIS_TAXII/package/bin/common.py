@@ -170,20 +170,6 @@ class AbstractRestHandler(abc.ABC):
         }
         return response
 
-    # TODO: Replace with method in AbstractKVStoreCollection
-    def insert_record(self, collection, input_json: dict, converter, model_class) -> dict:
-        try:
-            structured = converter.structure(input_json, model_class)
-        except Exception as exc:
-            logger.exception(f"Failed to convert input JSON to Model")
-            raise ValueError(repr(exc))
-
-        record_as_dict = converter.unstructure(structured)
-        logger.info(f"Inserting record into collection {collection}: {record_as_dict}")
-        collection.insert(record_as_dict)
-
-        return record_as_dict
-
     @staticmethod
     def exception_response(e: Exception, status_code: int) -> dict:
         return {"payload": {"error": str(e)}, "status": status_code}
