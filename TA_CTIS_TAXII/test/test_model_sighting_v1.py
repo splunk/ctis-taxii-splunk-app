@@ -34,6 +34,8 @@ def sample_maximal_sighting_dict_with_sighting_id():
         "summary": True,
         "tlp_v2_rating": TLPv2.CLEAR,
         "confidence": 90,
+        "labels": ["aaa", "bbb"],
+        "revoked": True
     }
 
 
@@ -50,6 +52,8 @@ def sample_maximal_sighting_object() -> SightingModelV1:
         tlp_v2_rating=TLPv2.GREEN,
         confidence=75,
         summary=False,
+        labels=["ccc", "ddd"],
+        revoked=False
     )
 
 
@@ -88,6 +92,8 @@ class TestStructureFromDict:
         assert sighting.summary is False
         assert sighting.tlp_v2_rating is None
         assert sighting.confidence == 100
+        assert sighting.labels == []
+        assert sighting.revoked is False
 
     def test_minimal_without_sighting_id(self):
         as_dict = sample_minimal_sighting_dict_with_sighting_id()
@@ -114,6 +120,8 @@ class TestStructureFromDict:
         assert sighting.summary is True
         assert sighting.tlp_v2_rating == TLPv2.CLEAR
         assert sighting.confidence == 90
+        assert sighting.labels == ["aaa", "bbb"]
+        assert sighting.revoked is True
 
 
 class TestUnstructureToDict:
@@ -133,6 +141,8 @@ class TestUnstructureToDict:
         assert as_dict["tlp_v2_rating"] == "TLP:GREEN"
         assert as_dict["confidence"] == 75
         assert as_dict["summary"] is False
+        assert as_dict["labels"] == ["ccc", "ddd"]
+        assert as_dict["revoked"] is False
         assert isinstance(as_dict["created"], str)
         assert isinstance(as_dict["modified"], str)
 
@@ -253,6 +263,8 @@ class TestConvertToStix2Object:
         assert stix_obj.count == 5
         assert stix_obj.confidence == 75
         assert stix_obj.summary is False
+        assert stix_obj.labels == ["ccc", "ddd"]
+        assert stix_obj.revoked is False
 
         # Marking definition for TLPv2 GREEN
         assert stix_obj.object_marking_refs == [GREEN_MARKING_DEFINITION.id]

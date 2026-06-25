@@ -80,6 +80,8 @@ class SightingModelV1(BaseModelV1):
     summary: bool = field(default=False)
     tlp_v2_rating: Optional[TLPv2] = field(default=None)
     confidence: int = field(validator=[validate_confidence], default=100)
+    revoked: bool = field(default=False)
+    labels: List[str] = field(factory=list)
 
     def __attrs_post_init__(self):
         super().__attrs_post_init__()
@@ -100,23 +102,9 @@ class SightingModelV1(BaseModelV1):
         if self.tlp_v2_rating is not None:
             kwargs["object_marking_refs"] = self.tlp_v2_rating.to_object_marking_ref()
 
-        if self.created_by_ref:
-            kwargs["created_by_ref"] = self.created_by_ref
-
-        if self.description:
-            kwargs["description"] = self.description
-
-        if self.first_seen is not None:
-            kwargs["first_seen"] = self.first_seen
-
-        if self.last_seen is not None:
-            kwargs["last_seen"] = self.last_seen
-
-        if self.count is not None:
-            kwargs["count"] = self.count
-
-        if self.where_sighted_refs:
-            kwargs["where_sighted_refs"] = self.where_sighted_refs
+        for prop in ["created_by_ref", "description", "first_seen", "last_seen", "count", "where_sighted_refs", "labels", "revoked"]:
+            if getattr(self, prop) is not None:
+                kwargs[prop] = getattr(self, prop)
 
         return StixSighting(**kwargs)
 
