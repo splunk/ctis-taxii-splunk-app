@@ -40,6 +40,8 @@ class BaseModelV1(BaseModel):
 # https://catt.rs/en/stable/
 def unstructure_datetime_hook(val: datetime) -> str:
     """This hook will be registered for `datetime`s."""
+    # datetime strings are persisted to KVStore Collection without timezone (UTC is assumed).
+    # E.g. "2026-06-23T02:19:08.682815"
     return val.isoformat()
 
 # `structure` is used to convert a dictionary to a Python object

@@ -52,6 +52,9 @@ def get_groupings_collection(session) -> list:
 def get_submissions_collection(session) -> list:
     return get_collection(session, "submissions")
 
+def get_sightings_collection(session) -> list:
+    return get_collection(session, "sightings")
+
 def get_collection(session, collection_name: str) -> list:
     # Handle pagination, limits.conf: max_rows_per_query = 50000
     records = []
@@ -86,6 +89,9 @@ def clear_groupings_collection(session):
 
 def clear_submissions_collection(session):
     clear_collection(session, "submissions")
+
+def clear_sightings_collection(session):
+    clear_collection(session, "sightings")
 
 def resp_raise_for_status_and_log_response(resp):
     if not resp.ok:
@@ -129,6 +135,9 @@ def create_new_identity(session, payload: dict) -> dict:
 def create_new_grouping(session, payload: dict) -> dict:
     return post_endpoint(endpoint="create-grouping", session=session, payload=payload)
 
+def create_new_sighting(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="create-sighting", session=session, payload=payload)
+
 def edit_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-identity", session=session, payload=payload)
 
@@ -138,6 +147,9 @@ def edit_grouping(session, payload: dict) -> dict:
 def edit_indicator(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-indicator", session=session, payload=payload)
 
+def edit_sighting(session, payload: dict) -> dict:
+    return post_endpoint(endpoint="edit-sighting", session=session, payload=payload)
+
 def delete_identity(session, identity_id: str) -> dict:
     return delete_endpoint(endpoint="delete-identity", session=session, payload={
         "identity_id": identity_id
@@ -146,6 +158,11 @@ def delete_identity(session, identity_id: str) -> dict:
 def delete_grouping(session, grouping_id: str) -> dict:
     return delete_endpoint(endpoint="delete-grouping", session=session, payload={
         "grouping_id": grouping_id
+    })
+
+def delete_sighting(session, sighting_id: str) -> dict:
+    return delete_endpoint(endpoint="delete-sighting", session=session, payload={
+        "sighting_id": sighting_id
     })
 
 def delete_indicators_by_grouping_id(session, grouping_id: str) -> dict:
@@ -180,6 +197,9 @@ def list_identities(session, skip: int, limit: int, query: dict = None) -> dict:
 
 def list_groupings(session, skip: int, limit: int, query: dict = None) -> dict:
     return query_collection_endpoint(endpoint="list-groupings", session=session, skip=skip, limit=limit, query=query)
+
+def list_sightings(session, skip: int = 0, limit: int = 100, query: dict = None) -> dict:
+    return query_collection_endpoint(endpoint="list-sightings", session=session, skip=skip, limit=limit, query=query)
 
 def get_grouping(session, grouping_id: str) -> dict:
     resp = list_groupings(session=session, skip=0, limit=0, query={"grouping_id": grouping_id})
@@ -251,6 +271,14 @@ def new_sample_grouping(session, grouping_name="grouping-1", identity_name="iden
     })["grouping"]
     assert grouping["grouping_id"] is not None
     return grouping
+
+def example_sighting(indicator_id: str, **kwargs) -> dict:
+    """Create example sighting payload with overridable fields"""
+    base = {
+        "sighting_of_ref": indicator_id,
+    }
+    base.update(kwargs)
+    return base
 
 def get_stix_bundle_json_preview(session, grouping_id: str) -> dict:
     return get_endpoint(endpoint="get-stix-bundle-for-grouping", session=session, grouping_id=grouping_id)
