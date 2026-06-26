@@ -57,7 +57,6 @@ class SubmitGroupingHandler(AbstractRestHandler):
             }
 
         # Submit immediately to TAXII server
-        self.kvstore_collections_context.groupings.update_grouping_last_submission_at(grouping_id=grouping_id, last_submission_at=structured.scheduled_at)
         return {
             "submission": self.submit_grouping(session_key=session_key, submission_id=structured.submission_id)
         }
