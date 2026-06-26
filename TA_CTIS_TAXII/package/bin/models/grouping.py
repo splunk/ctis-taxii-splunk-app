@@ -64,6 +64,9 @@ class GroupingModelV1(BaseModelV1):
     context: str = field(validator=[validate_grouping_context])
     name: str = field()
     description: str = field()
+
+    # This is required because joins between Collections is not easy
+    #  And to allow proper pagination of groupings for a given time range of submission date
     last_submission_at: Optional[datetime] = field(default=None)
     tlp_v2_rating: TLPv2 = field()
     confidence: int = field(validator=[validate_confidence], default=100)

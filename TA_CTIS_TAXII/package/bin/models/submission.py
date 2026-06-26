@@ -19,7 +19,10 @@ class SubmissionStatus(Enum):
 class SubmissionModelV1(BaseModelV1):
     grouping_id: str = field()
     submission_id: str = field(factory=lambda: str(uuid4()))
+
+    # scheduled_at represents both the time at which a Submission is scheduled and when it was sent
     scheduled_at: datetime = field(factory=datetime.utcnow)
+
     bundle_json_sent: Optional[str] = field(default=None)
     status: SubmissionStatus = field()
     taxii_config_name: str = field()

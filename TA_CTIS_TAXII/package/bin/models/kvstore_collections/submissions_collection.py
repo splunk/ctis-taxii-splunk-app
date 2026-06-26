@@ -1,8 +1,13 @@
 from .collection_name import CollectionName
 from .abstract_collection import AbstractKVStoreCollection
-from ..submission import SubmissionModelV1, submission_converter
+from ..submission import SubmissionModelV1, submission_converter, SubmissionStatus
 from cattrs import Converter
-from typing import Type, Dict
+from typing import Type, Dict, List
+from datetime import datetime, timezone
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 class SubmissionsCollection(AbstractKVStoreCollection[SubmissionModelV1]):
     SUBMISSION_ID_FIELD = "submission_id"
@@ -30,4 +35,13 @@ class SubmissionsCollection(AbstractKVStoreCollection[SubmissionModelV1]):
         Update a submission by its ID with the provided update_data which is a dict of key-values.
         """
         return self.update_one_structured(query={SubmissionsCollection.SUBMISSION_ID_FIELD: submission_id}, updates=updates)
+
+    def list_scheduled_due_to_be_submitted(self) -> List[SubmissionModelV1]:
+        now_as_isostring = datetime.now(tz=timezone.utc).replace(tzinfo=None).isoformat()
+        query = {
+            "status": SubmissionStatus.SCHEDULED.value,
+            "scheduled_at": {"$lte": now_as_isostring}
+        }
+        logger.info(f"Querying for submissions: {query}")
+        return self.fetch_many_structured(query=query)
 

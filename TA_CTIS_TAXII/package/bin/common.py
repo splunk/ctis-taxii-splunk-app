@@ -134,6 +134,7 @@ class AbstractRestHandler(abc.ABC):
             taxii_response = taxii_collection.add_objects(bundle_json)
             taxii_response_dict = taxii_response._raw
             logger.info(f"taxii_response: {taxii_response_dict}")
+            self.kvstore_collections_context.groupings.update_grouping_last_submission_at(grouping_id=submission.grouping_id, last_submission_at=submission.scheduled_at)
         except Exception as e:
             logger.exception(f"Failed to submit to TAXII collection: {e}")
             error = str(e)
@@ -169,20 +170,6 @@ class AbstractRestHandler(abc.ABC):
             "total": total_records,
         }
         return response
-
-    # TODO: Replace with method in AbstractKVStoreCollection
-    def insert_record(self, collection, input_json: dict, converter, model_class) -> dict:
-        try:
-            structured = converter.structure(input_json, model_class)
-        except Exception as exc:
-            logger.exception(f"Failed to convert input JSON to Model")
-            raise ValueError(repr(exc))
-
-        record_as_dict = converter.unstructure(structured)
-        logger.info(f"Inserting record into collection {collection}: {record_as_dict}")
-        collection.insert(record_as_dict)
-
-        return record_as_dict
 
     @staticmethod
     def exception_response(e: Exception, status_code: int) -> dict:

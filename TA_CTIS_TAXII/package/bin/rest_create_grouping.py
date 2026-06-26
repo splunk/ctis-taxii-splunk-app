@@ -1,20 +1,13 @@
-from common import AbstractRestHandler, NAMESPACE
+from common import AbstractRestHandler
 from models import GroupingModelV1, grouping_converter
-from solnlib._utils import get_collection_data
 
 
 class CreateGroupingHandler(AbstractRestHandler):
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
-        groupings_collection = get_collection_data(collection_name="groupings", session_key=session_key, app=NAMESPACE)
+        grouping = grouping_converter.structure(input_json, GroupingModelV1)
+        self.kvstore_collections_context.validate_grouping_references(grouping=grouping)
+        as_dict = self.kvstore_collections_context.groupings.insert_record(record=grouping)
 
-        created_by_ref = input_json["created_by_ref"]
-        identity_exists = self.kvstore_collections_context.identities.check_if_identity_exists(identity_id=created_by_ref)
-        if not identity_exists:
-            raise ValueError(f"Identity not found in identities collection: {created_by_ref}")
-
-        as_dict = self.insert_record(collection=groupings_collection, input_json=input_json, converter=grouping_converter, model_class=GroupingModelV1)
-
-        response = {
+        return {
             "grouping": as_dict,
         }
-        return response

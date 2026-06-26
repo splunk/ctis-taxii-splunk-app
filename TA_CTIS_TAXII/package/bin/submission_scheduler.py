@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 import json
+import logging
 import os
 import sys
 import time
-from datetime import datetime
-import logging
 
 sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
@@ -45,13 +44,7 @@ class SubmissionSchedulerCommand(GeneratingCommand):
         # Need to manually set the kvstore_collections_context since we are not using the REST handler's infrastructure
         handler.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, app_namespace=NAMESPACE)
 
-        now_as_isostring = datetime.utcnow().isoformat()
-        query = {
-            "status": SubmissionStatus.SCHEDULED.value,
-            "scheduled_at": {"$lte": now_as_isostring}
-        }
-        logger.info(f"Querying for submissions: {query}")
-        submissions = handler.kvstore_collections_context.submissions.fetch_many_structured(query=query)
+        submissions = handler.kvstore_collections_context.submissions.list_scheduled_due_to_be_submitted()
 
         logger.info(f"Number of submissions ready to be submitted: {len(submissions)}.")
 

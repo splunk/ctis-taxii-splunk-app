@@ -19,7 +19,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 
-from util import list_submissions, post_submit_grouping_to_taxii_server, unschedule_submission, get_submission
+from util import list_submissions, post_submit_grouping_to_taxii_server, unschedule_submission, get_submission, get_grouping
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -49,9 +49,16 @@ def timestamp_in_future(in_future: timedelta) -> str:
     timestamp = dt.isoformat(timespec="seconds")
     return timestamp
 
+def get_grouping_last_submission_at(session, grouping_id) -> datetime:
+    grouping = get_grouping(session=session, grouping_id=grouping_id)
+    assert grouping["last_submission_at"] is not None
+    last_submission_at = datetime.fromisoformat(grouping["last_submission_at"])
+    return last_submission_at
+
 
 class TestStixBundleSubmissionToTaxiiServer:
     def test_immediate_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
+        utc_now = datetime_in_future(in_future=timedelta(seconds=0))
         grouping_id = taxii_server_setup_and_grouping.grouping_id
         ctis_app_taxii_config = taxii_server_setup_and_grouping.taxii_config_name
         taxii2_server_details = taxii_server_setup_and_grouping.taxii2_server
@@ -71,23 +78,28 @@ class TestStixBundleSubmissionToTaxiiServer:
         taxii_server_resp_obj = json.loads(taxii_server_resp_json)
         assert taxii_server_resp_obj["status"] == "complete"
 
+        # Check that grouping's field last_submission_at is updated after submission
+        last_submission_at = get_grouping_last_submission_at(session=session, grouping_id=grouping_id)
+        logger.info(f"Grouping last submission at: {last_submission_at}.")
+        assert last_submission_at > utc_now
+
     def test_scheduled_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
         grouping_id = taxii_server_setup_and_grouping.grouping_id
         ctis_app_taxii_config = taxii_server_setup_and_grouping.taxii_config_name
         taxii2_server_details = taxii_server_setup_and_grouping.taxii2_server
 
         # Note that the endpoint accepts ISO 8601 formatted timestamp WITHOUT timezone info. UTC is assumed.
-        timestamp = timestamp_in_future(in_future=timedelta(seconds=30))
+        scheduled_datetime = timestamp_in_future(in_future=timedelta(seconds=30))
         submission_resp = post_submit_grouping_to_taxii_server(session=session,
                                                                grouping_id=grouping_id,
                                                                taxii_config_name=ctis_app_taxii_config,
                                                                taxii_collection_id=taxii2_server_details.readable_and_writable_collection_id,
-                                                               scheduled_at=timestamp)
+                                                               scheduled_at=scheduled_datetime)
         submission_resp_obj = submission_resp["submission"]
         assert submission_resp_obj["status"] == "SCHEDULED"
         assert submission_resp_obj["grouping_id"] == grouping_id
         assert submission_resp_obj["taxii_config_name"] == ctis_app_taxii_config
-        assert submission_resp_obj["scheduled_at"] == timestamp
+        assert submission_resp_obj["scheduled_at"] == scheduled_datetime
 
         submission_id = submission_resp_obj["submission_id"]
 
@@ -107,6 +119,13 @@ class TestStixBundleSubmissionToTaxiiServer:
             time.sleep(1)
         else:
             raise AssertionError(f"Scheduled submission {submission_id} was not sent within expected time.")
+
+        # Check that grouping's field last_submission_at is updated after submission
+        grouping = get_grouping(session=session, grouping_id=grouping_id)
+        last_submission_at = grouping.get("last_submission_at")
+        assert last_submission_at is not None
+        logger.info(f"Grouping last submission at: {last_submission_at}. Target submission time was: {scheduled_datetime}")
+        assert last_submission_at >= scheduled_datetime
 
     def test_unschedule_scheduled_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
         grouping_id = taxii_server_setup_and_grouping.grouping_id
