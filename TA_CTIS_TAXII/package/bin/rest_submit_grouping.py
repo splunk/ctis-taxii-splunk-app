@@ -41,7 +41,8 @@ class SubmitGroupingHandler(AbstractRestHandler):
         grouping_id = input_json["grouping_id"]
         taxii_config_name = input_json["taxii_config_name"]
         taxii_collection_id = input_json["taxii_collection_id"]
-        include_sightings = "include_sightings" in input_json
+        include_sightings = input_json.get("include_sightings", False)
+        assert isinstance(include_sightings, bool), "include_sightings must be a boolean value."
 
         # Validate that TAXII Config exists
         self.get_taxii_config(session_key=session_key, stanza_name=taxii_config_name)

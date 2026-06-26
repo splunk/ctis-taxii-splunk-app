@@ -1,19 +1,3 @@
-"""
-TODO:
-- Create fixture to spin up and tear down the TAXII server using the script provided.
-- Given Splunk host and credentials, and that the CTIS app is installed....
-- Create a new TAXII config in the app via a POST request:
-
-POST https://localhost:8089/servicesNS/-/TA_CTIS_TAXII/TA_CTIS_TAXII_taxii_config?output_mode=json
-Using x-www-form-urlencoded body with fields:
-name, api_root_url, username, password.
-
-- Create an identity
-- Create a grouping
-- Create an indicator which references the identity and grouping created
-- Get preview of STIX bundle JSON for grouping via API
-- Submit STIX bundle to TAXII server via API
-"""
 import json
 import logging
 import time
@@ -82,6 +66,9 @@ class TestStixBundleSubmissionToTaxiiServer:
         last_submission_at = get_grouping_last_submission_at(session=session, grouping_id=grouping_id)
         logger.info(f"Grouping last submission at: {last_submission_at}.")
         assert last_submission_at > utc_now
+
+    def test_immediate_submission_with_sightings(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
+        raise NotImplementedError
 
     def test_scheduled_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
         grouping_id = taxii_server_setup_and_grouping.grouping_id

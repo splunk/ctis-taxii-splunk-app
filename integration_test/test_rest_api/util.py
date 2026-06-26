@@ -280,14 +280,24 @@ def example_sighting(indicator_id: str, **kwargs) -> dict:
     base.update(kwargs)
     return base
 
-def get_stix_bundle_json_preview(session, grouping_id: str) -> dict:
-    return get_endpoint(endpoint="get-stix-bundle-for-grouping", session=session, grouping_id=grouping_id)
 
-def post_submit_grouping_to_taxii_server(session, grouping_id: str, taxii_config_name: str, taxii_collection_id: str, scheduled_at:str=None) -> dict:
+def get_stix_bundle_json_preview(session, grouping_id: str, include_sightings: bool = False) -> dict:
+    query_params = {
+        "grouping_id": grouping_id,
+    }
+    if include_sightings:
+        query_params["include_sightings"] = "1"
+
+    return get_endpoint(endpoint="get-stix-bundle-for-grouping", session=session, **query_params)
+
+
+def post_submit_grouping_to_taxii_server(session, grouping_id: str, taxii_config_name: str, taxii_collection_id: str,
+                                         scheduled_at: str = None, include_sightings: bool = False) -> dict:
     payload = {
         "grouping_id": grouping_id,
         "taxii_config_name": taxii_config_name,
-        "taxii_collection_id": taxii_collection_id
+        "taxii_collection_id": taxii_collection_id,
+        "include_sightings": include_sightings
     }
     if scheduled_at is not None:
         payload["scheduled_at"] = scheduled_at

@@ -220,6 +220,7 @@ class AbstractRestHandler(abc.ABC):
             query_params_dict = self.parse_query_params(in_string_dict["query"])
 
             self.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, app_namespace=NAMESPACE)
+            # TODO: Set self.session_key? instead of passing it around
 
             payload = self.handle(input_json=input_json, query_params=query_params_dict, session_key=session_key)
             return {"payload": payload, "status": 200}

@@ -13,7 +13,9 @@ class GetStixBundleForGroupingHandler(AbstractRestHandler):
 
         include_sightings = False
         if "include_sightings" in query_params:
-            include_sightings = True
+            query_params_include_sightings = query_params["include_sightings"][0]
+            if query_params_include_sightings == "1" or query_params_include_sightings.lower() == "true":
+                include_sightings = True
 
         bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id, include_sightings=include_sightings)
 
