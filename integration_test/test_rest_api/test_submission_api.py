@@ -3,7 +3,9 @@ import logging
 import time
 from datetime import datetime, timedelta
 
-from util import list_submissions, post_submit_grouping_to_taxii_server, unschedule_submission, get_submission, get_grouping
+from util import (list_submissions, post_submit_grouping_to_taxii_server, unschedule_submission,
+                  get_submission, get_grouping, get_indicators_collection, create_new_sighting,
+                  example_sighting)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -68,7 +70,42 @@ class TestStixBundleSubmissionToTaxiiServer:
         assert last_submission_at > utc_now
 
     def test_immediate_submission_with_sightings(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
-        raise NotImplementedError
+        grouping_id = taxii_server_setup_and_grouping.grouping_id
+        ctis_app_taxii_config = taxii_server_setup_and_grouping.taxii_config_name
+        taxii2_server_details = taxii_server_setup_and_grouping.taxii2_server
+
+        # Retrieve the indicator created by the fixture
+        indicators = get_indicators_collection(session)
+        indicator = [ind for ind in indicators if ind.get("grouping_id") == grouping_id][0]
+        indicator_id = indicator["indicator_id"]
+        logger.info(f"Using indicator ID: {indicator_id}")
+
+        # Create a sighting for the indicator
+        sighting_payload = example_sighting(indicator_id=indicator_id, description="Test sighting for submission", count=1)
+        sighting_resp = create_new_sighting(session, payload=sighting_payload)
+        sighting_id = sighting_resp["sighting_id"]
+        logger.info(f"Created sighting: {sighting_resp}")
+
+        logger.info("Submitting bundle/grouping to TAXII server with sightings...")
+        submission_resp = post_submit_grouping_to_taxii_server(session=session,
+                                                               grouping_id=grouping_id,
+                                                               taxii_config_name=ctis_app_taxii_config,
+                                                               taxii_collection_id=taxii2_server_details.readable_and_writable_collection_id,
+                                                               include_sightings=True)
+        logger.info(f"Submission response: {submission_resp}")
+        submission_resp_obj = submission_resp["submission"]
+        assert submission_resp_obj["status"] == "SENT"
+        assert submission_resp_obj["grouping_id"] == grouping_id
+        assert submission_resp_obj["taxii_config_name"] == ctis_app_taxii_config
+
+        taxii_server_resp_json = submission_resp_obj["response_json"]
+        taxii_server_resp_obj = json.loads(taxii_server_resp_json)
+        assert taxii_server_resp_obj["status"] == "complete"
+
+        bundle_json_sent = json.loads(submission_resp_obj["bundle_json_sent"])
+        bundle_object_ids = [x["id"] for x in bundle_json_sent["objects"]]
+        assert sighting_id in bundle_object_ids
+
 
     def test_scheduled_submission(self, session, cleanup_all_collections, taxii_server_setup_and_grouping):
         grouping_id = taxii_server_setup_and_grouping.grouping_id
