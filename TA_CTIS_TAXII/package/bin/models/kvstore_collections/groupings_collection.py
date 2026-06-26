@@ -3,6 +3,7 @@ from .abstract_collection import AbstractKVStoreCollection
 from ..grouping import GroupingModelV1, grouping_converter
 from cattrs import Converter
 from typing import Dict, Type
+from datetime import datetime
 
 class GroupingsCollection(AbstractKVStoreCollection[GroupingModelV1]):
     ID_FIELD = "grouping_id"
@@ -37,3 +38,8 @@ class GroupingsCollection(AbstractKVStoreCollection[GroupingModelV1]):
 
     def check_if_grouping_exists(self, grouping_id: str) -> bool:
         return self.check_if_exactly_one_exists(query={GroupingsCollection.ID_FIELD: grouping_id})
+
+    def update_grouping_last_submission_at(self, grouping_id: str, last_submission_at: datetime):
+        return self.update_grouping_raw(grouping_id=grouping_id, updates={
+            "last_submission_at": last_submission_at.isoformat()
+        })

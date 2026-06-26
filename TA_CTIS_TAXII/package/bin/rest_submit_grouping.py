@@ -19,11 +19,6 @@ def validate_input_json(input_json: dict):
 
 
 class SubmitGroupingHandler(AbstractRestHandler):
-    def update_grouping_last_submission_at(self, grouping_id: str, last_submission_at: datetime):
-        self.kvstore_collections_context.groupings.update_grouping_raw(grouping_id=grouping_id, updates={
-            "last_submission_at": last_submission_at.isoformat()
-        })
-
     def insert_submission_record(self, grouping_id: str, taxii_config_name: str, taxii_collection_id: str, scheduled_at: Optional[str] = None) -> Tuple[SubmissionModelV1, dict]:
         scheduled_at_kwargs = {}
         if scheduled_at:
@@ -38,7 +33,6 @@ class SubmitGroupingHandler(AbstractRestHandler):
             **scheduled_at_kwargs
         )
         unstructured = self.kvstore_collections_context.submissions.insert_record(record=new_submission)
-        self.update_grouping_last_submission_at(grouping_id=grouping_id, last_submission_at=new_submission.scheduled_at)
         return new_submission, unstructured
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
@@ -61,6 +55,9 @@ class SubmitGroupingHandler(AbstractRestHandler):
             return {
                 "submission": unstructured
             }
+
+        # Submit immediately to TAXII server
+        self.kvstore_collections_context.groupings.update_grouping_last_submission_at(grouping_id=grouping_id, last_submission_at=structured.scheduled_at)
         return {
             "submission": self.submit_grouping(session_key=session_key, submission_id=structured.submission_id)
         }

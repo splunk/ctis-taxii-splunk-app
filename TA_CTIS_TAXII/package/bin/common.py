@@ -134,6 +134,7 @@ class AbstractRestHandler(abc.ABC):
             taxii_response = taxii_collection.add_objects(bundle_json)
             taxii_response_dict = taxii_response._raw
             logger.info(f"taxii_response: {taxii_response_dict}")
+            self.kvstore_collections_context.groupings.update_grouping_last_submission_at(grouping_id=submission.grouping_id, last_submission_at=submission.scheduled_at)
         except Exception as e:
             logger.exception(f"Failed to submit to TAXII collection: {e}")
             error = str(e)
