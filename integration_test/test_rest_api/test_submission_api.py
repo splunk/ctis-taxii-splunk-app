@@ -121,7 +121,9 @@ class TestStixBundleSubmissionToTaxiiServer:
             raise AssertionError(f"Scheduled submission {submission_id} was not sent within expected time.")
 
         # Check that grouping's field last_submission_at is updated after submission
-        last_submission_at = get_grouping_last_submission_at(session=session, grouping_id=grouping_id)
+        grouping = get_grouping(session=session, grouping_id=grouping_id)
+        last_submission_at = grouping.get("last_submission_at")
+        assert last_submission_at is not None
         logger.info(f"Grouping last submission at: {last_submission_at}. Target submission time was: {scheduled_datetime}")
         assert last_submission_at >= scheduled_datetime
 
