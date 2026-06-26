@@ -22,6 +22,7 @@ class TestSubmissionModel:
         assert as_dict["scheduled_at"] == "2024-01-02T03:04:05"
         assert as_dict["response_json"] is None
         assert as_dict["error_message"] is None
+        assert as_dict["include_sightings"] is False
 
     def test_unstructure_submission_now(self):
         submission = SubmissionModelV1(
@@ -44,6 +45,7 @@ class TestSubmissionModel:
         assert as_dict["taxii_config_name"] == "taxii_config"
         assert as_dict["collection_id"] == "abc123"
         assert "submission_id" in as_dict
+        assert as_dict["include_sightings"] is False
 
     def test_structure(self):
         as_dict = {
@@ -60,3 +62,32 @@ class TestSubmissionModel:
         assert submission.collection_id == "abc123"
         assert submission.submission_id is not None
         assert submission.grouping_id == GROUPING_ID
+        assert submission.include_sightings is False, "By default, include_sightings is False"
+
+class TestFieldIncludeSightings:
+    def test_structure_including_field(self):
+        as_dict = {
+            "grouping_id": GROUPING_ID,
+            "bundle_json_sent": "{}",
+            "status": "SCHEDULED",
+            "taxii_config_name": "taxii_config",
+            "collection_id": "abc123",
+            "include_sightings": True,
+        }
+        submission = submission_converter.structure(as_dict, SubmissionModelV1)
+        assert submission.include_sightings is True
+
+    def test_unstructure_including_field(self):
+        submission = SubmissionModelV1(
+            grouping_id=GROUPING_ID,
+            bundle_json_sent="{}",
+            status=SubmissionStatus.SCHEDULED,
+            taxii_config_name="taxii_config",
+            collection_id="abc123",
+            include_sightings=True,
+        )
+        assert submission.include_sightings is True
+        unstructured = submission_converter.unstructure(submission)
+        assert unstructured["grouping_id"] == GROUPING_ID
+        assert unstructured["include_sightings"] is True
+

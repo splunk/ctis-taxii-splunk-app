@@ -29,5 +29,6 @@ class SubmissionModelV1(BaseModelV1):
     collection_id: str = field()
     response_json: Optional[str] = field(default=None)
     error_message: Optional[str] = field(default=None)
+    include_sightings: bool = field(default=False)
 
 submission_converter = make_base_converter()
