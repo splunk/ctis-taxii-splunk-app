@@ -89,6 +89,16 @@ class SightingModelV1(BaseModelV1):
             if self.first_seen > self.last_seen:
                 raise ValueError("first_seen must be <= last_seen")
 
+    @staticmethod
+    def identity_ids_referenced_by_sightings(sightings: List[SightingModelV1]):
+        identity_ids = set()
+        for sighting in sightings:
+            if sighting.created_by_ref is not None:
+                identity_ids.add(sighting.created_by_ref)
+            for sighting_of_ref in sighting.where_sighted_refs:
+                identity_ids.add(sighting_of_ref)
+        return list(identity_ids)
+
     def to_stix(self) -> StixSighting:
         kwargs = {
             "id": self.sighting_id,

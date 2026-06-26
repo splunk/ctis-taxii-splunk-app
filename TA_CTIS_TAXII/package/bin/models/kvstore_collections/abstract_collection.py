@@ -17,10 +17,20 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+
 class AbstractKVStoreCollection(ABC, Generic[T]):
     def __init__(self, session_key: str, app_namespace: str):
         self.session_key = session_key
         self.app_namespace = app_namespace
+
+
+    @staticmethod
+    def query_or(operands: List[Dict]) -> Dict:
+        return {"$or": operands}
+
+    @staticmethod
+    def query_in(field: str, possible_values: List[str]) -> Dict:
+        return AbstractKVStoreCollection.query_or([{field: value} for value in possible_values])
 
     @property
     @abstractmethod
@@ -89,6 +99,10 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
 
     def fetch_many_structured(self, query: dict) -> List[T]:
         return [self.model_converter.structure(record, self.model_class) for record in self.fetch_many_raw(query=query)]
+
+    def fetch_many_structured_by_primary_key(self, possible_values_of_primary_key: List) -> List[T]:
+        query = self.query_in(field=self.primary_key, possible_values=possible_values_of_primary_key)
+        return self.fetch_many_structured(query=query)
 
     def update_one_structured(self, query: Dict, updates: Dict) -> T:
         """

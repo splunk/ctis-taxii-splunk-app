@@ -13,7 +13,7 @@ from taxii2client.v21 import _TAXIIEndpoint
 
 from const import ADDON_NAME, ADDON_NAME_LOWER
 from models import SubmissionStatus, \
-    bundle_for_grouping, serialize_stix_object, maximum_tlpv2_of_indicators
+    bundle_for_grouping, serialize_stix_object, maximum_tlpv2_of_indicators, SightingModelV1
 from models.kvstore_collections import CollectionName, KVStoreCollectionsContext
 from server_exception import ServerException, RestResponseException
 from solnlib.log import Logs
@@ -122,7 +122,7 @@ class AbstractRestHandler(abc.ABC):
         bundle_json = None
         try:
             submission = self.kvstore_collections_context.submissions.get_submission(submission_id=submission_id)
-            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission.grouping_id)
+            bundle = self.generate_stix_bundle_for_grouping(grouping_id=submission.grouping_id, include_sightings=submission.include_sightings)
             bundle_json = serialize_stix_object(stix_object=bundle)
 
             taxii_config = self.get_taxii_config(session_key=session_key, stanza_name=submission.taxii_config_name)
@@ -242,19 +242,29 @@ class AbstractRestHandler(abc.ABC):
             logger.exception("Server error")
             return self.exception_response(e, 500)
 
-    def generate_stix_bundle_for_grouping(self, grouping_id:str) -> Bundle:
+    # TODO: Move into KVStoreCollectionsContext
+    def generate_stix_bundle_for_grouping(self, grouping_id:str, include_sightings: bool = False) -> Bundle:
         grouping = self.kvstore_collections_context.groupings.fetch_exactly_one_structured(query={"grouping_id": grouping_id})
         logger.info(f"grouping: {grouping}")
 
         indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
         logger.info(f"indicators: {indicators}")
 
-        identity = self.kvstore_collections_context.identities.fetch_exactly_one_structured(query={"identity_id" : grouping.created_by_ref})
-        logger.info(f"identity: {identity}")
+        sightings = []
+        if include_sightings:
+            for indicator in indicators:
+                more_sightings = self.kvstore_collections_context.sightings.fetch_many_by_sighting_of_ref(sighting_of_ref=indicator.indicator_id)
+                sightings.extend(more_sightings)
 
-        bundle = bundle_for_grouping(grouping_=grouping, indicators=indicators, grouping_identity=identity)
+        identity_ids_referenced_by_sightings = SightingModelV1.identity_ids_referenced_by_sightings(sightings=sightings)
+        all_identity_ids = identity_ids_referenced_by_sightings + [grouping.created_by_ref]
+        all_identities = self.kvstore_collections_context.identities.fetch_many_structured_by_primary_key(possible_values_of_primary_key=all_identity_ids)
+        logger.info(f"all_identities: {all_identities}")
+
+        bundle = bundle_for_grouping(grouping_=grouping, indicators=indicators, identities=all_identities, sightings=sightings)
         return bundle
 
+    # TODO: Move into KVStoreCollectionsContext
     def update_grouping_tlp_rating_to_match_indicators(self, grouping_id: str):
         indicators = self.kvstore_collections_context.indicators.fetch_many_by_grouping_id(grouping_id=grouping_id)
         logger.info(f"Grouping {grouping_id} has indicators: {indicators}")
