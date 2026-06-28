@@ -23,6 +23,7 @@ class ListGroupingsHandler(AbstractRestHandler):
         logger.info(f"grouping_ids: {grouping_ids}")
         indicators_collection = self.get_collection(collection_name="indicators", session_key=session_key)
 
+        # TODO: Replace with AbstractKVStoreCollection.fetch_many_structured_by_primary_key()
         indicators = []
         if grouping_ids:
             indicators_query = query_value_in_list("grouping_id", grouping_ids)

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import pytz
 
@@ -44,16 +44,20 @@ def serialize_stix_object(stix_object: _STIXBase21, **kwargs) -> str:
 
     return serialized
 
-def bundle_for_grouping(grouping_: GroupingModelV1, grouping_identity: IdentityModelV1,
-                        indicators: List[IndicatorModelV1]) -> Bundle:
-    objects_to_gather_tlp_rating = indicators + [grouping_, grouping_identity]
-    unique_tlp_ratings = set([obj.tlp_v2_rating for obj in objects_to_gather_tlp_rating])
+def bundle_for_grouping(grouping_: GroupingModelV1, identities: List[IdentityModelV1],
+                        indicators: List[IndicatorModelV1], sightings: Optional[List[SightingModelV1]]=None) -> Bundle:
+    if sightings is None:
+        sightings = []
+    objects_to_gather_tlp_rating = indicators + sightings + identities + [grouping_]
+    unique_tlp_ratings = set([obj.tlp_v2_rating for obj in objects_to_gather_tlp_rating if obj.tlp_v2_rating is not None])
     object_marking_refs = [x.to_object_marking_ref() for x in unique_tlp_ratings]
 
-    indicators_as_stix = [ind.to_stix(created_by_ref=grouping_identity.identity_id) for ind in indicators]
+    indicators_as_stix = [ind.to_stix(created_by_ref=grouping_.created_by_ref) for ind in indicators]
 
-    grouping_object_ids = [ind.id for ind in indicators_as_stix] + [grouping_identity.identity_id]
+    grouping_object_ids = [ind.id for ind in indicators_as_stix] + [grouping_.created_by_ref]
     grouping_stix = grouping_.to_stix(object_ids=grouping_object_ids)
-    identity_stix = grouping_identity.to_stix()
-    objects = [grouping_stix, identity_stix] + indicators_as_stix + object_marking_refs
+
+    identities_as_stix = [_identity.to_stix() for _identity in identities]
+    sightings_as_stix = [s.to_stix() for s in sightings]
+    objects = [grouping_stix] + identities_as_stix + indicators_as_stix + sightings_as_stix + object_marking_refs
     return Bundle(objects=objects)

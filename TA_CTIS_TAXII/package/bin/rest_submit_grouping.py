@@ -19,7 +19,7 @@ def validate_input_json(input_json: dict):
 
 
 class SubmitGroupingHandler(AbstractRestHandler):
-    def insert_submission_record(self, grouping_id: str, taxii_config_name: str, taxii_collection_id: str, scheduled_at: Optional[str] = None) -> Tuple[SubmissionModelV1, dict]:
+    def insert_submission_record(self, grouping_id: str, taxii_config_name: str, taxii_collection_id: str, scheduled_at: Optional[str] = None, include_sightings: bool = False) -> Tuple[SubmissionModelV1, dict]:
         scheduled_at_kwargs = {}
         if scheduled_at:
             scheduled_at_kwargs["scheduled_at"] = datetime.fromisoformat(scheduled_at)
@@ -30,6 +30,7 @@ class SubmitGroupingHandler(AbstractRestHandler):
             taxii_config_name=taxii_config_name,
             collection_id=taxii_collection_id,
             status=SubmissionStatus.SCHEDULED,
+            include_sightings=include_sightings,
             **scheduled_at_kwargs
         )
         unstructured = self.kvstore_collections_context.submissions.insert_record(record=new_submission)
@@ -40,17 +41,22 @@ class SubmitGroupingHandler(AbstractRestHandler):
         grouping_id = input_json["grouping_id"]
         taxii_config_name = input_json["taxii_config_name"]
         taxii_collection_id = input_json["taxii_collection_id"]
+        include_sightings = input_json.get("include_sightings", False)
+        assert isinstance(include_sightings, bool), "include_sightings must be a boolean value."
 
         # Validate that TAXII Config exists
         self.get_taxii_config(session_key=session_key, stanza_name=taxii_config_name)
 
         # Validates that the grouping exists, along with the indicators and identity objects
-        bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id)
+        bundle = self.generate_stix_bundle_for_grouping(grouping_id=grouping_id, include_sightings=include_sightings)
         logger.info(f"Validated bundle: {bundle.serialize()}")
 
         scheduled_at = input_json.get("scheduled_at")  # optional
-        structured, unstructured = self.insert_submission_record(grouping_id=grouping_id, taxii_config_name=taxii_config_name,
-                                                                taxii_collection_id=taxii_collection_id, scheduled_at=scheduled_at)
+        structured, unstructured = self.insert_submission_record(grouping_id=grouping_id,
+                                                                 taxii_config_name=taxii_config_name,
+                                                                 taxii_collection_id=taxii_collection_id,
+                                                                 scheduled_at=scheduled_at,
+                                                                 include_sightings=include_sightings)
         if scheduled_at:
             return {
                 "submission": unstructured
