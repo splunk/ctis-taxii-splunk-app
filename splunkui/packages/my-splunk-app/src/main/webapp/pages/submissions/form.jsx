@@ -228,11 +228,9 @@ export function Form({ groupingId }) {
     }, [collectionValidationError, collectionValidationLoading, setError, clearErrors]);
 
     useEffect(() => {
-        if (advancedSettings !== null) {
-            const defaultTaxiiConfigName = advancedSettings.default_taxii_config;
-            if (isString(defaultTaxiiConfigName) && defaultTaxiiConfigName !== '') {
-                setValue(FIELD_TAXII_CONFIG_NAME, defaultTaxiiConfigName, { shouldValidate: true });
-            }
+        const {defaultTaxiiConfigName} = advancedSettings;
+        if (isString(defaultTaxiiConfigName) && defaultTaxiiConfigName !== '') {
+            setValue(FIELD_TAXII_CONFIG_NAME, defaultTaxiiConfigName, { shouldValidate: true });
         }
     }, [advancedSettings, setValue]);
 
