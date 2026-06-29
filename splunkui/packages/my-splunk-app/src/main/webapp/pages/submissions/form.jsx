@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { errorToText, submitGrouping } from '@splunk/my-page/src/ApiClient';
 import Loader from '@splunk/my-page/src/Loader';
 import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
@@ -12,7 +11,6 @@ import Code from '@splunk/react-ui/Code';
 import Switch from '@splunk/react-ui/Switch';
 import { dateToIsoStringWithoutTimezone } from '@splunk/my-page/src/date_utils';
 import moment from 'moment';
-import { urlForViewSubmission } from '@splunk/my-page/src/urls';
 import Message from '@splunk/react-ui/Message';
 import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
 import P from '@splunk/react-ui/Paragraph';
@@ -29,6 +27,7 @@ import { usePageTitle } from '../../common/utils';
 import { useValidateCollectionId } from './hooks/useValidateCollectionId';
 import { useSubmissionFormData } from './hooks/useSubmissionFormData';
 import { useTaxiiCollectionsOptions } from './hooks/useTaxiiCollectionsOptions';
+import { useFormSubmission } from './hooks/useFormSubmission';
 
 const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
 const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
@@ -126,33 +125,7 @@ export function Form({ groupingId }) {
         setValue(FIELD_TAXII_COLLECTION_ID, selectedDefaultCollectionId, { shouldValidate: true });
     }, [selectedDefaultCollectionId, collectionOptions, setValue]);
 
-    const [submitSuccess, setSubmitSuccess] = useState(false);
-    const [submissionError, setSubmissionError] = useState(null);
-
-    const onSubmit = async (data) => {
-        console.log('Form data:', data);
-        const formIsValid = await trigger();
-        if (formIsValid) {
-            console.log('Form is valid');
-            await submitGrouping(
-                data,
-                (resp) => {
-                    console.log(resp);
-                    setSubmitSuccess(true);
-                    window.location = urlForViewSubmission(resp.submission.submission_id);
-                },
-                (errorResponse) => {
-                    console.error('Error submitting grouping', errorResponse);
-                    errorToText(errorResponse).then((errorText) => {
-                        setSubmissionError(errorText);
-                    });
-                },
-            );
-        } else {
-            console.log('Form is not valid');
-            console.error(formState.errors);
-        }
-    };
+    const { submitSuccess, submissionError, onSubmit } = useFormSubmission(trigger, formState);
 
     const handleScheduleSwitchOnClick = () => {
         setScheduledSubmission((v) => !v);
