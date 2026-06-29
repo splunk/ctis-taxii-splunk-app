@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { errorToText, listTaxiiCollections, submitGrouping } from '@splunk/my-page/src/ApiClient';
+import { errorToText, submitGrouping } from '@splunk/my-page/src/ApiClient';
 import Loader from '@splunk/my-page/src/Loader';
 import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
@@ -28,6 +28,7 @@ import {
 import { usePageTitle } from '../../common/utils';
 import { useValidateCollectionId } from './hooks/useValidateCollectionId';
 import { useSubmissionFormData } from './hooks/useSubmissionFormData';
+import { useTaxiiCollectionsOptions } from './hooks/useTaxiiCollectionsOptions';
 
 const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
 const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
@@ -42,49 +43,6 @@ const SwitchContainer = styled.div`
     min-width: fit-content;
     max-width: 30%;
 `;
-
-function collectionToOption(collection) {
-    let label = `${collection.title} (${collection.id})`;
-    if (collection.can_write === false) {
-        label += ' [Cannot Write]';
-    }
-    return {
-        label,
-        value: collection.id,
-        disabled: collection.can_write === false,
-    };
-}
-
-function useTaxiiCollectionsOptions({ selectedTaxiiConfig }) {
-    const [collectionOptions, setCollectionOptions] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    useEffect(() => {
-        console.log('Selected TAXII Config:', selectedTaxiiConfig);
-        if (selectedTaxiiConfig) {
-            setLoading(true);
-            listTaxiiCollections({
-                taxiiConfigName: selectedTaxiiConfig,
-                successHandler: (resp) => {
-                    console.log('Collections:', resp);
-                    const options = resp.collections.map((collection) =>
-                        collectionToOption(collection),
-                    );
-                    setCollectionOptions(options);
-                    setLoading(false);
-                },
-                errorHandler: async (errorResponse) => {
-                    const errorText = await errorResponse.text();
-                    const errMessage = `Error getting TAXII collections: ${errorText}`;
-                    console.error(errMessage, errorResponse);
-                    setLoading(false);
-                    setError(errMessage);
-                },
-            }).then();
-        }
-    }, [selectedTaxiiConfig]);
-    return { collectionOptions, loading, error };
-}
 
 function extractShouldDiscoverCollectionsFromConfig(taxiiConfigContent) {
     if (taxiiConfigContent && 'should_discover_collections' in taxiiConfigContent) {
@@ -228,7 +186,7 @@ export function Form({ groupingId }) {
     }, [collectionValidationError, collectionValidationLoading, setError, clearErrors]);
 
     useEffect(() => {
-        const {defaultTaxiiConfigName} = advancedSettings;
+        const { defaultTaxiiConfigName } = advancedSettings;
         if (isString(defaultTaxiiConfigName) && defaultTaxiiConfigName !== '') {
             setValue(FIELD_TAXII_CONFIG_NAME, defaultTaxiiConfigName, { shouldValidate: true });
         }
