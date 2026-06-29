@@ -28,11 +28,13 @@ import { useValidateCollectionId } from './hooks/useValidateCollectionId';
 import { useSubmissionFormData } from './hooks/useSubmissionFormData';
 import { useTaxiiCollectionsOptions } from './hooks/useTaxiiCollectionsOptions';
 import { useFormSubmission } from './hooks/useFormSubmission';
-
-const FIELD_TAXII_CONFIG_NAME = 'taxii_config_name';
-const FIELD_TAXII_COLLECTION_ID = 'taxii_collection_id';
-const FIELD_GROUPING_ID = 'grouping_id';
-const FIELD_SCHEDULED_AT = 'scheduled_at';
+import {
+    FIELD_GROUPING_ID,
+    FIELD_SCHEDULED_AT,
+    FIELD_TAXII_COLLECTION_ID,
+    FIELD_TAXII_CONFIG_NAME,
+    useRegisterFormFields,
+} from './formFields';
 
 const StyledForm = styled.form`
     max-width: 1000px;
@@ -78,32 +80,12 @@ export function Form({ groupingId }) {
         taxiiConfigEntries.map((entry) => [entry.name, entry.content]),
     );
 
-    register(FIELD_GROUPING_ID, { required: 'Grouping ID is required' });
-    register(FIELD_TAXII_CONFIG_NAME, { required: 'TAXII Config is required' });
-    register(FIELD_TAXII_COLLECTION_ID, {
-        required: 'TAXII Collection is required',
-    });
     const formCollectionId = watch(FIELD_TAXII_COLLECTION_ID);
     const debouncedCollectionId = useDebounce(formCollectionId, 300);
 
     const [scheduledSubmission, setScheduledSubmission] = useState(false);
+    useRegisterFormFields(register, scheduledSubmission);
     const submitButtonLabel = scheduledSubmission ? 'Schedule Submission' : 'Submit Now';
-
-    register(FIELD_SCHEDULED_AT, {
-        validate: (value) => {
-            if (scheduledSubmission) {
-                if (!value) {
-                    return `Scheduled At is required`;
-                }
-                const now = moment();
-                const dateValue = moment.utc(value);
-                if (dateValue < now) {
-                    return `Scheduled At must be in the future`;
-                }
-            }
-            return null;
-        },
-    });
 
     const selectedTaxiiConfig = watch(FIELD_TAXII_CONFIG_NAME);
     const selectedTaxiiConfigContent = taxiiConfigNameToContent[selectedTaxiiConfig];
