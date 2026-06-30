@@ -1,33 +1,10 @@
 import {
-    getAdvancedSettings,
     getGrouping,
     getStixBundleForGrouping,
     getTaxiiConfigs,
     useGetRecord,
 } from '@splunk/my-page/src/ApiClient';
-import { useEffect, useMemo, useState } from 'react';
-
-function useAdvancedSettings(){
-    const [defaultTaxiiConfigName, setDefaultTaxiiConfigName] = useState('');
-    const advancedSettings = useMemo(() => (
-        {
-            defaultTaxiiConfigName,
-        }
-    ), [defaultTaxiiConfigName])
-    const { loading, record, error } = useGetRecord({
-        restGetFunction: getAdvancedSettings,
-        restFunctionQueryArgs: {},
-    });
-    useEffect(() => {
-        if(record !== null){
-            setDefaultTaxiiConfigName(record.default_taxii_config ?? '')
-
-        }
-    }, [record]);
-
-
-    return {loading, error, advancedSettings};
-}
+import { useAdvancedSettings } from './useAdvancedSettings';
 
 export function useSubmissionFormData(groupingId) {
     // Validates groupingId, but does not use response
@@ -55,9 +32,11 @@ export function useSubmissionFormData(groupingId) {
     });
     const bundleJsonString = JSON.stringify(bundle?.bundle, null, 4);
 
-    const { loading: loadingAdvancedSettings, error: errorAdvancedSettings, advancedSettings } =
-        useAdvancedSettings();
-
+    const {
+        loading: loadingAdvancedSettings,
+        error: errorAdvancedSettings,
+        advancedSettings,
+    } = useAdvancedSettings();
 
     const loading =
         loadingGrouping || bundleLoading || loadingTaxiiConfigs || loadingAdvancedSettings;

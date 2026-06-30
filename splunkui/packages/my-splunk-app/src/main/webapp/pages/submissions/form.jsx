@@ -160,7 +160,7 @@ export function Form({ groupingId }) {
                             Error: {JSON.stringify(submissionError)}
                         </Message>
                     )}
-                    {DEBUG && <DebugForm />}
+                    {DEBUG && <DebugForm advancedSettings={advancedSettings}/>}
                     <section>
                         <GroupingId fieldName={FIELD_GROUPING_ID} />
                         <TaxiiConfigField
