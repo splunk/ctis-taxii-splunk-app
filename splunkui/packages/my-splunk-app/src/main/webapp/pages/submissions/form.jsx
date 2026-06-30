@@ -35,6 +35,7 @@ import {
     FIELD_TAXII_CONFIG_NAME,
     useRegisterFormFields,
 } from './formFields';
+import { useExtractFromTaxiiConfig } from './hooks/useExtractFromTaxiiConfig';
 
 const StyledForm = styled.form`
     max-width: 1000px;
@@ -45,13 +46,6 @@ const SwitchContainer = styled.div`
     max-width: 30%;
 `;
 
-function extractShouldDiscoverCollectionsFromConfig(taxiiConfigContent) {
-    if (taxiiConfigContent && 'should_discover_collections' in taxiiConfigContent) {
-        return taxiiConfigContent.should_discover_collections === '1';
-    }
-    // if should_discover_collections is not present, default to true for backwards compatibility
-    return true;
-}
 
 export function Form({ groupingId }) {
     const title = 'Submit Grouping';
@@ -71,14 +65,6 @@ export function Form({ groupingId }) {
 
     const { error, loading, bundleJsonString, advancedSettings, taxiiConfig } =
         useSubmissionFormData(groupingId);
-    const taxiiConfigEntries = taxiiConfig?.entry || [];
-    const taxiiConfigOptions = taxiiConfigEntries.map((entry) => ({
-        label: `${entry.name} (${entry.content.api_root_url})`,
-        value: entry.name,
-    }));
-    const taxiiConfigNameToContent = Object.fromEntries(
-        taxiiConfigEntries.map((entry) => [entry.name, entry.content]),
-    );
 
     const formCollectionId = watch(FIELD_TAXII_COLLECTION_ID);
     const debouncedCollectionId = useDebounce(formCollectionId, 300);
@@ -88,14 +74,7 @@ export function Form({ groupingId }) {
     const submitButtonLabel = scheduledSubmission ? 'Schedule Submission' : 'Submit Now';
 
     const selectedTaxiiConfig = watch(FIELD_TAXII_CONFIG_NAME);
-    const selectedTaxiiConfigContent = taxiiConfigNameToContent[selectedTaxiiConfig];
-    const shouldDiscoverTaxiiCollections = extractShouldDiscoverCollectionsFromConfig(
-        selectedTaxiiConfigContent,
-    );
-
-    const defaultCollectionId = selectedTaxiiConfigContent?.default_collection_id;
-    const selectedDefaultCollectionId =
-        isString(defaultCollectionId) && defaultCollectionId !== '' ? defaultCollectionId : null;
+    const {selectedDefaultCollectionId, taxiiConfigOptions, shouldDiscoverTaxiiCollections} = useExtractFromTaxiiConfig({taxiiConfig, selectedTaxiiConfigName: selectedTaxiiConfig});
 
     const {
         loading: collectionOptionsLoading,
