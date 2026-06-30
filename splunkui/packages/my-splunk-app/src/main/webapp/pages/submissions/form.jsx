@@ -36,6 +36,7 @@ import {
     useRegisterFormFields,
 } from './formFields';
 import { useExtractFromTaxiiConfig } from './hooks/useExtractFromTaxiiConfig';
+import { DebugForm } from './debugForm';
 
 const StyledForm = styled.form`
     max-width: 1000px;
@@ -46,6 +47,7 @@ const SwitchContainer = styled.div`
     max-width: 30%;
 `;
 
+const DEBUG = false;
 
 export function Form({ groupingId }) {
     const title = 'Submit Grouping';
@@ -60,8 +62,16 @@ export function Form({ groupingId }) {
             [FIELD_SCHEDULED_AT]: null,
         },
     });
-    const { watch, register, trigger, handleSubmit, formState, setValue, clearErrors, setError } =
-        methods;
+    const {
+        watch,
+        register,
+        trigger,
+        handleSubmit,
+        formState,
+        setValue,
+        clearErrors,
+        setError,
+    } = methods;
 
     const { error, loading, bundleJsonString, advancedSettings, taxiiConfig } =
         useSubmissionFormData(groupingId);
@@ -74,7 +84,8 @@ export function Form({ groupingId }) {
     const submitButtonLabel = scheduledSubmission ? 'Schedule Submission' : 'Submit Now';
 
     const selectedTaxiiConfig = watch(FIELD_TAXII_CONFIG_NAME);
-    const {selectedDefaultCollectionId, taxiiConfigOptions, shouldDiscoverTaxiiCollections} = useExtractFromTaxiiConfig({taxiiConfig, selectedTaxiiConfigName: selectedTaxiiConfig});
+    const { selectedDefaultCollectionId, taxiiConfigOptions, shouldDiscoverTaxiiCollections } =
+        useExtractFromTaxiiConfig({ taxiiConfig, selectedTaxiiConfigName: selectedTaxiiConfig });
 
     const {
         loading: collectionOptionsLoading,
@@ -149,6 +160,7 @@ export function Form({ groupingId }) {
                             Error: {JSON.stringify(submissionError)}
                         </Message>
                     )}
+                    {DEBUG && <DebugForm />}
                     <section>
                         <GroupingId fieldName={FIELD_GROUPING_ID} />
                         <TaxiiConfigField

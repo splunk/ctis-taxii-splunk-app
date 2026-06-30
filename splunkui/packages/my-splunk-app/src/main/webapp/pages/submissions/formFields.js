@@ -14,13 +14,10 @@ export function useRegisterFormFields(register, isScheduledSubmission){
             required: 'TAXII Collection is required',
         });
 
-        register(FIELD_SCHEDULED_AT, {
-            validate: (value) => {
-                if (isScheduledSubmission) {
-                    return validateScheduledAt(value);
-                }
-                return null;
-            },
-        });
+        if(isScheduledSubmission){
+            register(FIELD_SCHEDULED_AT, { validate: validateScheduledAt });
+        }else{
+            register(FIELD_SCHEDULED_AT, { required: false, validate: null });
+        }
     }, [register, isScheduledSubmission]);
 }
