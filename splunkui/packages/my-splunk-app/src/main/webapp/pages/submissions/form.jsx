@@ -30,6 +30,7 @@ import { useTaxiiCollectionsOptions } from './hooks/useTaxiiCollectionsOptions';
 import { useFormSubmission } from './hooks/useFormSubmission';
 import {
     FIELD_GROUPING_ID,
+    FIELD_INCLUDE_SIGHTINGS,
     FIELD_SCHEDULED_AT,
     FIELD_TAXII_COLLECTION_ID,
     FIELD_TAXII_CONFIG_NAME,
@@ -37,17 +38,14 @@ import {
 } from './formFields';
 import { useExtractFromTaxiiConfig } from './hooks/useExtractFromTaxiiConfig';
 import { DebugForm } from './debugForm';
+import { SwitchContainer } from './switchContainer';
+import { IncludeSightingsControlGroup } from './includeSightingsControlGroup';
 
 const StyledForm = styled.form`
     max-width: 1000px;
 `;
-const SwitchContainer = styled.div`
-    flex-grow: 0;
-    min-width: fit-content;
-    max-width: 30%;
-`;
 
-const DEBUG = false;
+const DEBUG = true;
 
 export function Form({ groupingId }) {
     const title = 'Submit Grouping';
@@ -60,28 +58,24 @@ export function Form({ groupingId }) {
             [FIELD_TAXII_COLLECTION_ID]: null,
             [FIELD_GROUPING_ID]: groupingId,
             [FIELD_SCHEDULED_AT]: null,
+            [FIELD_INCLUDE_SIGHTINGS]: false,
         },
     });
-    const {
-        watch,
-        register,
-        trigger,
-        handleSubmit,
-        formState,
-        setValue,
-        clearErrors,
-        setError,
-    } = methods;
+    const { watch, register, trigger, handleSubmit, formState, setValue, clearErrors, setError } =
+        methods;
 
     const { error, loading, bundleJsonString, advancedSettings, taxiiConfig } =
         useSubmissionFormData(groupingId);
 
+    const { defaultTaxiiConfigName, enableSightings } = advancedSettings;
     const formCollectionId = watch(FIELD_TAXII_COLLECTION_ID);
     const debouncedCollectionId = useDebounce(formCollectionId, 300);
 
     const [scheduledSubmission, setScheduledSubmission] = useState(false);
     useRegisterFormFields(register, scheduledSubmission);
     const submitButtonLabel = scheduledSubmission ? 'Schedule Submission' : 'Submit Now';
+
+    const [includeSightings, setIncludeSightings] = useState(false);
 
     const selectedTaxiiConfig = watch(FIELD_TAXII_CONFIG_NAME);
     const { selectedDefaultCollectionId, taxiiConfigOptions, shouldDiscoverTaxiiCollections } =
@@ -131,11 +125,14 @@ export function Form({ groupingId }) {
     }, [collectionValidationError, collectionValidationLoading, setError, clearErrors]);
 
     useEffect(() => {
-        const { defaultTaxiiConfigName } = advancedSettings;
         if (isString(defaultTaxiiConfigName) && defaultTaxiiConfigName !== '') {
             setValue(FIELD_TAXII_CONFIG_NAME, defaultTaxiiConfigName, { shouldValidate: true });
         }
-    }, [advancedSettings, setValue]);
+    }, [defaultTaxiiConfigName, setValue]);
+
+    useEffect(() => {
+        setValue(FIELD_INCLUDE_SIGHTINGS, includeSightings);
+    }, [includeSightings, setValue]);
 
     const submitButtonDisabled = useMemo(
         () =>
@@ -146,6 +143,8 @@ export function Form({ groupingId }) {
             submitSuccess,
         [submitSuccess, formState, collectionValidationLoading, collectionOptionsLoading],
     );
+
+    // TODO: Regenerate Bundle JSON Preview if includeSightings changes
 
     return (
         <FormProvider {...methods}>
@@ -160,7 +159,7 @@ export function Form({ groupingId }) {
                             Error: {JSON.stringify(submissionError)}
                         </Message>
                     )}
-                    {DEBUG && <DebugForm advancedSettings={advancedSettings}/>}
+                    {DEBUG && <DebugForm advancedSettings={advancedSettings} />}
                     <section>
                         <GroupingId fieldName={FIELD_GROUPING_ID} />
                         <TaxiiConfigField
@@ -204,6 +203,12 @@ export function Form({ groupingId }) {
                             </SwitchContainer>
                         </CustomControlGroup>
                         {scheduledSubmission && <ScheduledAt fieldName={FIELD_SCHEDULED_AT} />}
+                        {enableSightings && (
+                            <IncludeSightingsControlGroup
+                                handleOnClick={() => setIncludeSightings((v) => !v)}
+                                selected={includeSightings}
+                            />
+                        )}
                     </section>
                     <CustomControlGroup>
                         <HorizontalButtonLayout>
