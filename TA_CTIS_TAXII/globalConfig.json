@@ -220,7 +220,7 @@
                             "label": "Enable Sightings Feature",
                             "field": "enable_sightings",
                             "defaultValue": false,
-                            "help": "Note: Not supported for ASD CTIS partners. Enable to allow users to create sightings of indicators. Sightings can be included in Bundle submissions to the TAXII server."
+                            "help": "EXPERIMENTAL. Note: Not supported for ASD CTIS partners. Enable to allow users to create sightings of indicators. Sightings can be included in Bundle submissions to the TAXII server."
                         }
                     ],
                     "title": "Advanced Settings"
@@ -395,7 +395,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.30.0+e975aa1",
+        "version": "1.30.0+4c8dc0b",
         "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.10",
         "supportedThemes": [

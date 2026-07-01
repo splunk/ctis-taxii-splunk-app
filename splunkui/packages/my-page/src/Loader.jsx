@@ -12,10 +12,12 @@ const MessageContent = styled.div`
 `;
 
 function Loading({loadingText = "Loading..."}) {
-    return (<Heading>
-        {loadingText}
-        <WaitSpinner size="large"/>
-    </Heading>);
+    return (
+        <Heading>
+            <WaitSpinner size="large" />
+            <div>{loadingText}</div>
+        </Heading>
+    );
 }
 
 Loading.propTypes = {
