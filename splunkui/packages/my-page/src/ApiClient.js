@@ -367,9 +367,10 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
 
     const debouncedQueryArgs = useDebounce(JSON.stringify(restFunctionQueryArgs), 100);
     useEffect(() => {
+        const queryArgs = JSON.parse(debouncedQueryArgs);
         setLoading(true);
         restGetFunction({
-            ...restFunctionQueryArgs,
+            ...queryArgs,
             successHandler: (resp) => {
                 console.log("Response:", resp);
                 setRecord(resp);
@@ -382,7 +383,8 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
                 setLoading(false);
             }
         });
-    }, [debouncedQueryArgs]);
+        // TODO: return a cleanup function which cancels in-flight requests
+    }, [debouncedQueryArgs, restGetFunction]);
     return {record, loading, error};
 }
 
