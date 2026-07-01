@@ -267,11 +267,12 @@ export function getAdvancedSettings({successHandler, errorHandler}) {
     })
 }
 
-export function getStixBundleForGrouping({groupingId, successHandler, errorHandler}) {
+export function getStixBundleForGrouping({groupingId, includeSightings = false, successHandler, errorHandler}) {
     return getData({
         endpoint: 'get-stix-bundle-for-grouping',
         queryParams: {
-            grouping_id: groupingId
+            grouping_id: groupingId,
+            include_sightings: includeSightings ? 'true' : 'false',
         },
         successHandler, errorHandler
     })
@@ -366,6 +367,7 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
 
     const debouncedQueryArgs = useDebounce(JSON.stringify(restFunctionQueryArgs), 100);
     useEffect(() => {
+        setLoading(true);
         restGetFunction({
             ...restFunctionQueryArgs,
             successHandler: (resp) => {
@@ -373,10 +375,10 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
                 setRecord(resp);
                 setLoading(false);
             },
-            errorHandler: async (error) => {
-                const errorText = await errorToText(error);
+            errorHandler: async (_error) => {
+                const errorText = await errorToText(_error);
                 setError(errorText);
-                console.error(errorText, error);
+                console.error(errorText, _error);
                 setLoading(false);
             }
         });

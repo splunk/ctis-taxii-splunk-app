@@ -6,8 +6,6 @@ import styled from 'styled-components';
 import SubmitButton from '@splunk/my-page/src/SubmitButton';
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import { HorizontalButtonLayout } from '@splunk/my-page/src/HorizontalButtonLayout';
-import CollapsiblePanel from '@splunk/react-ui/CollapsiblePanel';
-import Code from '@splunk/react-ui/Code';
 import Switch from '@splunk/react-ui/Switch';
 import { dateToIsoStringWithoutTimezone } from '@splunk/my-page/src/date_utils';
 import moment from 'moment';
@@ -40,12 +38,14 @@ import { useExtractFromTaxiiConfig } from './hooks/useExtractFromTaxiiConfig';
 import { DebugForm } from './debugForm';
 import { SwitchContainer } from './switchContainer';
 import { IncludeSightingsControlGroup } from './includeSightingsControlGroup';
+import { PreviewStixBundleJson } from './previewStixBundleJson';
+import { shouldUseDebugMode } from '../../common/queryParams';
 
 const StyledForm = styled.form`
     max-width: 1000px;
 `;
 
-const DEBUG = true;
+const DEBUG = shouldUseDebugMode();
 
 export function Form({ groupingId }) {
     const title = 'Submit Grouping';
@@ -64,8 +64,7 @@ export function Form({ groupingId }) {
     const { watch, register, trigger, handleSubmit, formState, setValue, clearErrors, setError } =
         methods;
 
-    const { error, loading, bundleJsonString, advancedSettings, taxiiConfig } =
-        useSubmissionFormData(groupingId);
+    const { error, loading, advancedSettings, taxiiConfig } = useSubmissionFormData(groupingId);
 
     const { defaultTaxiiConfigName, enableSightings } = advancedSettings;
     const formCollectionId = watch(FIELD_TAXII_COLLECTION_ID);
@@ -144,8 +143,6 @@ export function Form({ groupingId }) {
         [submitSuccess, formState, collectionValidationLoading, collectionOptionsLoading],
     );
 
-    // TODO: Regenerate Bundle JSON Preview if includeSightings changes
-
     return (
         <FormProvider {...methods}>
             <StyledForm name="SubmitGrouping" onSubmit={handleSubmit(onSubmit)}>
@@ -219,11 +216,10 @@ export function Form({ groupingId }) {
                             />
                         </HorizontalButtonLayout>
                     </CustomControlGroup>
-                    <section>
-                        <CollapsiblePanel title="Preview of STIX Bundle JSON">
-                            <Code language="json" value={bundleJsonString} />
-                        </CollapsiblePanel>
-                    </section>
+                    <PreviewStixBundleJson
+                        groupingId={groupingId}
+                        includeSightings={includeSightings}
+                    />
                 </Loader>
             </StyledForm>
         </FormProvider>

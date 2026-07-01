@@ -1,6 +1,5 @@
 import {
     getGrouping,
-    getStixBundleForGrouping,
     getTaxiiConfigs,
     useGetRecord,
 } from '@splunk/my-page/src/ApiClient';
@@ -23,24 +22,14 @@ export function useSubmissionFormData(groupingId) {
     });
 
     const {
-        loading: bundleLoading,
-        record: bundle,
-        error: bundleError,
-    } = useGetRecord({
-        restGetFunction: getStixBundleForGrouping,
-        restFunctionQueryArgs: { groupingId },
-    });
-    const bundleJsonString = JSON.stringify(bundle?.bundle, null, 4);
-
-    const {
         loading: loadingAdvancedSettings,
         error: errorAdvancedSettings,
         advancedSettings,
     } = useAdvancedSettings();
 
     const loading =
-        loadingGrouping || bundleLoading || loadingTaxiiConfigs || loadingAdvancedSettings;
-    const error = groupingError || bundleError || taxiiConfigError || errorAdvancedSettings;
+        loadingGrouping || loadingTaxiiConfigs || loadingAdvancedSettings;
+    const error = groupingError || taxiiConfigError || errorAdvancedSettings;
 
-    return { loading, error, taxiiConfig, bundleJsonString, advancedSettings };
+    return { loading, error, taxiiConfig, advancedSettings };
 }
