@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import SearchPaginator from "./paginator";
 import P from '@splunk/react-ui/Paragraph';
-import {useDebounceMultiple} from "./debounce";
 import {v4 as uuidv4} from 'uuid';
+import SearchPaginator from "./paginator";
+import {useDebounceMultiple} from "./debounce";
 import {SORT_MODIFIED_DESC} from "./ApiClient";
 
 function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort = ""}) {

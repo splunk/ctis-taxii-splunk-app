@@ -120,6 +120,33 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
 IndicatorsSearchBar.propTypes = {
     onQueryChange: PropTypes.func.isRequired
 }
+export const SightingsSearchBar = ({ onQueryChange }) => {
+    const TEXT_SEARCH_FIELDS = [
+        'name',
+        'description',
+        'sighting_id',
+    ];
+    const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
+
+    const subqueries = [lastUpdatedQuery];
+
+    return (
+        <SearchBar
+            onQueryChange={onQueryChange}
+            fullTextSearchFields={TEXT_SEARCH_FIELDS}
+            subqueries={subqueries}
+        >
+            <DatetimeRangePicker
+                labelPrefix="Last Updated"
+                fieldName="modified"
+                onQueryChange={setLastUpdatedQuery}
+            />
+        </SearchBar>
+    );
+};
+SightingsSearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired,
+};
 
 export const GroupingsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'description', 'grouping_id', 'context'];
