@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
-import ExpandableDataTable from "@splunk/my-page/src/ExpandableDataTable";
+import { DataTableV2 } from "@splunk/my-page/src/ExpandableDataTable";
 import {deleteIdentity, getIdentities} from "@splunk/my-page/src/ApiClient";
 import P from "@splunk/react-ui/Paragraph";
-import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import {AppContainer, createErrorToast} from "@splunk/my-page/src/AppContainer";
 import {editIdentityPage, NEW_IDENTITY_PAGE} from "@splunk/my-page/src/urls";
 import Plus from '@splunk/react-icons/Plus';
@@ -17,7 +16,7 @@ import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
 import BaseButton from "@splunk/my-page/src/BaseButton";
 import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
-import { PaginatedRecords, RecordsLoaderContext } from '@splunk/my-page/src/PaginatedDataTable';
+import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
 import {layoutWithTheme} from "../../common/theme";
 import {getUrlQueryParams} from "../../common/queryParams";
 import IdentityForm from "../../common/IdentityForm";
@@ -57,23 +56,6 @@ const expansionFieldNameToCellValue = {
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
 }
 
-function RenderDataTable() {
-    const { loading, error, records } = useContext(RecordsLoaderContext);
-    // TODO: pass in isLoading, error?
-    const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
-    const errorElement = <P>{`Error: ${error}`}</P>
-    const table = <ExpandableDataTable data={records}
-                                       rowKeyFunction={(row) => row.identity_id}
-                                       expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
-                                       rowActionPrimary={Actions}
-    />
-    if (error) {
-        return errorElement;
-    }
-    return loading ? loadingElement : table;
-}
-
 function ListIdentities() {
     const [query, setQuery] = React.useState({});
     return (
@@ -84,7 +66,11 @@ function ListIdentities() {
             </PageHeadingContainer>
             <IdentitiesSearchBar onQueryChange={setQuery}/>
             <PaginatedRecords fetchData={getIdentities} onError={createErrorToast} query={query}>
-                <RenderDataTable/>
+                <DataTableV2 rowKeyFunction={(row) => row.identity_id}
+                             expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
+                             mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                             rowActionPrimary={Actions}
+                />
             </PaginatedRecords>
         </>
     );

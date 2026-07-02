@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import PropTypes from "prop-types";
 import {AppContainer, createErrorToast} from "@splunk/my-page/src/AppContainer";
-import Loader from "@splunk/my-page/src/Loader";
 import {SubmissionsSearchBar} from "@splunk/my-page/src/SearchBar";
 import {getSubmissions} from "@splunk/my-page/src/ApiClient";
-import ExpandableDataTable from "@splunk/my-page/src/ExpandableDataTable";
+import { DataTableV2 } from "@splunk/my-page/src/ExpandableDataTable";
 import {SubmissionStatusChip} from "@splunk/my-page/src/SubmissionStatusChip";
 import {HorizontalActionButtonLayout} from "@splunk/my-page/src/HorizontalButtonLayout";
 import {SubmitGroupingButton} from "@splunk/my-page/src/buttons/SubmitGroupingButton";
@@ -14,7 +13,7 @@ import useModal from "@splunk/my-page/src/useModal";
 import {CancelSubmissionModal} from "@splunk/my-page/src/CancelSubmissionModal";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
 import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
-import { PaginatedRecords, RecordsLoaderContext } from '@splunk/my-page/src/PaginatedDataTable';
+import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
 import {SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
 import {Form} from "./form";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -42,19 +41,6 @@ RowActionPrimary.propTypes = {
     row: PropTypes.object.isRequired
 }
 
-function RenderDataTable() {
-    const {records, loading, error} = useContext(RecordsLoaderContext);
-    const table = <ExpandableDataTable data={records}
-                                       rowKeyFunction={(row) => row.submission_id}
-                                       expansionRowFieldNameToCellValue={SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER}
-                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
-                                       rowActionPrimary={RowActionPrimary}
-    />
-    return <Loader error={error} loading={loading}>
-        {table}
-    </Loader>
-}
-
 function ListSubmissions() {
     const [query, setQuery] = React.useState({});
     const title = "Submissions";
@@ -66,7 +52,10 @@ function ListSubmissions() {
             </PageHeadingContainer>
             <SubmissionsSearchBar onQueryChange={setQuery}/>
             <PaginatedRecords fetchData={getSubmissions} onError={createErrorToast} query={query}>
-                <RenderDataTable/>
+                <DataTableV2 rowKeyFunction={row => row.submission_id}
+                             expansionRowFieldNameToCellValue={SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER}
+                             mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                             rowActionPrimary={RowActionPrimary} />
             </PaginatedRecords>
         </>
     );
