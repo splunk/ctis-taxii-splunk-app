@@ -1,13 +1,9 @@
-import React, { useContext, useEffect } from 'react';
-
-import ExpandableDataTable from '@splunk/my-page/src/ExpandableDataTable';
+import React, { useEffect } from 'react';
 import { IndicatorsSearchBar } from '@splunk/my-page/src/SearchBar';
 import Plus from '@splunk/react-icons/Plus';
 import { getIndicators } from '@splunk/my-page/src/ApiClient';
-import P from '@splunk/react-ui/Paragraph';
-import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 import { AppContainer, createErrorToast } from '@splunk/my-page/src/AppContainer';
-import { PaginatedRecords, RecordsLoaderContext } from '@splunk/my-page/src/PaginatedDataTable';
+import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
 import { GroupingIdLink, IndicatorIdLink, NEW_INDICATOR_PAGE, urlForEditIndicator } from '@splunk/my-page/src/urls';
 import useModal from '@splunk/my-page/src/useModal';
 import { DeleteIndicatorModal } from '@splunk/my-page/src/DeleteModal';
@@ -19,6 +15,7 @@ import PropTypes from 'prop-types';
 import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
 import BaseButton from '@splunk/my-page/src/BaseButton';
 import { formatTimestampForDisplay } from '@splunk/my-page/src/date_utils';
+import { DataTableV2 } from '@splunk/my-page/src/ExpandableDataTable';
 import { layoutWithTheme } from '../../common/theme';
 import ViewOrEditIndicator from '../../common/indicator_form/ViewOrEditIndicator';
 import { getUrlQueryParams } from '../../common/queryParams';
@@ -76,39 +73,37 @@ function useResponsiveColumns() {
     return columns;
 }
 
-function RenderDataTable() {
-    const {loading, error, records} = useContext(RecordsLoaderContext);
-    const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
-    const errorElement = <P>{`Error: ${error}`}</P>
-    const columns = useResponsiveColumns();
-    const columnNameToCellValue = mappingOfColumnNameToCellValue.filter((column) => columns.includes(column.columnName));
-    const table = <ExpandableDataTable data={records}
-                                       rowKeyFunction={(row) => row.indicator_id}
-                                       expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={columnNameToCellValue}
-                                       rowActionPrimary={RowActionPrimary}
-                                       actionsColumnWidth={120}
-    />
-    if (error) {
-        return errorElement;
-    }
-    return loading ? loadingElement : table;
-}
-
 function ListIndicators() {
     const [query, setQuery] = React.useState({});
     const title = "Indicators";
     usePageTitle(title);
 
+    const columns = useResponsiveColumns();
+    const columnNameToCellValue = mappingOfColumnNameToCellValue.filter((column) =>
+        columns.includes(column.columnName),
+    );
+
     return (
         <>
             <PageHeadingContainer>
                 <PageHeading level={1}>{title}</PageHeading>
-                <BaseButton inline icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
+                <BaseButton
+                    inline
+                    icon={<Plus />}
+                    label="New Indicator"
+                    appearance="primary"
+                    to={NEW_INDICATOR_PAGE}
+                />
             </PageHeadingContainer>
-            <IndicatorsSearchBar onQueryChange={setQuery}/>
+            <IndicatorsSearchBar onQueryChange={setQuery} />
             <PaginatedRecords fetchData={getIndicators} onError={createErrorToast} query={query}>
-                <RenderDataTable />
+                <DataTableV2
+                    rowKeyFunction={(row) => row.indicator_id}
+                    expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
+                    mappingOfColumnNameToCellValue={columnNameToCellValue}
+                    rowActionPrimary={RowActionPrimary}
+                    actionsColumnWidth={120}
+                />
             </PaginatedRecords>
         </>
     );
