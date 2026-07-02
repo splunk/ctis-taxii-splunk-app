@@ -1,9 +1,12 @@
 import styled from "styled-components";
-import React, {useEffect} from 'react';
+import React, { useContext, useEffect} from 'react';
 import Table from '@splunk/react-ui/Table';
 import {variables} from "@splunk/themes";
 import DL from '@splunk/react-ui/DefinitionList';
 import PropTypes from 'prop-types';
+import { RecordsLoaderContext } from './PaginatedDataTable';
+import P from '@splunk/react-ui/Paragraph';
+import WaitSpinner from '@splunk/react-ui/WaitSpinner';
 
 const LargeBoldText = styled.span`
     font-weight: ${variables.fontWeightBold};
@@ -127,3 +130,37 @@ function ExpandableDataTable({
 }
 
 export default ExpandableDataTable;
+
+export function DataTableV2({rowKeyFunction, expansionRowFieldNameToCellValue, mappingOfColumnNameToCellValue, rowActionPrimary, rowActionsSecondary, actionsColumnWidth = 150}) {
+    const { loading, error, records } = useContext(RecordsLoaderContext);
+    const loadingElement = (
+        <div>
+            <P>Loading...</P>
+            <WaitSpinner size="large" />
+        </div>
+    );
+    const errorElement = <P>{`Error: ${error}`}</P>;
+    const table = (
+        <ExpandableDataTable
+            data={records}
+            rowKeyFunction={rowKeyFunction}
+            expansionRowFieldNameToCellValue={expansionRowFieldNameToCellValue}
+            mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+            rowActionPrimary={rowActionPrimary}
+            rowActionsSecondary={rowActionsSecondary}
+            actionsColumnWidth={actionsColumnWidth}
+        />
+    );
+    if (error) {
+        return errorElement;
+    }
+    return loading ? loadingElement : table;
+}
+DataTableV2.propTypes = {
+    rowKeyFunction: PropTypes.func.isRequired,
+    rowActionPrimary: PropTypes.func,
+    rowActionsSecondary: PropTypes.func,
+    expansionRowFieldNameToCellValue: PropTypes.object.isRequired,
+    mappingOfColumnNameToCellValue: PropTypes.array.isRequired,
+    actionsColumnWidth: PropTypes.number,
+}
