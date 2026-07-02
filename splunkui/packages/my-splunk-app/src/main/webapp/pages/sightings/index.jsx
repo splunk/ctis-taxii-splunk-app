@@ -6,6 +6,7 @@ import ListSightings from './ListSightings';
 import CreateSighting from './CreateSighting';
 import EditSighting from './EditSighting';
 
+// TODO: Add feature flag check for enable_sightings
 function Router() {
     const queryParams = getUrlQueryParams();
     const sightingId = queryParams.get('sighting_id')

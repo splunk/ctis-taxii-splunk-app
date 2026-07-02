@@ -185,6 +185,29 @@ export function getIndicators({
     })
 }
 
+export function getSightings({
+    skip = 0,
+    limit = 0,
+    successHandler,
+    errorHandler,
+    query,
+    sort = SORT_MODIFIED_DESC,
+    ...rest
+}) {
+    return getData({
+        endpoint: 'list-sightings',
+        queryParams: {
+            skip,
+            limit,
+            sort,
+        },
+        query,
+        successHandler,
+        errorHandler,
+        ...rest,
+    });
+}
+
 export function getGroupings({
                                  skip = 0,
                                  limit = 0,
