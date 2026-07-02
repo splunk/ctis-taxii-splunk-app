@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getAdvancedSettings, useGetRecord } from '@splunk/my-page/src/ApiClient';
+import { getAdvancedSettings, useGetRecord } from '../ApiClient';
 
 export function useAdvancedSettings() {
     const [defaultTaxiiConfigName, setDefaultTaxiiConfigName] = useState('');

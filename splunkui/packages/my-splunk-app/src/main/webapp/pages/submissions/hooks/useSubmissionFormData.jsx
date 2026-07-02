@@ -3,7 +3,7 @@ import {
     getTaxiiConfigs,
     useGetRecord,
 } from '@splunk/my-page/src/ApiClient';
-import { useAdvancedSettings } from './useAdvancedSettings';
+import { useAdvancedSettings } from '@splunk/my-page/src/hooks/useAdvancedSettings';
 
 export function useSubmissionFormData(groupingId) {
     // Validates groupingId, but does not use response
