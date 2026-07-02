@@ -1,12 +1,12 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { createContext, useEffect, useMemo, useState } from 'react';
 import P from '@splunk/react-ui/Paragraph';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import PropTypes from 'prop-types';
-import SearchPaginator from "./paginator";
-import {useDebounceMultiple} from "./debounce";
-import {SORT_MODIFIED_DESC} from "./ApiClient";
+import SearchPaginator from './paginator';
+import { useDebounceMultiple } from './debounce';
+import { SORT_MODIFIED_DESC } from './ApiClient';
 
-function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort = ""}) {
+function usePaginatedData({ getDataPaginated, skip, limit, onError, query, sort = '' }) {
     const [records, setRecords] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -18,26 +18,35 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort =
 
     useEffect(() => {
         const newRequestId = uuidv4();
-        console.log("Setting new request ID:", newRequestId, "for request:", JSON.stringify(debouncedValues));
+        console.log(
+            'Setting new request ID:',
+            newRequestId,
+            'for request:',
+            JSON.stringify(debouncedValues),
+        );
         setLastRequestId(newRequestId);
     }, [debouncedValues]);
 
     useEffect(() => {
         if (lastRequestId) {
-            console.log("Latest request ID:", lastRequestId)
+            console.log('Latest request ID:', lastRequestId);
             setLoading(true);
             setError(null);
             getDataPaginated({
-                skip, limit, query, sort,
+                skip,
+                limit,
+                query,
+                sort,
                 requestId: lastRequestId,
-                successHandler: (data, {requestId: responseRequestId}) => {
-                    setRequestIdToResponse((prev) => ({...prev, [responseRequestId]: data}));
-                }, errorHandler: (_error) => {
+                successHandler: (data, { requestId: responseRequestId }) => {
+                    setRequestIdToResponse((prev) => ({ ...prev, [responseRequestId]: data }));
+                },
+                errorHandler: (_error) => {
                     setLoading(false);
                     setError(_error);
                     console.error(_error);
                     onError(_error);
-                }
+                },
             }).then();
         }
     }, [lastRequestId]);
@@ -52,13 +61,20 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort =
         }
     }, [requestIdToResponse, lastRequestId]);
 
-    return {records, totalRecords, loading, error};
+    return { records, totalRecords, loading, error };
 }
 
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
 const DEFAULT_RESULTS_PER_PAGE = 10;
 
-export function useDataPages({fetchData, query, pageNum, onError = null, sort=SORT_MODIFIED_DESC, resultsPerPage = DEFAULT_RESULTS_PER_PAGE}){
+export function useDataPages({
+    fetchData,
+    query,
+    pageNum,
+    onError = null,
+    sort = SORT_MODIFIED_DESC,
+    resultsPerPage = DEFAULT_RESULTS_PER_PAGE,
+}) {
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
     const { records, totalRecords, loading, error } = usePaginatedData({
         getDataPaginated: fetchData,
@@ -79,16 +95,31 @@ export function useDataPages({fetchData, query, pageNum, onError = null, sort=SO
         [totalRecords, resultsPerPage],
     );
 
-    return { records, totalRecords, numPages, loading, error, pageNum };
+    return { records, totalRecords, numPages, loading, error };
 }
 
-export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort=SORT_MODIFIED_DESC}) {
+export const RecordsLoaderContext = createContext({ records: [], loading: true, error: null });
+
+export function PaginatedRecords({
+    fetchData,
+    onError,
+    query,
+    sort = SORT_MODIFIED_DESC,
+    children,
+}) {
     const [pageNum, setPageNum] = useState(1);
     const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
-    const {records, loading, error, numPages, totalRecords} = useDataPages({fetchData, query, pageNum, onError, sort, resultsPerPage});
+    const { records, loading, error, numPages, totalRecords } = useDataPages({
+        fetchData,
+        query,
+        pageNum,
+        onError,
+        sort,
+        resultsPerPage,
+    });
 
     useEffect(() => {
-        console.log('Setting page num to 1');
+        console.log('Setting page num to 1 due to change in results per page');
         setPageNum(1);
     }, [resultsPerPage]);
 
@@ -98,25 +129,27 @@ export default function PaginatedDataTable({renderData: RenderData, fetchData, o
         setPageNum(1);
     }, [query]);
 
-    return (
-        <>
-            <RenderData records={records} loading={loading} error={error}/>
-            <P>{`Records found: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
-            <SearchPaginator totalPages={numPages}
-                             pageNum={pageNum}
-                             onChangePage={setPageNum}
-                             resultsPerPage={resultsPerPage}
-                             setResultsPerPage={setResultsPerPage}
-                             optionsResultsPerPage={OPTIONS_RESULTS_PER_PAGE}/>
+    const contextValue = useMemo(() => ({ records, loading, error }), [records, loading, error]);
 
-        </>
+    return (
+        <RecordsLoaderContext.Provider value={contextValue}>
+            {children}
+            <P>{`Records found: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
+            <SearchPaginator
+                totalPages={numPages}
+                pageNum={pageNum}
+                onChangePage={setPageNum}
+                resultsPerPage={resultsPerPage}
+                setResultsPerPage={setResultsPerPage}
+                optionsResultsPerPage={OPTIONS_RESULTS_PER_PAGE}
+            />
+        </RecordsLoaderContext.Provider>
     );
 }
-
-PaginatedDataTable.propTypes = {
-    renderData: PropTypes.func.isRequired,
+PaginatedRecords.propTypes = {
     fetchData: PropTypes.func.isRequired,
     onError: PropTypes.func.isRequired,
-    query: PropTypes.string,
+    query: PropTypes.object.isRequired,
     sort: PropTypes.string,
-}
+    children: PropTypes.node.isRequired,
+};

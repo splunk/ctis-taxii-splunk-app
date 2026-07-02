@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import ExpandableDataTable from "@splunk/my-page/src/ExpandableDataTable";
-import PaginatedDataTable from "@splunk/my-page/src/PaginatedDataTable";
 import {AppContainer, createErrorToast} from "@splunk/my-page/src/AppContainer";
 import P from "@splunk/react-ui/Paragraph";
 import WaitSpinner from "@splunk/react-ui/WaitSpinner";
@@ -22,6 +21,7 @@ import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
 import BaseButton from "@splunk/my-page/src/BaseButton";
 import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
+import { PaginatedRecords, RecordsLoaderContext } from '@splunk/my-page/src/PaginatedDataTable';
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
 import {getUrlQueryParams} from "../../common/queryParams";
@@ -76,8 +76,8 @@ const expansionFieldNameToCellValue = {
     "Submissions": (row) => <SubmissionCardLayout groupingId={row.grouping_id}/>,
 }
 
-function renderDataTable({records, loading, error}) {
-    // TODO: pass in isLoading, error?
+function RenderDataTable() {
+    const { loading, error, records } = useContext(RecordsLoaderContext);
     const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
     const errorElement = <P>{`Error: ${error}`}</P>
     const table = <ExpandableDataTable data={records}
@@ -103,9 +103,9 @@ function ListGroupings() {
                 <BaseButton inline icon={<Plus/>} label="New Grouping" appearance="primary" to={NEW_GROUPING_PAGE}/>
             </PageHeadingContainer>
             <GroupingsSearchBar onQueryChange={setQuery}/>
-            <PaginatedDataTable renderData={renderDataTable} fetchData={getGroupings} query={query} onError={(e) => {
-                createErrorToast(e);
-            }}/>
+            <PaginatedRecords fetchData={getGroupings} onError={createErrorToast} query={query}>
+                <RenderDataTable />
+            </PaginatedRecords>
         </>
     );
 }
