@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import P from '@splunk/react-ui/Paragraph';
 import {v4 as uuidv4} from 'uuid';
+import PropTypes from 'prop-types';
 import SearchPaginator from "./paginator";
 import {useDebounceMultiple} from "./debounce";
 import {SORT_MODIFIED_DESC} from "./ApiClient";
@@ -31,11 +32,11 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort =
                 requestId: lastRequestId,
                 successHandler: (data, {requestId: responseRequestId}) => {
                     setRequestIdToResponse((prev) => ({...prev, [responseRequestId]: data}));
-                }, errorHandler: (error) => {
+                }, errorHandler: (_error) => {
                     setLoading(false);
-                    setError(error);
-                    console.error(error);
-                    onError(error);
+                    setError(_error);
+                    console.error(_error);
+                    onError(_error);
                 }
             }).then();
         }
@@ -54,40 +55,46 @@ function usePaginatedData({getDataPaginated, skip, limit, onError, query, sort =
     return {records, totalRecords, loading, error};
 }
 
-/**
- * Render Paginated Data Table
- *
- * @param {Object} props
- * @param {renderData} props.renderData - Component Function which accepts records, loading, error and returns JSX
- * @param {fetchData} props.fetchData - Function which fetches data from server. Accepts skip, limit, onError and returns {records, totalRecords, loading, error}
- * @param {onError} props.onError - Callback to handle error. Accepts a single error argument.
- *
- */
 const OPTIONS_RESULTS_PER_PAGE = [10, 20, 50, 100, 200];
 const DEFAULT_RESULTS_PER_PAGE = 10;
 
-export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort=SORT_MODIFIED_DESC}) {
-    const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
-    const [pageNum, setPageNum] = useState(1);
+export function useDataPages({fetchData, query, pageNum, onError = null, sort=SORT_MODIFIED_DESC, resultsPerPage = DEFAULT_RESULTS_PER_PAGE}){
     const skip = useMemo(() => (pageNum - 1) * resultsPerPage, [pageNum, resultsPerPage]);
-    const {records, totalRecords, loading, error} = usePaginatedData({
+    const { records, totalRecords, loading, error } = usePaginatedData({
         getDataPaginated: fetchData,
         skip,
         limit: resultsPerPage,
         query,
         sort,
-        onError
+        onError: (e) => {
+            if (onError !== null && typeof onError === 'function') {
+                return onError(e);
+            }
+            console.error(e);
+            return null;
+        },
     });
-    const numPages = useMemo(() => Math.max(Math.ceil(totalRecords / resultsPerPage), 1), [totalRecords, resultsPerPage]);
+    const numPages = useMemo(
+        () => Math.max(Math.ceil(totalRecords / resultsPerPage), 1),
+        [totalRecords, resultsPerPage],
+    );
+
+    return { records, totalRecords, numPages, loading, error, pageNum };
+}
+
+export default function PaginatedDataTable({renderData: RenderData, fetchData, onError, query, sort=SORT_MODIFIED_DESC}) {
+    const [pageNum, setPageNum] = useState(1);
+    const [resultsPerPage, setResultsPerPage] = useState(DEFAULT_RESULTS_PER_PAGE);
+    const {records, loading, error, numPages, totalRecords} = useDataPages({fetchData, query, pageNum, onError, sort, resultsPerPage});
 
     useEffect(() => {
-        console.log("Setting page num to 1");
+        console.log('Setting page num to 1');
         setPageNum(1);
     }, [resultsPerPage]);
 
     useEffect(() => {
         // Reset page number when query changes
-        console.log("Setting page num to 1 due to query change");
+        console.log('Setting page num to 1 due to query change');
         setPageNum(1);
     }, [query]);
 
@@ -104,5 +111,12 @@ export default function PaginatedDataTable({renderData: RenderData, fetchData, o
 
         </>
     );
+}
 
+PaginatedDataTable.propTypes = {
+    renderData: PropTypes.func.isRequired,
+    fetchData: PropTypes.func.isRequired,
+    onError: PropTypes.func.isRequired,
+    query: PropTypes.string,
+    sort: PropTypes.string,
 }
