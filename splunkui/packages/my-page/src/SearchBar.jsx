@@ -122,9 +122,9 @@ IndicatorsSearchBar.propTypes = {
 }
 export const SightingsSearchBar = ({ onQueryChange }) => {
     const TEXT_SEARCH_FIELDS = [
-        'name',
-        'description',
         'sighting_id',
+        'description',
+        'labels',
     ];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
 
