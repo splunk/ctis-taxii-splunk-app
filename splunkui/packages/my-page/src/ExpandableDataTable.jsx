@@ -1,12 +1,13 @@
-import styled from "styled-components";
-import React, { useContext, useEffect} from 'react';
+import styled from 'styled-components';
+import React, { useContext, useEffect } from 'react';
 import Table from '@splunk/react-ui/Table';
-import {variables} from "@splunk/themes";
+import { variables } from '@splunk/themes';
 import DL from '@splunk/react-ui/DefinitionList';
 import PropTypes from 'prop-types';
-import { RecordsLoaderContext } from './PaginatedDataTable';
 import P from '@splunk/react-ui/Paragraph';
 import WaitSpinner from '@splunk/react-ui/WaitSpinner';
+import { RecordsLoaderContext } from './PaginatedDataTable';
+import { NoValuePresent } from './data_table/values';
 
 const LargeBoldText = styled.span`
     font-weight: ${variables.fontWeightBold};
@@ -23,13 +24,13 @@ const StyledDL = styled(DL)`
     }
 `;
 
-function ExpandedDataRecord({mapping}) {
+function ExpandedDataRecord({ mapping }) {
     return (
         <StyledDL layout="fixed" termWidth="200px">
             {Object.entries(mapping).map(([term, description]) => (
                 <>
                     <StyledDL.Term>{term}</StyledDL.Term>
-                    <StyledDL.Description>{description}</StyledDL.Description>
+                    <StyledDL.Description>{description ?? <NoValuePresent />}</StyledDL.Description>
                 </>
             ))}
         </StyledDL>
@@ -37,17 +38,20 @@ function ExpandedDataRecord({mapping}) {
 }
 ExpandedDataRecord.propTypes = {
     mapping: PropTypes.object.isRequired,
-}
+};
 
 function getExpansionRow(row, rowKeyFunction, fieldNameToCellValue, numTableColumns) {
-    const mapping = Object.entries(fieldNameToCellValue).reduce((acc, [fieldName, getCellValue]) => {
-        acc[fieldName] = getCellValue(row);
-        return acc;
-    }, {});
-    const expandedDataRecord = <ExpandedDataRecord mapping={mapping}/>;
+    const mapping = Object.entries(fieldNameToCellValue).reduce(
+        (acc, [fieldName, getCellValue]) => {
+            acc[fieldName] = getCellValue(row);
+            return acc;
+        },
+        {},
+    );
+    const expandedDataRecord = <ExpandedDataRecord mapping={mapping} />;
     return (
         <Table.Row key={`${rowKeyFunction(row)}-expansion`}>
-            <Table.Cell style={{borderTop: 'none'}} colSpan={numTableColumns}>
+            <Table.Cell style={{ borderTop: 'none' }} colSpan={numTableColumns}>
                 {expandedDataRecord}
             </Table.Cell>
         </Table.Row>
@@ -59,15 +63,14 @@ const ContainerWithFixedMaxWidth = styled.div`
 `;
 
 function ExpandableDataTable({
-                                 data,
-                                 rowKeyFunction,
-                                 mappingOfColumnNameToCellValue,
-                                 expansionRowFieldNameToCellValue,
-                                 rowActionPrimary: RowActionPrimary,
-                                 rowActionsSecondary: RowActionsSecondary,
-                                 actionsColumnWidth = 150,
-                             }) {
-
+    data,
+    rowKeyFunction,
+    mappingOfColumnNameToCellValue,
+    expansionRowFieldNameToCellValue,
+    rowActionPrimary: RowActionPrimary,
+    rowActionsSecondary: RowActionsSecondary,
+    actionsColumnWidth = 150,
+}) {
     // Adding one to include actions column
     let totalColumns = mappingOfColumnNameToCellValue.length;
     const hasActionsColumn = RowActionPrimary || RowActionsSecondary;
@@ -77,17 +80,17 @@ function ExpandableDataTable({
     const [expandedRows, setExpandedRows] = React.useState(() => new Set());
     const toggleRowExpansion = (rowKey) => {
         if (expandedRows.has(rowKey)) {
-            setExpandedRows(prev => {
+            setExpandedRows((prev) => {
                 const newSet = new Set(prev);
                 newSet.delete(rowKey);
                 return newSet;
             });
         } else {
-            setExpandedRows(prev => {
+            setExpandedRows((prev) => {
                 return new Set(prev).add(rowKey);
             });
         }
-    }
+    };
 
     useEffect(() => {
         if (data.length === 1) {
@@ -97,33 +100,47 @@ function ExpandableDataTable({
     }, [JSON.stringify(data)]);
 
     return (
-        <Table stripeRows rowExpansion="controlled" actionsColumnWidth={hasActionsColumn ? actionsColumnWidth : null}>
+        <Table
+            stripeRows
+            rowExpansion="controlled"
+            actionsColumnWidth={hasActionsColumn ? actionsColumnWidth : null}
+        >
             <Table.Head>
-                {mappingOfColumnNameToCellValue.map(({columnName}) => (
+                {mappingOfColumnNameToCellValue.map(({ columnName }) => (
                     <Table.HeadCell key={columnName}>
                         <LargeBoldText>{columnName}</LargeBoldText>
                     </Table.HeadCell>
                 ))}
             </Table.Head>
             <Table.Body>
-                {data && data.map((row) => (
-                    <Table.Row key={rowKeyFunction(row)}
-                               actionPrimary={RowActionPrimary && <RowActionPrimary row={row}/>}
-                               actionsSecondary={RowActionsSecondary && <RowActionsSecondary row={row}/>}
-                               onExpansion={() => toggleRowExpansion(rowKeyFunction(row))}
-                               expanded={expandedRows.has(rowKeyFunction(row))}
-                               expansionRow={
-                                   getExpansionRow(row, rowKeyFunction, expansionRowFieldNameToCellValue, totalColumns)
-                               }>
-                        {mappingOfColumnNameToCellValue.map(({columnName, getCellContent}) => (
-                            <Table.Cell key={columnName}>
-                                <ContainerWithFixedMaxWidth>
-                                    <LargeText>{getCellContent(row)}</LargeText>
-                                </ContainerWithFixedMaxWidth>
-                            </Table.Cell>
-                        ))}
-                    </Table.Row>
-                ))}
+                {data &&
+                    data.map((row) => (
+                        <Table.Row
+                            key={rowKeyFunction(row)}
+                            actionPrimary={RowActionPrimary && <RowActionPrimary row={row} />}
+                            actionsSecondary={
+                                RowActionsSecondary && <RowActionsSecondary row={row} />
+                            }
+                            onExpansion={() => toggleRowExpansion(rowKeyFunction(row))}
+                            expanded={expandedRows.has(rowKeyFunction(row))}
+                            expansionRow={getExpansionRow(
+                                row,
+                                rowKeyFunction,
+                                expansionRowFieldNameToCellValue,
+                                totalColumns,
+                            )}
+                        >
+                            {mappingOfColumnNameToCellValue.map(
+                                ({ columnName, getCellContent }) => (
+                                    <Table.Cell key={columnName}>
+                                        <ContainerWithFixedMaxWidth>
+                                            <LargeText>{getCellContent(row)}</LargeText>
+                                        </ContainerWithFixedMaxWidth>
+                                    </Table.Cell>
+                                ),
+                            )}
+                        </Table.Row>
+                    ))}
             </Table.Body>
         </Table>
     );
@@ -131,7 +148,14 @@ function ExpandableDataTable({
 
 export default ExpandableDataTable;
 
-export function DataTableV2({rowKeyFunction, expansionRowFieldNameToCellValue, mappingOfColumnNameToCellValue, rowActionPrimary, rowActionsSecondary, actionsColumnWidth = 150}) {
+export function DataTableV2({
+    rowKeyFunction,
+    expansionRowFieldNameToCellValue,
+    mappingOfColumnNameToCellValue,
+    rowActionPrimary,
+    rowActionsSecondary,
+    actionsColumnWidth = 150,
+}) {
     const { loading, error, records } = useContext(RecordsLoaderContext);
     const loadingElement = (
         <div>
@@ -163,4 +187,4 @@ DataTableV2.propTypes = {
     expansionRowFieldNameToCellValue: PropTypes.object.isRequired,
     mappingOfColumnNameToCellValue: PropTypes.array.isRequired,
     actionsColumnWidth: PropTypes.number,
-}
+};

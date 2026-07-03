@@ -1,6 +1,7 @@
 import {createURL} from '@splunk/splunk-utils/url';
 import {app} from '@splunk/splunk-utils/config';
 import React from "react";
+import PropTypes from 'prop-types';
 
 export const VIEW_INDICATORS_PAGE = createURL(`/app/${app}/indicators`);
 export const NEW_INDICATOR_PAGE = createURL(`/app/${app}/new_indicator`);
@@ -57,11 +58,20 @@ export const editGroupingPage = (groupingId) => createURL(`/app/${app}/groupings
 export function IdentityIdLink({identityId}) {
     return (<a href={viewIdentity(identityId)}>{identityId}</a>)
 }
+IdentityIdLink.propTypes = {
+    identityId: PropTypes.string.isRequired
+}
 
 export function GroupingIdLink({groupingId}) {
     return (<a href={viewGrouping(groupingId)}>{groupingId}</a>)
 }
+GroupingIdLink.propTypes = {
+    groupingId: PropTypes.string.isRequired
+}
 
 export function IndicatorIdLink({indicatorId}) {
     return (<a href={viewIndicator(indicatorId)}>{indicatorId}</a>)
+}
+IndicatorIdLink.propTypes = {
+    indicatorId: PropTypes.string.isRequired
 }
