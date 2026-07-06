@@ -20,9 +20,9 @@ import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading
 import BaseButton from "@splunk/my-page/src/BaseButton";
 import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
 import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
+import {getUrlQueryParams} from "@splunk/my-page/src/queryParams";
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
-import {getUrlQueryParams} from "../../common/queryParams";
 import {FIELD_LABEL_TLP_V2_MARKING} from "../../common/tlp";
 
 function SubmitToTaxiiButton({row}) {

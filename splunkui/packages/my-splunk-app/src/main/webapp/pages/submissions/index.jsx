@@ -14,9 +14,9 @@ import {CancelSubmissionModal} from "@splunk/my-page/src/CancelSubmissionModal";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
 import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
 import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
+import {getUrlQueryParams} from "@splunk/my-page/src/queryParams";
 import {SUBMISSION_MAPPING_OF_FIELD_NAME_TO_RENDER} from "./ViewSubmissionRecord";
 import {Form} from "./form";
-import {getUrlQueryParams} from "../../common/queryParams";
 import {layoutWithTheme} from "../../common/theme";
 import {usePageTitle} from "../../common/utils";
 

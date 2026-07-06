@@ -17,8 +17,8 @@ import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading
 import BaseButton from "@splunk/my-page/src/BaseButton";
 import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
 import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
+import {getUrlQueryParams} from "@splunk/my-page/src/queryParams";
 import {layoutWithTheme} from "../../common/theme";
-import {getUrlQueryParams} from "../../common/queryParams";
 import IdentityForm from "../../common/IdentityForm";
 import {FIELD_LABEL_TLP_V2_MARKING} from "../../common/tlp";
 

@@ -16,9 +16,9 @@ import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeadi
 import BaseButton from '@splunk/my-page/src/BaseButton';
 import { formatTimestampForDisplay } from '@splunk/my-page/src/date_utils';
 import { DataTableV2 } from '@splunk/my-page/src/ExpandableDataTable';
+import { getUrlQueryParams } from '@splunk/my-page/src/queryParams';
 import { layoutWithTheme } from '../../common/theme';
 import ViewOrEditIndicator from '../../common/indicator_form/ViewOrEditIndicator';
-import { getUrlQueryParams } from '../../common/queryParams';
 import { usePageTitle } from '../../common/utils';
 import { FIELD_LABEL_TLP_V2_MARKING } from '../../common/tlp';
 

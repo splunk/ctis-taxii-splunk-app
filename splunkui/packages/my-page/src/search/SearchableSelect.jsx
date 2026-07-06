@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import Select from "@splunk/react-ui/Select";
+import {getUrlQueryParams} from "../queryParams";
 import {useDebounce} from "../debounce";
 import {useGetRecord} from "../ApiClient";
 import {generateRegexQueryForFields} from "./util";
-import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 
 export default function SearchableSelect({
                                              showAnyOption = true,

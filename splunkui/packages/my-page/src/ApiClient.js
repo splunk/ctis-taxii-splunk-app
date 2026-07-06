@@ -455,6 +455,17 @@ export function getSubmission({submissionId, successHandler, errorHandler}) {
     })
 }
 
+export function getSighting({sightingId, successHandler, errorHandler}) {
+    return getExactlyOneRecord({
+        query: {
+            "sighting_id": sightingId
+        },
+        endpoint: 'list-sightings',
+        successHandler,
+        errorHandler
+    })
+}
+
 export function listIndicatorCategories(successHandler, errorHandler) {
     return getData({
         endpoint: 'list-ioc-categories',
