@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Select from "@splunk/react-ui/Select";
+import PropTypes from 'prop-types';
 import {getUrlQueryParams} from "../queryParams";
 import {useDebounce} from "../debounce";
 import {useGetRecord} from "../ApiClient";
@@ -16,9 +17,11 @@ export default function SearchableSelect({
                                              initialSelection = '',
                                              initialSelectionQueryParamName,
                                              selectOptionLabelFunction,
+                                             apiPageSize = 20,
                                              ...props
                                          }) {
     let initialSelectionValue = initialSelection;
+    // TODO: Extract this query param functionality. This component is used in both search bar and entity form contexts.
     if (initialSelectionQueryParamName) {
         initialSelectionValue = getUrlQueryParams().get(initialSelectionQueryParamName) ?? initialSelection;
     }
@@ -35,10 +38,10 @@ export default function SearchableSelect({
         setSearchFilter(keyword);
     }
     const debouncedSearchFilter = useDebounce(searchFilter, 200);
-    const {loading, record: response, error} = useGetRecord({
-        restGetFunction: restGetFunction,
+    const {loading, record: response} = useGetRecord({
+        restGetFunction,
         restFunctionQueryArgs: {
-            limit: 100,
+            limit: apiPageSize,
             query: {
                 "$or" : [
                     generateRegexQueryForFields(searchableFields, debouncedSearchFilter),
@@ -85,4 +88,18 @@ export default function SearchableSelect({
             ))}
         </Select>
     );
+}
+
+SearchableSelect.propTypes = {
+    showAnyOption: PropTypes.bool,
+    searchableFields: PropTypes.arrayOf(PropTypes.string).isRequired,
+    queryFilterField: PropTypes.string.isRequired,
+    restGetFunction: PropTypes.func.isRequired,
+    placeholder: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+    selectOptionLabelFunction: PropTypes.func.isRequired,
+    onQueryChange: PropTypes.func,
+    initialSelection: PropTypes.string,
+    initialSelectionQueryParamName: PropTypes.string,
+    apiPageSize: PropTypes.number,
 }

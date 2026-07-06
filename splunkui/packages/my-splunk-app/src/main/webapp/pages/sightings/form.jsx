@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
 import { usePageTitle } from '../../common/utils';
 import { FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
+import { SightingOfRefField } from './formControls';
 
 const FORM_FIELD_SIGHTING_ID = 'sighting_id';
 const FORM_FIELD_SIGHTING_OF_REF = 'sighting_of_ref';
@@ -59,6 +60,7 @@ export function Form({ existingSighting = null }) {
     return (<FormProvider {...formMethods}>
         <MyForm>
             Form
+            <SightingOfRefField fieldName={FORM_FIELD_SIGHTING_OF_REF}/>
         </MyForm>
         {isDebugMode && <div>
             <div><code>{JSON.stringify(formValues)}</code></div>
