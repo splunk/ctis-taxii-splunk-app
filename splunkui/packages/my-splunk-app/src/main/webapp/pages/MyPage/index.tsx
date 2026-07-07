@@ -6,10 +6,12 @@ import ControlGroup from '@splunk/react-ui/ControlGroup';
 
 import Text from '@splunk/react-ui/Text';
 import Heading from '@splunk/react-ui/Heading';
-
-
 // @ts-ignore
 import { postCreateIndicator, deleteIndicatorsInGrouping } from '@splunk/my-page/src/ApiClient.js';
+// @ts-ignore
+import {DropdownTest} from './dropdown_test.jsx';
+
+// @ts-ignore
 import { ContentContainer, StyledContainer } from './Styles';
 
 function generateCreateIndicatorsPayload(groupingId: String, n: Number = 100) {
@@ -80,6 +82,9 @@ function Component(){
                         onClick={() => handleOnClickDeleteIndicators(groupingId)}
                     />
                 </ControlGroup>
+            </ContentContainer>
+            <ContentContainer>
+                <DropdownTest/>
             </ContentContainer>
         </StyledContainer>
     );

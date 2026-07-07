@@ -10,7 +10,7 @@ export const StyledContainer = styled.div`
 `;
 
 export const ContentContainer = styled.div`
-    max-width: 800px;
+    max-width: 1200px;
 
     & > * {
         margin-top: 10px;

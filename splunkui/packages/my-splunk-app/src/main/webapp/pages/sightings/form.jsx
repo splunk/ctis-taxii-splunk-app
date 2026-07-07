@@ -6,11 +6,12 @@ import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
 import { usePageTitle } from '../../common/utils';
-import { FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
-import { SightingOfRefField } from './formControls';
+import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
+import { DescriptionField, SightingOfRefField } from './formControls';
 
 const FORM_FIELD_SIGHTING_ID = 'sighting_id';
 const FORM_FIELD_SIGHTING_OF_REF = 'sighting_of_ref';
+const FORM_FIELD_DESCRIPTION = 'description';
 
 const MyForm = styled.form`
     max-width: 800px;
@@ -42,6 +43,7 @@ export function Form({ existingSighting = null }) {
 
     register(FORM_FIELD_SIGHTING_OF_REF, { required: 'sighting_of_ref is required', value: null });
     register(FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION);
+    register(FORM_FIELD_DESCRIPTION, { required: false });
 
     useEffect(() => {
         if (existingSighting !== null) {
@@ -51,6 +53,7 @@ export function Form({ existingSighting = null }) {
             });
             setValue(FORM_FIELD_SIGHTING_OF_REF, existingSighting.sighting_of_ref);
             setValue(FIELD_CONFIDENCE, existingSighting.confidence);
+            setValue(FORM_FIELD_DESCRIPTION, existingSighting.description)
         }
     }, [existingSighting, register, setValue]);
 
@@ -59,8 +62,9 @@ export function Form({ existingSighting = null }) {
 
     return (<FormProvider {...formMethods}>
         <MyForm>
-            Form
             <SightingOfRefField fieldName={FORM_FIELD_SIGHTING_OF_REF}/>
+            <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
+            <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
         </MyForm>
         {isDebugMode && <div>
             <div><code>{JSON.stringify(formValues)}</code></div>

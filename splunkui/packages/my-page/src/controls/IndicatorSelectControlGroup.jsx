@@ -24,6 +24,7 @@ export default function IndicatorSelectControlGroup({
                 restGetFunction={getIndicators}
                 queryFilterField="indicator_id"
                 value={value}
+                initialSelection={value}
                 selectOptionLabelFunction={(record) => `${record.name} (${record.indicator_id})`}
             />
         </CustomControlGroup>
