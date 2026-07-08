@@ -59,6 +59,11 @@ export const editGroupingPage = (groupingId) => createURL(`/app/${app}/groupings
     action: 'edit',
 });
 
+export const editSightingPage = (sightingId) => createURL(`/app/${app}/sightings`, {
+    sighting_id: sightingId,
+    action: 'edit',
+});
+
 export function IdentityIdLink({identityId}) {
     return (<a href={viewIdentity(identityId)}>{identityId}</a>)
 }

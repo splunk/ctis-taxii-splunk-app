@@ -6,10 +6,12 @@ import { getSightings } from '@splunk/my-page/src/ApiClient';
 import { createErrorToast } from '@splunk/my-page/src/AppContainer';
 import { DataTableV2 } from '@splunk/my-page/src/ExpandableDataTable';
 import { formatTimestampForDisplay } from '@splunk/my-page/src/date_utils';
-import { IndicatorIdLink, IdentityIdLink } from '@splunk/my-page/src/urls';
+import { IndicatorIdLink, IdentityIdLink, editSightingPage } from '@splunk/my-page/src/urls';
 import PropTypes from 'prop-types';
 import List from '@splunk/react-ui/List';
 import { NoValuePresent, BooleanValue, StixLabels } from '@splunk/my-page/src/data_table/values';
+import { HorizontalActionButtonLayout } from '@splunk/my-page/src/HorizontalButtonLayout';
+import EditIconOnlyButton from '@splunk/my-page/src/buttons/EditIconOnlyButton';
 import { usePageTitle } from '../../common/utils';
 import { FIELD_LABEL_TLP_V2_MARKING } from '../../common/tlp';
 
@@ -65,6 +67,18 @@ const mappingOfColumnNameToCellValue = [
     },
 ];
 
+function RowActionButtons({row}){
+    return (<HorizontalActionButtonLayout>
+        <EditIconOnlyButton to={editSightingPage(row.sighting_id)} />
+    </HorizontalActionButtonLayout>);
+}
+
+RowActionButtons.propTypes = {
+    row: PropTypes.shape({
+        sighting_id: PropTypes.string,
+    })
+}
+
 export default function ListSightings() {
     usePageTitle(PAGE_TITLE);
     const [query, setQuery] = useState({});
@@ -79,6 +93,7 @@ export default function ListSightings() {
                 <DataTableV2 rowKeyFunction={(row) => row.sighting_id}
                              expansionRowFieldNameToCellValue={EXPANSION_ROW_FIELD_NAME_TO_CELL_VALUE}
                              mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                             rowActionPrimary={RowActionButtons}
 
                 />
             </PaginatedRecords>
