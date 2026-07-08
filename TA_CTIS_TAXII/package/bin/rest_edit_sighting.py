@@ -15,6 +15,4 @@ class EditSightingHandler(AbstractRestHandler):
         self.kvstore_collections_context.validate_sighting_references(sighting=updated_structured)
 
         updated = self.kvstore_collections_context.sightings.update_sighting_raw(sighting_id=sighting_id, updates=input_json)
-        return {
-            "sighting": updated,
-        }
+        return updated
