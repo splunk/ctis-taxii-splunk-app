@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Select from '@splunk/react-ui/Select';
 import PropTypes from 'prop-types';
 import { uniqBy } from 'lodash';
+import styled from 'styled-components';
 import { useGetRecord } from '../ApiClient';
 import { generateRegexQueryForFields } from './util';
 import { shouldUseDebugMode } from '../queryParams';
@@ -55,13 +56,16 @@ export function useSelectOptionsFromApi({
     return { options, loading: (loading || loading2), error: (error || error2) };
 }
 
+const StyledSelect = styled(Select)`
+    width: 100% !important;
+`;
 export default function SearchableSelectV2({
                                                primaryKey,
                                                recordToOptionLabel,
                                                searchableFields,
                                                restGetFunction,
                                                selectedValue,
-    setSelectedValue,
+                                               setSelectedValue,
                                                apiPageSize = 10
                                            }) {
     const [searchFilter, setSearchFilter] = useState('');
@@ -95,7 +99,7 @@ export default function SearchableSelectV2({
     }, [searchFilter]);
 
     const selectComponent =
-        <Select value={selectedValue}
+        <StyledSelect value={selectedValue}
                 filter="controlled"
                 onFilterChange={handleFilterChange}
                 onChange={handleOnChange}
@@ -104,7 +108,7 @@ export default function SearchableSelectV2({
             {options && options.map(
                 option => <Select.Option key={option.value} label={option.label} value={option.value} />
             )}
-        </Select>;
+        </StyledSelect>;
     const isDebugMode = shouldUseDebugMode();
     if (isDebugMode) {
         return (<div>

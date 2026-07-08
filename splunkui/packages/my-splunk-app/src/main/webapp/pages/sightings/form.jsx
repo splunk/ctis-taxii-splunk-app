@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Loader from '@splunk/my-page/src/Loader';
-import { getSighting, useGetRecord } from '@splunk/my-page/src/ApiClient';
+import { getSighting, postCreateSighting, useGetRecord } from '@splunk/my-page/src/ApiClient';
 import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
+import { IndicatorSelectControlGroup } from '@splunk/my-page/src/controls/IndicatorSelectControlGroup';
+import SubmitButton from '@splunk/my-page/src/SubmitButton';
+import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
-import { DescriptionField, SightingOfRefField } from './formControls';
+import { DescriptionField  } from './formControls';
+import { useOnFormSubmit } from '../../common/formSubmit';
 
 const FORM_FIELD_SIGHTING_ID = 'sighting_id';
 const FORM_FIELD_SIGHTING_OF_REF = 'sighting_of_ref';
@@ -39,7 +43,7 @@ export function Form({ existingSighting = null }) {
 
         }
     });
-    const { register, setValue, watch } = formMethods;
+    const { handleSubmit, register, setValue, watch, formState } = formMethods;
 
     register(FORM_FIELD_SIGHTING_OF_REF, { required: 'sighting_of_ref is required', value: null });
     register(FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION);
@@ -59,15 +63,34 @@ export function Form({ existingSighting = null }) {
 
     const isDebugMode = shouldUseDebugMode();
     const formValues = watch();
+    const selectedIndicatorId = watch(FORM_FIELD_SIGHTING_OF_REF);
+
+    const {submitSuccess, submissionError, onSubmit, submitButtonDisabled} = useOnFormSubmit({
+        formMethods,
+        submitToPostEndpoint: postCreateSighting,
+        submissionSuccessCallback: (resp) => console.log(resp),
+        submissionErrorCallback: (error) => {
+            console.error(error)
+        },
+    })
 
     return (<FormProvider {...formMethods}>
-        <MyForm>
-            <SightingOfRefField fieldName={FORM_FIELD_SIGHTING_OF_REF}/>
+        <MyForm onSubmit={handleSubmit(onSubmit)}>
+            <IndicatorSelectControlGroup label='Sighting of Ref'
+                                         error={formState.errors[FORM_FIELD_SIGHTING_OF_REF]?.message}
+                                         selectedIndicatorId={selectedIndicatorId}
+                                         setSelectedIndicatorId={(x) => setValue(FORM_FIELD_SIGHTING_OF_REF, x, {shouldValidate: true}) } />
             <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
             <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
+            <CustomControlGroup>
+                <SubmitButton inline submitting={formState.isSubmitting} label='Submit' disabled={submitButtonDisabled}/>
+            </CustomControlGroup>
+            {submitSuccess && <CustomControlGroup>Success</CustomControlGroup>}
+            {submissionError && <CustomControlGroup>Error: {JSON.stringify(submissionError)}</CustomControlGroup>}
         </MyForm>
         {isDebugMode && <div>
             <div><code>{JSON.stringify(formValues)}</code></div>
+            <div><code>{JSON.stringify(formState)}</code></div>
         </div>}
     </FormProvider>);
 }

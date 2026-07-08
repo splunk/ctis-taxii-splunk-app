@@ -1,41 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CustomControlGroup } from '../CustomControlGroup';
-import SearchableSelect from '../search/SearchableSelect';
 import { getIndicators } from '../ApiClient';
+import SearchableSelectV2 from '../search/SearchableSelectV2';
+import { CustomControlGroup } from '../CustomControlGroup';
 
-export default function IndicatorSelectControlGroup({
-                                                        label,
-                                                        value,
-                                                        onChange,
-                                                        error,
-                                                        readOnly = false,
-                                                        disabled = false
-                                                    }) {
-    return (
-        <CustomControlGroup label={label} error={error} value={value} readOnly={readOnly}>
-            <SearchableSelect
-                error={error}
-                showAnyOption={false}
-                searchableFields={['name', 'indicator_id']}
-                onChange={onChange}
-                disabled={disabled}
-                placeholder="Indicator..."
-                restGetFunction={getIndicators}
-                queryFilterField="indicator_id"
-                value={value}
-                initialSelection={value}
-                selectOptionLabelFunction={(record) => `${record.name} (${record.indicator_id})`}
-            />
-        </CustomControlGroup>
-    );
+
+export function IndicatorSelect({selectedIndicatorId, setSelectedIndicatorId}) {
+    return <SearchableSelectV2 searchableFields={['name', 'indicator_id']}
+                        primaryKey='indicator_id'
+                        recordToOptionLabel={(r) => `${r.name} (${r.indicator_id})`}
+                        restGetFunction={getIndicators}
+                        selectedValue={selectedIndicatorId}
+                        setSelectedValue={setSelectedIndicatorId}
+    />
+}
+IndicatorSelect.propTypes = {
+    selectedIndicatorId: PropTypes.string,
+    setSelectedIndicatorId: PropTypes.func.isRequired,
 }
 
+export function IndicatorSelectControlGroup({selectedIndicatorId, setSelectedIndicatorId, label, ...props}) {
+    return (<CustomControlGroup label={label} {...props}>
+        <IndicatorSelect selectedIndicatorId={selectedIndicatorId} setSelectedIndicatorId={setSelectedIndicatorId}/>
+    </CustomControlGroup>)
+}
 IndicatorSelectControlGroup.propTypes = {
-    label: PropTypes.string,
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-    error: PropTypes.string,
-    readOnly: PropTypes.bool,
-    disabled: PropTypes.bool
-};
+    selectedIndicatorId: PropTypes.string,
+    setSelectedIndicatorId: PropTypes.func.isRequired,
+    label: PropTypes.string.isRequired,
+}
+
+

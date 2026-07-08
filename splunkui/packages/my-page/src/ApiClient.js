@@ -110,6 +110,10 @@ export function postCreateGrouping(data, successHandler, errorHandler) {
     return postData('create-grouping', data, successHandler, errorHandler)
 }
 
+export function postCreateSighting(data, successHandler, errorHandler) {
+    return postData('create-sighting', data, successHandler, errorHandler)
+}
+
 export function editIdentity(data, successHandler, errorHandler) {
     return postData('edit-identity', data, successHandler, errorHandler)
 }
