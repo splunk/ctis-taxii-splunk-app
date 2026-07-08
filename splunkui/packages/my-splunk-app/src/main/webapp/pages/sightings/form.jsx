@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Loader from '@splunk/my-page/src/Loader';
 import {
@@ -12,6 +12,10 @@ import styled from 'styled-components';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
 import SubmitButton from '@splunk/my-page/src/SubmitButton';
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
+import Modal from '@splunk/react-ui/Modal';
+import Message from '@splunk/react-ui/Message';
+import Button from '@splunk/react-ui/Button';
+import { viewSighting } from '@splunk/my-page/src/urls';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
 import { DescriptionField, SightingOfRef } from './formControls';
@@ -69,14 +73,19 @@ export function Form({ existingSighting = null }) {
     const isDebugMode = shouldUseDebugMode();
     const formValues = watch();
 
+    const [respSightingId, setRespSightingId] = useState(null);
     const {submitSuccess, submissionError, onSubmit, submitButtonDisabled} = useOnFormSubmit({
         formMethods,
         submitToPostEndpoint: editMode ? editSighting : postCreateSighting,
-        submissionSuccessCallback: (resp) => console.log(resp),
+        submissionSuccessCallback: (resp) => {
+            setRespSightingId(resp?.sighting_id);
+            console.log(resp);
+        },
         submissionErrorCallback: (error) => {
             console.error(error)
         },
     })
+    const successModalTitle = editMode ? 'Updated Sighting' : 'Created Sighting';
 
     return (<FormProvider {...formMethods}>
         <MyForm onSubmit={handleSubmit(onSubmit)}>
@@ -86,12 +95,18 @@ export function Form({ existingSighting = null }) {
             <CustomControlGroup>
                 <SubmitButton inline submitting={formState.isSubmitting} label='Submit' disabled={submitButtonDisabled}/>
             </CustomControlGroup>
-            {submitSuccess && <CustomControlGroup>Success</CustomControlGroup>}
-            {submissionError && <CustomControlGroup>Error: {JSON.stringify(submissionError)}</CustomControlGroup>}
+            {submissionError && <Message type='error'>Error: {JSON.stringify(submissionError)}</Message>}
         </MyForm>
+        <Modal open={submitSuccess}>
+            <Modal.Header title={successModalTitle} />
+            <Modal.Body>
+                <Button to={viewSighting(respSightingId)} appearance='primary' label='Go to Sighting'/>
+            </Modal.Body>
+        </Modal>
         {isDebugMode && <div>
             <div><code>{JSON.stringify(formValues)}</code></div>
             <div><code>{JSON.stringify(formState)}</code></div>
+            <div>Submit success: {JSON.stringify(submitSuccess)}</div>
         </div>}
     </FormProvider>);
 }

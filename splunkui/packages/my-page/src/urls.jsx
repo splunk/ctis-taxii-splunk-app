@@ -26,6 +26,10 @@ export const viewIdentity = (identityId) => createURL(`/app/${app}/identities`, 
     identity_id: identityId,
 });
 
+export const viewSighting = (sightingId) => createURL(`/app/${app}/sightings`, {
+    search: sightingId,
+});
+
 export const urlForEditGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {
     action: 'edit',
     grouping_id: groupingId,

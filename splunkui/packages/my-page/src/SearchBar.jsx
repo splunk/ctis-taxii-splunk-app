@@ -125,6 +125,7 @@ export const SightingsSearchBar = ({ onQueryChange }) => {
         'sighting_id',
         'description',
         'labels',
+        'sighting_of_ref'
     ];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
 
