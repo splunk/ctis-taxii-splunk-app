@@ -5,12 +5,11 @@ import { getSighting, postCreateSighting, useGetRecord } from '@splunk/my-page/s
 import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
-import { IndicatorSelectControlGroup } from '@splunk/my-page/src/controls/IndicatorSelectControlGroup';
 import SubmitButton from '@splunk/my-page/src/SubmitButton';
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
-import { DescriptionField  } from './formControls';
+import { DescriptionField, SightingOfRef } from './formControls';
 import { useOnFormSubmit } from '../../common/formSubmit';
 
 const FORM_FIELD_SIGHTING_ID = 'sighting_id';
@@ -63,7 +62,6 @@ export function Form({ existingSighting = null }) {
 
     const isDebugMode = shouldUseDebugMode();
     const formValues = watch();
-    const selectedIndicatorId = watch(FORM_FIELD_SIGHTING_OF_REF);
 
     const {submitSuccess, submissionError, onSubmit, submitButtonDisabled} = useOnFormSubmit({
         formMethods,
@@ -76,10 +74,7 @@ export function Form({ existingSighting = null }) {
 
     return (<FormProvider {...formMethods}>
         <MyForm onSubmit={handleSubmit(onSubmit)}>
-            <IndicatorSelectControlGroup label='Sighting of Ref'
-                                         error={formState.errors[FORM_FIELD_SIGHTING_OF_REF]?.message}
-                                         selectedIndicatorId={selectedIndicatorId}
-                                         setSelectedIndicatorId={(x) => setValue(FORM_FIELD_SIGHTING_OF_REF, x, {shouldValidate: true}) } />
+            <SightingOfRef fieldName={FORM_FIELD_SIGHTING_OF_REF}/>
             <ConfidenceField fieldName={FIELD_CONFIDENCE}/>
             <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
             <CustomControlGroup>

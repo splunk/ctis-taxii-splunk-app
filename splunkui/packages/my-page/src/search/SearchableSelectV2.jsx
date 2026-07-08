@@ -66,7 +66,8 @@ export default function SearchableSelectV2({
                                                restGetFunction,
                                                selectedValue,
                                                setSelectedValue,
-                                               apiPageSize = 10
+                                               apiPageSize = 10,
+                                               ...selectProps
                                            }) {
     const [searchFilter, setSearchFilter] = useState('');
     const query = useMemo(() => {
@@ -100,10 +101,11 @@ export default function SearchableSelectV2({
 
     const selectComponent =
         <StyledSelect value={selectedValue}
-                filter="controlled"
-                onFilterChange={handleFilterChange}
-                onChange={handleOnChange}
-                isLoadingOptions={loading}
+                      filter="controlled"
+                      onFilterChange={handleFilterChange}
+                      onChange={handleOnChange}
+                      isLoadingOptions={loading}
+                      {...selectProps}
         >
             {options && options.map(
                 option => <Select.Option key={option.value} label={option.label} value={option.value} />

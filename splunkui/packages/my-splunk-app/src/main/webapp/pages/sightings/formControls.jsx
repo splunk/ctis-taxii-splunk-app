@@ -1,8 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 import TextAreaControlGroup from '@splunk/my-page/src/TextAreaControlGroup';
-import {useFormInputProps} from "../../common/formInputProps";
+import { useFormContext } from 'react-hook-form';
+import { IndicatorSelectControlGroup } from '@splunk/my-page/src/controls/IndicatorSelectControlGroup';
+import { useFormInputProps } from '../../common/formInputProps';
 
+export function SightingOfRef({fieldName}){
+    const {setValue, watch, formState: {errors}} = useFormContext();
+    const selectedIndicatorId = watch(fieldName);
+    return (<IndicatorSelectControlGroup label='Sighting of Ref'
+                                 error={errors[fieldName]?.message}
+                                 selectedIndicatorId={selectedIndicatorId}
+                                 setSelectedIndicatorId={(x) => setValue(fieldName, x, {shouldValidate: true}) } />);
+}
+SightingOfRef.propTypes = {
+    fieldName: PropTypes.string.isRequired,
+}
 
 export function DescriptionField({fieldName, ...props}) {
     return <TextAreaControlGroup label="Description" {...useFormInputProps(fieldName)} {...props}/>

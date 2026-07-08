@@ -5,15 +5,17 @@ import SearchableSelectV2 from '../search/SearchableSelectV2';
 import { CustomControlGroup } from '../CustomControlGroup';
 
 
-export function IndicatorSelect({selectedIndicatorId, setSelectedIndicatorId}) {
+export function IndicatorSelect({ selectedIndicatorId, setSelectedIndicatorId }) {
     return <SearchableSelectV2 searchableFields={['name', 'indicator_id']}
-                        primaryKey='indicator_id'
-                        recordToOptionLabel={(r) => `${r.name} (${r.indicator_id})`}
-                        restGetFunction={getIndicators}
-                        selectedValue={selectedIndicatorId}
-                        setSelectedValue={setSelectedIndicatorId}
-    />
+                               primaryKey="indicator_id"
+                               recordToOptionLabel={(r) => `${r.name} (${r.indicator_id})`}
+                               restGetFunction={getIndicators}
+                               selectedValue={selectedIndicatorId}
+                               setSelectedValue={setSelectedIndicatorId}
+                               placeholder="Search for an indicator by id or name..."
+    />;
 }
+
 IndicatorSelect.propTypes = {
     selectedIndicatorId: PropTypes.string,
     setSelectedIndicatorId: PropTypes.func.isRequired,
