@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Loader from '@splunk/my-page/src/Loader';
-import { getSighting, postCreateSighting, useGetRecord } from '@splunk/my-page/src/ApiClient';
+import {
+    getSighting,
+    postCreateSighting,
+    editSighting,
+    useGetRecord,
+} from '@splunk/my-page/src/ApiClient';
 import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
@@ -33,7 +38,8 @@ function useExistingSighting(sightingId) {
 export function Form({ existingSighting = null }) {
     // Pass in an existingSighting object to use edit mode.
     // Otherwise, assumed to be in create-new mode.
-    const pageTitle = existingSighting ? `Edit Sighting ${existingSighting.sighting_id}` : 'New Sighting';
+    const editMode = existingSighting !== null;
+    const pageTitle = editMode ? `Edit Sighting ${existingSighting.sighting_id}` : 'New Sighting';
     usePageTitle(pageTitle);
 
     const formMethods = useForm({
@@ -65,7 +71,7 @@ export function Form({ existingSighting = null }) {
 
     const {submitSuccess, submissionError, onSubmit, submitButtonDisabled} = useOnFormSubmit({
         formMethods,
-        submitToPostEndpoint: postCreateSighting,
+        submitToPostEndpoint: editMode ? editSighting : postCreateSighting,
         submissionSuccessCallback: (resp) => console.log(resp),
         submissionErrorCallback: (error) => {
             console.error(error)

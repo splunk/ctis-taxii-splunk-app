@@ -126,6 +126,10 @@ export function editIndicator(data, successHandler, errorHandler) {
     return postData('edit-indicator', data, successHandler, errorHandler)
 }
 
+export function editSighting(data, successHandler, errorHandler) {
+    return postData('edit-sighting', data, successHandler, errorHandler)
+}
+
 export function deleteIdentity({identityId, successHandler, errorHandler}) {
     console.log('Deleting identity:', identityId);
     return deleteData({
