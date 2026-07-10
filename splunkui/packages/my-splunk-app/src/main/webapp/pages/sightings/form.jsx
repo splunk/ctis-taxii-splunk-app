@@ -80,6 +80,8 @@ export function Form({ existingSighting = null }) {
             setValue(FORM_FIELD_SIGHTING_OF_REF, existingSighting.sighting_of_ref);
             setValue(FIELD_CONFIDENCE, existingSighting.confidence);
             setValue(FORM_FIELD_DESCRIPTION, existingSighting.description)
+            setValue(FORM_FIELD_FIRST_SEEN, existingSighting[FORM_FIELD_FIRST_SEEN])
+            setValue(FORM_FIELD_LAST_SEEN, existingSighting[FORM_FIELD_LAST_SEEN])
             setValue(FORM_FIELD_COUNT, existingSighting[FORM_FIELD_COUNT])
         }
     }, [existingSighting, register, setValue]);
