@@ -3,7 +3,24 @@ import PropTypes from 'prop-types';
 import TextAreaControlGroup from '@splunk/my-page/src/TextAreaControlGroup';
 import { useFormContext } from 'react-hook-form';
 import { IndicatorSelectControlGroup } from '@splunk/my-page/src/controls/IndicatorSelectControlGroup';
+import DatetimeControlGroup from '@splunk/my-page/src/DateTimeControlGroup';
 import { useFormInputProps } from '../../common/formInputProps';
+
+export function FirstSeen({fieldName}){
+    const inputProps = useFormInputProps(fieldName);
+    return (<DatetimeControlGroup label='First Seen (UTC)' setHelpTextAsRelativeTime {...inputProps}/>)
+}
+FirstSeen.propTypes = {
+    fieldName: PropTypes.string.isRequired,
+}
+
+export function LastSeen({fieldName}){
+    const inputProps = useFormInputProps(fieldName);
+    return (<DatetimeControlGroup label='Last Seen (UTC)' setHelpTextAsRelativeTime {...inputProps}/>)
+}
+LastSeen.propTypes = {
+    fieldName: PropTypes.string.isRequired,
+}
 
 export function SightingOfRef({fieldName}){
     const {setValue, watch, formState: {errors}} = useFormContext();
