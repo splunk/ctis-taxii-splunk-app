@@ -201,10 +201,10 @@ class TestValidators:
             SightingModelV1(
                 sighting_of_ref=INDICATOR_ID,
                 description="Test",
-                count=0,
+                count=-1,
                 tlp_v2_rating=TLPv2.CLEAR,
             )
-        assert "count must be >= 1" in str(exc_info.value)
+        assert exc_info.type is ValueError
 
     def test_validate_temporal_order_first_after_last(self):
         with pytest.raises(ValueError) as exc_info:

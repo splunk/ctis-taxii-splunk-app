@@ -36,8 +36,10 @@ def validate_sighting_of_ref(instance, attribute, value):
 
 
 def validate_count(instance, attribute, value: int):
-    if value is not None and value < 1:
-        raise ValueError("count must be >= 1")
+    # https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#sighting
+    # If present, this MUST be an integer between 0 and 999,999,999 inclusive
+    if value is not None and not (0 <= value <= 999_999_999):
+        raise ValueError("count must be an integer between 0 and 999,999,999 inclusive")
 
 
 def validate_where_sighted_refs(instance, attribute, value: List[str]):
