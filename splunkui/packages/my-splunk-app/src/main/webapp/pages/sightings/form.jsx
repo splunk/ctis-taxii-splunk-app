@@ -18,7 +18,7 @@ import Button from '@splunk/react-ui/Button';
 import { viewSighting } from '@splunk/my-page/src/urls';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
-import { DescriptionField, FirstSeen, LastSeen, SightingOfRef } from './formControls';
+import { Count, DescriptionField, FirstSeen, LastSeen, SightingOfRef } from './formControls';
 import { useOnFormSubmit } from '../../common/formSubmit';
 
 const FORM_FIELD_SIGHTING_ID = 'sighting_id';
@@ -26,6 +26,7 @@ const FORM_FIELD_SIGHTING_OF_REF = 'sighting_of_ref';
 const FORM_FIELD_DESCRIPTION = 'description';
 const FORM_FIELD_FIRST_SEEN = 'first_seen';
 const FORM_FIELD_LAST_SEEN = 'last_seen';
+const FORM_FIELD_COUNT = 'count';
 
 
 const MyForm = styled.form`
@@ -51,8 +52,8 @@ export function Form({ existingSighting = null }) {
 
     const formMethods = useForm({
         mode: 'all', defaultValues: {
-            [FIELD_CONFIDENCE]: 100
-
+            [FIELD_CONFIDENCE]: 100,
+            [FORM_FIELD_COUNT]: 1,
         }
     });
     const { handleSubmit, register, setValue, watch, formState, trigger } = formMethods;
@@ -68,6 +69,7 @@ export function Form({ existingSighting = null }) {
     register(FORM_FIELD_DESCRIPTION, { required: false });
     register(FORM_FIELD_FIRST_SEEN, { required: false, validate: validateFirstSeenIsBeforeLastSeen });
     register(FORM_FIELD_LAST_SEEN, { required: false, validate: validateFirstSeenIsBeforeLastSeen});
+    register(FORM_FIELD_COUNT, { required: false, value: 1 });
 
     useEffect(() => {
         if (existingSighting !== null) {
@@ -78,6 +80,7 @@ export function Form({ existingSighting = null }) {
             setValue(FORM_FIELD_SIGHTING_OF_REF, existingSighting.sighting_of_ref);
             setValue(FIELD_CONFIDENCE, existingSighting.confidence);
             setValue(FORM_FIELD_DESCRIPTION, existingSighting.description)
+            setValue(FORM_FIELD_COUNT, existingSighting[FORM_FIELD_COUNT])
         }
     }, [existingSighting, register, setValue]);
 
@@ -120,10 +123,11 @@ export function Form({ existingSighting = null }) {
             <DescriptionField fieldName={FORM_FIELD_DESCRIPTION}/>
             <FirstSeen fieldName={FORM_FIELD_FIRST_SEEN}/>
             <LastSeen fieldName={FORM_FIELD_LAST_SEEN}/>
+            <Count fieldName={FORM_FIELD_COUNT}/>
             <CustomControlGroup>
                 <SubmitButton inline submitting={formState.isSubmitting} label='Submit' disabled={submitButtonDisabled}/>
             </CustomControlGroup>
-            {submissionError && <Message type='error'>Error: {JSON.stringify(submissionError)}</Message>}
+            {submissionError && <Message type='error' appearance='fill'>Error: {JSON.stringify(submissionError)}</Message>}
         </MyForm>
         <Modal open={submitSuccess}>
             <Modal.Header title={successModalTitle} />

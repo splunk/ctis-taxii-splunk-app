@@ -4,6 +4,8 @@ import TextAreaControlGroup from '@splunk/my-page/src/TextAreaControlGroup';
 import { useFormContext } from 'react-hook-form';
 import { IndicatorSelectControlGroup } from '@splunk/my-page/src/controls/IndicatorSelectControlGroup';
 import DatetimeControlGroup from '@splunk/my-page/src/DateTimeControlGroup';
+import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
+import Number from '@splunk/react-ui/Number';
 import { useFormInputProps } from '../../common/formInputProps';
 
 export function FirstSeen({fieldName}){
@@ -40,4 +42,18 @@ export function DescriptionField({fieldName, ...props}) {
 
 DescriptionField.propTypes = {
     fieldName: PropTypes.string.isRequired
+}
+
+export function Count({fieldName}){
+    const {setValue, watch} = useFormContext();
+    const value = watch(fieldName);
+    const onChange = (e, {value: newValue}) => {
+        setValue(fieldName, newValue, {shouldValidate: true});
+    }
+    return <CustomControlGroup label="Count">
+        <Number value={value} onChange={onChange} min={0} max={999_999_999} step={1}/>
+    </CustomControlGroup>
+}
+Count.propTypes = {
+    fieldName: PropTypes.string.isRequired,
 }
