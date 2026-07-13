@@ -19,6 +19,7 @@ import {
     CreatedByRef,
     DescriptionField,
     FirstSeen,
+    LabelsControlGroup,
     LastSeen,
     SightingOfRef,
     WhereSightedRefs
@@ -36,6 +37,7 @@ const FORM_FIELD_WHERE_SIGHTED_REFS = 'where_sighted_refs'
 const FORM_FIELD_CREATED_BY_REF = 'created_by_ref'
 const FORM_FIELD_SUMMARY = 'summary';
 const FORM_FIELD_REVOKED = 'revoked';
+const FORM_FIELD_LABELS = 'labels';
 
 const ALL_FIELD_NAMES = [
     FORM_FIELD_SIGHTING_ID,
@@ -49,7 +51,8 @@ const ALL_FIELD_NAMES = [
     FORM_FIELD_SUMMARY,
     FORM_FIELD_REVOKED,
     FORM_FIELD_TLP_V2_RATING,
-    FIELD_CONFIDENCE
+    FIELD_CONFIDENCE,
+    FORM_FIELD_LABELS
 ]
 
 const MyForm = styled.form`
@@ -98,6 +101,7 @@ export function Form({ existingSighting = null }) {
     register(FORM_FIELD_SUMMARY, { required: false, value: false });
     register(FORM_FIELD_REVOKED, { required: false, value: false });
     register(FORM_FIELD_TLP_V2_RATING, {required: false});
+    register(FORM_FIELD_LABELS, { required: false, value: [] });
 
     useEffect(() => {
         if (existingSighting !== null) {
@@ -156,7 +160,7 @@ export function Form({ existingSighting = null }) {
             <CheckboxControlGroup fieldName={FORM_FIELD_SUMMARY} label='Summary' controlGroupHelp='Whether the Sighting should be considered summary data.' />
             <CheckboxControlGroup fieldName={FORM_FIELD_REVOKED} label='Revoked' controlGroupHelp='Whether the object has been revoked. Revoked objects are no longer considered valid by the object creator.' />
             <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING} />
-
+            <LabelsControlGroup fieldName={FORM_FIELD_LABELS} />
             <CustomControlGroup>
                 <SubmitButton inline submitting={formState.isSubmitting} label='Submit' disabled={submitButtonDisabled}/>
             </CustomControlGroup>

@@ -9,6 +9,7 @@ import Number from '@splunk/react-ui/Number';
 import IdentityMultiselect from '@splunk/my-page/src/controls/IdentityMultiselect';
 import { IdentitySelect } from '@splunk/my-page/src/controls/IdentitySelect';
 import Checkbox from '@splunk/react-ui/Checkbox';
+import Multiselect from '@splunk/react-ui/Multiselect';
 import { useFormInputProps } from '../../common/formInputProps';
 
 export function FirstSeen({fieldName}){
@@ -99,4 +100,19 @@ CheckboxControlGroup.propTypes = {
     fieldName: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
     controlGroupHelp: PropTypes.string.isRequired
+}
+
+export function LabelsControlGroup({fieldName}) {
+    const {setValue, watch} = useFormContext();
+    const labels = watch(fieldName);
+    const handleOnChange = (e, {values}) => {
+        setValue(fieldName, values, {shouldValidate: true});
+    }
+
+    return (<CustomControlGroup label='Labels' help='Type to add a label. Click on a label to remove it.'>
+        <Multiselect allowNewValues values={labels} onChange={handleOnChange}/>
+    </CustomControlGroup>);
+}
+LabelsControlGroup.propTypes = {
+    fieldName: PropTypes.string.isRequired,
 }
