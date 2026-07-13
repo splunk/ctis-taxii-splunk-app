@@ -6,6 +6,7 @@ import { IndicatorSelectControlGroup } from '@splunk/my-page/src/controls/Indica
 import DatetimeControlGroup from '@splunk/my-page/src/DateTimeControlGroup';
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import Number from '@splunk/react-ui/Number';
+import IdentityMultiselect from '@splunk/my-page/src/controls/IdentityMultiselect';
 import { useFormInputProps } from '../../common/formInputProps';
 
 export function FirstSeen({fieldName}){
@@ -55,5 +56,18 @@ export function Count({fieldName}){
     </CustomControlGroup>
 }
 Count.propTypes = {
+    fieldName: PropTypes.string.isRequired,
+}
+
+export function WhereSightedRefs({fieldName}) {
+    const {setValue, watch} = useFormContext();
+    const identityIds = watch(fieldName);
+    const setIdentityIds = (ids) => setValue(fieldName, ids, {shouldValidate: true});
+
+    return (<CustomControlGroup label='Where Sighted Refs'>
+        <IdentityMultiselect selectedIdentityIds={identityIds} setSelectedIdentityIds={setIdentityIds} />
+    </CustomControlGroup>)
+}
+WhereSightedRefs.propTypes = {
     fieldName: PropTypes.string.isRequired,
 }

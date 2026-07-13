@@ -13,6 +13,7 @@ type ListInputArgs = {
     setItems: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+// There's a SUIT component that handles this already: https://splunkui.splunk.com/Packages/react-ui/Multiselect?section=examples#Controlled
 function ListInput({ items, setItems }: ListInputArgs) {
     const [text, setText] = useState('');
     const handleButtonClick = () => {

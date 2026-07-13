@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Loader from '@splunk/my-page/src/Loader';
-import {
-    getSighting,
-    postCreateSighting,
-    editSighting,
-    useGetRecord,
-} from '@splunk/my-page/src/ApiClient';
+import { editSighting, getSighting, postCreateSighting, useGetRecord } from '@splunk/my-page/src/ApiClient';
 import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
@@ -18,7 +13,7 @@ import Button from '@splunk/react-ui/Button';
 import { viewSighting } from '@splunk/my-page/src/urls';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
-import { Count, DescriptionField, FirstSeen, LastSeen, SightingOfRef } from './formControls';
+import { Count, DescriptionField, FirstSeen, LastSeen, SightingOfRef, WhereSightedRefs } from './formControls';
 import { useOnFormSubmit } from '../../common/formSubmit';
 
 const FORM_FIELD_SIGHTING_ID = 'sighting_id';
@@ -27,6 +22,7 @@ const FORM_FIELD_DESCRIPTION = 'description';
 const FORM_FIELD_FIRST_SEEN = 'first_seen';
 const FORM_FIELD_LAST_SEEN = 'last_seen';
 const FORM_FIELD_COUNT = 'count';
+const FORM_FIELD_WHERE_SIGHTED_REFS = 'where_sighted_refs'
 
 
 const MyForm = styled.form`
@@ -70,6 +66,7 @@ export function Form({ existingSighting = null }) {
     register(FORM_FIELD_FIRST_SEEN, { required: false, validate: validateFirstSeenIsBeforeLastSeen });
     register(FORM_FIELD_LAST_SEEN, { required: false, validate: validateFirstSeenIsBeforeLastSeen});
     register(FORM_FIELD_COUNT, { required: false, value: 1 });
+    register(FORM_FIELD_WHERE_SIGHTED_REFS, { required: false, value: [] });
 
     useEffect(() => {
         if (existingSighting !== null) {
@@ -83,6 +80,7 @@ export function Form({ existingSighting = null }) {
             setValue(FORM_FIELD_FIRST_SEEN, existingSighting[FORM_FIELD_FIRST_SEEN])
             setValue(FORM_FIELD_LAST_SEEN, existingSighting[FORM_FIELD_LAST_SEEN])
             setValue(FORM_FIELD_COUNT, existingSighting[FORM_FIELD_COUNT])
+            setValue(FORM_FIELD_WHERE_SIGHTED_REFS, existingSighting[FORM_FIELD_WHERE_SIGHTED_REFS]);
         }
     }, [existingSighting, register, setValue]);
 
@@ -126,6 +124,7 @@ export function Form({ existingSighting = null }) {
             <FirstSeen fieldName={FORM_FIELD_FIRST_SEEN}/>
             <LastSeen fieldName={FORM_FIELD_LAST_SEEN}/>
             <Count fieldName={FORM_FIELD_COUNT}/>
+            <WhereSightedRefs fieldName={FORM_FIELD_WHERE_SIGHTED_REFS}/>
             <CustomControlGroup>
                 <SubmitButton inline submitting={formState.isSubmitting} label='Submit' disabled={submitButtonDisabled}/>
             </CustomControlGroup>
