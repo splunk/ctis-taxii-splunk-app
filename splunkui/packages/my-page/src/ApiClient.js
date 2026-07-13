@@ -159,6 +159,16 @@ export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
         errorHandler
     })
 }
+
+export function deleteSighting({sightingId, successHandler, errorHandler}) {
+    return deleteData({
+        endpoint: 'delete-sighting',
+        data: {sighting_id: sightingId},
+        successHandler,
+        errorHandler
+    })
+}
+
 export function deleteIndicatorsInGrouping({ groupingId, successHandler, errorHandler }) {
     console.log('Deleting indicators in grouping:', groupingId);
     return deleteData({

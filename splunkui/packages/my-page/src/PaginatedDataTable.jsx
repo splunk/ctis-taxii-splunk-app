@@ -2,10 +2,16 @@ import React, { createContext, useEffect, useMemo, useState } from 'react';
 import P from '@splunk/react-ui/Paragraph';
 import { v4 as uuidv4 } from 'uuid';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { variables } from '@splunk/themes';
 import SearchPaginator from './paginator';
 import { useDebounceMultiple } from './debounce';
 import { SORT_MODIFIED_DESC } from './ApiClient';
 
+const Container = styled.div`
+    margin-top: ${variables.spacingLarge};
+    margin-bottom: ${variables.spacingLarge};
+`
 function usePaginatedData({ getDataPaginated, skip, limit, onError, query, sort = '' }) {
     const [records, setRecords] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -134,15 +140,17 @@ export function PaginatedRecords({
     return (
         <RecordsLoaderContext.Provider value={contextValue}>
             {children}
-            <P>{`Records found: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
-            <SearchPaginator
-                totalPages={numPages}
-                pageNum={pageNum}
-                onChangePage={setPageNum}
-                resultsPerPage={resultsPerPage}
-                setResultsPerPage={setResultsPerPage}
-                optionsResultsPerPage={OPTIONS_RESULTS_PER_PAGE}
-            />
+            <Container>
+                <P>{`Records found: ${totalRecords}. Page: ${pageNum} out of ${numPages}`}</P>
+                <SearchPaginator
+                    totalPages={numPages}
+                    pageNum={pageNum}
+                    onChangePage={setPageNum}
+                    resultsPerPage={resultsPerPage}
+                    setResultsPerPage={setResultsPerPage}
+                    optionsResultsPerPage={OPTIONS_RESULTS_PER_PAGE}
+                />
+            </Container>
         </RecordsLoaderContext.Provider>
     );
 }

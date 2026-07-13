@@ -12,8 +12,11 @@ import List from '@splunk/react-ui/List';
 import { NoValuePresent, BooleanValue, StixLabels } from '@splunk/my-page/src/data_table/values';
 import { HorizontalActionButtonLayout } from '@splunk/my-page/src/HorizontalButtonLayout';
 import EditIconOnlyButton from '@splunk/my-page/src/buttons/EditIconOnlyButton';
-import { usePageTitle } from '../../common/utils';
+import DeleteIconOnlyButton from '@splunk/my-page/src/buttons/DeleteIconOnlyButton';
+import useModal from '@splunk/my-page/src/useModal';
+import { DeleteSightingModal } from '@splunk/my-page/src/DeleteModal';
 import { FIELD_LABEL_TLP_V2_MARKING } from '../../common/tlp';
+import { usePageTitle } from '../../common/utils';
 
 
 const PAGE_TITLE = 'Sightings';
@@ -58,18 +61,18 @@ const mappingOfColumnNameToCellValue = [
     { columnName: 'Sighting ID', getCellContent: (row) => row.sighting_id },
     { columnName: 'Sighting of Ref', getCellContent: (row) => row.sighting_of_ref },
     {
-        columnName: 'Created At (UTC)',
-        getCellContent: (row) => formatTimestampForDisplay(row.created),
-    },
-    {
         columnName: 'Updated At (UTC)',
         getCellContent: (row) => formatTimestampForDisplay(row.modified),
     },
 ];
 
 function RowActionButtons({row}){
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
+
     return (<HorizontalActionButtonLayout>
         <EditIconOnlyButton to={editSightingPage(row.sighting_id)} />
+        <DeleteIconOnlyButton onClick={handleRequestOpen} />
+        <DeleteSightingModal open={open} onRequestClose={handleRequestClose} sighting={row} />
     </HorizontalActionButtonLayout>);
 }
 

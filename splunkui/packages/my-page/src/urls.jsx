@@ -10,6 +10,7 @@ export const VIEW_IDENTITIES_PAGE = createURL(`/app/${app}/identities`);
 export const NEW_IDENTITY_PAGE = createURL(`/app/${app}/new_identity`);
 
 export const VIEW_GROUPINGS_PAGE = createURL(`/app/${app}/groupings`);
+export const VIEW_SIGHTINGS_PAGE = createURL(`/app/${app}/sightings`);
 export const NEW_GROUPING_PAGE = createURL(`/app/${app}/new_grouping`);
 
 export const VIEW_CONFIGURATION_PAGE = createURL(`/app/${app}/configuration`);
