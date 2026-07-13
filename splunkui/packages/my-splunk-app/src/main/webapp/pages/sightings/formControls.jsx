@@ -8,6 +8,7 @@ import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import Number from '@splunk/react-ui/Number';
 import IdentityMultiselect from '@splunk/my-page/src/controls/IdentityMultiselect';
 import { IdentitySelect } from '@splunk/my-page/src/controls/IdentitySelect';
+import Checkbox from '@splunk/react-ui/Checkbox';
 import { useFormInputProps } from '../../common/formInputProps';
 
 export function FirstSeen({fieldName}){
@@ -86,3 +87,16 @@ export function CreatedByRef({ fieldName }) {
 CreatedByRef.propTypes = {
     fieldName: PropTypes.string.isRequired
 };
+
+export function CheckboxControlGroup({fieldName, label, controlGroupHelp}){
+    const {setValue, watch} = useFormContext();
+    const isChecked = watch(fieldName);
+    return (<CustomControlGroup label={label} help={controlGroupHelp}>
+        <Checkbox checked={isChecked} onChange={(e, {checked}) => setValue(fieldName, checked, {shouldValidate: true})}/>
+    </CustomControlGroup>)
+}
+CheckboxControlGroup.propTypes = {
+    fieldName: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    controlGroupHelp: PropTypes.string.isRequired
+}

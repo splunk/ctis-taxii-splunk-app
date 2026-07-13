@@ -14,6 +14,7 @@ import { viewSighting } from '@splunk/my-page/src/urls';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
 import {
+    CheckboxControlGroup,
     Count,
     CreatedByRef,
     DescriptionField,
@@ -32,7 +33,21 @@ const FORM_FIELD_LAST_SEEN = 'last_seen';
 const FORM_FIELD_COUNT = 'count';
 const FORM_FIELD_WHERE_SIGHTED_REFS = 'where_sighted_refs'
 const FORM_FIELD_CREATED_BY_REF = 'created_by_ref'
+const FORM_FIELD_SUMMARY = 'summary';
+const FORM_FIELD_REVOKED = 'revoked';
 
+const ALL_FIELD_NAMES = [
+    FORM_FIELD_SIGHTING_ID,
+    FORM_FIELD_SIGHTING_OF_REF,
+    FORM_FIELD_DESCRIPTION,
+    FORM_FIELD_FIRST_SEEN,
+    FORM_FIELD_LAST_SEEN,
+    FORM_FIELD_COUNT,
+    FORM_FIELD_WHERE_SIGHTED_REFS,
+    FORM_FIELD_CREATED_BY_REF,
+    FORM_FIELD_SUMMARY,
+    FORM_FIELD_REVOKED
+]
 
 const MyForm = styled.form`
     max-width: 800px;
@@ -77,6 +92,8 @@ export function Form({ existingSighting = null }) {
     register(FORM_FIELD_COUNT, { required: false, value: 1 });
     register(FORM_FIELD_WHERE_SIGHTED_REFS, { required: false, value: [] });
     register(FORM_FIELD_CREATED_BY_REF, { required: false });
+    register(FORM_FIELD_SUMMARY, { required: false, value: false });
+    register(FORM_FIELD_REVOKED, { required: false, value: false });
 
     useEffect(() => {
         if (existingSighting !== null) {
@@ -84,14 +101,9 @@ export function Form({ existingSighting = null }) {
                 required: 'sighting_id is required',
                 value: existingSighting.sighting_id
             });
-            setValue(FORM_FIELD_SIGHTING_OF_REF, existingSighting.sighting_of_ref);
-            setValue(FIELD_CONFIDENCE, existingSighting.confidence);
-            setValue(FORM_FIELD_DESCRIPTION, existingSighting.description)
-            setValue(FORM_FIELD_FIRST_SEEN, existingSighting[FORM_FIELD_FIRST_SEEN])
-            setValue(FORM_FIELD_LAST_SEEN, existingSighting[FORM_FIELD_LAST_SEEN])
-            setValue(FORM_FIELD_COUNT, existingSighting[FORM_FIELD_COUNT])
-            setValue(FORM_FIELD_WHERE_SIGHTED_REFS, existingSighting[FORM_FIELD_WHERE_SIGHTED_REFS]);
-            setValue(FORM_FIELD_CREATED_BY_REF, existingSighting[FORM_FIELD_CREATED_BY_REF]);
+            ALL_FIELD_NAMES.forEach(fieldName => {
+                setValue(fieldName, existingSighting[fieldName]);
+            });
         }
     }, [existingSighting, register, setValue]);
 
@@ -137,6 +149,8 @@ export function Form({ existingSighting = null }) {
             <Count fieldName={FORM_FIELD_COUNT}/>
             <WhereSightedRefs fieldName={FORM_FIELD_WHERE_SIGHTED_REFS}/>
             <CreatedByRef fieldName={FORM_FIELD_CREATED_BY_REF}/>
+            <CheckboxControlGroup fieldName={FORM_FIELD_SUMMARY} label='Summary' controlGroupHelp='Whether the Sighting should be considered summary data.' />
+            <CheckboxControlGroup fieldName={FORM_FIELD_REVOKED} label='Revoked' controlGroupHelp='Whether the object has been revoked. Revoked objects are no longer considered valid by the object creator.' />
             <CustomControlGroup>
                 <SubmitButton inline submitting={formState.isSubmitting} label='Submit' disabled={submitButtonDisabled}/>
             </CustomControlGroup>
