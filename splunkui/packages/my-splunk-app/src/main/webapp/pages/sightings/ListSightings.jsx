@@ -6,7 +6,7 @@ import { getSightings } from '@splunk/my-page/src/ApiClient';
 import { createErrorToast } from '@splunk/my-page/src/AppContainer';
 import { DataTableV2 } from '@splunk/my-page/src/ExpandableDataTable';
 import { formatTimestampForDisplay } from '@splunk/my-page/src/date_utils';
-import { IndicatorIdLink, IdentityIdLink, editSightingPage } from '@splunk/my-page/src/urls';
+import { IndicatorIdLink, IdentityIdLink, editSightingPage, NEW_SIGHTING_PAGE } from '@splunk/my-page/src/urls';
 import PropTypes from 'prop-types';
 import List from '@splunk/react-ui/List';
 import { NoValuePresent, BooleanValue, StixLabels } from '@splunk/my-page/src/data_table/values';
@@ -17,6 +17,9 @@ import useModal from '@splunk/my-page/src/useModal';
 import { DeleteSightingModal } from '@splunk/my-page/src/DeleteModal';
 import { FIELD_LABEL_TLP_V2_MARKING } from '../../common/tlp';
 import { usePageTitle } from '../../common/utils';
+import Button from '@splunk/react-ui/Button';
+import BaseButton from '@splunk/my-page/src/BaseButton';
+import Plus from '@splunk/react-icons/Plus';
 
 
 const PAGE_TITLE = 'Sightings';
@@ -90,6 +93,13 @@ export default function ListSightings() {
         <div>
             <PageHeadingContainer>
                 <PageHeading level={1}>{PAGE_TITLE}</PageHeading>
+                <BaseButton
+                    inline
+                    icon={<Plus />}
+                    label="New Sighting"
+                    appearance="primary"
+                    to={NEW_SIGHTING_PAGE}
+                />
             </PageHeadingContainer>
             <SightingsSearchBar onQueryChange={setQuery} />
             <PaginatedRecords fetchData={getSightings} onError={createErrorToast} query={query}>
