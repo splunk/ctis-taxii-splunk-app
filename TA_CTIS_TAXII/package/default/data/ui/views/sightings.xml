@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="TA_CTIS_TAXII:/templates/sightings.html" type="html">
+	<label>Sightings</label>
+</view>

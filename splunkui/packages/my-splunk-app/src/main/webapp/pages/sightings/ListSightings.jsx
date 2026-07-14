@@ -1,0 +1,115 @@
+import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
+import React, { useState } from 'react';
+import { SightingsSearchBar } from '@splunk/my-page/src/SearchBar';
+import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
+import { getSightings } from '@splunk/my-page/src/ApiClient';
+import { createErrorToast } from '@splunk/my-page/src/AppContainer';
+import { DataTableV2 } from '@splunk/my-page/src/ExpandableDataTable';
+import { formatTimestampForDisplay } from '@splunk/my-page/src/date_utils';
+import { IndicatorIdLink, IdentityIdLink, editSightingPage, NEW_SIGHTING_PAGE } from '@splunk/my-page/src/urls';
+import PropTypes from 'prop-types';
+import List from '@splunk/react-ui/List';
+import { NoValuePresent, BooleanValue, StixLabels } from '@splunk/my-page/src/data_table/values';
+import { HorizontalActionButtonLayout } from '@splunk/my-page/src/HorizontalButtonLayout';
+import EditIconOnlyButton from '@splunk/my-page/src/buttons/EditIconOnlyButton';
+import DeleteIconOnlyButton from '@splunk/my-page/src/buttons/DeleteIconOnlyButton';
+import useModal from '@splunk/my-page/src/useModal';
+import { DeleteSightingModal } from '@splunk/my-page/src/DeleteModal';
+import { FIELD_LABEL_TLP_V2_MARKING } from '../../common/tlp';
+import { usePageTitle } from '../../common/utils';
+import Button from '@splunk/react-ui/Button';
+import BaseButton from '@splunk/my-page/src/BaseButton';
+import Plus from '@splunk/react-icons/Plus';
+
+
+const PAGE_TITLE = 'Sightings';
+
+function WhereSightedRefs({ identities }) {
+    if(identities.length === 0){
+        return <NoValuePresent />;
+    }
+    return (
+        <List>
+            {identities.map((identity) => (
+                <List.Item key={identity}>
+                    <IdentityIdLink identityId={identity}/>
+                </List.Item>
+            ))}
+        </List>
+    );
+}
+WhereSightedRefs.propTypes = {
+    identities: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
+const EXPANSION_ROW_FIELD_NAME_TO_CELL_VALUE = {
+    "Sighting ID": (row) => row.sighting_id,
+    "Sighting of Ref": (row) => <IndicatorIdLink indicatorId={row.sighting_of_ref} />,
+    "Description": (row) => row.description,
+    "First Seen (UTC)": (row) => row.first_seen,
+    "Last Seen (UTC)": (row) => row.last_seen,
+    "Count": (row) => row.count,
+    "Where Sighted Refs": row => <WhereSightedRefs identities={row.where_sighted_refs} />,
+    "Created By Ref": row => row.created_by_ref ? <IdentityIdLink identityId={row.created_by_ref} /> : <NoValuePresent/>,
+    "Summary": row => <BooleanValue value={row.summary}/>,
+    [FIELD_LABEL_TLP_V2_MARKING]: row => row.tlp_v2_rating,
+    "Confidence": row => row.confidence,
+    "Revoked": row => <BooleanValue value={row.revoked}/>,
+    "Labels": row => <StixLabels labels={row.labels}/>,
+    "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
+    "Updated At (UTC)": (row) => formatTimestampForDisplay(row.modified),
+}
+
+const mappingOfColumnNameToCellValue = [
+    { columnName: 'Sighting ID', getCellContent: (row) => row.sighting_id },
+    { columnName: 'Sighting of Ref', getCellContent: (row) => row.sighting_of_ref },
+    {
+        columnName: 'Updated At (UTC)',
+        getCellContent: (row) => formatTimestampForDisplay(row.modified),
+    },
+];
+
+function RowActionButtons({row}){
+    const {open, handleRequestClose, handleRequestOpen} = useModal();
+
+    return (<HorizontalActionButtonLayout>
+        <EditIconOnlyButton to={editSightingPage(row.sighting_id)} />
+        <DeleteIconOnlyButton onClick={handleRequestOpen} />
+        <DeleteSightingModal open={open} onRequestClose={handleRequestClose} sighting={row} />
+    </HorizontalActionButtonLayout>);
+}
+
+RowActionButtons.propTypes = {
+    row: PropTypes.shape({
+        sighting_id: PropTypes.string,
+    })
+}
+
+export default function ListSightings() {
+    usePageTitle(PAGE_TITLE);
+    const [query, setQuery] = useState({});
+
+    return (
+        <div>
+            <PageHeadingContainer>
+                <PageHeading level={1}>{PAGE_TITLE}</PageHeading>
+                <BaseButton
+                    inline
+                    icon={<Plus />}
+                    label="New Sighting"
+                    appearance="primary"
+                    to={NEW_SIGHTING_PAGE}
+                />
+            </PageHeadingContainer>
+            <SightingsSearchBar onQueryChange={setQuery} />
+            <PaginatedRecords fetchData={getSightings} onError={createErrorToast} query={query}>
+                <DataTableV2 rowKeyFunction={(row) => row.sighting_id}
+                             expansionRowFieldNameToCellValue={EXPANSION_ROW_FIELD_NAME_TO_CELL_VALUE}
+                             mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                             rowActionPrimary={RowActionButtons}
+
+                />
+            </PaginatedRecords>
+        </div>
+    );
+}

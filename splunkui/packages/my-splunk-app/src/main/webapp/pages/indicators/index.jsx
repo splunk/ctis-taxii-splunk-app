@@ -1,34 +1,26 @@
-import React, {useEffect} from 'react';
-
-import ExpandableDataTable from "@splunk/my-page/src/ExpandableDataTable";
-import {IndicatorsSearchBar} from "@splunk/my-page/src/SearchBar";
+import React, { useEffect } from 'react';
+import { IndicatorsSearchBar } from '@splunk/my-page/src/SearchBar';
 import Plus from '@splunk/react-icons/Plus';
-import {getIndicators} from "@splunk/my-page/src/ApiClient";
-import P from "@splunk/react-ui/Paragraph";
-import WaitSpinner from '@splunk/react-ui/WaitSpinner';
-import {AppContainer, createErrorToast} from "@splunk/my-page/src/AppContainer";
-import PaginatedDataTable from "@splunk/my-page/src/PaginatedDataTable";
-import {
-    GroupingIdLink,
-    IndicatorIdLink,
-    NEW_INDICATOR_PAGE,
-    urlForEditIndicator
-} from "@splunk/my-page/src/urls";
-import useModal from "@splunk/my-page/src/useModal";
-import {DeleteIndicatorModal} from "@splunk/my-page/src/DeleteModal";
-import {useViewportBreakpoints} from "@splunk/my-page/src/viewportBreakpoints";
-import EditIconOnlyButton from "@splunk/my-page/src/buttons/EditIconOnlyButton";
-import DeleteIconOnlyButton from "@splunk/my-page/src/buttons/DeleteIconOnlyButton";
-import {HorizontalActionButtonLayout} from "@splunk/my-page/src/HorizontalButtonLayout";
-import PropTypes from "prop-types";
-import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
-import BaseButton from "@splunk/my-page/src/BaseButton";
-import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
-import {layoutWithTheme} from "../../common/theme";
-import ViewOrEditIndicator from "../../common/indicator_form/ViewOrEditIndicator";
-import {getUrlQueryParams} from "../../common/queryParams";
-import {usePageTitle} from "../../common/utils";
-import {FIELD_LABEL_TLP_V2_MARKING} from "../../common/tlp";
+import { getIndicators } from '@splunk/my-page/src/ApiClient';
+import { AppContainer, createErrorToast } from '@splunk/my-page/src/AppContainer';
+import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
+import { GroupingIdLink, IndicatorIdLink, NEW_INDICATOR_PAGE, urlForEditIndicator } from '@splunk/my-page/src/urls';
+import useModal from '@splunk/my-page/src/useModal';
+import { DeleteIndicatorModal } from '@splunk/my-page/src/DeleteModal';
+import { useViewportBreakpoints } from '@splunk/my-page/src/viewportBreakpoints';
+import EditIconOnlyButton from '@splunk/my-page/src/buttons/EditIconOnlyButton';
+import DeleteIconOnlyButton from '@splunk/my-page/src/buttons/DeleteIconOnlyButton';
+import { HorizontalActionButtonLayout } from '@splunk/my-page/src/HorizontalButtonLayout';
+import PropTypes from 'prop-types';
+import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
+import BaseButton from '@splunk/my-page/src/BaseButton';
+import { formatTimestampForDisplay } from '@splunk/my-page/src/date_utils';
+import { DataTableV2 } from '@splunk/my-page/src/ExpandableDataTable';
+import { getUrlQueryParams } from '@splunk/my-page/src/queryParams';
+import { layoutWithTheme } from '../../common/theme';
+import ViewOrEditIndicator from '../../common/indicator_form/ViewOrEditIndicator';
+import { usePageTitle } from '../../common/utils';
+import { FIELD_LABEL_TLP_V2_MARKING } from '../../common/tlp';
 
 const mappingOfColumnNameToCellValue = [
     {columnName: "Name", getCellContent: (row) => row.name},
@@ -81,46 +73,38 @@ function useResponsiveColumns() {
     return columns;
 }
 
-function RenderDataTable({records, loading, error}) {
-    // TODO: pass in isLoading, error?
-    const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
-    const errorElement = <P>{`Error: ${error}`}</P>
-    const columns = useResponsiveColumns();
-    const columnNameToCellValue = mappingOfColumnNameToCellValue.filter((column) => columns.includes(column.columnName));
-    const table = <ExpandableDataTable data={records}
-                                       rowKeyFunction={(row) => row.indicator_id}
-                                       expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={columnNameToCellValue}
-                                       rowActionPrimary={RowActionPrimary}
-                                       actionsColumnWidth={120}
-    />
-    if (error) {
-        return errorElement;
-    }
-    return loading ? loadingElement : table;
-}
-
-RenderDataTable.propTypes = {
-    records: PropTypes.array.isRequired,
-    loading: PropTypes.bool.isRequired,
-    error: PropTypes.string
-}
-
 function ListIndicators() {
     const [query, setQuery] = React.useState({});
     const title = "Indicators";
     usePageTitle(title);
 
+    const columns = useResponsiveColumns();
+    const columnNameToCellValue = mappingOfColumnNameToCellValue.filter((column) =>
+        columns.includes(column.columnName),
+    );
+
     return (
         <>
             <PageHeadingContainer>
                 <PageHeading level={1}>{title}</PageHeading>
-                <BaseButton inline icon={<Plus/>} label="New Indicator" appearance="primary" to={NEW_INDICATOR_PAGE}/>
+                <BaseButton
+                    inline
+                    icon={<Plus />}
+                    label="New Indicator"
+                    appearance="primary"
+                    to={NEW_INDICATOR_PAGE}
+                />
             </PageHeadingContainer>
-            <IndicatorsSearchBar onQueryChange={setQuery}/>
-            <PaginatedDataTable renderData={RenderDataTable} fetchData={getIndicators} query={query} onError={(e) => {
-                createErrorToast(e);
-            }}/>
+            <IndicatorsSearchBar onQueryChange={setQuery} />
+            <PaginatedRecords fetchData={getIndicators} onError={createErrorToast} query={query}>
+                <DataTableV2
+                    rowKeyFunction={(row) => row.indicator_id}
+                    expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
+                    mappingOfColumnNameToCellValue={columnNameToCellValue}
+                    rowActionPrimary={RowActionPrimary}
+                    actionsColumnWidth={120}
+                />
+            </PaginatedRecords>
         </>
     );
 }

@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import Search from '@splunk/react-ui/Search';
 
 import styled from 'styled-components';
-import {getUrlQueryParams} from "@splunk/my-splunk-app/src/main/webapp/common/queryParams";
 import {variables} from "@splunk/themes";
 import PropTypes from "prop-types";
+import {getUrlQueryParams} from "./queryParams";
 import {SearchFieldDropdown} from "./SearchFieldDropdown";
 import {useDebounce} from "./debounce";
 import {DatetimeRangePicker} from "./DatetimeRangePicker";
@@ -120,6 +120,34 @@ export const IndicatorsSearchBar = ({onQueryChange}) => {
 IndicatorsSearchBar.propTypes = {
     onQueryChange: PropTypes.func.isRequired
 }
+export const SightingsSearchBar = ({ onQueryChange }) => {
+    const TEXT_SEARCH_FIELDS = [
+        'sighting_id',
+        'description',
+        'labels',
+        'sighting_of_ref'
+    ];
+    const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
+
+    const subqueries = [lastUpdatedQuery];
+
+    return (
+        <SearchBar
+            onQueryChange={onQueryChange}
+            fullTextSearchFields={TEXT_SEARCH_FIELDS}
+            subqueries={subqueries}
+        >
+            <DatetimeRangePicker
+                labelPrefix="Last Updated"
+                fieldName="modified"
+                onQueryChange={setLastUpdatedQuery}
+            />
+        </SearchBar>
+    );
+};
+SightingsSearchBar.propTypes = {
+    onQueryChange: PropTypes.func.isRequired,
+};
 
 export const GroupingsSearchBar = ({onQueryChange}) => {
     const TEXT_SEARCH_FIELDS = ['name', 'description', 'grouping_id', 'context'];

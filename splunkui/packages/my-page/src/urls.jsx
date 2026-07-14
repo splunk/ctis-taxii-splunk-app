@@ -1,6 +1,7 @@
 import {createURL} from '@splunk/splunk-utils/url';
 import {app} from '@splunk/splunk-utils/config';
 import React from "react";
+import PropTypes from 'prop-types';
 
 export const VIEW_INDICATORS_PAGE = createURL(`/app/${app}/indicators`);
 export const NEW_INDICATOR_PAGE = createURL(`/app/${app}/new_indicator`);
@@ -10,6 +11,9 @@ export const NEW_IDENTITY_PAGE = createURL(`/app/${app}/new_identity`);
 
 export const VIEW_GROUPINGS_PAGE = createURL(`/app/${app}/groupings`);
 export const NEW_GROUPING_PAGE = createURL(`/app/${app}/new_grouping`);
+
+export const VIEW_SIGHTINGS_PAGE = createURL(`/app/${app}/sightings`);
+export const NEW_SIGHTING_PAGE = createURL(`/app/${app}/sightings?action=create`);
 
 export const VIEW_CONFIGURATION_PAGE = createURL(`/app/${app}/configuration`);
 
@@ -23,6 +27,10 @@ export const viewGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {
 
 export const viewIdentity = (identityId) => createURL(`/app/${app}/identities`, {
     identity_id: identityId,
+});
+
+export const viewSighting = (sightingId) => createURL(`/app/${app}/sightings`, {
+    search: sightingId,
 });
 
 export const urlForEditGrouping = (groupingId) => createURL(`/app/${app}/groupings`, {
@@ -54,14 +62,28 @@ export const editGroupingPage = (groupingId) => createURL(`/app/${app}/groupings
     action: 'edit',
 });
 
+export const editSightingPage = (sightingId) => createURL(`/app/${app}/sightings`, {
+    sighting_id: sightingId,
+    action: 'edit',
+});
+
 export function IdentityIdLink({identityId}) {
     return (<a href={viewIdentity(identityId)}>{identityId}</a>)
+}
+IdentityIdLink.propTypes = {
+    identityId: PropTypes.string.isRequired
 }
 
 export function GroupingIdLink({groupingId}) {
     return (<a href={viewGrouping(groupingId)}>{groupingId}</a>)
 }
+GroupingIdLink.propTypes = {
+    groupingId: PropTypes.string.isRequired
+}
 
 export function IndicatorIdLink({indicatorId}) {
     return (<a href={viewIndicator(indicatorId)}>{indicatorId}</a>)
+}
+IndicatorIdLink.propTypes = {
+    indicatorId: PropTypes.string.isRequired
 }

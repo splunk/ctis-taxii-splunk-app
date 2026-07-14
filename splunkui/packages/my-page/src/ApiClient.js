@@ -110,6 +110,10 @@ export function postCreateGrouping(data, successHandler, errorHandler) {
     return postData('create-grouping', data, successHandler, errorHandler)
 }
 
+export function postCreateSighting(data, successHandler, errorHandler) {
+    return postData('create-sighting', data, successHandler, errorHandler)
+}
+
 export function editIdentity(data, successHandler, errorHandler) {
     return postData('edit-identity', data, successHandler, errorHandler)
 }
@@ -120,6 +124,10 @@ export function editGrouping(data, successHandler, errorHandler) {
 
 export function editIndicator(data, successHandler, errorHandler) {
     return postData('edit-indicator', data, successHandler, errorHandler)
+}
+
+export function editSighting(data, successHandler, errorHandler) {
+    return postData('edit-sighting', data, successHandler, errorHandler)
 }
 
 export function deleteIdentity({identityId, successHandler, errorHandler}) {
@@ -151,6 +159,16 @@ export function deleteIndicator({indicatorId, successHandler, errorHandler}) {
         errorHandler
     })
 }
+
+export function deleteSighting({sightingId, successHandler, errorHandler}) {
+    return deleteData({
+        endpoint: 'delete-sighting',
+        data: {sighting_id: sightingId},
+        successHandler,
+        errorHandler
+    })
+}
+
 export function deleteIndicatorsInGrouping({ groupingId, successHandler, errorHandler }) {
     console.log('Deleting indicators in grouping:', groupingId);
     return deleteData({
@@ -183,6 +201,29 @@ export function getIndicators({
             skip, limit, sort
         }, query, successHandler, errorHandler, ...rest
     })
+}
+
+export function getSightings({
+    skip = 0,
+    limit = 0,
+    successHandler,
+    errorHandler,
+    query,
+    sort = SORT_MODIFIED_DESC,
+    ...rest
+}) {
+    return getData({
+        endpoint: 'list-sightings',
+        queryParams: {
+            skip,
+            limit,
+            sort,
+        },
+        query,
+        successHandler,
+        errorHandler,
+        ...rest,
+    });
 }
 
 export function getGroupings({
@@ -427,6 +468,17 @@ export function getSubmission({submissionId, successHandler, errorHandler}) {
             "submission_id": submissionId
         },
         endpoint: 'list-submissions',
+        successHandler,
+        errorHandler
+    })
+}
+
+export function getSighting({sightingId, successHandler, errorHandler}) {
+    return getExactlyOneRecord({
+        query: {
+            "sighting_id": sightingId
+        },
+        endpoint: 'list-sightings',
         successHandler,
         errorHandler
     })

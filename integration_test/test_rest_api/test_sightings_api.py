@@ -117,11 +117,9 @@ def test_update_sighting(session, cleanup_all_collections):
         "confidence": 90,
         "description": "Updated description"
     }
-    edit_resp = edit_sighting(session, payload=edit_payload)
+    updated_sighting = edit_sighting(session, payload=edit_payload)
 
     # Verify updates
-    assert "sighting" in edit_resp
-    updated_sighting = edit_resp["sighting"]
     assert updated_sighting["count"] == 10
     assert updated_sighting["confidence"] == 90
     assert updated_sighting["description"] == "Updated description"

@@ -14,6 +14,7 @@ import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeadi
 import P from '@splunk/react-ui/Paragraph';
 import { isString } from 'lodash';
 import { useDebounce } from '@splunk/my-page/src/debounce';
+import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
 import {
     GroupingId,
     ScheduledAt,
@@ -39,7 +40,6 @@ import { DebugForm } from './debugForm';
 import { SwitchContainer } from './switchContainer';
 import { IncludeSightingsControlGroup } from './includeSightingsControlGroup';
 import { PreviewStixBundleJson } from './previewStixBundleJson';
-import { shouldUseDebugMode } from '../../common/queryParams';
 
 const StyledForm = styled.form`
     max-width: 1000px;

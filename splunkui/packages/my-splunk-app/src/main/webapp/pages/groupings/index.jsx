@@ -1,10 +1,7 @@
 import React from 'react';
 
-import ExpandableDataTable from "@splunk/my-page/src/ExpandableDataTable";
-import PaginatedDataTable from "@splunk/my-page/src/PaginatedDataTable";
+import { DataTableV2 } from "@splunk/my-page/src/ExpandableDataTable";
 import {AppContainer, createErrorToast} from "@splunk/my-page/src/AppContainer";
-import P from "@splunk/react-ui/Paragraph";
-import WaitSpinner from "@splunk/react-ui/WaitSpinner";
 import Plus from '@splunk/react-icons/Plus';
 import {getGroupings} from "@splunk/my-page/src/ApiClient";
 import {editGroupingPage, GroupingIdLink, IdentityIdLink, NEW_GROUPING_PAGE} from "@splunk/my-page/src/urls";
@@ -22,9 +19,10 @@ import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
 import BaseButton from "@splunk/my-page/src/BaseButton";
 import {formatTimestampForDisplay} from "@splunk/my-page/src/date_utils";
+import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
+import {getUrlQueryParams} from "@splunk/my-page/src/queryParams";
 import {layoutWithTheme} from "../../common/theme";
 import GroupingForm from "../../common/GroupingForm";
-import {getUrlQueryParams} from "../../common/queryParams";
 import {FIELD_LABEL_TLP_V2_MARKING} from "../../common/tlp";
 
 function SubmitToTaxiiButton({row}) {
@@ -76,23 +74,6 @@ const expansionFieldNameToCellValue = {
     "Submissions": (row) => <SubmissionCardLayout groupingId={row.grouping_id}/>,
 }
 
-function renderDataTable({records, loading, error}) {
-    // TODO: pass in isLoading, error?
-    const loadingElement = <P>Loading...<WaitSpinner size='large'/></P>;
-    const errorElement = <P>{`Error: ${error}`}</P>
-    const table = <ExpandableDataTable data={records}
-                                       rowKeyFunction={(row) => row.grouping_id}
-                                       expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
-                                       mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
-                                       rowActionPrimary={GroupingActionButtons}
-                                       actionsColumnWidth={200}
-    />
-    if (error) {
-        return errorElement;
-    }
-    return loading ? loadingElement : table;
-}
-
 function ListGroupings() {
     const [query, setQuery] = React.useState({});
 
@@ -100,12 +81,24 @@ function ListGroupings() {
         <>
             <PageHeadingContainer>
                 <PageHeading level={1}>Groupings</PageHeading>
-                <BaseButton inline icon={<Plus/>} label="New Grouping" appearance="primary" to={NEW_GROUPING_PAGE}/>
+                <BaseButton
+                    inline
+                    icon={<Plus />}
+                    label="New Grouping"
+                    appearance="primary"
+                    to={NEW_GROUPING_PAGE}
+                />
             </PageHeadingContainer>
-            <GroupingsSearchBar onQueryChange={setQuery}/>
-            <PaginatedDataTable renderData={renderDataTable} fetchData={getGroupings} query={query} onError={(e) => {
-                createErrorToast(e);
-            }}/>
+            <GroupingsSearchBar onQueryChange={setQuery} />
+            <PaginatedRecords fetchData={getGroupings} onError={createErrorToast} query={query}>
+                <DataTableV2
+                    rowKeyFunction={(row) => row.grouping_id}
+                    expansionRowFieldNameToCellValue={expansionFieldNameToCellValue}
+                    mappingOfColumnNameToCellValue={mappingOfColumnNameToCellValue}
+                    rowActionPrimary={GroupingActionButtons}
+                    actionsColumnWidth={200}
+                />
+            </PaginatedRecords>
         </>
     );
 }

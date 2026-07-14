@@ -1,8 +1,9 @@
 import React from "react";
 import P from "@splunk/react-ui/Paragraph";
+import PropTypes from 'prop-types';
 import DeleteButton from "./DeleteButton";
-import {deleteGrouping, deleteIndicator} from "./ApiClient";
-import {VIEW_GROUPINGS_PAGE, VIEW_INDICATORS_PAGE} from "./urls";
+import { deleteGrouping, deleteIndicator, deleteSighting } from './ApiClient';
+import { VIEW_GROUPINGS_PAGE, VIEW_INDICATORS_PAGE, VIEW_SIGHTINGS_PAGE } from './urls';
 import ActionModal from "./ActionModal";
 
 export default function DeleteModal({
@@ -56,5 +57,20 @@ export function DeleteIndicatorModal({open, onRequestClose, indicator}) {
                         deleteEndpointArgs={{indicatorId: indicator.indicator_id}}
                         modalBodyContent={<P>Are you sure you want to delete this
                             indicator: <strong>{indicator.name} ({indicator.indicator_id})</strong>?</P>}/>
+}
+
+export function DeleteSightingModal({open, onRequestClose, sighting}){
+    return <DeleteModal open={open}
+        onRequestClose={onRequestClose}
+                        deletionSuccessUrl={VIEW_SIGHTINGS_PAGE}
+                        deleteEndpointFunction={deleteSighting}
+                        deleteEndpointArgs={{sightingId: sighting.sighting_id}}
+                        modalBodyContent={<P>Are you sure you want to delete this sighting: <strong>{sighting.sighting_id}</strong>?</P>}
+    />
+}
+DeleteSightingModal.propTypes = {
+    open: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    sighting: PropTypes.object.isRequired,
 }
 
