@@ -20,6 +20,7 @@ nav:
     - Groupings: cti-mgmt/groupings.md
     - Indicators: cti-mgmt/indicators.md
     - Submissions: cti-mgmt/submissions.md
+    - Sightings: cti-mgmt/sightings.md
   - Troubleshooting: troubleshooting.md
   - Technical Notes: technical-notes.md
 theme:
