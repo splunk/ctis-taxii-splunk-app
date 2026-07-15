@@ -5,6 +5,7 @@
     <collection label="Identities">
         <view name="identities"/>
         <view name="new_identity"/>
+        <a href="./bulk_import?model=identity">Bulk Import</a>
     </collection>
     <collection label="Groupings">
         <view name="groupings"/>
@@ -13,6 +14,7 @@
     <collection label="Indicators">
         <view name="indicators"/>
         <view name="new_indicator"/>
+        <a href="./bulk_import?model=indicator">Bulk Import</a>
     </collection>
     <collection label="Sightings">
         <a href="./sightings?action=list">Sightings</a>

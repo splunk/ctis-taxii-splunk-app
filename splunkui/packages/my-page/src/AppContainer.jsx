@@ -3,6 +3,7 @@ import React from "react";
 import styled, {createGlobalStyle} from "styled-components";
 import {mixins, SplunkThemeProvider, variables} from "@splunk/themes";
 import Toaster, {makeCreateToast} from "@splunk/react-toast-notifications/Toaster";
+import PropTypes from 'prop-types';
 
 const GlobalStyle = createGlobalStyle`
     body {
@@ -42,4 +43,7 @@ export function AppContainer({children}) {
             </SplunkThemeProvider>
         </>
     )
+}
+AppContainer.propTypes = {
+    children: PropTypes.node.isRequired,
 }

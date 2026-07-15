@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<view template="TA_CTIS_TAXII:/templates/bulk_import.html" type="html">
+	<label>Bulk Import</label>
+</view>
