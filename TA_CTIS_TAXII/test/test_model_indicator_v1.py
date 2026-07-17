@@ -204,6 +204,22 @@ def test_maximum_tlpv2_of_indicators():
     max_tlp = maximum_tlpv2_of_indicators(indicators)
     assert max_tlp == TLPv2.AMBER
 
+class TestCreatedByRefField:
+    identity_id = "identity--99c14faf-179a-4ec7-80bb-536c8f0fbb2d"
+
+    def test_parse_from_dict(self):
+        my_dict = get_sample_dict()
+        my_dict["created_by_ref"] = self.identity_id
+        indicator = indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert indicator.created_by_ref == self.identity_id
+
+    def test_model_object_to_dict(self):
+        indicator = new_sample_indicator_instance()
+        indicator.created_by_ref = self.identity_id
+        as_dict = indicator_converter.unstructure(indicator)
+        assert as_dict["created_by_ref"] == self.identity_id
+
+
 class TestHandleFormPayload:
     def test_should_handle_indicators_list(self):
         payload = {

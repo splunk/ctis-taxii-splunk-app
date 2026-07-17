@@ -39,6 +39,11 @@ def validate_grouping_id(instance, attribute, value):
     if not value.startswith("grouping--"):
         raise ValueError("grouping_id must start with 'grouping--'")
 
+def validate_created_by_ref(instance, attribute, value):
+    if value is not None:
+        if not value.startswith("identity--"):
+            raise ValueError("created_by_ref must start with 'identity--'")
+
 @define(slots=False, kw_only=True)
 class IndicatorModelV1(BaseModelV1):
     indicator_id: str = field(validator=[validate_indicator_id])
@@ -60,6 +65,7 @@ class IndicatorModelV1(BaseModelV1):
     tlp_v2_rating: TLPv2 = field()
     valid_from: datetime = field()
     confidence: int = field(validator=[validate_confidence])
+    created_by_ref: Optional[str] = field(default=None, validator=[validate_created_by_ref])
 
     def to_stix(self, created_by_ref:str = None) -> StixIndicator:
         return StixIndicator(
@@ -91,14 +97,19 @@ class IndicatorModelV1(BaseModelV1):
         # spec required properties
         created_dt = parse_date(stix_json["created"])
         modified_dt = parse_date(stix_json["modified"])
+
         # spec optional properties
         name = getattr(stix2_object, "name", "")
         description = getattr(stix2_object, "description", "")
         confidence = getattr(stix2_object, "confidence", 100)
 
+        # TODO: add optional created_by_ref field to Indicator Model
+        created_by_ref = getattr(stix2_object, "created_by_ref", None)
+
         return IndicatorModelV1(indicator_id=stix2_object.id,
                                 grouping_id=grouping_id,
                                 created=created_dt,
+                                created_by_ref=created_by_ref,
                                 modified=modified_dt,
                                 name=name,
                                 description=description,
