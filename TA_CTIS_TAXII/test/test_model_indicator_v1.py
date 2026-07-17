@@ -246,3 +246,4 @@ class TestHandleFormPayload:
         first_error = errors[0]
         assert first_error["index"] == 0
         assert "Invalid STIX pattern" in first_error["errors"][0]
+

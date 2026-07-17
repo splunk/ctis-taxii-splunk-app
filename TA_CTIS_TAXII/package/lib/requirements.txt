@@ -17,4 +17,5 @@ splunk-sdk
 solnlib
 taxii2-client==2.3.0
 pytz
+python-dateutil
 # remote-pdb

@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
+from dateutil.parser import parse as parse_date
 
 from attrs import define, field
 from cattrs import ClassValidationError
 from stix2 import Indicator as StixIndicator
+import stix2
 from stix2patterns.validator import validate as stix_validate
 from uuid import uuid4
 from .base import BaseModelV1, make_base_converter
 from .common import validate_confidence
 from .tlp_v2 import TLPv2
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict
 from functools import reduce
 
 """
@@ -73,6 +75,40 @@ class IndicatorModelV1(BaseModelV1):
             confidence=self.confidence,
             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
         )
+
+    @staticmethod
+    def from_stix_object(stix_json: Dict, grouping_id: str) -> IndicatorModelV1:
+        """
+        Links to STIX spec
+        https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#indicator
+        https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#common-properties
+        """
+        stix2_object = stix2.parse(data=stix_json, allow_custom=True)
+
+        assert stix2_object.pattern_type == "stix"
+        assert stix2_object.pattern is not None
+
+        # spec required properties
+        created_dt = parse_date(stix_json["created"])
+        modified_dt = parse_date(stix_json["modified"])
+        # spec optional properties
+        name = getattr(stix2_object, "name", "")
+        description = getattr(stix2_object, "description", "")
+        confidence = getattr(stix2_object, "confidence", 100)
+
+        return IndicatorModelV1(indicator_id=stix2_object.id,
+                                grouping_id=grouping_id,
+                                created=created_dt,
+                                modified=modified_dt,
+                                name=name,
+                                description=description,
+                                stix_pattern=stix2_object.pattern,
+                                confidence=confidence,
+                                indicator_value='',
+                                indicator_category='',
+                                tlp_v2_rating=TLPv2.GREEN, # placeholder?
+                                valid_from=datetime.now(tz=timezone.utc), # replace with valid_from
+                                )
 
 
 indicator_converter = make_base_converter()
