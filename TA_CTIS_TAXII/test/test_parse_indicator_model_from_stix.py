@@ -1,6 +1,6 @@
 import pytz
 
-from package.bin.models import IndicatorModelV1
+from TA_CTIS_TAXII.package.bin.models import IndicatorModelV1
 from datetime import datetime
 
 IDENTITY_ID = "identity--4ddedd72-6517-4ddb-807e-db4fd0afe1a8"

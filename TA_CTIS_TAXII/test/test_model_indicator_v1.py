@@ -1,10 +1,11 @@
 from datetime import datetime
+
 import attrs
 import pytest
-import pytz
 from cattrs import ClassValidationError, transform_error
 
-from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators, maximum_tlpv2_of_indicators
+from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, \
+    form_payload_to_indicators, maximum_tlpv2_of_indicators
 from TA_CTIS_TAXII.package.bin.models.tlp_v2 import TLPv2, GREEN_MARKING_DEFINITION
 from TA_CTIS_TAXII.test.sample_indicator import GROUPING_ID, IDENTITY_ID, SAMPLE_DICT_NO_SPLUNK_RESERVED_FIELDS, \
     SAMPLE_INDICATOR_INSTANCE, get_sample_dict, new_sample_indicator_instance
