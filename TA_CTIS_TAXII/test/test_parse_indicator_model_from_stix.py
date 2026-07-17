@@ -53,6 +53,11 @@ class TestParseFromStix2Json:
     def test_should_parse_revoked(self):
         raise NotImplementedError
 
-    def test_should_allow_custom_keys(self):
+    def test_should_allow_custom_fields(self):
         # Should allow custom fields in the Indicator JSON such as "x_opencti_score"
-        raise NotImplementedError
+        indicator = IndicatorModelV1.from_stix_object(stix_json={
+            **MINIMAL_INDICATOR_STIX_JSON,
+            "x_opencti_score": 100
+        }, grouping_id=GROUPING_ID)
+        assert indicator is not None
+
