@@ -66,6 +66,8 @@ class IndicatorModelV1(BaseModelV1):
     valid_from: datetime = field()
     confidence: int = field(validator=[validate_confidence])
     created_by_ref: Optional[str] = field(default=None, validator=[validate_created_by_ref])
+    labels: List[str] = field(factory=list)
+    valid_until: Optional[datetime] = field(default=None)
 
     def to_stix(self, created_by_ref:str = None) -> StixIndicator:
         return StixIndicator(
@@ -80,6 +82,7 @@ class IndicatorModelV1(BaseModelV1):
             valid_from=self.valid_from,
             confidence=self.confidence,
             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
+            labels=self.labels,
         )
 
     @staticmethod
@@ -89,6 +92,11 @@ class IndicatorModelV1(BaseModelV1):
         https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#indicator
         https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#common-properties
         """
+        assert stix_json["type"] == "indicator"
+        assert stix_json["spec_version"] == "2.1"
+        for field in ["id", "created", "modified", "valid_from", "pattern_type", "pattern"]:
+            if field not in stix_json:
+                raise ValueError(f"Missing required field '{field}' in STIX JSON")
         stix2_object = stix2.parse(data=stix_json, allow_custom=True)
 
         assert stix2_object.pattern_type == "stix"
@@ -97,11 +105,14 @@ class IndicatorModelV1(BaseModelV1):
         # spec required properties
         created_dt = parse_date(stix_json["created"])
         modified_dt = parse_date(stix_json["modified"])
+        valid_from = parse_date(stix_json["valid_from"])
 
         # spec optional properties
         name = getattr(stix2_object, "name", "")
         description = getattr(stix2_object, "description", "")
         confidence = getattr(stix2_object, "confidence", 100)
+        labels = getattr(stix2_object, "labels", [])
+        valid_until = parse_date(stix_json["valid_until"]) if "valid_until" in stix_json else None
 
         # TODO: add optional created_by_ref field to Indicator Model
         created_by_ref = getattr(stix2_object, "created_by_ref", None)
@@ -118,7 +129,9 @@ class IndicatorModelV1(BaseModelV1):
                                 indicator_value='',
                                 indicator_category='',
                                 tlp_v2_rating=TLPv2.GREEN, # placeholder?
-                                valid_from=datetime.now(tz=timezone.utc), # replace with valid_from
+                                valid_from=valid_from,
+                                valid_until=valid_until,
+                                labels=labels,
                                 )
 
 

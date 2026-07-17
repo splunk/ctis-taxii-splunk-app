@@ -1,6 +1,7 @@
 from datetime import datetime
 import attrs
 import pytest
+import pytz
 from cattrs import ClassValidationError, transform_error
 
 from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators, maximum_tlpv2_of_indicators
@@ -219,6 +220,32 @@ class TestCreatedByRefField:
         as_dict = indicator_converter.unstructure(indicator)
         assert as_dict["created_by_ref"] == self.identity_id
 
+class TestLabelsField:
+    def test_parse_from_dict(self):
+        my_dict = get_sample_dict()
+        my_dict["labels"] = ["aaa", "bbb"]
+        indicator = indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert indicator.labels == ["aaa", "bbb"]
+
+    def test_model_object_to_dict(self):
+        indicator = new_sample_indicator_instance()
+        indicator.labels = ["aaa", "bbb"]
+        as_dict = indicator_converter.unstructure(indicator)
+        assert as_dict["labels"] == ["aaa", "bbb"]
+
+class TestValidUntilField:
+    # In the KVStore record, we are not storing timezone in the datetime string. UTC is assumed.
+    def test_parse_from_dict(self):
+        my_dict = get_sample_dict()
+        my_dict["valid_until"] = "2026-01-02T01:02:03"
+        indicator = indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert indicator.valid_until == datetime(2026, 1, 2, 1, 2, 3)
+
+    def test_model_object_to_dict(self):
+        indicator = new_sample_indicator_instance()
+        indicator.valid_until = datetime(2026, 8, 1, 0, 0, 1)
+        as_dict = indicator_converter.unstructure(indicator)
+        assert as_dict["valid_until"] == "2026-08-01T00:00:01"
 
 class TestHandleFormPayload:
     def test_should_handle_indicators_list(self):
