@@ -29,6 +29,7 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => <GroupingIdLink groupingId={row.grouping_id}/>},
 ]
 
+// TODO: Render optional created_by_ref field which is an identity
 const expansionFieldNameToCellValue = {
     "Indicator ID": (row) => <IndicatorIdLink indicatorId={row.indicator_id}/>,
     "Grouping ID": (row) => <GroupingIdLink groupingId={row.grouping_id}/>,
