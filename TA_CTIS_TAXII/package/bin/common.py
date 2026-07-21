@@ -258,6 +258,9 @@ class AbstractRestHandler(abc.ABC):
                 sightings.extend(more_sightings)
 
         identity_ids_referenced_by_sightings = SightingModelV1.identity_ids_referenced_by_sightings(sightings=sightings)
+        # TODO: Imported indicators can now have a created_by_ref property set.
+        #   Currently we override this property to be the Grouping creator in generated STIX bundles.
+        #   In future, we may need to preserve the indicator.created_by_ref instead of overriding it.
         all_identity_ids = identity_ids_referenced_by_sightings + [grouping.created_by_ref]
         all_identities = self.kvstore_collections_context.identities.fetch_many_structured_by_primary_key(possible_values_of_primary_key=all_identity_ids)
         logger.info(f"all_identities: {all_identities}")

@@ -74,9 +74,14 @@ class IndicatorModelV1(BaseModelV1):
         optional_kwargs = {}
         if self.valid_until is not None:
             optional_kwargs["valid_until"] = self.valid_until
+
+        # self.created_by_ref was not a part of the original model. This has been added to support importing indicators.
+        # The param created_by_ref can override the self.created_by_ref property.
+        creator_identity = created_by_ref if created_by_ref is not None else self.created_by_ref
+
         return StixIndicator(
             id=self.indicator_id,
-            created_by_ref=created_by_ref,
+            created_by_ref=creator_identity,
             created=self.created,
             modified=self.modified,
             name=self.name,
