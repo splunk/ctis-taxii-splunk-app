@@ -68,8 +68,12 @@ class IndicatorModelV1(BaseModelV1):
     created_by_ref: Optional[str] = field(default=None, validator=[validate_created_by_ref])
     labels: List[str] = field(factory=list)
     valid_until: Optional[datetime] = field(default=None)
+    revoked: bool = field(default=False)
 
     def to_stix(self, created_by_ref:str = None) -> StixIndicator:
+        optional_kwargs = {}
+        if self.valid_until is not None:
+            optional_kwargs["valid_until"] = self.valid_until
         return StixIndicator(
             id=self.indicator_id,
             created_by_ref=created_by_ref,
@@ -83,6 +87,8 @@ class IndicatorModelV1(BaseModelV1):
             confidence=self.confidence,
             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
             labels=self.labels,
+            revoked=self.revoked,
+            **optional_kwargs
         )
 
     @staticmethod
@@ -113,6 +119,7 @@ class IndicatorModelV1(BaseModelV1):
         confidence = getattr(stix2_object, "confidence", 100)
         labels = getattr(stix2_object, "labels", [])
         valid_until = parse_date(stix_json["valid_until"]) if "valid_until" in stix_json else None
+        revoked = getattr(stix2_object, "revoked", False)
 
         # TODO: add optional created_by_ref field to Indicator Model
         created_by_ref = getattr(stix2_object, "created_by_ref", None)
@@ -132,6 +139,7 @@ class IndicatorModelV1(BaseModelV1):
                                 valid_from=valid_from,
                                 valid_until=valid_until,
                                 labels=labels,
+                                revoked=revoked,
                                 )
 
 

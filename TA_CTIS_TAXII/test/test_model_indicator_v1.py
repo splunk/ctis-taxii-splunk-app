@@ -3,10 +3,12 @@ from datetime import datetime
 import attrs
 import pytest
 from cattrs import ClassValidationError, transform_error
+import json
 
 from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, \
     form_payload_to_indicators, maximum_tlpv2_of_indicators
 from TA_CTIS_TAXII.package.bin.models.tlp_v2 import TLPv2, GREEN_MARKING_DEFINITION
+from TA_CTIS_TAXII.package.bin.models import serialize_stix_object
 from TA_CTIS_TAXII.test.sample_indicator import GROUPING_ID, IDENTITY_ID, SAMPLE_DICT_NO_SPLUNK_RESERVED_FIELDS, \
     SAMPLE_INDICATOR_INSTANCE, get_sample_dict, new_sample_indicator_instance
 
@@ -188,6 +190,20 @@ def test_to_stix():
     assert stix.confidence == indicator.confidence
     assert stix.object_marking_refs == [GREEN_MARKING_DEFINITION.id]
     assert stix.created_by_ref == IDENTITY_ID
+
+    # Additional optional fields, not originally expected by ACSC
+    assert stix.revoked is False
+    assert 'labels' not in stix
+    assert 'valid_until' not in stix
+
+    serialized = serialize_stix_object(stix_object=stix)
+    assert type(serialized) == str
+    serialized_dict = json.loads(serialized)
+    assert serialized_dict["id"] == indicator.indicator_id
+
+    for field in ['revoked', 'labels', 'valid_until']:
+        assert field not in serialized_dict
+
 
 
 @pytest.mark.parametrize("grouping_id", ["", None, "invalid"])

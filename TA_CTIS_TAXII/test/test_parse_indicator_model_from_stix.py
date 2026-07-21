@@ -35,6 +35,7 @@ class TestParseFromStix2Json:
         assert indicator.modified == datetime(2026, 7, 18, 10, 0, 1, 0, tzinfo=pytz.UTC)
         assert indicator.confidence == 99
         assert indicator.created_by_ref == IDENTITY_ID
+        assert indicator.revoked is False
 
     def test_should_parse_labels(self):
         indicator = IndicatorModelV1.from_stix_object(stix_json={
@@ -51,7 +52,11 @@ class TestParseFromStix2Json:
         assert indicator.valid_until == datetime(2026, 8, 1, 1, 2, 3, tzinfo=pytz.UTC)
 
     def test_should_parse_revoked(self):
-        raise NotImplementedError
+        indicator = IndicatorModelV1.from_stix_object(stix_json={
+            **MINIMAL_INDICATOR_STIX_JSON,
+            "revoked": True
+        }, grouping_id=GROUPING_ID)
+        assert indicator.revoked is True
 
     def test_should_allow_custom_fields(self):
         # Should allow custom fields in the Indicator JSON such as "x_opencti_score"
