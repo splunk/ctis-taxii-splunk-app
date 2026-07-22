@@ -103,8 +103,9 @@ class IndicatorModelV1(BaseModelV1):
         https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#indicator
         https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#common-properties
         """
-        assert stix_json["type"] == "indicator"
-        assert stix_json["spec_version"] == "2.1"
+        assert isinstance(stix_json, dict), "Expected stix_json to be an object"
+        assert stix_json.get("type") == "indicator", 'Expected object to have type of "indicator".'
+        assert stix_json.get("spec_version") == "2.1", "Expected STIX spec_version to be 2.1"
         for field in ["id", "created", "modified", "valid_from", "pattern_type", "pattern"]:
             if field not in stix_json:
                 raise ValueError(f"Missing required field '{field}' in STIX JSON")

@@ -44,6 +44,7 @@ try:
     from rest_list_sightings import ListSightingsHandler
     from rest_edit_sighting import EditSightingHandler
     from rest_delete_sighting import DeleteSightingHandler
+    from rest_import_stix import ImportStixHandler
 
 except ImportError as e:
     tb = traceback.format_exc()
