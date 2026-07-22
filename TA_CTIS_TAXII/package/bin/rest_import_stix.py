@@ -1,11 +1,11 @@
-import logging
-from typing import Dict, List
 import json
-
-from models import IndicatorModelV1
-from common import AbstractRestHandler
+import logging
 from enum import Enum, unique
+from typing import Dict, List
 
+from common import AbstractRestHandler
+from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter
+from remote_pdb import RemotePdb
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -32,14 +32,32 @@ class ImportStixHandler(AbstractRestHandler):
         existing_indicators = self.kvstore_collections_context.indicators.fetch_many_structured_by_primary_key(possible_values_of_primary_key=indicator_ids)
         return [x.indicator_id for x in existing_indicators]
 
-    def handle_for_indicators(self, action : Action, indicators: List[Dict], overwrite_existing: bool = False) -> Dict:
+    def handle_validate_indicators(self, indicators: List[Dict]) -> Dict:
         validate_indicators(indicators=indicators)
-        indicator_ids = self.existing_indicator_ids(indicators)
-        if action == Action.IMPORT:
-            pass # handle persistence
-            return {}
-        else:
-            return {"existing_ids": indicator_ids}
+        existing_ids = self.existing_indicator_ids(indicators)
+        return {"existing_ids": existing_ids}
+
+    def handle_import_indicators(self, indicators: List[Dict], new_grouping: GroupingModelV1, overwrite_existing: bool = False) -> Dict:
+        validate_indicators(indicators=indicators)
+        existing_ids = set(self.existing_indicator_ids(indicators))
+        if not overwrite_existing and len(existing_ids) > 0:
+            raise ValueError(f"Cannot import indicators, some already exist: {existing_ids}")
+
+        new_grouping_unstructured = self.kvstore_collections_context.groupings.insert_record(record=new_grouping)
+
+        new_indicators = []
+        # This might be too slow for 1000+ indicators, perhaps replace with a bulk delete + insert operation?
+        for indicator_dict in indicators:
+            indicator_model = IndicatorModelV1.from_stix_object(stix_json=indicator_dict, grouping_id=new_grouping.grouping_id)
+
+            if overwrite_existing and indicator_model.indicator_id in existing_ids:
+                self.kvstore_collections_context.indicators.delete_indicator(indicator_id=indicator_model.indicator_id)
+            unstructured_indicator = self.kvstore_collections_context.indicators.insert_record(record=indicator_model)
+            new_indicators.append(unstructured_indicator)
+        return {
+            "new_grouping": new_grouping_unstructured,
+            "indicators": new_indicators,
+        }
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         if 'action' not in input_json:
@@ -63,7 +81,13 @@ class ImportStixHandler(AbstractRestHandler):
         overwrite_existing = input_json.get('overwrite_existing', False)
         logger.info(f"action={action}, overwrite_existing={overwrite_existing}")
         if model_type=='indicator':
-            return self.handle_for_indicators(action=action_enum, indicators=stix_objects, overwrite_existing=overwrite_existing)
+            if action_enum == Action.IMPORT:
+                if 'new_grouping' not in input_json:
+                    raise ValueError("Missing 'new_grouping' field in json body")
+                new_grouping = grouping_converter.structure(input_json['new_grouping'], GroupingModelV1)
+                return self.handle_import_indicators(indicators=stix_objects, new_grouping=new_grouping, overwrite_existing=overwrite_existing)
+            else:
+                return self.handle_validate_indicators(indicators=stix_objects)
         else:
             return {
                 "response" : "TODO"
