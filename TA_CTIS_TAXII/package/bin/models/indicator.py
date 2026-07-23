@@ -141,6 +141,8 @@ class IndicatorModelV1(BaseModelV1):
                                 confidence=confidence,
                                 indicator_value='',
                                 indicator_category='',
+                                # TODO: Extract TLP 2.0 from object_marking_refs if possible
+                                #  Otherwise use a default rating
                                 tlp_v2_rating=TLPv2.GREEN, # placeholder?
                                 valid_from=valid_from,
                                 valid_until=valid_until,

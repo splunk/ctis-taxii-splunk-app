@@ -4,8 +4,8 @@ from enum import Enum, unique
 from typing import Dict, List
 
 from common import AbstractRestHandler
-from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter
-from remote_pdb import RemotePdb
+from models import IndicatorModelV1, GroupingModelV1, grouping_converter
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -39,19 +39,22 @@ class ImportStixHandler(AbstractRestHandler):
 
     def handle_import_indicators(self, indicators: List[Dict], new_grouping: GroupingModelV1, overwrite_existing: bool = False) -> Dict:
         validate_indicators(indicators=indicators)
-        existing_ids = set(self.existing_indicator_ids(indicators))
+        existing_ids = self.existing_indicator_ids(indicators)
         if not overwrite_existing and len(existing_ids) > 0:
             raise ValueError(f"Cannot import indicators, some already exist: {existing_ids}")
 
         new_grouping_unstructured = self.kvstore_collections_context.groupings.insert_record(record=new_grouping)
 
+        # Delete existing
+        if len(existing_ids) > 0:
+            self.kvstore_collections_context.indicators.delete_many_by_primary_key(primary_key_values=existing_ids)
+
         new_indicators = []
-        # This might be too slow for 1000+ indicators, perhaps replace with a bulk delete + insert operation?
+        # Naive approach takes ~3 minutes with 1000 indicators.
+        # TODO: Replace with a bulk (optional) DELETE storage/collections/data/{collection} + batch_save?
+        # https://help.splunk.com/en/splunk-cloud-platform/leverage-rest-apis/rest-api-reference/10.5.2605/kv-store-endpoints/kv-store-endpoint-descriptions#delete-1
         for indicator_dict in indicators:
             indicator_model = IndicatorModelV1.from_stix_object(stix_json=indicator_dict, grouping_id=new_grouping.grouping_id)
-
-            if overwrite_existing and indicator_model.indicator_id in existing_ids:
-                self.kvstore_collections_context.indicators.delete_indicator(indicator_id=indicator_model.indicator_id)
             unstructured_indicator = self.kvstore_collections_context.indicators.insert_record(record=indicator_model)
             new_indicators.append(unstructured_indicator)
         return {

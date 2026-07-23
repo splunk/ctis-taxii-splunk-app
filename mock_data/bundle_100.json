@@ -1,0 +1,1706 @@
+{
+    "type": "bundle",
+    "id": "bundle--84f6c6f6-f611-4474-b6c4-daf6528725ca",
+    "objects": [
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--2a8bf7b1-e217-45c6-a23a-6c4f826e0c9e",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.459911Z",
+            "modified": "2026-07-22T05:23:50.459911Z",
+            "name": "gray fox io",
+            "pattern": "[url:value = 'https://gray.fox.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.459911Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 94
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--e2ee91f3-63b4-4b03-a31c-3c9273a44be0",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.462754Z",
+            "modified": "2026-07-22T05:23:50.462754Z",
+            "name": "cyan dolphin com",
+            "pattern": "[url:value = 'https://cyan.dolphin.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.462754Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 37
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--c3b5b809-b9e9-4852-9a0c-7509fc98f6e5",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.463249Z",
+            "modified": "2026-07-22T05:23:50.463249Z",
+            "name": "magenta alligator com",
+            "pattern": "[url:value = 'https://magenta.alligator.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.463249Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 42
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--0e8fd5d6-b45f-41df-b8c5-167da7f42e87",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.463585Z",
+            "modified": "2026-07-22T05:23:50.463585Z",
+            "name": "gold bear io",
+            "pattern": "[url:value = 'https://gold.bear.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.463585Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 98
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--4f2dd179-1379-4289-bec2-d51759516e29",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.46391Z",
+            "modified": "2026-07-22T05:23:50.46391Z",
+            "name": "silver zebra io",
+            "pattern": "[url:value = 'https://silver.zebra.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.46391Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 88
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--cd60414b-3f8b-4b57-9e3c-eaaee92dfa1c",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.46426Z",
+            "modified": "2026-07-22T05:23:50.46426Z",
+            "name": "red zebra org",
+            "pattern": "[url:value = 'https://red.zebra.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.46426Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 89
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--9e210e07-b463-46f0-8ed8-619809104392",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.464564Z",
+            "modified": "2026-07-22T05:23:50.464564Z",
+            "name": "yellow shark org",
+            "pattern": "[url:value = 'https://yellow.shark.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.464564Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 78
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--00597bbb-b8b5-4c14-8e8f-aa5a282bf94e",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.464927Z",
+            "modified": "2026-07-22T05:23:50.464927Z",
+            "name": "teal butterfly com",
+            "pattern": "[url:value = 'https://teal.butterfly.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.464927Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 33
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--f3279032-9de8-47c0-8153-0ccb75b877b6",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.465253Z",
+            "modified": "2026-07-22T05:23:50.465253Z",
+            "name": "blue bear edu",
+            "pattern": "[url:value = 'https://blue.bear.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.465253Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 68
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--4955d977-6633-4199-9b5a-37fb29b3a153",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.465541Z",
+            "modified": "2026-07-22T05:23:50.465541Z",
+            "name": "teal bear io",
+            "pattern": "[url:value = 'https://teal.bear.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.465541Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 39
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--0e107b16-8199-4732-841c-4361ae6cb152",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.465825Z",
+            "modified": "2026-07-22T05:23:50.465825Z",
+            "name": "black polar edu",
+            "pattern": "[url:value = 'https://black.polar.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.465825Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 95
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--7dcf1733-4bfa-40d6-b181-f5d8421e86da",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.466114Z",
+            "modified": "2026-07-22T05:23:50.466114Z",
+            "name": "magenta sheep org",
+            "pattern": "[url:value = 'https://magenta.sheep.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.466114Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 13
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--446eb5fe-4212-402b-bcc3-931c845ce6fd",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.466466Z",
+            "modified": "2026-07-22T05:23:50.466466Z",
+            "name": "teal rhinoceros io",
+            "pattern": "[url:value = 'https://teal.rhinoceros.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.466466Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 2
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--2af76153-66ca-4f09-8f3f-4ef2d1369d7b",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.466762Z",
+            "modified": "2026-07-22T05:23:50.466762Z",
+            "name": "silver fox org",
+            "pattern": "[url:value = 'https://silver.fox.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.466762Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 42
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--7ed8da36-4545-47e7-81bd-0309ca2b4e22",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.467068Z",
+            "modified": "2026-07-22T05:23:50.467068Z",
+            "name": "silver spider org",
+            "pattern": "[url:value = 'https://silver.spider.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.467068Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 65
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--144f337b-150c-4801-aec0-21b7a77ab8d3",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.467356Z",
+            "modified": "2026-07-22T05:23:50.467356Z",
+            "name": "yellow fox com",
+            "pattern": "[url:value = 'https://yellow.fox.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.467356Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 25
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--6f63ccfc-5005-4366-8c36-935b739fa9dd",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.467647Z",
+            "modified": "2026-07-22T05:23:50.467647Z",
+            "name": "red octopus io",
+            "pattern": "[url:value = 'https://red.octopus.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.467647Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 90
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--ce2764cb-0899-47c9-bd52-0be55d178c1d",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.467934Z",
+            "modified": "2026-07-22T05:23:50.467934Z",
+            "name": "green chicken org",
+            "pattern": "[url:value = 'https://green.chicken.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.467934Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 75
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--35e325fb-459f-4c57-ae84-8f987d886916",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.468224Z",
+            "modified": "2026-07-22T05:23:50.468224Z",
+            "name": "gold wolf edu",
+            "pattern": "[url:value = 'https://gold.wolf.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.468224Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 95
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--e61f0332-1781-4c27-9ba7-2954bb092d2c",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.468513Z",
+            "modified": "2026-07-22T05:23:50.468513Z",
+            "name": "purple koala edu",
+            "pattern": "[url:value = 'https://purple.koala.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.468513Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 2
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--3404aaa7-f96d-4199-9d8f-ce7648187db7",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.468801Z",
+            "modified": "2026-07-22T05:23:50.468801Z",
+            "name": "maroon lion org",
+            "pattern": "[url:value = 'https://maroon.lion.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.468801Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 100
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--17c08c94-9c87-4829-9dcd-b159311714bf",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.469091Z",
+            "modified": "2026-07-22T05:23:50.469091Z",
+            "name": "cyan cat org",
+            "pattern": "[url:value = 'https://cyan.cat.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.469091Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 21
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--ffb7687d-8b6d-4638-9b7b-8bc4aa6b35c2",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.469463Z",
+            "modified": "2026-07-22T05:23:50.469463Z",
+            "name": "maroon penguin com",
+            "pattern": "[url:value = 'https://maroon.penguin.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.469463Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 68
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--114b5eab-7b3a-4453-9a38-b555b8a57c0b",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.469788Z",
+            "modified": "2026-07-22T05:23:50.469788Z",
+            "name": "yellow donkey io",
+            "pattern": "[url:value = 'https://yellow.donkey.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.469788Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 76
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--7594d075-216d-4f5f-ba1d-d8c2becaaccb",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.470129Z",
+            "modified": "2026-07-22T05:23:50.470129Z",
+            "name": "magenta horse org",
+            "pattern": "[url:value = 'https://magenta.horse.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.470129Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 46
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--5fba0b19-60c2-41ea-9d53-b0de68f21cd5",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.470458Z",
+            "modified": "2026-07-22T05:23:50.470458Z",
+            "name": "navy deer com",
+            "pattern": "[url:value = 'https://navy.deer.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.470458Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 41
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--0aa2cc7e-4555-48f5-b733-e89b34f8c2a6",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.470772Z",
+            "modified": "2026-07-22T05:23:50.470772Z",
+            "name": "lime deer edu",
+            "pattern": "[url:value = 'https://lime.deer.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.470772Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 30
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--eaa7530e-7ad1-4425-8503-28ac97222224",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.471058Z",
+            "modified": "2026-07-22T05:23:50.471058Z",
+            "name": "green crocodile com",
+            "pattern": "[url:value = 'https://green.crocodile.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.471058Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 65
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--26f279cf-9dbd-468d-8dd0-c362c5c7e2ef",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.471344Z",
+            "modified": "2026-07-22T05:23:50.471344Z",
+            "name": "red fish com",
+            "pattern": "[url:value = 'https://red.fish.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.471344Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 86
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--8342c22e-ae31-4e65-a29c-a94e9e4d74da",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.471631Z",
+            "modified": "2026-07-22T05:23:50.471631Z",
+            "name": "magenta turtle org",
+            "pattern": "[url:value = 'https://magenta.turtle.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.471631Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 41
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--4a9e7aee-4520-4ae3-8683-75a8ff909e15",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.471921Z",
+            "modified": "2026-07-22T05:23:50.471921Z",
+            "name": "gold bear com",
+            "pattern": "[url:value = 'https://gold.bear.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.471921Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 51
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--6031bfbf-9d70-4078-b140-62c82302b230",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.472208Z",
+            "modified": "2026-07-22T05:23:50.472208Z",
+            "name": "teal eagle com",
+            "pattern": "[url:value = 'https://teal.eagle.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.472208Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 56
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--0d795c0a-fe95-4c42-bc60-0976ff540b50",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.472493Z",
+            "modified": "2026-07-22T05:23:50.472493Z",
+            "name": "lime turtle io",
+            "pattern": "[url:value = 'https://lime.turtle.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.472493Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 38
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--d6bad551-bd97-4ab8-aa31-0e2b29e095e8",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.472826Z",
+            "modified": "2026-07-22T05:23:50.472826Z",
+            "name": "red rat com",
+            "pattern": "[url:value = 'https://red.rat.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.472826Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 25
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--c071c27c-9018-4b74-8afd-55f20786c75f",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.473115Z",
+            "modified": "2026-07-22T05:23:50.473115Z",
+            "name": "purple cat io",
+            "pattern": "[url:value = 'https://purple.cat.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.473115Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 21
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--022b24cb-3ee8-4da2-8ad3-b7fefbadf52a",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.473402Z",
+            "modified": "2026-07-22T05:23:50.473402Z",
+            "name": "blue frog org",
+            "pattern": "[url:value = 'https://blue.frog.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.473402Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 36
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--a26a3d79-4aea-4144-aaae-476f13f044d3",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.473685Z",
+            "modified": "2026-07-22T05:23:50.473685Z",
+            "name": "cyan penguin edu",
+            "pattern": "[url:value = 'https://cyan.penguin.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.473685Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 18
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--e4999266-0821-4e38-bc06-bf549b4542dd",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.473971Z",
+            "modified": "2026-07-22T05:23:50.473971Z",
+            "name": "gray duck io",
+            "pattern": "[url:value = 'https://gray.duck.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.473971Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 67
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--b19f0136-1a0b-4834-a551-06e0a0444604",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.474259Z",
+            "modified": "2026-07-22T05:23:50.474259Z",
+            "name": "gray chimpanzee io",
+            "pattern": "[url:value = 'https://gray.chimpanzee.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.474259Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 79
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--e4696a2f-2bcd-454d-9033-dacdab6becd7",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.474562Z",
+            "modified": "2026-07-22T05:23:50.474562Z",
+            "name": "navy mouse org",
+            "pattern": "[url:value = 'https://navy.mouse.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.474562Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 90
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--35445bf7-c67f-4fa2-965b-bbde637cbe47",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.474846Z",
+            "modified": "2026-07-22T05:23:50.474846Z",
+            "name": "brown octopus org",
+            "pattern": "[url:value = 'https://brown.octopus.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.474846Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 7
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--874c0552-217f-4a7c-ab10-160e9f6bc69d",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.475133Z",
+            "modified": "2026-07-22T05:23:50.475133Z",
+            "name": "navy dog org",
+            "pattern": "[url:value = 'https://navy.dog.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.475133Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 54
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--037f87ee-8388-495a-8ddb-dc63fdcdbf97",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.475416Z",
+            "modified": "2026-07-22T05:23:50.475416Z",
+            "name": "black cat edu",
+            "pattern": "[url:value = 'https://black.cat.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.475416Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 95
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--fd047533-ea13-454a-8575-a109f846493a",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.47575Z",
+            "modified": "2026-07-22T05:23:50.47575Z",
+            "name": "magenta hippopotamus io",
+            "pattern": "[url:value = 'https://magenta.hippopotamus.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.47575Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 85
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--b65aa9d1-c2a7-4ed6-9255-2f455dc5d9a7",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.476056Z",
+            "modified": "2026-07-22T05:23:50.476056Z",
+            "name": "white elephant edu",
+            "pattern": "[url:value = 'https://white.elephant.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.476056Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 9
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--336a02f5-f4cc-459c-9afc-895439626cde",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.476343Z",
+            "modified": "2026-07-22T05:23:50.476343Z",
+            "name": "red wolf org",
+            "pattern": "[url:value = 'https://red.wolf.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.476343Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 60
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--f81f88f2-87b3-4f61-9c2b-b403b33c5c20",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.476624Z",
+            "modified": "2026-07-22T05:23:50.476624Z",
+            "name": "gray chicken edu",
+            "pattern": "[url:value = 'https://gray.chicken.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.476624Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 9
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--ddecf35b-d1f9-4daf-9a46-a1de09a9a9f3",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.476908Z",
+            "modified": "2026-07-22T05:23:50.476908Z",
+            "name": "gray giraffe io",
+            "pattern": "[url:value = 'https://gray.giraffe.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.476908Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 21
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--eb2cc291-0131-4478-8c62-8871a3a9e91d",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.477195Z",
+            "modified": "2026-07-22T05:23:50.477195Z",
+            "name": "yellow dolphin org",
+            "pattern": "[url:value = 'https://yellow.dolphin.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.477195Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 100
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--58322cdd-6792-4f5c-ae14-8672584a2c40",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.477503Z",
+            "modified": "2026-07-22T05:23:50.477503Z",
+            "name": "magenta rhinoceros io",
+            "pattern": "[url:value = 'https://magenta.rhinoceros.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.477503Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 30
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--4644dea7-c0d3-4309-87bd-c9b91d82f667",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.477796Z",
+            "modified": "2026-07-22T05:23:50.477796Z",
+            "name": "maroon butterfly org",
+            "pattern": "[url:value = 'https://maroon.butterfly.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.477796Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 46
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--77ddf0b8-ad17-427f-89a0-3f62a5077de4",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.478082Z",
+            "modified": "2026-07-22T05:23:50.478082Z",
+            "name": "teal fox io",
+            "pattern": "[url:value = 'https://teal.fox.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.478082Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 43
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--6f2f9386-7868-41c9-9034-0768ae64b4f4",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.478366Z",
+            "modified": "2026-07-22T05:23:50.478366Z",
+            "name": "brown polar edu",
+            "pattern": "[url:value = 'https://brown.polar.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.478366Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 10
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--d049849a-149b-46bc-982b-0e0dcbb0c2ef",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.478653Z",
+            "modified": "2026-07-22T05:23:50.478653Z",
+            "name": "brown lion org",
+            "pattern": "[url:value = 'https://brown.lion.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.478653Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 60
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--c7e8af1b-6287-4ec3-a906-c29875819141",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.479269Z",
+            "modified": "2026-07-22T05:23:50.479269Z",
+            "name": "cyan spider com",
+            "pattern": "[url:value = 'https://cyan.spider.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.479269Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 79
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--2287e074-4fe8-44b8-8dbd-35a4c7b62c2e",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.479553Z",
+            "modified": "2026-07-22T05:23:50.479553Z",
+            "name": "red fox org",
+            "pattern": "[url:value = 'https://red.fox.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.479553Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 71
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--57ff37bc-f3e5-4374-8cc6-1ed0a79bf880",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.479831Z",
+            "modified": "2026-07-22T05:23:50.479831Z",
+            "name": "white cat io",
+            "pattern": "[url:value = 'https://white.cat.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.479831Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 16
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--f4c83f89-93d2-433a-a029-076f4905bb83",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.48012Z",
+            "modified": "2026-07-22T05:23:50.48012Z",
+            "name": "white bear com",
+            "pattern": "[url:value = 'https://white.bear.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.48012Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 28
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--3394f5e7-5153-47c7-96be-275d5fe8b6d1",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.480404Z",
+            "modified": "2026-07-22T05:23:50.480404Z",
+            "name": "pink polar edu",
+            "pattern": "[url:value = 'https://pink.polar.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.480404Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 4
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--f7721bdc-21d2-4ee7-884b-0b55af7b8fd6",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.480688Z",
+            "modified": "2026-07-22T05:23:50.480688Z",
+            "name": "violet frog io",
+            "pattern": "[url:value = 'https://violet.frog.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.480688Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 39
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--77219fb0-d8b7-4e17-80a2-d9ac6c1276cb",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.480975Z",
+            "modified": "2026-07-22T05:23:50.480975Z",
+            "name": "brown pig io",
+            "pattern": "[url:value = 'https://brown.pig.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.480975Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 48
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--c9d05669-fbc8-4084-b58c-3f9da6045dbe",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.481263Z",
+            "modified": "2026-07-22T05:23:50.481263Z",
+            "name": "gray tiger com",
+            "pattern": "[url:value = 'https://gray.tiger.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.481263Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 93
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--5cb6512f-ec3a-49d6-ae2d-3e5b51c40c38",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.481564Z",
+            "modified": "2026-07-22T05:23:50.481564Z",
+            "name": "navy zebra edu",
+            "pattern": "[url:value = 'https://navy.zebra.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.481564Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 21
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--bb23c47e-604e-468e-8922-ab0aed8b2850",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.481849Z",
+            "modified": "2026-07-22T05:23:50.481849Z",
+            "name": "teal lion org",
+            "pattern": "[url:value = 'https://teal.lion.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.481849Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 15
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--b1600a2b-d427-4bd9-81fb-db34c43a4d86",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.482181Z",
+            "modified": "2026-07-22T05:23:50.482181Z",
+            "name": "purple elephant com",
+            "pattern": "[url:value = 'https://purple.elephant.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.482181Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 81
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--f4a2f73f-5480-4b8b-a2f6-cdffc289a6fa",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.48247Z",
+            "modified": "2026-07-22T05:23:50.48247Z",
+            "name": "silver kangaroo io",
+            "pattern": "[url:value = 'https://silver.kangaroo.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.48247Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 29
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--12171cd6-d42c-4abb-9e2d-245f24a0a457",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.482756Z",
+            "modified": "2026-07-22T05:23:50.482756Z",
+            "name": "white snake io",
+            "pattern": "[url:value = 'https://white.snake.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.482756Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 68
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--6bfdee54-f134-4b8f-91c8-bc63aec57961",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.483039Z",
+            "modified": "2026-07-22T05:23:50.483039Z",
+            "name": "purple zebra edu",
+            "pattern": "[url:value = 'https://purple.zebra.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.483039Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 91
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--1a3e461c-e678-4ed3-b724-ff5bd7bd759e",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.483324Z",
+            "modified": "2026-07-22T05:23:50.483324Z",
+            "name": "pink dog edu",
+            "pattern": "[url:value = 'https://pink.dog.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.483324Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 52
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--c071b235-33b6-47d3-a845-9b1e637ed8cf",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.483604Z",
+            "modified": "2026-07-22T05:23:50.483604Z",
+            "name": "green kangaroo io",
+            "pattern": "[url:value = 'https://green.kangaroo.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.483604Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 55
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--519de903-7889-4d77-97ec-29cc23a8a0b5",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.483889Z",
+            "modified": "2026-07-22T05:23:50.483889Z",
+            "name": "cyan crocodile com",
+            "pattern": "[url:value = 'https://cyan.crocodile.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.483889Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 85
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--5b52a007-15d8-4c57-9ff1-209cd1d5681c",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.484175Z",
+            "modified": "2026-07-22T05:23:50.484175Z",
+            "name": "navy giraffe org",
+            "pattern": "[url:value = 'https://navy.giraffe.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.484175Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 2
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--1c6dad33-5573-4b27-abd4-820a6a4313a1",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.484478Z",
+            "modified": "2026-07-22T05:23:50.484478Z",
+            "name": "red frog org",
+            "pattern": "[url:value = 'https://red.frog.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.484478Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 10
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--b83cdba6-5197-45f6-9246-f09b83e03f8c",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.484759Z",
+            "modified": "2026-07-22T05:23:50.484759Z",
+            "name": "orange duck com",
+            "pattern": "[url:value = 'https://orange.duck.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.484759Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 46
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--15f26792-af86-4ff5-9130-4d54987860f3",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.485044Z",
+            "modified": "2026-07-22T05:23:50.485044Z",
+            "name": "magenta duck org",
+            "pattern": "[url:value = 'https://magenta.duck.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.485044Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 88
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--2868a952-ef60-4efe-a2c7-6ea286d74390",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.485393Z",
+            "modified": "2026-07-22T05:23:50.485393Z",
+            "name": "gold horse org",
+            "pattern": "[url:value = 'https://gold.horse.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.485393Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 57
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--42601293-e5ac-4c09-b0f1-24ccd767dcfd",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.485683Z",
+            "modified": "2026-07-22T05:23:50.485683Z",
+            "name": "red horse org",
+            "pattern": "[url:value = 'https://red.horse.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.485683Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 78
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--0f10a489-3d53-464d-94ba-d06679a03400",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.485967Z",
+            "modified": "2026-07-22T05:23:50.485967Z",
+            "name": "violet whale org",
+            "pattern": "[url:value = 'https://violet.whale.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.485967Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 1
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--7c01c063-2361-4a8c-becb-f1590324f2af",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.486254Z",
+            "modified": "2026-07-22T05:23:50.486254Z",
+            "name": "silver alligator edu",
+            "pattern": "[url:value = 'https://silver.alligator.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.486254Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 1
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--ebf12828-3393-4490-a0b5-5fbb02e8556b",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.486578Z",
+            "modified": "2026-07-22T05:23:50.486578Z",
+            "name": "green zebra io",
+            "pattern": "[url:value = 'https://green.zebra.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.486578Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 47
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--b2e9c09d-3d61-4359-bfc9-8ca136336732",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.486862Z",
+            "modified": "2026-07-22T05:23:50.486862Z",
+            "name": "teal chimpanzee io",
+            "pattern": "[url:value = 'https://teal.chimpanzee.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.486862Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 87
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--c8fef97e-1895-488e-b6e7-bfb281c73435",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.487147Z",
+            "modified": "2026-07-22T05:23:50.487147Z",
+            "name": "brown owl io",
+            "pattern": "[url:value = 'https://brown.owl.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.487147Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 88
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--eb06253d-53e3-4754-9643-32a042be0ffb",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.487428Z",
+            "modified": "2026-07-22T05:23:50.487428Z",
+            "name": "gold owl org",
+            "pattern": "[url:value = 'https://gold.owl.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.487428Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 72
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--35cc36cf-9ac9-48a2-9ab2-0cfcff42c8eb",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.487708Z",
+            "modified": "2026-07-22T05:23:50.487708Z",
+            "name": "navy kangaroo io",
+            "pattern": "[url:value = 'https://navy.kangaroo.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.487708Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 27
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--28909b13-8b8f-4634-ba3a-ed5b54769b86",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.487992Z",
+            "modified": "2026-07-22T05:23:50.487992Z",
+            "name": "black donkey edu",
+            "pattern": "[url:value = 'https://black.donkey.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.487992Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 21
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--37279a49-62d5-4b13-9b5e-98f9b8ce7e72",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.488286Z",
+            "modified": "2026-07-22T05:23:50.488286Z",
+            "name": "yellow frog io",
+            "pattern": "[url:value = 'https://yellow.frog.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.488286Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 50
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--9c726cc6-57aa-4c3d-b04d-09ebef97129e",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.488631Z",
+            "modified": "2026-07-22T05:23:50.488631Z",
+            "name": "maroon butterfly io",
+            "pattern": "[url:value = 'https://maroon.butterfly.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.488631Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 60
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--249316c3-e8b1-4d9a-a1b3-6907e1494f29",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.488936Z",
+            "modified": "2026-07-22T05:23:50.488936Z",
+            "name": "white butterfly org",
+            "pattern": "[url:value = 'https://white.butterfly.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.488936Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 100
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--d2649fb4-b0c5-4e64-becf-5d1b0e91b54e",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.48923Z",
+            "modified": "2026-07-22T05:23:50.48923Z",
+            "name": "gold kangaroo io",
+            "pattern": "[url:value = 'https://gold.kangaroo.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.48923Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 22
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--eae2f8af-8d99-43c7-9805-e245736e8895",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.489543Z",
+            "modified": "2026-07-22T05:23:50.489543Z",
+            "name": "green butterfly edu",
+            "pattern": "[url:value = 'https://green.butterfly.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.489543Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 86
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--a8677f24-ac39-470f-b998-97bab37f4101",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.489831Z",
+            "modified": "2026-07-22T05:23:50.489831Z",
+            "name": "purple frog edu",
+            "pattern": "[url:value = 'https://purple.frog.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.489831Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 12
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--03e58134-104f-40d3-8640-e30e097486fa",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.490122Z",
+            "modified": "2026-07-22T05:23:50.490122Z",
+            "name": "magenta dolphin edu",
+            "pattern": "[url:value = 'https://magenta.dolphin.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.490122Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 94
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--fe29311f-23b0-43a3-8124-6300d2a86181",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.49041Z",
+            "modified": "2026-07-22T05:23:50.49041Z",
+            "name": "navy polar edu",
+            "pattern": "[url:value = 'https://navy.polar.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.49041Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 30
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--bee3c684-7f4d-4810-b2ae-d42b4036bdc2",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.490693Z",
+            "modified": "2026-07-22T05:23:50.490693Z",
+            "name": "brown bee com",
+            "pattern": "[url:value = 'https://brown.bee.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.490693Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 93
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--d4702730-30cf-4601-be46-d1fbc92ab6af",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.490979Z",
+            "modified": "2026-07-22T05:23:50.490979Z",
+            "name": "maroon spider io",
+            "pattern": "[url:value = 'https://maroon.spider.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.490979Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 38
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--06899e4d-c49a-49eb-815d-64add72e818b",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.491262Z",
+            "modified": "2026-07-22T05:23:50.491262Z",
+            "name": "white goat io",
+            "pattern": "[url:value = 'https://white.goat.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.491262Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 79
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--6a73fa00-1680-42b3-9664-04e1e6519510",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.491597Z",
+            "modified": "2026-07-22T05:23:50.491597Z",
+            "name": "orange owl edu",
+            "pattern": "[url:value = 'https://orange.owl.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.491597Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 94
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--a52b3a01-ee1c-4098-8bd4-0f082185ca38",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.491881Z",
+            "modified": "2026-07-22T05:23:50.491881Z",
+            "name": "teal bee org",
+            "pattern": "[url:value = 'https://teal.bee.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.491881Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 20
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--988a21e9-8251-4f40-a3bd-02cbb2a2a200",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.492161Z",
+            "modified": "2026-07-22T05:23:50.492161Z",
+            "name": "brown rhinoceros org",
+            "pattern": "[url:value = 'https://brown.rhinoceros.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.492161Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 49
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--84cbc5ca-0a2e-4337-97bb-a6d371e8df8d",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:50.49245Z",
+            "modified": "2026-07-22T05:23:50.49245Z",
+            "name": "magenta bear com",
+            "pattern": "[url:value = 'https://magenta.bear.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:50.49245Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 79
+        }
+    ]
+}

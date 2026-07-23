@@ -77,6 +77,13 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         delete_http_resp = self.collection.delete(query=json.dumps(query))
         return str(delete_http_resp)
 
+    def delete_many_by_primary_key(self, primary_key_values: List[str]):
+        records_to_delete = self.fetch_many_structured_by_primary_key(possible_values_of_primary_key=primary_key_values)
+        for record in records_to_delete:
+            logger.info(f"Deleting record: {record}")
+        query = self.query_in(field=self.primary_key, possible_values=primary_key_values)
+        return self.delete_many(query=query)
+
     def check_if_exactly_one_exists(self, query: Dict) -> bool:
         try:
             self.fetch_exactly_one_structured(query=query)
