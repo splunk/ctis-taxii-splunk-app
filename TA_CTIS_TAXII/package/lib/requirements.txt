@@ -18,7 +18,7 @@ solnlib
 taxii2-client==2.3.0
 pytz
 python-dateutil
-# remote-pdb
+remote-pdb
 
 # Latest requests version that supports Python 3.9
 # Python 3.9 was dropped in https://github.com/psf/requests/releases/tag/v2.33.0

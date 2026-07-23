@@ -4,7 +4,7 @@ from enum import Enum, unique
 from typing import Dict, List
 
 from common import AbstractRestHandler
-from models import IndicatorModelV1, GroupingModelV1, grouping_converter
+from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -49,17 +49,12 @@ class ImportStixHandler(AbstractRestHandler):
         if len(existing_ids) > 0:
             self.kvstore_collections_context.indicators.delete_many_by_primary_key(primary_key_values=existing_ids)
 
-        new_indicators = []
-        # Naive approach takes ~3 minutes with 1000 indicators.
-        # TODO: Replace with a bulk (optional) DELETE storage/collections/data/{collection} + batch_save?
-        # https://help.splunk.com/en/splunk-cloud-platform/leverage-rest-apis/rest-api-reference/10.5.2605/kv-store-endpoints/kv-store-endpoint-descriptions#delete-1
-        for indicator_dict in indicators:
-            indicator_model = IndicatorModelV1.from_stix_object(stix_json=indicator_dict, grouping_id=new_grouping.grouping_id)
-            unstructured_indicator = self.kvstore_collections_context.indicators.insert_record(record=indicator_model)
-            new_indicators.append(unstructured_indicator)
+        new_indicators_structured = [IndicatorModelV1.from_stix_object(stix_json=x, grouping_id=new_grouping.grouping_id) for x in indicators]
+        self.kvstore_collections_context.indicators.insert_many_structured(records=new_indicators_structured)
+
         return {
             "new_grouping": new_grouping_unstructured,
-            "indicators": new_indicators,
+            "indicators": [indicator_converter.unstructure(x) for x in new_indicators_structured],
         }
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
