@@ -25,6 +25,9 @@ export const utcNowIsoStringWithoutTimezone = () => {
 }
 
 export const formatTimestampForDisplay = (timestampIsoString) => {
+    if(!timestampIsoString || timestampIsoString === "") {
+        return "No Value";
+    }
     const timestampFormatted = moment.utc(timestampIsoString).format("YYYY-MM-DD HH:mm:ss");
     const fromNow = moment.utc(timestampIsoString).fromNow();
     return `${timestampFormatted} (${fromNow})`;

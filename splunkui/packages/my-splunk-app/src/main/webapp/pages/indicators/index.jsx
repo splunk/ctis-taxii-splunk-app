@@ -4,7 +4,13 @@ import Plus from '@splunk/react-icons/Plus';
 import { getIndicators } from '@splunk/my-page/src/ApiClient';
 import { AppContainer, createErrorToast } from '@splunk/my-page/src/AppContainer';
 import { PaginatedRecords } from '@splunk/my-page/src/PaginatedDataTable';
-import { GroupingIdLink, IndicatorIdLink, NEW_INDICATOR_PAGE, urlForEditIndicator } from '@splunk/my-page/src/urls';
+import {
+    GroupingIdLink,
+    IdentityIdLink,
+    IndicatorIdLink,
+    NEW_INDICATOR_PAGE,
+    urlForEditIndicator
+} from '@splunk/my-page/src/urls';
 import useModal from '@splunk/my-page/src/useModal';
 import { DeleteIndicatorModal } from '@splunk/my-page/src/DeleteModal';
 import { useViewportBreakpoints } from '@splunk/my-page/src/viewportBreakpoints';
@@ -17,6 +23,7 @@ import BaseButton from '@splunk/my-page/src/BaseButton';
 import { formatTimestampForDisplay } from '@splunk/my-page/src/date_utils';
 import { DataTableV2 } from '@splunk/my-page/src/ExpandableDataTable';
 import { getUrlQueryParams } from '@splunk/my-page/src/queryParams';
+import { BooleanValue, NoValuePresent, StixLabels } from '@splunk/my-page/src/data_table/values';
 import { layoutWithTheme } from '../../common/theme';
 import ViewOrEditIndicator from '../../common/indicator_form/ViewOrEditIndicator';
 import { usePageTitle } from '../../common/utils';
@@ -29,7 +36,6 @@ const mappingOfColumnNameToCellValue = [
     {columnName: "Grouping ID", getCellContent: (row) => <GroupingIdLink groupingId={row.grouping_id}/>},
 ]
 
-// TODO: Render optional created_by_ref field which is an identity
 const expansionFieldNameToCellValue = {
     "Indicator ID": (row) => <IndicatorIdLink indicatorId={row.indicator_id}/>,
     "Grouping ID": (row) => <GroupingIdLink groupingId={row.grouping_id}/>,
@@ -37,12 +43,16 @@ const expansionFieldNameToCellValue = {
     "Description": (row) => row.description,
     "STIX Pattern": (row) => row.stix_pattern,
     "Valid From (UTC)": (row) => formatTimestampForDisplay(row.valid_from),
+    "Valid Until (UTC)": (row) => row.valid_until ? formatTimestampForDisplay(row.valid_until) : <NoValuePresent/>,
     "Indicator Category": (row) => row.indicator_category,
     "Indicator Value": (row) => row.indicator_value,
     [FIELD_LABEL_TLP_V2_MARKING]: (row) => row.tlp_v2_rating,
     "Created At (UTC)": (row) => formatTimestampForDisplay(row.created),
     "Modified At (UTC)": (row) => formatTimestampForDisplay(row.modified),
     "Confidence": (row) => row.confidence,
+    "Labels": row => <StixLabels labels={row.labels}/>,
+    "Revoked": (row) => <BooleanValue value={row.revoked}/>,
+    "Created By Ref": row => row.created_by_ref ? <IdentityIdLink identityId={row.created_by_ref} /> : <NoValuePresent/>,
 }
 
 const RowActionPrimary = ({row}) => {
