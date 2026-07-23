@@ -1,6 +1,6 @@
 import pytz
 
-from TA_CTIS_TAXII.package.bin.models import IndicatorModelV1
+from TA_CTIS_TAXII.package.bin.models import IndicatorModelV1, TLPv2
 from datetime import datetime
 
 IDENTITY_ID = "identity--4ddedd72-6517-4ddb-807e-db4fd0afe1a8"
@@ -65,4 +65,14 @@ class TestParseFromStix2Json:
             "x_opencti_score": 100
         }, grouping_id=GROUPING_ID)
         assert indicator is not None
+
+    def test_should_parse_tlp2_from_object_marking_refs(self):
+        # https://github.com/oasis-open/cti-stix-common-objects/blob/main/extension-definition-specifications/tlp-2.0/examples/tlp-amber.json
+        TLP_2_AMBER_MARKING_DEF = "marking-definition--55d920b0-5e8b-4f79-9ee9-91f868d9b421"
+        indicator = IndicatorModelV1.from_stix_object(stix_json={
+            **MINIMAL_INDICATOR_STIX_JSON,
+            "object_marking_refs": [TLP_2_AMBER_MARKING_DEF]
+        }, grouping_id=GROUPING_ID)
+        assert indicator.tlp_v2_rating == TLPv2.AMBER
+
 

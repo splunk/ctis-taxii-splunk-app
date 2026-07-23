@@ -1,19 +1,20 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from dateutil.parser import parse as parse_date
+from datetime import datetime
+from functools import reduce
+from typing import List, Optional, Tuple, Dict
+from uuid import uuid4
 
+import stix2
 from attrs import define, field
 from cattrs import ClassValidationError
+from dateutil.parser import parse as parse_date
 from stix2 import Indicator as StixIndicator
-import stix2
 from stix2patterns.validator import validate as stix_validate
-from uuid import uuid4
+
 from .base import BaseModelV1, make_base_converter
 from .common import validate_confidence
 from .tlp_v2 import TLPv2
-from typing import List, Optional, Tuple, Dict
-from functools import reduce
 
 """
 # This Indicator Model represents fields required to generate a STIX 2.1 Indicator object
@@ -97,7 +98,7 @@ class IndicatorModelV1(BaseModelV1):
         )
 
     @staticmethod
-    def from_stix_object(stix_json: Dict, grouping_id: str) -> IndicatorModelV1:
+    def from_stix_object(stix_json: Dict, grouping_id: str, default_tlp_v2_rating=TLPv2.GREEN) -> IndicatorModelV1:
         """
         Links to STIX spec
         https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#indicator
@@ -126,8 +127,9 @@ class IndicatorModelV1(BaseModelV1):
         labels = getattr(stix2_object, "labels", [])
         valid_until = parse_date(stix_json["valid_until"]) if "valid_until" in stix_json else None
         revoked = getattr(stix2_object, "revoked", False)
+        object_marking_refs = getattr(stix2_object, "object_marking_refs", [])
+        tlp_v2_rating = TLPv2.from_object_marking_refs(object_marking_refs=object_marking_refs) or default_tlp_v2_rating
 
-        # TODO: add optional created_by_ref field to Indicator Model
         created_by_ref = getattr(stix2_object, "created_by_ref", None)
 
         return IndicatorModelV1(indicator_id=stix2_object.id,
@@ -141,9 +143,7 @@ class IndicatorModelV1(BaseModelV1):
                                 confidence=confidence,
                                 indicator_value='',
                                 indicator_category='',
-                                # TODO: Extract TLP 2.0 from object_marking_refs if possible
-                                #  Otherwise use a default rating
-                                tlp_v2_rating=TLPv2.GREEN, # placeholder?
+                                tlp_v2_rating=tlp_v2_rating,
                                 valid_from=valid_from,
                                 valid_until=valid_until,
                                 labels=labels,
