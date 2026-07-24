@@ -24,6 +24,7 @@ def validate_indicators(indicators: List[Dict]):
             raise ValueError(f"Invalid indicator {json.dumps(indicator)}: {e}") from e
 
 
+# TODO: Integration test coverage
 class ImportStixHandler(AbstractRestHandler):
     def existing_indicator_ids(self, indicators: List[Dict]):
         if len(indicators) == 0:
