@@ -2,6 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Message from '@splunk/react-ui/Message';
 import Loader from '@splunk/my-page/src/Loader';
+import List from '@splunk/react-ui/List';
+import CollapsiblePanel from '@splunk/react-ui/CollapsiblePanel';
+
+function ListOfIndicatorIds({indicatorIds}){
+    return <List>
+        {indicatorIds.map(id => <List.Item key={id}>{id}</List.Item>)}
+    </List>
+}
+ListOfIndicatorIds.propTypes = {
+    indicatorIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+}
 
 export default function IndicatorsValidationSummary({
     indicators,
@@ -25,7 +36,10 @@ export default function IndicatorsValidationSummary({
                     <div>Indicators found: {indicators.length}</div>
                     {existingIndicatorIds.length > 0 && (
                         <Message appearance="fill" type="warning">
-                            Existing indicators found: {JSON.stringify(existingIndicatorIds)}
+                            Existing indicators found. Expand to see list of IDs.
+                            <CollapsiblePanel title="Existing Indicator IDs">
+                                <ListOfIndicatorIds indicatorIds={existingIndicatorIds} />
+                            </CollapsiblePanel>
                         </Message>
                     )}
                 </div>}
