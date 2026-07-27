@@ -11,12 +11,12 @@ import Modal from '@splunk/react-ui/Modal';
 import Message from '@splunk/react-ui/Message';
 import Button from '@splunk/react-ui/Button';
 import { viewSighting } from '@splunk/my-page/src/urls';
+import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
 import {
     CheckboxControlGroup,
     Count,
-    CreatedByRef,
     DescriptionField,
     FirstSeen,
     LabelsControlGroup,

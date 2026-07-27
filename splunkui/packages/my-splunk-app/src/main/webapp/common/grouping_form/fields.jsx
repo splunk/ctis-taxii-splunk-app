@@ -4,6 +4,7 @@ import TextControlGroup from "@splunk/my-page/src/TextControlGroup";
 import TextAreaControlGroup from "@splunk/my-page/src/TextAreaControlGroup";
 import PropTypes from "prop-types";
 import {useFormInputProps} from "../formInputProps";
+import {GROUPING_CONTEXTS} from './const';
 
 export function GroupingIdField({fieldName, ...props}) {
     return <TextControlGroup label="Grouping ID" {...useFormInputProps(fieldName)} {...props}/>
@@ -29,13 +30,12 @@ DescriptionField.propTypes = {
     fieldName: PropTypes.string.isRequired
 }
 
-export function ContextField({fieldName, options, ...props}) {
-    return <SelectControlGroup label="Context" {...useFormInputProps(fieldName)} options={options} {...props}/>
+export function ContextField({fieldName, ...props}) {
+    return <SelectControlGroup label="Context" {...useFormInputProps(fieldName)} options={GROUPING_CONTEXTS} {...props}/>
 }
 
 ContextField.propTypes = {
     fieldName: PropTypes.string.isRequired,
-    options: PropTypes.array.isRequired
 }
 
 export function CreatedByField({fieldName, options, ...props}) {

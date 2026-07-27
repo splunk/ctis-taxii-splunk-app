@@ -7,7 +7,6 @@ import DatetimeControlGroup from '@splunk/my-page/src/DateTimeControlGroup';
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import Number from '@splunk/react-ui/Number';
 import IdentityMultiselect from '@splunk/my-page/src/controls/IdentityMultiselect';
-import { IdentitySelect } from '@splunk/my-page/src/controls/IdentitySelect';
 import Checkbox from '@splunk/react-ui/Checkbox';
 import Multiselect from '@splunk/react-ui/Multiselect';
 import { useFormInputProps } from '../../common/formInputProps';
@@ -74,20 +73,6 @@ export function WhereSightedRefs({fieldName}) {
 WhereSightedRefs.propTypes = {
     fieldName: PropTypes.string.isRequired,
 }
-
-export function CreatedByRef({ fieldName }) {
-    const { setValue, watch } = useFormContext();
-    const identityId = watch(fieldName);
-    const setIdentityId = (id) => setValue(fieldName, id, { shouldValidate: true });
-
-    return (<CustomControlGroup label="Created By Ref">
-        <IdentitySelect selectedIdentityId={identityId} setSelectedIdentityId={setIdentityId} />
-    </CustomControlGroup>);
-}
-
-CreatedByRef.propTypes = {
-    fieldName: PropTypes.string.isRequired
-};
 
 export function CheckboxControlGroup({fieldName, label, controlGroupHelp}){
     const {setValue, watch} = useFormContext();

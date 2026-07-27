@@ -19,9 +19,8 @@ function extractIndicatorsFromBundleJSON(text) {
     });
 }
 
-export function IndicatorsFileUploader({ setIndicators }) {
+export function IndicatorsFileUploader({ setIndicators, filename, setFilename }) {
     const [fileText, setFileText] = useState(null);
-    const [filename, setFileName] = useState(null);
     const [fileIsLoading, setFileIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
@@ -37,12 +36,14 @@ export function IndicatorsFileUploader({ setIndicators }) {
         }
     }, [fileText, setIndicators]);
     return <>
-        <PageHeading level={2}>Please upload a JSON STIX Bundle file.</PageHeading>
-        <FileUpload setFileText={setFileText} fileName={filename} setFileName={setFileName}
+        <PageHeading level={2}>Choose a JSON STIX Bundle file.</PageHeading>
+        <FileUpload setFileText={setFileText} fileName={filename} setFileName={setFilename}
                     fileIsLoading={fileIsLoading} setFileIsLoading={setFileIsLoading} />
         {errorMessage && <Message type="error" appearance="fill">Error: {errorMessage}</Message>}
     </>;
 }
 IndicatorsFileUploader.propTypes = {
-    setIndicators: PropTypes.func.isRequired
+    setIndicators: PropTypes.func.isRequired,
+    filename: PropTypes.string.isRequired,
+    setFilename: PropTypes.func.isRequired,
 }

@@ -4,6 +4,8 @@ import Message from '@splunk/react-ui/Message';
 import Loader from '@splunk/my-page/src/Loader';
 import List from '@splunk/react-ui/List';
 import CollapsiblePanel from '@splunk/react-ui/CollapsiblePanel';
+import styled from 'styled-components';
+import { variables } from '@splunk/themes';
 
 function ListOfIndicatorIds({indicatorIds}){
     return <List>
@@ -13,6 +15,11 @@ function ListOfIndicatorIds({indicatorIds}){
 ListOfIndicatorIds.propTypes = {
     indicatorIds: PropTypes.arrayOf(PropTypes.string).isRequired,
 }
+
+const Container = styled.div`
+    margin-top: ${variables.spacingLarge};
+    margin-bottom: ${variables.spacingLarge};
+`;
 
 export default function IndicatorsValidationSummary({
     indicators,
@@ -32,7 +39,7 @@ export default function IndicatorsValidationSummary({
                 </Message>
             )}
             {!validationError &&
-                <div>
+                <Container>
                     <div>Indicators found: {indicators.length}</div>
                     {existingIndicatorIds.length > 0 && (
                         <Message appearance="fill" type="warning">
@@ -42,7 +49,7 @@ export default function IndicatorsValidationSummary({
                             </CollapsiblePanel>
                         </Message>
                     )}
-                </div>}
+                </Container>}
         </Loader>
     );
 }
