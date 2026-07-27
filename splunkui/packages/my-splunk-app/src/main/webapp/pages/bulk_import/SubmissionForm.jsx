@@ -8,6 +8,7 @@ import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeadi
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
+import { postSubmitStixIndicatorsToImport } from '@splunk/my-page/src/ApiClient';
 import registerGroupingFields from '../../common/grouping_form/formRegistration';
 import { ContextField, DescriptionField, NameField } from '../../common/grouping_form/fields';
 import {
@@ -65,10 +66,18 @@ export function SubmissionForm({ filename, indicators, numExistingIndicators }) 
         setValue(FORM_FIELD_NAME, `Indicators imported from ${filename}`, {shouldValidate : true})
         setValue(FORM_FIELD_DESCRIPTION, `Indicators imported from ${filename}`, {shouldValidate : true})
         setValue(FORM_FIELD_CONTEXT, 'unspecified', {shouldValidate: true})
+        setValue(FORM_FIELD_TLP_V2_RATING, 'TLP:GREEN', {shouldValidate: true})
     }, [filename, setValue]);
 
-    const onSubmit = (data) => {
+    // TODO: Handle waiting for POST response including loading state and error handling
+    // TODO: Show a modal upon success with button to navigate to the new grouping
+    const onSubmit = async (data) => {
         console.log('Form submitted with data:', data);
+        await postSubmitStixIndicatorsToImport({indicators, newGrouping: data, overwriteExisting: true, successHandler: (resp) => {
+                console.log(resp);
+            }, errorHandler: (err) => {
+                console.error(err);
+            }})
     }
     const formData = watch();
 

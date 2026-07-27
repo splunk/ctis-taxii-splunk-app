@@ -3,13 +3,6 @@ import {app, getCSRFToken} from '@splunk/splunk-utils/config';
 import {useEffect, useState} from "react";
 import {useDebounce} from "./debounce";
 
-function postData(endpoint, data, successHandler, errorHandler) {
-    return submitToEndpoint('POST', endpoint, data, successHandler, errorHandler);
-}
-
-function deleteData({endpoint, data, successHandler, errorHandler}) {
-    return submitToEndpoint('DELETE', endpoint, data, successHandler, errorHandler);
-}
 
 export async function errorToText(errorOrResponse) {
     if (errorOrResponse instanceof Response) {
@@ -51,6 +44,14 @@ function submitToEndpoint(method, endpoint, data, successHandler, errorHandler) 
         })
         .then(successHandler)
         .catch(errorHandler);
+}
+
+function postData(endpoint, data, successHandler, errorHandler) {
+    return submitToEndpoint('POST', endpoint, data, successHandler, errorHandler);
+}
+
+function deleteData({endpoint, data, successHandler, errorHandler}) {
+    return submitToEndpoint('DELETE', endpoint, data, successHandler, errorHandler);
 }
 
 export function getData({endpoint, queryParams, query, successHandler, errorHandler, requestId = null}) {
@@ -118,6 +119,16 @@ export function postValidateStixIndicatorsToImport({ indicators, successHandler,
     return postData('import-stix', {
         action: "validate",
         stix_objects: indicators,
+        model_type: 'indicator'
+    }, successHandler, errorHandler)
+}
+
+export function postSubmitStixIndicatorsToImport({ indicators, newGrouping, overwriteExisting = false, successHandler, errorHandler}) {
+    return postData('import-stix', {
+        action: "import",
+        stix_objects: indicators,
+        new_grouping: newGrouping,
+        overwrite_existing: overwriteExisting,
         model_type: 'indicator'
     }, successHandler, errorHandler)
 }
