@@ -138,6 +138,14 @@ def create_new_grouping(session, payload: dict) -> dict:
 def create_new_sighting(session, payload: dict) -> dict:
     return post_endpoint(endpoint="create-sighting", session=session, payload=payload)
 
+def validate_stix_indicators(session, indicators: list) -> dict:
+    """Validate STIX indicators and check for existing IDs"""
+    return post_endpoint(endpoint="import-stix", session=session, payload={
+        "action": "validate",
+        "model_type": "indicator",
+        "stix_objects": indicators
+    })
+
 def edit_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-identity", session=session, payload=payload)
 
@@ -238,6 +246,22 @@ def example_indicator() -> dict:
         "stix_pattern": "[network-traffic:src_ref.type = 'ipv4-addr' AND network-traffic:src_ref.value = '123.456.1.2']",
         "name": "Source IPv4",
         "description": "Source IPv4 - Description",
+    }
+
+def example_stix_indicator(indicator_id: str = None) -> dict:
+    """Create a minimal valid STIX 2.1 indicator object"""
+    if indicator_id is None:
+        indicator_id = f"indicator--{uuid.uuid4()}"
+
+    return {
+        "spec_version": "2.1",
+        "type": "indicator",
+        "id": indicator_id,
+        "pattern_type": "stix",
+        "pattern": f"[url:value = 'https://example-{uuid.uuid4()}.com']",
+        "created": "2026-07-17T01:02:03.456Z",
+        "modified": "2026-07-18T10:00:01.000Z",
+        "valid_from": "2026-07-17T00:11:22.000Z"
     }
 
 def new_indicator_payload() -> dict:
