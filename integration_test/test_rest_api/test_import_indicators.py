@@ -1,3 +1,6 @@
+import pytest
+import requests
+
 from .util import (
     create_new_indicator,
     validate_stix_indicators,
@@ -14,9 +17,36 @@ In the JSON payload, the "action" can either be "validate" or "import".
 """
 
 class TestValidateMode:
-    def test_sitx_indicator_missing_pattern_throws_error(self, session, cleanup_all_collections):
-        # Expecting HTTP 400
-        pass
+    def test_stix_indicator_missing_pattern_throws_error(self, session, cleanup_all_collections):
+        """
+        Test that validation rejects STIX indicators missing required 'pattern' field.
+
+        The endpoint should return HTTP 400 with an error message indicating
+        the missing field.
+        """
+        # Create a STIX indicator missing the required 'pattern' field
+        invalid_stix_indicator = {
+            "spec_version": "2.1",
+            "type": "indicator",
+            "id": "indicator--c1e4f15d-cb46-496c-b50e-c24efdf7c90e",
+            "pattern_type": "stix",
+            # "pattern" field is intentionally missing
+            "created": "2026-07-17T01:02:03.456Z",
+            "modified": "2026-07-18T10:00:01.000Z",
+            "valid_from": "2026-07-17T00:11:22.000Z"
+        }
+
+        # Attempt to validate the invalid indicator
+        # Should raise HTTPError with 400 status code
+        with pytest.raises(requests.HTTPError) as excinfo:
+            validate_stix_indicators(session=session, indicators=[invalid_stix_indicator])
+
+        # Verify it's a 400 error
+        assert excinfo.value.response.status_code == 400
+
+        # Verify the error message mentions the missing field
+        response_content = excinfo.value.response.text
+        assert "missing required field 'pattern'" in response_content.lower()
 
     def test_existing_indicator_ids_are_returned(self, session, cleanup_all_collections):
         """
