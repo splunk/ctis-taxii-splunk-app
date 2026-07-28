@@ -15,6 +15,7 @@ export function useValidateStixIndicators(indicators) {
                     setExistingIndicatorIds(resp?.existing_ids ?? [])
                     setLoading(false);
                 }, errorHandler: async (error) => {
+                    // TODO: Replace with existing errorToText() in ApiClient.js
                     if(error instanceof Response){
                         const respJson = await error.json();
                         if(typeof respJson?.error === 'string'){

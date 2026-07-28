@@ -43,7 +43,7 @@ export default function IndicatorsValidationSummary({
                     <div>Indicators found: {indicators.length}</div>
                     {existingIndicatorIds.length > 0 && (
                         <Message appearance="fill" type="warning">
-                            Existing indicators found. Expand to see list of IDs.
+                            Warning: Existing indicators found. Expand to see list of IDs.
                             <CollapsiblePanel title="Existing Indicator IDs">
                                 <ListOfIndicatorIds indicatorIds={existingIndicatorIds} />
                             </CollapsiblePanel>
