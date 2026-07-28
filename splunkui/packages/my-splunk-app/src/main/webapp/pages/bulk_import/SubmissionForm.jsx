@@ -11,6 +11,9 @@ import { errorToText, postSubmitStixIndicatorsToImport } from '@splunk/my-page/s
 import Message from '@splunk/react-ui/Message';
 import SubmitButton from '@splunk/my-page/src/SubmitButton';
 import P from '@splunk/react-ui/Paragraph';
+import Modal from '@splunk/react-ui/Modal';
+import { viewGrouping } from '@splunk/my-page/src/urls';
+import { StyledButton } from '@splunk/my-page/src/StyledButton';
 import registerGroupingFields from '../../common/grouping_form/formRegistration';
 import { ContextField, DescriptionField, NameField } from '../../common/grouping_form/fields';
 import {
@@ -70,16 +73,20 @@ export function SubmissionForm({ filename, indicators, numExistingIndicators }) 
         setValue(FORM_FIELD_TLP_V2_RATING, 'TLP:GREEN', {shouldValidate: true})
     }, [filename, setValue]);
 
-    // TODO: Show a modal upon success with button to navigate to the new grouping
     const [submitting, setSubmitting] = useState(false);
     const [submissionError, setSubmissionError] = useState(null);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+    const [newGroupingId, setNewGroupingId] = useState(null);
     const onSubmit = async (data) => {
         console.log('Form submitted with data:', data);
         setSubmitting(true);
         setSubmissionError(null);
+        setSubmitSuccess(false);
         await postSubmitStixIndicatorsToImport({indicators, newGrouping: data, overwriteExisting: true, successHandler: (resp) => {
                 console.log(resp);
                 setSubmitting(false);
+                setSubmitSuccess(true);
+                setNewGroupingId(resp?.new_grouping?.grouping_id);
             }, errorHandler: async (err) => {
                 console.error(err);
                 setSubmissionError(await errorToText(err));
@@ -114,6 +121,14 @@ export function SubmissionForm({ filename, indicators, numExistingIndicators }) 
                            numNewIndicators={numNewIndicators}
                            submitting={submitting} />
             {submissionError && <Message type='error' appearance='fill'>ERROR: {String(submissionError)}</Message>}
+            <Modal open={submitSuccess}>
+                <Modal.Header
+                    title='Successfully Imported Indicators And Created New Grouping'
+                />
+                <Modal.Body>
+                    <StyledButton to={viewGrouping(newGroupingId)} label='View New Grouping'/>
+                </Modal.Body>
+            </Modal>
 
         </MyForm>
     </FormProvider>;
