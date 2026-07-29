@@ -4,7 +4,7 @@ import string
 import uuid
 import os
 import logging
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -145,6 +145,16 @@ def validate_stix_indicators(session, indicators: list) -> dict:
         "model_type": "indicator",
         "stix_objects": indicators
     })
+
+def import_stix_indicators(session, indicators: List, new_grouping: Dict, overwrite_existing: bool = False) -> Dict:
+    payload = {
+        "action": "import",
+        "model_type": "indicator",
+        "overwrite_existing": overwrite_existing,
+        "stix_objects": indicators,
+        "new_grouping": new_grouping
+    }
+    return post_endpoint(endpoint="import-stix", session=session, payload=payload)
 
 def edit_identity(session, payload: dict) -> dict:
     return post_endpoint(endpoint="edit-identity", session=session, payload=payload)
