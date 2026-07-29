@@ -115,8 +115,8 @@ class IndicatorModelV1(BaseModelV1):
                 raise ValueError(f"Missing required field '{field}' in STIX JSON")
         stix2_object = stix2.parse(data=stix_json, allow_custom=True)
 
-        assert stix2_object.pattern_type == "stix"
-        assert stix2_object.pattern is not None
+        assert stix2_object.pattern_type.startswith("stix"), "Expected pattern_type to be 'stix'"
+        assert stix2_object.pattern is not None, "Expected pattern to be provided"
 
         # spec required properties
         created_dt = parse_iso8601_to_naive_datetime(stix_json["created"])
