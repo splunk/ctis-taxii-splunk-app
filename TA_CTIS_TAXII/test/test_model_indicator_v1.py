@@ -264,6 +264,14 @@ class TestValidUntilField:
         as_dict = indicator_converter.unstructure(indicator)
         assert as_dict["valid_until"] == "2026-08-01T00:00:01"
 
+    def test_should_validate_that_valid_until_is_after_valid_from(self):
+        my_dict = get_sample_dict()
+        my_dict["valid_from"] = "2026-01-02T00:00:00"
+        my_dict["valid_until"] = "2026-01-01T00:00:00"
+        with pytest.raises(ClassValidationError) as exc_info:
+            indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert 'valid_until must be after valid_from' in str(exc_info.value.exceptions[0])
+
 class TestHandleFormPayload:
     def test_should_handle_indicators_list(self):
         payload = {

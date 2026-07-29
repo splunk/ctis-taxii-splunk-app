@@ -12,6 +12,7 @@ import Message from '@splunk/react-ui/Message';
 import Button from '@splunk/react-ui/Button';
 import { viewSighting } from '@splunk/my-page/src/urls';
 import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
+import { LabelsControlGroup } from '@splunk/my-page/src/controls/LabelsControlGroup';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
 import {
@@ -19,7 +20,6 @@ import {
     Count,
     DescriptionField,
     FirstSeen,
-    LabelsControlGroup,
     LastSeen,
     SightingOfRef,
     WhereSightedRefs

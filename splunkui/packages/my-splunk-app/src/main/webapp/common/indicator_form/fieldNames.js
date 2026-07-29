@@ -13,6 +13,8 @@ export const FIELD_GROUPING_ID = "grouping_id";
 export {FIELD_CONFIDENCE};
 export const FIELD_VALID_FROM = "valid_from";
 export const FIELD_INDICATORS = "indicators";
+export const FIELD_LABELS = "labels";
+export const FIELD_VALID_UNTIL = "valid_until";
 
 // For Edit Indicator Form
 export const FIELD_INDICATOR_ID = "indicator_id";

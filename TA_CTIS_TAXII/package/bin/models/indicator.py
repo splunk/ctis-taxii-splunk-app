@@ -48,6 +48,11 @@ def validate_created_by_ref(instance, attribute, value):
 def parse_iso8601_to_naive_datetime(value: str) -> datetime:
     return parse_date(value, ignoretz=True)
 
+def validate_valid_until_is_after_valid_from(instance, attribute, value):
+    if value is not None:
+        if instance.valid_from is not None and value < instance.valid_from:
+            raise ValueError("valid_until must be after valid_from")
+
 @define(slots=False, kw_only=True)
 class IndicatorModelV1(BaseModelV1):
     indicator_id: str = field(validator=[validate_indicator_id])
@@ -71,7 +76,7 @@ class IndicatorModelV1(BaseModelV1):
     confidence: int = field(validator=[validate_confidence])
     created_by_ref: Optional[str] = field(default=None, validator=[validate_created_by_ref])
     labels: List[str] = field(factory=list)
-    valid_until: Optional[datetime] = field(default=None)
+    valid_until: Optional[datetime] = field(default=None, validator=[validate_valid_until_is_after_valid_from])
     revoked: bool = field(default=False)
 
     def to_stix(self, created_by_ref:str = None) -> StixIndicator:
