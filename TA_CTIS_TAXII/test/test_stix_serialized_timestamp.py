@@ -3,9 +3,22 @@ from datetime import datetime, timezone
 from uuid import uuid4
 from TA_CTIS_TAXII.package.bin.models import IndicatorModelV1, GroupingModelV1, IdentityModelV1, serialize_stix_object
 from TA_CTIS_TAXII.package.bin.models.tlp_v2 import TLPv2
+from TA_CTIS_TAXII.package.bin.models.base import unstructure_datetime_hook, structure_datetime_hook
+import pytest
 
 IDENTITY_ID = f"identity--{uuid4()}"
 
+
+class TestBaseModel:
+    def test_unstructure_datetime_hook(self):
+        assert unstructure_datetime_hook(datetime(2024, 8, 14, 23, 9, 21, 123456)) == "2024-08-14T23:09:21.123456"
+
+        # Should raise an AssertionError if tzinfo is not None
+        with pytest.raises(AssertionError):
+            unstructure_datetime_hook(datetime(2024, 8, 14, 23, 9, 21, 123456, tzinfo=timezone.utc))
+
+    def test_structure_datetime_hook(self):
+        assert structure_datetime_hook("2024-08-14T23:09:21.123456", None) == datetime(2024, 8, 14, 23, 9, 21, 123456)
 
 class TestSerializationOfTimestamps:
     """

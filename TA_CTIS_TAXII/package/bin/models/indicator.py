@@ -45,6 +45,9 @@ def validate_created_by_ref(instance, attribute, value):
         if not value.startswith("identity--"):
             raise ValueError("created_by_ref must start with 'identity--'")
 
+def parse_iso8601_to_naive_datetime(value: str) -> datetime:
+    return parse_date(value, ignoretz=True)
+
 @define(slots=False, kw_only=True)
 class IndicatorModelV1(BaseModelV1):
     indicator_id: str = field(validator=[validate_indicator_id])
@@ -116,16 +119,16 @@ class IndicatorModelV1(BaseModelV1):
         assert stix2_object.pattern is not None
 
         # spec required properties
-        created_dt = parse_date(stix_json["created"])
-        modified_dt = parse_date(stix_json["modified"])
-        valid_from = parse_date(stix_json["valid_from"])
+        created_dt = parse_iso8601_to_naive_datetime(stix_json["created"])
+        modified_dt = parse_iso8601_to_naive_datetime(stix_json["modified"])
+        valid_from = parse_iso8601_to_naive_datetime(stix_json["valid_from"])
 
         # spec optional properties
         name = getattr(stix2_object, "name", "")
         description = getattr(stix2_object, "description", "")
         confidence = getattr(stix2_object, "confidence", 100)
         labels = getattr(stix2_object, "labels", [])
-        valid_until = parse_date(stix_json["valid_until"]) if "valid_until" in stix_json else None
+        valid_until = parse_iso8601_to_naive_datetime(stix_json["valid_until"]) if "valid_until" in stix_json else None
         revoked = getattr(stix2_object, "revoked", False)
         object_marking_refs = getattr(stix2_object, "object_marking_refs", [])
         tlp_v2_rating = TLPv2.from_object_marking_refs(object_marking_refs=object_marking_refs) or default_tlp_v2_rating

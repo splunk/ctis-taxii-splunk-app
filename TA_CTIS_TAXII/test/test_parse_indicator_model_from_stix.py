@@ -31,8 +31,8 @@ class TestParseFromStix2Json:
 
         assert indicator.indicator_id == INDICATOR_ID
         assert indicator.stix_pattern == URL_PATTERN
-        assert indicator.created == datetime(2026, 7, 17, 1, 2, 3, 456_000, tzinfo=pytz.UTC)
-        assert indicator.modified == datetime(2026, 7, 18, 10, 0, 1, 0, tzinfo=pytz.UTC)
+        assert indicator.created == datetime(2026, 7, 17, 1, 2, 3, 456_000), "Expected timezone to be dropped"
+        assert indicator.modified == datetime(2026, 7, 18, 10, 0, 1, 0)
         assert indicator.confidence == 99
         assert indicator.created_by_ref == IDENTITY_ID
         assert indicator.revoked is False
@@ -49,7 +49,7 @@ class TestParseFromStix2Json:
             **MINIMAL_INDICATOR_STIX_JSON,
             "valid_until": "2026-08-01T01:02:03Z"
         }, grouping_id=GROUPING_ID)
-        assert indicator.valid_until == datetime(2026, 8, 1, 1, 2, 3, tzinfo=pytz.UTC)
+        assert indicator.valid_until == datetime(2026, 8, 1, 1, 2, 3)
 
     def test_should_parse_revoked(self):
         indicator = IndicatorModelV1.from_stix_object(stix_json={

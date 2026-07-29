@@ -15,6 +15,7 @@ class Action(str, Enum):
     VALIDATE = "validate"
     IMPORT = "import"
 
+# TODO move to models code
 def validate_indicators(indicators: List[Dict]):
     dummy_grouping_id = "grouping--1c7550ed-0e27-4c3e-b91d-0a080410ca9e"
     for indicator in indicators:
@@ -24,8 +25,8 @@ def validate_indicators(indicators: List[Dict]):
             raise ValueError(f"Invalid indicator {json.dumps(indicator)}: {e}") from e
 
 
-# TODO: Integration test coverage
 class ImportStixHandler(AbstractRestHandler):
+    # TODO Move to collection class
     def existing_indicator_ids(self, indicators: List[Dict]):
         if len(indicators) == 0:
             return []
