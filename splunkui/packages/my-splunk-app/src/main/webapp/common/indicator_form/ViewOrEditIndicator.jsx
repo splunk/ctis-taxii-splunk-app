@@ -19,6 +19,7 @@ import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading
 import CollapsiblePanel from '@splunk/react-ui/CollapsiblePanel';
 import { LabelsControlGroup } from '@splunk/my-page/src/controls/LabelsControlGroup';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
+import { RevokedCheckboxControlGroup } from '@splunk/my-page/src/controls/CheckboxControlGroup';
 import {useOnFormSubmit} from "../formSubmit";
 import {usePatternSuggester} from "../../pages/new_indicator/patternSuggester";
 import useIndicatorCategories from "./indicatorCategories";
@@ -39,7 +40,7 @@ import {
     FIELD_INDICATOR_DESCRIPTION,
     FIELD_INDICATOR_ID,
     FIELD_INDICATOR_NAME,
-    FIELD_INDICATOR_VALUE, FIELD_LABELS,
+    FIELD_INDICATOR_VALUE, FIELD_LABELS, FIELD_REVOKED,
     FIELD_STIX_PATTERN,
     FIELD_TLP_RATING,
     FIELD_VALID_FROM, FIELD_VALID_UNTIL,
@@ -55,7 +56,7 @@ const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,
     FIELD_INDICATOR_CATEGORY, FIELD_INDICATOR_VALUE,
     FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION,
-    FIELD_VALID_UNTIL, FIELD_LABELS
+    FIELD_VALID_UNTIL, FIELD_LABELS, FIELD_REVOKED
 ];
 
 const ButtonsForViewMode = ({indicator}) => {
@@ -81,23 +82,6 @@ ButtonsForEditMode.propTypes = {
     submitButtonDisabled: PropTypes.bool.isRequired
 }
 
-function validateValidFromIsBeforeValidUntil(val, formValues) {
-    if(formValues.valid_until !== ''){
-        if(val > formValues.valid_until){
-            return 'Expected valid_from to be before valid_until';
-        }
-    }
-    return null;
-}
-
-function validateValidUntilIsAfterValidFrom(val, formValues) {
-    if(val !== ''){
-        if(val < formValues.valid_from){
-            return 'Expected valid_until to be after valid_from';
-        }
-    }
-    return null;
-}
 
 export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const title = editMode ? `Edit Indicator` : `Indicator (${indicatorId})`;
@@ -115,9 +99,6 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
     })
     const {trigger, watch, register, formState, handleSubmit, setValue} = methods;
     FORM_FIELD_NAMES.forEach(fieldName => register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]));
-
-    register(FIELD_VALID_FROM, {required: true, validate: validateValidFromIsBeforeValidUntil})
-    register(FIELD_VALID_UNTIL, {required: false, validate: validateValidUntilIsAfterValidFrom})
 
     const {onSubmit, submitSuccess, submissionError, submitButtonDisabled} = useOnFormSubmit({
         formMethods: methods,
@@ -148,6 +129,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
             if(record.valid_until){
                 setValue(FIELD_VALID_UNTIL, reduceIsoStringPrecisionToSeconds(record.valid_until));
             }
+            setValue(FIELD_REVOKED, record.revoked ?? false);
         }
     }, [setValue, record]);
 
@@ -202,8 +184,9 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                                           patternApiError={patternApiError}
                                           readOnly={readOnly}/>
                         <CollapsiblePanel title='Advanced Fields'>
-                            <LabelsControlGroup fieldName={FIELD_LABELS}/>
                             <ValidFromField fieldName={FIELD_VALID_UNTIL} label='Valid Until (UTC)'/>
+                            <LabelsControlGroup fieldName={FIELD_LABELS}/>
+                            <RevokedCheckboxControlGroup fieldName={FIELD_REVOKED} />
                         </CollapsiblePanel>
                     </section>
                     {submissionError?.json?.errors && <Message appearance="fill" type="error">
