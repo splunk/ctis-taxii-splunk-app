@@ -7,7 +7,7 @@ import ImportIndicatorsPage from './ImportIndicatorsPage';
 
 
 function BulkImportIdentities() {
-    return (<Message>Bulk import identities</Message>);
+    return (<Message>Bulk import identities - Coming Soon...</Message>);
 }
 
 function Router() {
