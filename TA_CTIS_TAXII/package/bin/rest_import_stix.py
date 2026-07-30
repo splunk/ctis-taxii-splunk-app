@@ -64,7 +64,7 @@ class ImportStixHandler(AbstractRestHandler):
             raise ValueError("Missing 'action' field in json body")
         action = input_json['action']
         try:
-            action_enum = Action(input_json['action'])
+            action_enum = Action(action)
         except ValueError as e:
             raise ValueError(f"Invalid action type given: {action}") from e
 
