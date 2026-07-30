@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {editIndicator, getIndicator, useGetRecord} from "@splunk/my-page/src/ApiClient";
 import {FormProvider, useForm} from "react-hook-form";
 import Loader from "@splunk/my-page/src/Loader";
-import {reduceIsoStringPrecisionToSeconds} from "@splunk/my-page/src/date_utils";
+import {reduceIsoStringPrecisionToMilliseconds} from "@splunk/my-page/src/date_utils";
 import {HorizontalButtonLayout} from "@splunk/my-page/src/HorizontalButtonLayout";
 import DeleteButton from "@splunk/my-page/src/DeleteButton";
 import {CustomControlGroup} from "@splunk/my-page/src/CustomControlGroup";
@@ -122,12 +122,12 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
             setValue(FIELD_STIX_PATTERN, record.stix_pattern);
             setValue(FIELD_INDICATOR_VALUE, record.indicator_value);
             setValue(FIELD_INDICATOR_CATEGORY, record.indicator_category);
-            setValue(FIELD_VALID_FROM, reduceIsoStringPrecisionToSeconds(record.valid_from));
+            setValue(FIELD_VALID_FROM, reduceIsoStringPrecisionToMilliseconds(record.valid_from));
             setValue(FIELD_CONFIDENCE, record.confidence);
             setValue(FIELD_TLP_RATING, record.tlp_v2_rating);
             setValue(FIELD_LABELS, record.labels);
             if(record.valid_until){
-                setValue(FIELD_VALID_UNTIL, reduceIsoStringPrecisionToSeconds(record.valid_until));
+                setValue(FIELD_VALID_UNTIL, reduceIsoStringPrecisionToMilliseconds(record.valid_until));
             }
             setValue(FIELD_REVOKED, record.revoked ?? false);
         }
@@ -163,7 +163,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
 
     return (<div>
         <PageHeadingContainer>
-            <PageHeading>{title}</PageHeading>
+            <PageHeading level={2}>{title}</PageHeading>
         </PageHeadingContainer>
         <Loader loading={loading} error={error}>
             <FormProvider {...methods}>

@@ -46,6 +46,7 @@ def validate_created_by_ref(instance, attribute, value):
             raise ValueError("created_by_ref must start with 'identity--'")
 
 def parse_iso8601_to_naive_datetime(value: str) -> datetime:
+    # TODO: Truncate down sub-seconds to at most 3 decimal places (millisecond precision)
     return parse_date(value, ignoretz=True)
 
 def validate_valid_until_is_after_valid_from(instance, attribute, value):
