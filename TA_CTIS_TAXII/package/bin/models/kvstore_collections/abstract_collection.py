@@ -74,8 +74,16 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         return record.key
 
     def delete_many(self, query: Dict):
+        # https://help.splunk.com/en/splunk-cloud-platform/leverage-rest-apis/rest-api-reference/10.5.2605/kv-store-endpoints/kv-store-endpoint-descriptions#delete-1
         delete_http_resp = self.collection.delete(query=json.dumps(query))
         return str(delete_http_resp)
+
+    def delete_many_by_primary_key(self, primary_key_values: List[str]):
+        records_to_delete = self.fetch_many_structured_by_primary_key(possible_values_of_primary_key=primary_key_values)
+        for record in records_to_delete:
+            logger.info(f"Deleting record: {record}")
+        query = self.query_in(field=self.primary_key, possible_values=primary_key_values)
+        return self.delete_many(query=query)
 
     def check_if_exactly_one_exists(self, query: Dict) -> bool:
         try:
@@ -95,6 +103,7 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         return structured
 
     def fetch_many_raw(self, query: Dict, limit=0, skip=0) -> List[Dict]:
+        logger.info(f"fetch_many_raw: query={query}, limit={limit}, skip={skip}")
         return list(self.collection.query(query=query, limit=limit, skip=skip))
 
     def fetch_many_structured(self, query: dict) -> List[T]:
@@ -125,6 +134,30 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         self.collection.insert(unstructured)
         logger.info(f"Record inserted into collection={self.collection_name}: structured={record} unstructured={unstructured}")
         return unstructured
+
+    def any_exists(self, records: List[T]) -> bool:
+        """
+        Returns whether any records with given primary key exist in the collection.
+        """
+        primary_keys = []
+        for record in records:
+            pk = getattr(record, self.primary_key)
+            assert pk is not None, f"Expected primary key of {self.primary_key} on {record} to be non-null."
+            primary_keys.append(pk)
+        return self.any_exists_by_primary_key(primary_key_values=primary_keys)
+
+    def any_exists_by_primary_key(self, primary_key_values: List[str]) -> bool:
+        logger.info(f"Checking if any records exist for primary keys: {primary_key_values}")
+        existing_records = self.fetch_many_structured_by_primary_key(possible_values_of_primary_key=primary_key_values)
+        return len(existing_records) > 0
+
+    def insert_many_structured(self, records: List[T]) -> List[Dict]:
+        assert not self.any_exists(records=records)
+        unstructured_records = [self.model_converter.unstructure(x) for x in records]
+        # batch_save() returns a list of new record keys
+        resp = self.collection.batch_save(*unstructured_records)
+        logger.info(f"New record keys inserted into collection={self.collection_name}: {resp}")
+        return unstructured_records
 
     def update_record(self, record: T) -> T:
         record.set_modified_to_now()

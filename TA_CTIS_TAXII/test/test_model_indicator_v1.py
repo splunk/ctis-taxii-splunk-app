@@ -1,10 +1,14 @@
 from datetime import datetime
+
 import attrs
 import pytest
 from cattrs import ClassValidationError, transform_error
+import json
 
-from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, form_payload_to_indicators, maximum_tlpv2_of_indicators
+from TA_CTIS_TAXII.package.bin.models.indicator import IndicatorModelV1, indicator_converter, \
+    form_payload_to_indicators, maximum_tlpv2_of_indicators
 from TA_CTIS_TAXII.package.bin.models.tlp_v2 import TLPv2, GREEN_MARKING_DEFINITION
+from TA_CTIS_TAXII.package.bin.models import serialize_stix_object
 from TA_CTIS_TAXII.test.sample_indicator import GROUPING_ID, IDENTITY_ID, SAMPLE_DICT_NO_SPLUNK_RESERVED_FIELDS, \
     SAMPLE_INDICATOR_INSTANCE, get_sample_dict, new_sample_indicator_instance
 
@@ -187,6 +191,20 @@ def test_to_stix():
     assert stix.object_marking_refs == [GREEN_MARKING_DEFINITION.id]
     assert stix.created_by_ref == IDENTITY_ID
 
+    # Additional optional fields, not originally expected by ACSC
+    assert stix.revoked is False
+    assert 'labels' not in stix
+    assert 'valid_until' not in stix
+
+    serialized = serialize_stix_object(stix_object=stix)
+    assert type(serialized) == str
+    serialized_dict = json.loads(serialized)
+    assert serialized_dict["id"] == indicator.indicator_id
+
+    for field in ['revoked', 'labels', 'valid_until']:
+        assert field not in serialized_dict
+
+
 
 @pytest.mark.parametrize("grouping_id", ["", None, "invalid"])
 def test_validate_grouping_id(grouping_id):
@@ -203,6 +221,56 @@ def test_maximum_tlpv2_of_indicators():
     ]
     max_tlp = maximum_tlpv2_of_indicators(indicators)
     assert max_tlp == TLPv2.AMBER
+
+class TestCreatedByRefField:
+    identity_id = "identity--99c14faf-179a-4ec7-80bb-536c8f0fbb2d"
+
+    def test_parse_from_dict(self):
+        my_dict = get_sample_dict()
+        my_dict["created_by_ref"] = self.identity_id
+        indicator = indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert indicator.created_by_ref == self.identity_id
+
+    def test_model_object_to_dict(self):
+        indicator = new_sample_indicator_instance()
+        indicator.created_by_ref = self.identity_id
+        as_dict = indicator_converter.unstructure(indicator)
+        assert as_dict["created_by_ref"] == self.identity_id
+
+class TestLabelsField:
+    def test_parse_from_dict(self):
+        my_dict = get_sample_dict()
+        my_dict["labels"] = ["aaa", "bbb"]
+        indicator = indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert indicator.labels == ["aaa", "bbb"]
+
+    def test_model_object_to_dict(self):
+        indicator = new_sample_indicator_instance()
+        indicator.labels = ["aaa", "bbb"]
+        as_dict = indicator_converter.unstructure(indicator)
+        assert as_dict["labels"] == ["aaa", "bbb"]
+
+class TestValidUntilField:
+    # In the KVStore record, we are not storing timezone in the datetime string. UTC is assumed.
+    def test_parse_from_dict(self):
+        my_dict = get_sample_dict()
+        my_dict["valid_until"] = "2026-01-02T01:02:03"
+        indicator = indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert indicator.valid_until == datetime(2026, 1, 2, 1, 2, 3)
+
+    def test_model_object_to_dict(self):
+        indicator = new_sample_indicator_instance()
+        indicator.valid_until = datetime(2026, 8, 1, 0, 0, 1)
+        as_dict = indicator_converter.unstructure(indicator)
+        assert as_dict["valid_until"] == "2026-08-01T00:00:01"
+
+    def test_should_validate_that_valid_until_is_after_valid_from(self):
+        my_dict = get_sample_dict()
+        my_dict["valid_from"] = "2026-01-02T00:00:00"
+        my_dict["valid_until"] = "2026-01-01T00:00:00"
+        with pytest.raises(ClassValidationError) as exc_info:
+            indicator_converter.structure(my_dict, IndicatorModelV1)
+        assert 'valid_until must be after valid_from' in str(exc_info.value.exceptions[0])
 
 class TestHandleFormPayload:
     def test_should_handle_indicators_list(self):
@@ -246,3 +314,4 @@ class TestHandleFormPayload:
         first_error = errors[0]
         assert first_error["index"] == 0
         assert "Invalid STIX pattern" in first_error["errors"][0]
+

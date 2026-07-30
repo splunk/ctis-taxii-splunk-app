@@ -91,7 +91,7 @@ SearchBar.propTypes = {
 }
 
 export const IndicatorsSearchBar = ({onQueryChange}) => {
-    const TEXT_SEARCH_FIELDS = ['name', 'description', 'stix_pattern', 'indicator_value', 'indicator_category', 'indicator_id', 'grouping_id'];
+    const TEXT_SEARCH_FIELDS = ['name', 'description', 'stix_pattern', 'indicator_value', 'indicator_category', 'indicator_id', 'grouping_id', 'labels'];
     const [lastUpdatedQuery, setLastUpdatedQuery] = useState({});
     const [tlpRatingQuery, setTlpRatingQuery] = useState({});
     const [indicatorFilter, setIndicatorFilter] = useState(null);

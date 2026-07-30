@@ -1,0 +1,176 @@
+{
+    "type": "bundle",
+    "id": "bundle--d5d875c0-9cd8-46a0-b253-3d73d176014c",
+    "objects": [
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--5f13c5fd-b2a5-4efa-b834-bf057627cad1",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.847817Z",
+            "modified": "2026-07-22T05:23:43.847817Z",
+            "name": "blue elephant io",
+            "pattern": "[url:value = 'https://blue.elephant.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.847817Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 24
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--da720eb1-fdc6-4163-b6d7-9e253afdaffe",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.850621Z",
+            "modified": "2026-07-22T05:23:43.850621Z",
+            "name": "violet eagle com",
+            "pattern": "[url:value = 'https://violet.eagle.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.850621Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 16
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--d2f848f0-678a-474d-bb23-e33e3e7e55f2",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.851026Z",
+            "modified": "2026-07-22T05:23:43.851026Z",
+            "name": "lime snake org",
+            "pattern": "[url:value = 'https://lime.snake.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.851026Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 33
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--5655bb57-81f0-4699-8de6-8cd682caf4be",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.851407Z",
+            "modified": "2026-07-22T05:23:43.851407Z",
+            "name": "magenta bear io",
+            "pattern": "[url:value = 'https://magenta.bear.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.851407Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 45
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--68ba9f3c-c8dd-44e2-8200-e2ce6be7e6c8",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.851694Z",
+            "modified": "2026-07-22T05:23:43.851694Z",
+            "name": "violet owl org",
+            "pattern": "[url:value = 'https://violet.owl.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.851694Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 56
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--ebf6006b-7fcd-47f3-8ae7-3a7be4a07fcf",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.852004Z",
+            "modified": "2026-07-22T05:23:43.852004Z",
+            "name": "green bear io",
+            "pattern": "[url:value = 'https://green.bear.io']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.852004Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 17
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--b89bc391-bc1f-401c-8ecb-5138c1c6d086",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.852286Z",
+            "modified": "2026-07-22T05:23:43.852286Z",
+            "name": "brown bear edu",
+            "pattern": "[url:value = 'https://brown.bear.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.852286Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 32
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--6ae9ee0f-7376-409c-bbd6-a9000fb15109",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.852595Z",
+            "modified": "2026-07-22T05:23:43.852595Z",
+            "name": "magenta bear com",
+            "pattern": "[url:value = 'https://magenta.bear.com']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.852595Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 40
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--5ce91b67-27f7-4ef6-a926-6ed564945c79",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.852881Z",
+            "modified": "2026-07-22T05:23:43.852881Z",
+            "name": "green hippopotamus org",
+            "pattern": "[url:value = 'https://green.hippopotamus.org']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.852881Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 20
+        },
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--8c3dc3f4-d982-4e0d-ad9b-5ac679424b5a",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.853176Z",
+            "modified": "2026-07-22T05:23:43.853176Z",
+            "name": "yellow wolf edu",
+            "pattern": "[url:value = 'https://yellow.wolf.edu']",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.853176Z",
+            "labels": [
+                "mock-data"
+            ],
+            "confidence": 77
+        }
+    ]
+}

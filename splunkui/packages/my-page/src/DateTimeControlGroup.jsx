@@ -29,7 +29,7 @@ const DatetimeControlGroup = ({
     }
     return (
         <CustomControlGroup label={label} help={helpText} error={error} value={humanReadableDate} readOnly={readOnly}>
-            <DatetimeInput type="datetime-local" value={value} onChange={onChange} {...props}/>
+            <DatetimeInput type="datetime-local" step="0.1" value={value} onChange={onChange} {...props}/>
         </CustomControlGroup>
     );
 }

@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from attrs import define, field
 from cattr.gen import make_dict_structure_fn, make_dict_unstructure_fn
 from cattrs import Converter
-from datetime import datetime
+
 
 def get_datetime_utc_now():
     # datetime.utcnow() is deprecated since Python version 3.12
@@ -42,7 +44,9 @@ def unstructure_datetime_hook(val: datetime) -> str:
     """This hook will be registered for `datetime`s."""
     # datetime strings are persisted to KVStore Collection without timezone (UTC is assumed).
     # E.g. "2026-06-23T02:19:08.682815"
-    return val.isoformat()
+    assert val.tzinfo is None, f"Expected no timezone. Got: {val.tzinfo}"
+    without_timezone = val.replace(tzinfo=None)
+    return without_timezone.isoformat()
 
 # `structure` is used to convert a dictionary to a Python object
 def structure_datetime_hook(value, type) -> datetime:

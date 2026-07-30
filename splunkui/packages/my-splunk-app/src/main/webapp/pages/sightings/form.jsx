@@ -11,15 +11,15 @@ import Modal from '@splunk/react-ui/Modal';
 import Message from '@splunk/react-ui/Message';
 import Button from '@splunk/react-ui/Button';
 import { viewSighting } from '@splunk/my-page/src/urls';
+import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
+import { LabelsControlGroup } from '@splunk/my-page/src/controls/LabelsControlGroup';
+import { CheckboxControlGroup, RevokedCheckboxControlGroup } from '@splunk/my-page/src/controls/CheckboxControlGroup';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
 import {
-    CheckboxControlGroup,
     Count,
-    CreatedByRef,
     DescriptionField,
     FirstSeen,
-    LabelsControlGroup,
     LastSeen,
     SightingOfRef,
     WhereSightedRefs
@@ -158,7 +158,7 @@ export function Form({ existingSighting = null }) {
             <WhereSightedRefs fieldName={FORM_FIELD_WHERE_SIGHTED_REFS}/>
             <CreatedByRef fieldName={FORM_FIELD_CREATED_BY_REF}/>
             <CheckboxControlGroup fieldName={FORM_FIELD_SUMMARY} label='Summary' controlGroupHelp='Whether the Sighting should be considered summary data.' />
-            <CheckboxControlGroup fieldName={FORM_FIELD_REVOKED} label='Revoked' controlGroupHelp='Whether the object has been revoked. Revoked objects are no longer considered valid by the object creator.' />
+            <RevokedCheckboxControlGroup fieldName={FORM_FIELD_REVOKED} />
             <TLPv2RatingField fieldName={FORM_FIELD_TLP_V2_RATING} />
             <LabelsControlGroup fieldName={FORM_FIELD_LABELS} />
             <CustomControlGroup>

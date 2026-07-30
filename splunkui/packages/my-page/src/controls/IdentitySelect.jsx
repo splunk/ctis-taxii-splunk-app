@@ -4,7 +4,7 @@ import { getIdentities } from '../ApiClient';
 import SearchableSelectV2 from '../search/SearchableSelectV2';
 
 
-export function IdentitySelect({ selectedIdentityId, setSelectedIdentityId }) {
+export function IdentitySelect({ selectedIdentityId, setSelectedIdentityId, ...selectProps }) {
     return <SearchableSelectV2 searchableFields={['name', 'identity_id']}
                                primaryKey="identity_id"
                                recordToOptionLabel={(r) => `${r.name} (${r.identity_id})`}
@@ -12,6 +12,7 @@ export function IdentitySelect({ selectedIdentityId, setSelectedIdentityId }) {
                                selectedValue={selectedIdentityId}
                                setSelectedValue={setSelectedIdentityId}
                                placeholder="Search for an identity by id or name..."
+                               {...selectProps}
     />;
 }
 

@@ -18,7 +18,7 @@ export function BooleanValue({ value }) {
 }
 
 export function StixLabels({ labels }) {
-    if (labels.length === 0) {
+    if (!labels || labels.length === 0) {
         return <NoValuePresent />;
     }
     return (

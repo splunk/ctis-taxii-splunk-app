@@ -24,13 +24,23 @@ const StyledDL = styled(DL)`
     }
 `;
 
+function Description({ description }) {
+    if (description === null || description === undefined || description === '') {
+        return <NoValuePresent />;
+    }
+    return <P>{description}</P>;
+}
+Description.propTypes = {
+    description: PropTypes.string,
+}
+
 function ExpandedDataRecord({ mapping }) {
     return (
         <StyledDL layout="fixed" termWidth="200px">
             {Object.entries(mapping).map(([term, description]) => (
                 <>
                     <StyledDL.Term>{term}</StyledDL.Term>
-                    <StyledDL.Description>{description ?? <NoValuePresent />}</StyledDL.Description>
+                    <StyledDL.Description><Description description={description} /></StyledDL.Description>
                 </>
             ))}
         </StyledDL>

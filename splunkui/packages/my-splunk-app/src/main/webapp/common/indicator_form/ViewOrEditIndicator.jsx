@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {editIndicator, getIndicator, useGetRecord} from "@splunk/my-page/src/ApiClient";
 import {FormProvider, useForm} from "react-hook-form";
 import Loader from "@splunk/my-page/src/Loader";
-import {reduceIsoStringPrecisionToSeconds} from "@splunk/my-page/src/date_utils";
+import {reduceIsoStringPrecisionToMilliseconds} from "@splunk/my-page/src/date_utils";
 import {HorizontalButtonLayout} from "@splunk/my-page/src/HorizontalButtonLayout";
 import DeleteButton from "@splunk/my-page/src/DeleteButton";
 import {CustomControlGroup} from "@splunk/my-page/src/CustomControlGroup";
@@ -16,6 +16,10 @@ import {DeleteIndicatorModal} from "@splunk/my-page/src/DeleteModal";
 import useModal from "@splunk/my-page/src/useModal";
 import PropTypes from "prop-types";
 import {PageHeading, PageHeadingContainer} from "@splunk/my-page/src/PageHeading";
+import CollapsiblePanel from '@splunk/react-ui/CollapsiblePanel';
+import { LabelsControlGroup } from '@splunk/my-page/src/controls/LabelsControlGroup';
+import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
+import { RevokedCheckboxControlGroup } from '@splunk/my-page/src/controls/CheckboxControlGroup';
 import {useOnFormSubmit} from "../formSubmit";
 import {usePatternSuggester} from "../../pages/new_indicator/patternSuggester";
 import useIndicatorCategories from "./indicatorCategories";
@@ -36,21 +40,24 @@ import {
     FIELD_INDICATOR_DESCRIPTION,
     FIELD_INDICATOR_ID,
     FIELD_INDICATOR_NAME,
-    FIELD_INDICATOR_VALUE,
+    FIELD_INDICATOR_VALUE, FIELD_LABELS, FIELD_REVOKED,
     FIELD_STIX_PATTERN,
     FIELD_TLP_RATING,
-    FIELD_VALID_FROM,
+    FIELD_VALID_FROM, FIELD_VALID_UNTIL,
     REGISTER_FIELD_OPTIONS
-} from "./fieldNames";
+} from './fieldNames';
 import {GroupingIdFieldV2} from "./GroupingsDropdown";
 import {usePageTitle} from "../utils";
 import {TLPv2RatingField} from "../tlp";
 import {ConfidenceField} from "../confidence";
 
+
 const FORM_FIELD_NAMES = [FIELD_INDICATOR_ID,
     FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM,
     FIELD_INDICATOR_CATEGORY, FIELD_INDICATOR_VALUE,
-    FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION];
+    FIELD_STIX_PATTERN, FIELD_INDICATOR_NAME, FIELD_INDICATOR_DESCRIPTION,
+    FIELD_VALID_UNTIL, FIELD_LABELS, FIELD_REVOKED
+];
 
 const ButtonsForViewMode = ({indicator}) => {
     const {open, handleRequestClose, handleRequestOpen} = useModal();
@@ -75,6 +82,7 @@ ButtonsForEditMode.propTypes = {
     submitButtonDisabled: PropTypes.bool.isRequired
 }
 
+
 export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const title = editMode ? `Edit Indicator` : `Indicator (${indicatorId})`;
     const readOnly = !editMode;
@@ -89,7 +97,7 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
     const methods = useForm({
         mode: 'all',
     })
-    const {watch, register, formState, handleSubmit, setValue} = methods;
+    const {trigger, watch, register, formState, handleSubmit, setValue} = methods;
     FORM_FIELD_NAMES.forEach(fieldName => register(fieldName, REGISTER_FIELD_OPTIONS[fieldName]));
 
     const {onSubmit, submitSuccess, submissionError, submitButtonDisabled} = useOnFormSubmit({
@@ -114,9 +122,14 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
             setValue(FIELD_STIX_PATTERN, record.stix_pattern);
             setValue(FIELD_INDICATOR_VALUE, record.indicator_value);
             setValue(FIELD_INDICATOR_CATEGORY, record.indicator_category);
-            setValue(FIELD_VALID_FROM, reduceIsoStringPrecisionToSeconds(record.valid_from));
+            setValue(FIELD_VALID_FROM, reduceIsoStringPrecisionToMilliseconds(record.valid_from));
             setValue(FIELD_CONFIDENCE, record.confidence);
             setValue(FIELD_TLP_RATING, record.tlp_v2_rating);
+            setValue(FIELD_LABELS, record.labels);
+            if(record.valid_until){
+                setValue(FIELD_VALID_UNTIL, reduceIsoStringPrecisionToMilliseconds(record.valid_until));
+            }
+            setValue(FIELD_REVOKED, record.revoked ?? false);
         }
     }, [setValue, record]);
 
@@ -131,20 +144,30 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
         }
     }, [setValue, suggestedPattern]);
 
+    const validFrom = watch(FIELD_VALID_FROM);
+    const validUntil = watch(FIELD_VALID_UNTIL);
+
+    useEffect(() => {
+        trigger(['valid_from', 'valid_until']);
+    }, [trigger, validFrom, validUntil]);
+
+    useEffect(() => {
+        // Handle when input is cleared
+        if(validUntil === ''){
+            setValue(FIELD_VALID_UNTIL, null, {shouldValidate: true})
+        }
+    }, [validUntil, setValue])
+
+    const formValues = watch();
+    const showDebug = shouldUseDebugMode();
+
     return (<div>
         <PageHeadingContainer>
-            <PageHeading>{title}</PageHeading>
+            <PageHeading level={2}>{title}</PageHeading>
         </PageHeadingContainer>
         <Loader loading={loading} error={error}>
             <FormProvider {...methods}>
                 <StyledForm onSubmit={handleSubmit(onSubmit)}>
-                    {submissionError?.json?.errors && <Message appearance="fill" type="error">
-                        <div>
-                            <P>Form submission error</P>
-                            {submissionError.json.errors.map(submissionErrorToDisplay =>
-                                <P>{submissionErrorToDisplay}</P>)}
-                        </div>
-                    </Message>}
                     <section>
                         <IndicatorIdField fieldName={FIELD_INDICATOR_ID} readOnly={readOnly} disabled/>
                         <GroupingIdFieldV2 fieldName={FIELD_GROUPING_ID} readOnly={readOnly}/>
@@ -160,7 +183,19 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                                           fieldName={FIELD_STIX_PATTERN}
                                           patternApiError={patternApiError}
                                           readOnly={readOnly}/>
+                        <CollapsiblePanel title='Advanced Fields'>
+                            <ValidFromField fieldName={FIELD_VALID_UNTIL} label='Valid Until (UTC)'/>
+                            <LabelsControlGroup fieldName={FIELD_LABELS}/>
+                            <RevokedCheckboxControlGroup fieldName={FIELD_REVOKED} />
+                        </CollapsiblePanel>
                     </section>
+                    {submissionError?.json?.errors && <Message appearance="fill" type="error">
+                        <div>
+                            <P>Form submission error</P>
+                            {submissionError.json.errors.map(submissionErrorToDisplay =>
+                                <P>{submissionErrorToDisplay}</P>)}
+                        </div>
+                    </Message>}
                     <section>
                         <CustomControlGroup>
                             {!editMode && <ButtonsForViewMode indicator={record}/>}
@@ -168,7 +203,9 @@ export default function ViewOrEditIndicator({indicatorId, editMode}) {
                                                              submitButtonDisabled={submitButtonDisabled}/>}
                         </CustomControlGroup>
                     </section>
-
+                    {showDebug && <section>
+                        <div><code>{JSON.stringify(formValues, null, 2)}</code></div>
+                    </section>}
                 </StyledForm>
             </FormProvider>
         </Loader>

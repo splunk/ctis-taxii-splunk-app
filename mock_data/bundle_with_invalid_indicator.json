@@ -1,0 +1,19 @@
+{
+    "type": "bundle",
+    "id": "bundle--d5d875c0-9cd8-46a0-b253-3d73d176014c",
+    "objects": [
+        {
+            "type": "indicator",
+            "spec_version": "2.1",
+            "id": "indicator--5f13c5fd-b2a5-4efa-b834-bf057627cad2",
+            "created_by_ref": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-07-22T05:23:43.847817Z",
+            "modified": "2026-07-22T05:23:43.847817Z",
+            "name": "blue elephant io",
+            "pattern": "invalid pattern",
+            "pattern_type": "stix",
+            "pattern_version": "2.1",
+            "valid_from": "2026-07-22T05:23:43.847817Z"
+        }
+    ]
+}

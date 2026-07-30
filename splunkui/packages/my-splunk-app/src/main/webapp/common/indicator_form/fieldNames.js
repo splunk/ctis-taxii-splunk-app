@@ -13,10 +13,30 @@ export const FIELD_GROUPING_ID = "grouping_id";
 export {FIELD_CONFIDENCE};
 export const FIELD_VALID_FROM = "valid_from";
 export const FIELD_INDICATORS = "indicators";
+export const FIELD_LABELS = "labels";
+export const FIELD_VALID_UNTIL = "valid_until";
+export const FIELD_REVOKED = "revoked";
 
 // For Edit Indicator Form
 export const FIELD_INDICATOR_ID = "indicator_id";
 
+function validateValidFromIsBeforeValidUntil(val, formValues) {
+    if(formValues.valid_until !== ''){
+        if(val > formValues.valid_until){
+            return 'Expected valid_from to be before valid_until';
+        }
+    }
+    return null;
+}
+
+function validateValidUntilIsAfterValidFrom(val, formValues) {
+    if(val !== ''){
+        if(val < formValues.valid_from){
+            return 'Expected valid_until to be after valid_from';
+        }
+    }
+    return null;
+}
 export const REGISTER_FIELD_OPTIONS = {
     [FIELD_INDICATOR_ID] : {
         required: "Indicator ID is required."
@@ -29,7 +49,8 @@ export const REGISTER_FIELD_OPTIONS = {
     },
     [FIELD_CONFIDENCE]: FIELD_CONFIDENCE_OPTION,
     [FIELD_VALID_FROM]: {
-        required: "Valid from is required."
+        required: "Valid from is required.",
+        validate: validateValidFromIsBeforeValidUntil
     },
     [FIELD_INDICATORS]: {
         // TODO: validate at least one array length >= 1
@@ -52,5 +73,15 @@ export const REGISTER_FIELD_OPTIONS = {
     },
     [FIELD_INDICATOR_DESCRIPTION]: {
         required: "Indicator Description is required."
+    },
+    [FIELD_VALID_UNTIL]: {
+        required: false,
+        validate: validateValidUntilIsAfterValidFrom
+    },
+    [FIELD_LABELS]: {
+        required: false
+    },
+    [FIELD_REVOKED]: {
+        required: false
     }
 }

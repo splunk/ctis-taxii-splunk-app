@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import Optional
+
 import stix2
 from stix2 import MarkingDefinition
 
@@ -105,6 +107,24 @@ class TLPv2(Enum):
             return RED_MARKING_DEFINITION
         else:
             raise ValueError(f"Invalid TLPv2 value: {self}")
+
+    @staticmethod
+    def from_object_marking_refs(object_marking_refs: list) -> Optional[TLPv2]:
+        """
+        Returns the first TLP 2.0 marking found in list of object_marking_refs, or None if no TLP 2.0 marking is found.
+        """
+        for ref in object_marking_refs:
+            if ref == CLEAR_MARKING_DEFINITION.id:
+                return TLPv2.CLEAR
+            elif ref == AMBER_STRICT_MARKING_DEFINITION.id:
+                return TLPv2.AMBER_STRICT
+            elif ref == AMBER_MARKING_DEFINITION.id:
+                return TLPv2.AMBER
+            elif ref == GREEN_MARKING_DEFINITION.id:
+                return TLPv2.GREEN
+            elif ref == RED_MARKING_DEFINITION.id:
+                return TLPv2.RED
+        return None
 
     @staticmethod
     def maximum(value1: TLPv2, value2: TLPv2) -> TLPv2:
