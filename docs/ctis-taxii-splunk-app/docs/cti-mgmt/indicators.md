@@ -92,3 +92,51 @@ To edit an existing Indicator, click on the pencil button in the Indicator's row
 To delete an existing Indicator, click on the trash can button in the Indicator's row.
 You will be prompted to confirm the deletion.
 ![Delete Indicator Button](indicators_img/delete_indicator_button.png)
+
+## Import Indicators from Bundle File
+**New in version v1.34.0.**
+
+You can import indicators from a STIX 2.1 JSON Bundle file. To do so, navigate to `Indicators > Bulk Import` in the navigation menu.
+
+![Navigation to Bulk Import](bulk_import_indicators_img/nav.png)
+
+On this page you can click on the rectangle area to browse for a STIX Bundle JSON file.
+The bundle file should contain at least one indicator object. Any other type of objects in the bundle will be ignored.
+
+![Blank Form](bulk_import_indicators_img/blank_form.png)
+
+All indicator objects are expected to have the following properties at a minimum:
+
+- `id`
+- `type` = `"indicator"`
+- `spec_version` = `"2.1"`
+- `created`
+- `modified`
+- `pattern_type` = `"stix"`
+- `pattern`
+- `valid_from`
+
+After selecting a STIX Bundle JSON file you will be shown a form to create a new Grouping.
+The imported indicators will be added to this new grouping.
+![After selecting a file](bulk_import_indicators_img/after_selecting_file_success.png)
+
+After filling in the required fields, click on the 'Import' button to import the indicators from the STIX Bundle file,
+and create the new grouping.
+
+Upon successful import, you will be shown a confirmation message and given the option to navigate to the newly created grouping to view the imported indicators.
+![After Successful Import](bulk_import_indicators_img/after_import_success.png)
+
+### Error Handling
+If an invalid JSON file is selected you may see some error message such as:
+
+![Invalid JSON File](bulk_import_indicators_img/example_error_invalid_file.png)
+
+### Importing Indicators with Existing IDs
+If the Bundle JSON file selected has indicators with IDs that already exist in the app, you will be required to confirm
+that you want to overwrite the existing indicators with the new ones from the bundle file.
+
+![Selected File with Existing IDs](bulk_import_indicators_img/bundle_with_existing_indicators.png)
+
+Check the checkbox to confirm that you want to overwrite the existing indicators, and click on the 'Import' button to proceed with the import.
+
+![Confirm Overwrite](bulk_import_indicators_img/confirm_overwrite.png)
