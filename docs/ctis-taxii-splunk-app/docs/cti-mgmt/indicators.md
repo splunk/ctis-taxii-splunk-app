@@ -102,7 +102,19 @@ You can import indicators from a STIX 2.1 JSON Bundle file. To do so, navigate t
 
 On this page you can click on the rectangle area to browse for a STIX Bundle JSON file.
 The bundle file should contain at least one indicator object. Any other type of objects in the bundle will be ignored.
+
 ![Blank Form](bulk_import_indicators_img/blank_form.png)
+
+All indicator objects are expected to have the following properties at a minimum:
+
+- `id`
+- `type` = `"indicator"`
+- `spec_version` = `"2.1"`
+- `created`
+- `modified`
+- `pattern_type` = `"stix"`
+- `pattern`
+- `valid_from`
 
 After selecting a STIX Bundle JSON file you will be shown a form to create a new Grouping.
 The imported indicators will be added to this new grouping.
