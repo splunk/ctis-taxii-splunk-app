@@ -160,7 +160,7 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         return len(existing_records) > 0
 
     def insert_many_structured(self, records: List[T]) -> List[Dict]:
-        assert not self.any_exists(records=records)
+        assert not self.any_exists(records=records), f"Expected that primary key of records to not already exist in collection. records={records}"
         unstructured_records = [self.model_converter.unstructure(x) for x in records]
         # batch_save() returns a list of new record keys
         resp = self.collection.batch_save(*unstructured_records)

@@ -32,7 +32,8 @@ Example STIX identity:
 """
 
 def validate_identity_class(instance, attribute, value):
-    if value not in ["individual", "organization", "group", "class", "unknown"]:
+    # https://docs.oasis-open.org/cti/stix/v2.1/stix-v2.1.html#identity-class-vocabulary
+    if value not in ["individual", "organization", "group", "class", "system", "unknown"]:
         raise ValueError(f"Invalid identity_class: {value}")
 
 @define(slots=False, kw_only=True)

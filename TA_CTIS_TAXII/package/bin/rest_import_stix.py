@@ -3,7 +3,7 @@ from enum import Enum, unique
 from typing import Dict, List
 
 from common import AbstractRestHandler
-from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter, validate_stix_indicators, validate_stix_identities
+from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter, validate_stix_indicators, validate_stix_identities, IdentityModelV1
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -57,6 +57,22 @@ class ImportStixHandler(AbstractRestHandler):
             "indicators": [indicator_converter.unstructure(x) for x in new_indicators_structured],
         }
 
+    def handle_import_identities(self, identities: List[Dict], overwrite_existing: bool = False) -> Dict:
+        validate_stix_identities(identities=identities)
+        existing_ids = self.existing_identity_ids(identities)
+        if not overwrite_existing and len(existing_ids) > 0:
+            raise ValueError(f"Cannot import identities, some already exist: {existing_ids}")
+
+        if len(existing_ids) > 0:
+            self.kvstore_collections_context.identities.delete_many_by_primary_key(primary_key_values=existing_ids)
+
+        new_structured_identities = [IdentityModelV1.from_stix(stix_object=x) for x in identities]
+        unstructured_records  = self.kvstore_collections_context.identities.insert_many_structured(records=new_structured_identities)
+        return {
+            "identities": unstructured_records
+        }
+
+
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         if 'action' not in input_json:
             raise ValueError("Missing 'action' field in json body")
@@ -77,7 +93,7 @@ class ImportStixHandler(AbstractRestHandler):
             raise ValueError(f"Expected stix_objects to be a non-empty array")
 
         overwrite_existing = input_json.get('overwrite_existing', False)
-        logger.info(f"action={action}, overwrite_existing={overwrite_existing}")
+
         if model_type=='indicator':
             if action_enum == Action.IMPORT:
                 if 'new_grouping' not in input_json:
@@ -90,5 +106,5 @@ class ImportStixHandler(AbstractRestHandler):
             if action_enum == Action.VALIDATE:
                 return self.handle_validate_identities(identities=stix_objects)
             else:
-                raise NotImplementedError("TODO: Handle import of identity model")
+                return self.handle_import_identities(identities=stix_objects, overwrite_existing=overwrite_existing)
         raise NotImplementedError()
