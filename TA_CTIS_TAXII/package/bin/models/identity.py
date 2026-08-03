@@ -1,10 +1,13 @@
+from typing import Dict
+
 from attrs import define, field
 from .base import BaseModelV1, make_base_converter
 from stix2 import Identity
 from stix2.exceptions import InvalidValueError
+import stix2
 from uuid import uuid4
 
-from .common import validate_confidence
+from .common import validate_confidence, parse_iso8601_to_naive_datetime
 from .tlp_v2 import TLPv2
 
 
@@ -53,6 +56,33 @@ class IdentityModelV1(BaseModelV1):
             modified=self.modified,
             object_marking_refs=self.tlp_v2_rating.to_object_marking_ref(),
             confidence=self.confidence
+        )
+
+    @staticmethod
+    def from_stix(stix_object: Dict, default_tlp_v2_rating=TLPv2.GREEN) -> 'IdentityModelV1':
+        assert stix_object['type'] == 'identity'
+        assert stix_object['spec_version'] == '2.1'
+
+        assert 'id' in stix_object, "Expected 'id' to be present in stix_object"
+
+        # Possibly need to set allow_custom=True depending on what JSON users upload
+        parsed = stix2.parse(stix_object)
+
+        confidence = stix_object.get('confidence', 100)
+        object_marking_refs = stix_object.get('object_marking_refs', [])
+        identity_class = stix_object.get('identity_class', 'unknown')
+        created = parse_iso8601_to_naive_datetime(stix_object.get('created'))
+        modified = parse_iso8601_to_naive_datetime(stix_object.get('modified'))
+
+        tlp_rating = TLPv2.from_object_marking_refs(object_marking_refs) or default_tlp_v2_rating
+        return IdentityModelV1(
+            identity_id=parsed.id,
+            name=parsed.name,
+            confidence=confidence,
+            identity_class=identity_class,
+            tlp_v2_rating=tlp_rating,
+            created=created,
+            modified=modified,
         )
 
 

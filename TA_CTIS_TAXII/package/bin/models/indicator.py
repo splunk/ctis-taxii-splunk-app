@@ -8,12 +8,11 @@ from uuid import uuid4
 import stix2
 from attrs import define, field
 from cattrs import ClassValidationError
-from dateutil.parser import parse as parse_date
 from stix2 import Indicator as StixIndicator
 from stix2patterns.validator import validate as stix_validate
 
 from .base import BaseModelV1, make_base_converter
-from .common import validate_confidence
+from .common import validate_confidence, parse_iso8601_to_naive_datetime
 from .tlp_v2 import TLPv2
 
 """
@@ -44,10 +43,6 @@ def validate_created_by_ref(instance, attribute, value):
     if value is not None:
         if not value.startswith("identity--"):
             raise ValueError("created_by_ref must start with 'identity--'")
-
-def parse_iso8601_to_naive_datetime(value: str) -> datetime:
-    # TODO: Truncate down sub-seconds to at most 3 decimal places (millisecond precision)
-    return parse_date(value, ignoretz=True)
 
 def validate_valid_until_is_after_valid_from(instance, attribute, value):
     if value is not None:

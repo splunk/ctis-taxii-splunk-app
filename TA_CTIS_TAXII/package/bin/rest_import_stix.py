@@ -26,7 +26,6 @@ def validate_indicators(indicators: List[Dict]):
 
 
 class ImportStixHandler(AbstractRestHandler):
-    # TODO Move to collection class
     def existing_indicator_ids(self, indicators: List[Dict]):
         if len(indicators) == 0:
             return []
@@ -58,6 +57,9 @@ class ImportStixHandler(AbstractRestHandler):
             "new_grouping": new_grouping_unstructured,
             "indicators": [indicator_converter.unstructure(x) for x in new_indicators_structured],
         }
+
+    def handle_validate_identities(self, identities: List[Dict]) -> Dict:
+        pass
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         if 'action' not in input_json:
