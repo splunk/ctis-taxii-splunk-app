@@ -1,10 +1,9 @@
-import json
 import logging
 from enum import Enum, unique
 from typing import Dict, List
 
 from common import AbstractRestHandler
-from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter
+from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter, validate_stix_indicators
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -15,16 +14,6 @@ class Action(str, Enum):
     VALIDATE = "validate"
     IMPORT = "import"
 
-# TODO move to models code
-def validate_indicators(indicators: List[Dict]):
-    dummy_grouping_id = "grouping--1c7550ed-0e27-4c3e-b91d-0a080410ca9e"
-    for indicator in indicators:
-        try:
-            IndicatorModelV1.from_stix_object(stix_json=indicator, grouping_id=dummy_grouping_id)
-        except (ValueError, AssertionError) as e:
-            raise ValueError(f"Invalid indicator {json.dumps(indicator)}: {e}") from e
-
-
 class ImportStixHandler(AbstractRestHandler):
     def existing_indicator_ids(self, indicators: List[Dict]):
         if len(indicators) == 0:
@@ -34,12 +23,12 @@ class ImportStixHandler(AbstractRestHandler):
         return [x.indicator_id for x in existing_indicators]
 
     def handle_validate_indicators(self, indicators: List[Dict]) -> Dict:
-        validate_indicators(indicators=indicators)
+        validate_stix_indicators(indicators=indicators)
         existing_ids = self.existing_indicator_ids(indicators)
         return {"existing_ids": existing_ids}
 
     def handle_import_indicators(self, indicators: List[Dict], new_grouping: GroupingModelV1, overwrite_existing: bool = False) -> Dict:
-        validate_indicators(indicators=indicators)
+        validate_stix_indicators(indicators=indicators)
         existing_ids = self.existing_indicator_ids(indicators)
         if not overwrite_existing and len(existing_ids) > 0:
             raise ValueError(f"Cannot import indicators, some already exist: {existing_ids}")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from functools import reduce
 from typing import List, Optional, Tuple, Dict
@@ -176,3 +177,11 @@ def maximum_tlpv2_of_indicators(indicators: List[IndicatorModelV1]) -> TLPv2:
     if not indicators:
         raise ValueError("Must provide non-empty list of indicators")
     return reduce(TLPv2.maximum, [ind.tlp_v2_rating for ind in indicators])
+
+def validate_stix_indicators(indicators: List[Dict]):
+    dummy_grouping_id = "grouping--1c7550ed-0e27-4c3e-b91d-0a080410ca9e"
+    for indicator in indicators:
+        try:
+            IndicatorModelV1.from_stix_object(stix_json=indicator, grouping_id=dummy_grouping_id)
+        except (ValueError, AssertionError) as e:
+            raise ValueError(f"Invalid indicator {json.dumps(indicator)}: {e}") from e
