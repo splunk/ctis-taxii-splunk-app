@@ -3,7 +3,7 @@ from enum import Enum, unique
 from typing import Dict, List
 
 from common import AbstractRestHandler
-from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter, validate_stix_indicators
+from models import IndicatorModelV1, GroupingModelV1, grouping_converter, indicator_converter, validate_stix_indicators, validate_stix_identities
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -15,16 +15,26 @@ class Action(str, Enum):
     IMPORT = "import"
 
 class ImportStixHandler(AbstractRestHandler):
-    def existing_indicator_ids(self, indicators: List[Dict]):
+    def existing_indicator_ids(self, indicators: List[Dict]) -> List[str]:
         if len(indicators) == 0:
             return []
         indicator_ids = [x.get("id") for x in indicators]
-        existing_indicators = self.kvstore_collections_context.indicators.fetch_many_structured_by_primary_key(possible_values_of_primary_key=indicator_ids)
-        return [x.indicator_id for x in existing_indicators]
+        return self.kvstore_collections_context.indicators.filter_primary_keys_that_exist(primary_key_values=indicator_ids)
 
     def handle_validate_indicators(self, indicators: List[Dict]) -> Dict:
         validate_stix_indicators(indicators=indicators)
         existing_ids = self.existing_indicator_ids(indicators)
+        return {"existing_ids": existing_ids}
+
+    def existing_identity_ids(self, identities: List[Dict]) -> List[str]:
+        if len(identities) == 0:
+            return []
+        identity_ids = [x.get("id") for x in identities]
+        return self.kvstore_collections_context.identities.filter_primary_keys_that_exist(primary_key_values=identity_ids)
+
+    def handle_validate_identities(self, identities: List[Dict]) -> Dict:
+        validate_stix_identities(identities=identities)
+        existing_ids = self.existing_identity_ids(identities)
         return {"existing_ids": existing_ids}
 
     def handle_import_indicators(self, indicators: List[Dict], new_grouping: GroupingModelV1, overwrite_existing: bool = False) -> Dict:
@@ -46,9 +56,6 @@ class ImportStixHandler(AbstractRestHandler):
             "new_grouping": new_grouping_unstructured,
             "indicators": [indicator_converter.unstructure(x) for x in new_indicators_structured],
         }
-
-    def handle_validate_identities(self, identities: List[Dict]) -> Dict:
-        pass
 
     def handle(self, input_json: dict, query_params: dict, session_key: str) -> dict:
         if 'action' not in input_json:
@@ -79,7 +86,9 @@ class ImportStixHandler(AbstractRestHandler):
                 return self.handle_import_indicators(indicators=stix_objects, new_grouping=new_grouping, overwrite_existing=overwrite_existing)
             else:
                 return self.handle_validate_indicators(indicators=stix_objects)
-        else:
-            return {
-                "response" : "TODO"
-            }
+        elif model_type=='identity':
+            if action_enum == Action.VALIDATE:
+                return self.handle_validate_identities(identities=stix_objects)
+            else:
+                raise NotImplementedError("TODO: Handle import of identity model")
+        raise NotImplementedError()

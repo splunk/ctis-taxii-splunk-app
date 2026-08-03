@@ -113,6 +113,14 @@ class AbstractKVStoreCollection(ABC, Generic[T]):
         query = self.query_in(field=self.primary_key, possible_values=possible_values_of_primary_key)
         return self.fetch_many_structured(query=query)
 
+    def filter_primary_keys_that_exist(self, primary_key_values: List[str]) -> List[str]:
+        """
+        Returns a subset list of primary_key_values that exist in the collection.
+        """
+        existing_records = self.fetch_many_structured_by_primary_key(possible_values_of_primary_key=primary_key_values)
+        existing_primary_keys = [getattr(record, self.primary_key) for record in existing_records]
+        return existing_primary_keys
+
     def update_one_structured(self, query: Dict, updates: Dict) -> T:
         """
         Update a single record identified by the query with the provided updates which is a dict of key-values.

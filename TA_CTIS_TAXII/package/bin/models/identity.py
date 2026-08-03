@@ -1,4 +1,5 @@
-from typing import Dict
+import json
+from typing import Dict, List
 
 from attrs import define, field
 from .base import BaseModelV1, make_base_converter
@@ -60,10 +61,12 @@ class IdentityModelV1(BaseModelV1):
 
     @staticmethod
     def from_stix(stix_object: Dict, default_tlp_v2_rating=TLPv2.GREEN) -> 'IdentityModelV1':
-        assert stix_object['type'] == 'identity'
-        assert stix_object['spec_version'] == '2.1'
-
-        assert 'id' in stix_object, "Expected 'id' to be present in stix_object"
+        if stix_object.get('type') != 'identity':
+            raise ValueError(f'Expected "type" to be "identity"')
+        if stix_object.get('spec_version') != '2.1':
+            raise ValueError(f'Expected "spec_version" to be "2.1"')
+        if 'id' not in stix_object:
+            raise ValueError(f'Expected "id" to be present')
 
         # Possibly need to set allow_custom=True depending on what JSON users upload
         parsed = stix2.parse(stix_object)
@@ -87,3 +90,10 @@ class IdentityModelV1(BaseModelV1):
 
 
 identity_converter = make_base_converter()
+
+def validate_stix_identities(identities: List[Dict]):
+    for identity in identities:
+        try:
+            IdentityModelV1.from_stix(stix_object=identity)
+        except (ValueError, AssertionError) as e:
+            raise ValueError(f"Invalid identity {json.dumps(identity)}: {e}") from e
