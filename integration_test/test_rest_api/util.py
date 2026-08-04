@@ -146,6 +146,23 @@ def validate_stix_indicators(session, indicators: list) -> dict:
         "stix_objects": indicators
     })
 
+def validate_stix_identities(session, identities: list) -> dict:
+    """Validate STIX identities and check for existing IDs"""
+    return post_endpoint(endpoint="import-stix", session=session, payload={
+        "action": "validate",
+        "model_type": "identity",
+        "stix_objects": identities
+    })
+
+def import_stix_identities(session, identities: List, overwrite_existing: bool = False) -> Dict:
+    payload = {
+        "action": "import",
+        "model_type": "identity",
+        "overwrite_existing": overwrite_existing,
+        "stix_objects": identities
+    }
+    return post_endpoint(endpoint="import-stix", session=session, payload=payload)
+
 def import_stix_indicators(session, indicators: List, new_grouping: Dict, overwrite_existing: bool = False) -> Dict:
     payload = {
         "action": "import",
@@ -272,6 +289,23 @@ def example_stix_indicator(indicator_id: str = None) -> dict:
         "created": "2026-07-17T01:02:03.456Z",
         "modified": "2026-07-18T10:00:01.000Z",
         "valid_from": "2026-07-17T00:11:22.000Z"
+    }
+
+def example_stix_identity(identity_id: str = None, name: str = None, identity_class: str = "organization") -> dict:
+    """Create a minimal valid STIX 2.1 identity object"""
+    if identity_id is None:
+        identity_id = f"identity--{uuid.uuid4()}"
+    if name is None:
+        name = f"Example Identity {uuid.uuid4()}"
+
+    return {
+        "spec_version": "2.1",
+        "type": "identity",
+        "id": identity_id,
+        "name": name,
+        "identity_class": identity_class,
+        "created": "2026-07-17T01:02:03.456Z",
+        "modified": "2026-07-18T10:00:01.000Z"
     }
 
 def new_indicator_payload() -> dict:

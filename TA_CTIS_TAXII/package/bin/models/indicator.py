@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from functools import reduce
 from typing import List, Optional, Tuple, Dict
@@ -8,12 +9,11 @@ from uuid import uuid4
 import stix2
 from attrs import define, field
 from cattrs import ClassValidationError
-from dateutil.parser import parse as parse_date
 from stix2 import Indicator as StixIndicator
 from stix2patterns.validator import validate as stix_validate
 
 from .base import BaseModelV1, make_base_converter
-from .common import validate_confidence
+from .common import validate_confidence, parse_iso8601_to_naive_datetime
 from .tlp_v2 import TLPv2
 
 """
@@ -44,10 +44,6 @@ def validate_created_by_ref(instance, attribute, value):
     if value is not None:
         if not value.startswith("identity--"):
             raise ValueError("created_by_ref must start with 'identity--'")
-
-def parse_iso8601_to_naive_datetime(value: str) -> datetime:
-    # TODO: Truncate down sub-seconds to at most 3 decimal places (millisecond precision)
-    return parse_date(value, ignoretz=True)
 
 def validate_valid_until_is_after_valid_from(instance, attribute, value):
     if value is not None:
@@ -181,3 +177,11 @@ def maximum_tlpv2_of_indicators(indicators: List[IndicatorModelV1]) -> TLPv2:
     if not indicators:
         raise ValueError("Must provide non-empty list of indicators")
     return reduce(TLPv2.maximum, [ind.tlp_v2_rating for ind in indicators])
+
+def validate_stix_indicators(indicators: List[Dict]):
+    dummy_grouping_id = "grouping--1c7550ed-0e27-4c3e-b91d-0a080410ca9e"
+    for indicator in indicators:
+        try:
+            IndicatorModelV1.from_stix_object(stix_json=indicator, grouping_id=dummy_grouping_id)
+        except (ValueError, AssertionError) as e:
+            raise ValueError(f"Invalid indicator {json.dumps(indicator)}: {e}") from e
