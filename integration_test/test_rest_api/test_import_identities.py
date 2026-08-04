@@ -1,4 +1,4 @@
-from .util import create_new_identity, example_stix_identity, get_identities_collection, validate_stix_identities
+from .util import create_new_identity, example_stix_identity, get_identities_collection, import_stix_identities, validate_stix_identities
 
 
 """
@@ -106,7 +106,70 @@ class TestValidateMode:
 class TestImportMode:
     def test_import(self, session, cleanup_all_collections):
         """
-        This test should
-
+        This test should:
+        1. Create 2 identity records: A and B.
+        2. Request `POST import-stix` in import mode with 2 STIX 2.1 identity objects (C and D), one of which has the same "id"
+        as record B.
+        Note that overwrite_existing=true should be passed in the JSON body.
+        3. Verify that the identities collection now has 3 records: A, C and D. B should have been overwritten.
         """
-        raise NotImplementedError
+        identity_a_id = "identity--d18c503d-1a6a-4b35-93e0-faad809ea101"
+        identity_b_id = "identity--a4da26af-e89e-48aa-b8db-b42722fea202"
+
+        create_new_identity(session, {
+            "name": "Identity A",
+            "identity_class": "organization",
+            "identity_id": identity_a_id,
+            "confidence": 50,
+            "tlp_v2_rating": "TLP:GREEN",
+        })
+        create_new_identity(session, {
+            "name": "Identity B",
+            "identity_class": "individual",
+            "identity_id": identity_b_id,
+            "confidence": 75,
+            "tlp_v2_rating": "TLP:GREEN",
+        })
+
+        identities_before = get_identities_collection(session)
+        assert len(identities_before) == 2
+
+        stix_identity_overwrite = example_stix_identity(
+            identity_id=identity_b_id,
+            name="Imported Identity C",
+            identity_class="group",
+        )
+        stix_identity_overwrite["confidence"] = 91
+
+        stix_identity_new = example_stix_identity(
+            name="Imported Identity D",
+            identity_class="system",
+        )
+
+        response = import_stix_identities(
+            session=session,
+            identities=[stix_identity_overwrite, stix_identity_new],
+            overwrite_existing=True,
+        )
+
+        assert "identities" in response
+        assert len(response["identities"]) == 2
+        response_ids = {identity["identity_id"] for identity in response["identities"]}
+        assert response_ids == {identity_b_id, stix_identity_new["id"]}
+
+        identities_after = get_identities_collection(session)
+        assert len(identities_after) == 3
+
+        identities_by_id = {identity["identity_id"]: identity for identity in identities_after}
+        assert set(identities_by_id.keys()) == {identity_a_id, identity_b_id, stix_identity_new["id"]}
+
+        assert identities_by_id[identity_a_id]["name"] == "Identity A"
+
+        overwritten_identity = identities_by_id[identity_b_id]
+        assert overwritten_identity["name"] == "Imported Identity C"
+        assert overwritten_identity["identity_class"] == "group"
+        assert overwritten_identity["confidence"] == 91
+
+        new_identity = identities_by_id[stix_identity_new["id"]]
+        assert new_identity["name"] == "Imported Identity D"
+        assert new_identity["identity_class"] == "system"

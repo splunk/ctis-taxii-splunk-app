@@ -154,6 +154,15 @@ def validate_stix_identities(session, identities: list) -> dict:
         "stix_objects": identities
     })
 
+def import_stix_identities(session, identities: List, overwrite_existing: bool = False) -> Dict:
+    payload = {
+        "action": "import",
+        "model_type": "identity",
+        "overwrite_existing": overwrite_existing,
+        "stix_objects": identities
+    }
+    return post_endpoint(endpoint="import-stix", session=session, payload=payload)
+
 def import_stix_indicators(session, indicators: List, new_grouping: Dict, overwrite_existing: bool = False) -> Dict:
     payload = {
         "action": "import",
