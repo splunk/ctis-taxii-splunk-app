@@ -114,9 +114,10 @@ def generate_indicator():
 def generate_identity():
     animal = random.choice(ANIMALS)
     color = random.choice(COLORS)
+    identity_class = random.choice(['individual', 'organization'])
     return stix2.Identity(
-        name=f'{color} {animal} Company'.title(),
-        identity_class='organization'
+        name=f'{color} {animal} {identity_class}'.title(),
+        identity_class=identity_class
     )
 
 

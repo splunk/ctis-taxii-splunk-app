@@ -16,12 +16,26 @@ function assertTextIsStixBundleJson(text){
     }
 }
 
-function extractIndicatorsFromBundleJSON(text) {
-    assertTextIsStixBundleJson(text);
-    const obj = JSON.parse(text);
+function extractStixObjectsOfCertainTypeFromJson(jsonText, stixObjectType){
+    if(typeof jsonText !== 'string'){
+        throw new Error("Expected jsonText to be non-null string");
+    }
+    if(typeof stixObjectType !== 'string'){
+        throw new Error("Expected stixObjectType to be a non-null string");
+    }
+    assertTextIsStixBundleJson(jsonText);
+    const obj = JSON.parse(jsonText);
     return obj.objects.filter(x => {
-        return x?.type === 'indicator' && x?.spec_version === '2.1';
+        return x?.type === stixObjectType && x?.spec_version === '2.1';
     });
+}
+
+function extractIndicatorsFromBundleJSON(text) {
+    return extractStixObjectsOfCertainTypeFromJson(text, 'indicator');
+}
+
+function extractIdentitiesFromBundleJSON(text) {
+    return extractStixObjectsOfCertainTypeFromJson(text, 'identity');
 }
 
 function GenericFileUploader({ onFileLoaded, filename, setFilename }) {
@@ -68,6 +82,23 @@ export function IndicatorsFileUploader({ setIndicators, filename, setFilename })
 
 IndicatorsFileUploader.propTypes = {
     setIndicators: PropTypes.func.isRequired,
+    filename: PropTypes.string.isRequired,
+    setFilename: PropTypes.func.isRequired,
+}
+
+export function IdentitiesFileUploader({ setIdentities, filename, setFilename }) {
+    const onFileLoaded = useCallback((fileText) => {
+        try {
+            setIdentities(extractIdentitiesFromBundleJSON(fileText));
+        } catch (e) {
+            setIdentities([]);
+        }
+    }, [setIdentities]);
+
+    return <GenericFileUploader onFileLoaded={onFileLoaded} filename={filename} setFilename={setFilename} />
+}
+IdentitiesFileUploader.propTypes = {
+    setIdentities: PropTypes.func.isRequired,
     filename: PropTypes.string.isRequired,
     setFilename: PropTypes.func.isRequired,
 }

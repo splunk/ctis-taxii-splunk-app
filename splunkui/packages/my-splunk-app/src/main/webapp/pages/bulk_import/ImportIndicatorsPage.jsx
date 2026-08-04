@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
 import { useValidateStixIndicators } from '@splunk/my-page/src/hooks/useValidateStixIndicators';
 import Container from './container';
-import { IndicatorsFileUploader } from './IndicatorsFileUploader';
+import { IndicatorsFileUploader } from './FileUploader';
 import IndicatorsValidationSummary from './IndicatorsValidationSummary';
 import { SubmissionForm } from './SubmissionForm';
 
