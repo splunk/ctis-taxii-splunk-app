@@ -4,7 +4,7 @@ import Message from '@splunk/react-ui/Message';
 import { getUrlQueryParams } from '@splunk/my-page/src/queryParams';
 import { layoutWithTheme } from '../../common/theme';
 import ImportIndicatorsPage from './ImportIndicatorsPage';
-import ImportIdentitiesPage from './ImportIndentitiesPage';
+import ImportIdentitiesPage from './ImportIdentitiesPage';
 
 
 

@@ -1,0 +1,24 @@
+{
+    "type": "bundle",
+    "id": "bundle--5fc21fc4-9e81-40b3-a967-cf0fedbae5b6",
+    "objects": [
+        {
+            "type": "identity",
+            "spec_version": "2.1",
+            "id": "this id is invalid",
+            "created": "2026-08-04T07:35:12.42431Z",
+            "modified": "2026-08-04T07:35:12.42431Z",
+            "name": "Red Eagle Organization",
+            "identity_class": "organization"
+        },
+        {
+            "type": "identity",
+            "spec_version": "2.1",
+            "id": "identity--9325530c-b4a5-4078-8a4e-67b0f097e765",
+            "created": "2026-08-04T07:35:12.423954Z",
+            "modified": "2026-08-04T07:35:12.423954Z",
+            "name": "Mock Identity 1",
+            "identity_class": "this identity class is invalid"
+        }
+    ]
+}

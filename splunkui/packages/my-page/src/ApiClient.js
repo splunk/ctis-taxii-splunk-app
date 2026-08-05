@@ -115,11 +115,11 @@ export function postCreateSighting(data, successHandler, errorHandler) {
     return postData('create-sighting', data, successHandler, errorHandler)
 }
 
-export function postValidateStixIndicatorsToImport({ indicators, successHandler, errorHandler}) {
+export function postValidateStixObjectsToImport({ stixObjects, modelType, successHandler, errorHandler}) {
     return postData('import-stix', {
         action: "validate",
-        stix_objects: indicators,
-        model_type: 'indicator'
+        stix_objects: stixObjects,
+        model_type: modelType
     }, successHandler, errorHandler)
 }
 
