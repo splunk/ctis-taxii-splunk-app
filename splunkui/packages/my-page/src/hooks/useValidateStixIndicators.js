@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { postValidateStixIndicatorsToImport } from '../ApiClient';
+import { postValidateStixIndicatorsToImport ,errorToText} from '../ApiClient';
 
+// TODO: Extract reusable logic to help create useValidateStixIdentities(identities)
 export function useValidateStixIndicators(indicators) {
    const [validationError, setValidationError] = useState(null);
    const [loading, setLoading] = useState(false);
@@ -15,19 +16,9 @@ export function useValidateStixIndicators(indicators) {
                     setExistingIndicatorIds(resp?.existing_ids ?? [])
                     setLoading(false);
                 }, errorHandler: async (error) => {
-                    // TODO: Replace with existing errorToText() in ApiClient.js
-                    if(error instanceof Response){
-                        const respJson = await error.json();
-                        if(typeof respJson?.error === 'string'){
-                            setValidationError(`Validation Error: ${respJson.error}`);
-                        }else{
-                            setValidationError(JSON.stringify(respJson));
-                        }
-                    }else{
-                        setValidationError(String(error));
-                    }
+                    setValidationError(await errorToText(error));
                     setLoading(false);
-                 }
+                }
             })
         }
     }, [indicators]);

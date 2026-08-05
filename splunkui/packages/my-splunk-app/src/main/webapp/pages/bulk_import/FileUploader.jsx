@@ -25,9 +25,13 @@ function extractStixObjectsOfCertainTypeFromJson(jsonText, stixObjectType){
     }
     assertTextIsStixBundleJson(jsonText);
     const obj = JSON.parse(jsonText);
-    return obj.objects.filter(x => {
+    const filteredObjects = obj.objects.filter(x => {
         return x?.type === stixObjectType && x?.spec_version === '2.1';
     });
+    if(filteredObjects.length === 0){
+        throw new Error(`No stix objects of type "${stixObjectType}" found`);
+    }
+    return filteredObjects;
 }
 
 function extractIndicatorsFromBundleJSON(text) {
@@ -36,6 +40,16 @@ function extractIndicatorsFromBundleJSON(text) {
 
 function extractIdentitiesFromBundleJSON(text) {
     return extractStixObjectsOfCertainTypeFromJson(text, 'identity');
+}
+function ErrorMessage({errorMessage}) {
+    if(errorMessage){
+        return <Message type="error" appearance="fill">ERROR: {errorMessage}</Message>;
+    }
+    return null;
+
+}
+ErrorMessage.propTypes = {
+    errorMessage: PropTypes.string.isRequired
 }
 
 function GenericFileUploader({ onFileLoaded, filename, setFilename }) {
@@ -58,7 +72,7 @@ function GenericFileUploader({ onFileLoaded, filename, setFilename }) {
         <PageHeading level={2}>Choose a JSON STIX Bundle file.</PageHeading>
         <FileUpload setFileText={setFileText} fileName={filename} setFileName={setFilename}
                     fileIsLoading={fileIsLoading} setFileIsLoading={setFileIsLoading} />
-        {errorMessage && <Message type="error" appearance="fill">Error: {errorMessage}</Message>}
+        <ErrorMessage errorMessage={errorMessage} />
     </>;
 }
 
@@ -69,15 +83,21 @@ GenericFileUploader.propTypes = {
 }
 
 export function IndicatorsFileUploader({ setIndicators, filename, setFilename }) {
+    const [errorMessage, setErrorMessage] = useState(null);
     const onFileLoaded = useCallback((fileText) => {
         try {
             setIndicators(extractIndicatorsFromBundleJSON(fileText));
+            setErrorMessage(null);
         } catch (e) {
+            setErrorMessage(e.message);
             setIndicators([]);
         }
     }, [setIndicators]);
 
-    return <GenericFileUploader onFileLoaded={onFileLoaded} filename={filename} setFilename={setFilename} />
+    return <>
+        <GenericFileUploader onFileLoaded={onFileLoaded} filename={filename} setFilename={setFilename} />
+        <ErrorMessage errorMessage={errorMessage} />
+    </>
 }
 
 IndicatorsFileUploader.propTypes = {
@@ -87,15 +107,21 @@ IndicatorsFileUploader.propTypes = {
 }
 
 export function IdentitiesFileUploader({ setIdentities, filename, setFilename }) {
+    const [errorMessage, setErrorMessage] = useState(null);
     const onFileLoaded = useCallback((fileText) => {
         try {
             setIdentities(extractIdentitiesFromBundleJSON(fileText));
+            setErrorMessage(null);
         } catch (e) {
             setIdentities([]);
+            setErrorMessage(e.message);
         }
     }, [setIdentities]);
 
-    return <GenericFileUploader onFileLoaded={onFileLoaded} filename={filename} setFilename={setFilename} />
+    return <>
+        <GenericFileUploader onFileLoaded={onFileLoaded} filename={filename} setFilename={setFilename} />
+        <ErrorMessage errorMessage={errorMessage} />
+    </>
 }
 IdentitiesFileUploader.propTypes = {
     setIdentities: PropTypes.func.isRequired,

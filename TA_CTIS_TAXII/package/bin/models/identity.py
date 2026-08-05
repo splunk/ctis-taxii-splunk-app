@@ -96,5 +96,5 @@ def validate_stix_identities(identities: List[Dict]):
     for identity in identities:
         try:
             IdentityModelV1.from_stix(stix_object=identity)
-        except (ValueError, AssertionError) as e:
+        except Exception as e:
             raise ValueError(f"Invalid identity {json.dumps(identity)}: {e}") from e
