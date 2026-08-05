@@ -3,7 +3,7 @@ import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeadi
 import { useValidateStixIndicators } from '@splunk/my-page/src/hooks/useValidateStixObjects';
 import Container from './container';
 import { IndicatorsFileUploader } from './FileUploader';
-import IndicatorsValidationSummary from './IndicatorsValidationSummary';
+import ValidationSummary from './ValidationSummary';
 import { SubmissionForm } from './SubmissionForm';
 
 export default function ImportIndicatorsPage() {
@@ -16,11 +16,12 @@ export default function ImportIndicatorsPage() {
                 <PageHeading level={1}>Bulk Import Indicators</PageHeading>
             </PageHeadingContainer>
             <IndicatorsFileUploader setIndicators={setIndicators} filename={filename} setFilename={setFilename}/>
-            <IndicatorsValidationSummary
-                indicators={indicators}
+            <ValidationSummary
+                stixObjects={indicators}
+                stixObjectType='indicator'
                 validationLoading={validationLoading}
                 validationError={validationError}
-                existingIndicatorIds={existingIds}
+                existingIds={existingIds}
             />
             {!validationLoading && !validationError && indicators.length > 0 &&
                 <SubmissionForm indicators={indicators}

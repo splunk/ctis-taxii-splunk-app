@@ -7,13 +7,13 @@ import CollapsiblePanel from '@splunk/react-ui/CollapsiblePanel';
 import styled from 'styled-components';
 import { variables } from '@splunk/themes';
 
-function ListOfIndicatorIds({indicatorIds}){
+function ListofStixIds({ids}){
     return <List>
-        {indicatorIds.map(id => <List.Item key={id}>{id}</List.Item>)}
+        {ids.map(id => <List.Item key={id}>{id}</List.Item>)}
     </List>
 }
-ListOfIndicatorIds.propTypes = {
-    indicatorIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+ListofStixIds.propTypes = {
+    ids: PropTypes.arrayOf(PropTypes.string).isRequired,
 }
 
 const Container = styled.div`
@@ -21,13 +21,8 @@ const Container = styled.div`
     margin-bottom: ${variables.spacingLarge};
 `;
 
-export default function IndicatorsValidationSummary({
-    indicators,
-    validationLoading,
-    validationError,
-    existingIndicatorIds
-}) {
-    if (indicators.length === 0) {
+export default function ValidationSummary({stixObjects, validationLoading, validationError, existingIds, stixObjectType}) {
+    if (stixObjects.length === 0) {
         return null;
     }
 
@@ -40,12 +35,12 @@ export default function IndicatorsValidationSummary({
             )}
             {!validationError &&
                 <Container>
-                    <div>Indicators found: {indicators.length}</div>
-                    {existingIndicatorIds.length > 0 && (
+                    <div>Number of {stixObjectType} objects found in file: {stixObjects.length}</div>
+                    {existingIds.length > 0 && (
                         <Message appearance="fill" type="warning">
-                            Warning: Existing indicators found. Expand to see list of IDs.
-                            <CollapsiblePanel title="Existing Indicator IDs">
-                                <ListOfIndicatorIds indicatorIds={existingIndicatorIds} />
+                            Warning: Some record(s) with the same ID already exist. Expand to see the list of IDs.
+                            <CollapsiblePanel title={`Existing ${stixObjectType} IDs`}>
+                                <ListofStixIds ids={existingIds} />
                             </CollapsiblePanel>
                         </Message>
                     )}
@@ -53,14 +48,11 @@ export default function IndicatorsValidationSummary({
         </Loader>
     );
 }
-
-IndicatorsValidationSummary.propTypes = {
-    indicators: PropTypes.arrayOf(PropTypes.object).isRequired,
+ValidationSummary.propTypes = {
+    stixObjects: PropTypes.arrayOf(PropTypes.shape({})),
+    stixObjectType: PropTypes.string.isRequired,
     validationLoading: PropTypes.bool.isRequired,
     validationError: PropTypes.string,
-    existingIndicatorIds: PropTypes.arrayOf(PropTypes.string).isRequired
-};
+    existingIds: PropTypes.arrayOf(PropTypes.string),
+}
 
-IndicatorsValidationSummary.defaultProps = {
-    validationError: null
-};
