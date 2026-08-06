@@ -115,11 +115,11 @@ export function postCreateSighting(data, successHandler, errorHandler) {
     return postData('create-sighting', data, successHandler, errorHandler)
 }
 
-export function postValidateStixIndicatorsToImport({ indicators, successHandler, errorHandler}) {
+export function postValidateStixObjectsToImport({ stixObjects, modelType, successHandler, errorHandler}) {
     return postData('import-stix', {
         action: "validate",
-        stix_objects: indicators,
-        model_type: 'indicator'
+        stix_objects: stixObjects,
+        model_type: modelType
     }, successHandler, errorHandler)
 }
 
@@ -130,6 +130,15 @@ export function postSubmitStixIndicatorsToImport({ indicators, newGrouping, over
         new_grouping: newGrouping,
         overwrite_existing: overwriteExisting,
         model_type: 'indicator'
+    }, successHandler, errorHandler)
+}
+
+export function postSubmitStixIdentitiesToImport({ identities, overwriteExisting = false, successHandler, errorHandler}) {
+    return postData('import-stix', {
+        action: "import",
+        stix_objects: identities,
+        overwrite_existing: overwriteExisting,
+        model_type: 'identity'
     }, successHandler, errorHandler)
 }
 

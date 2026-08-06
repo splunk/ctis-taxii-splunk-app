@@ -183,5 +183,5 @@ def validate_stix_indicators(indicators: List[Dict]):
     for indicator in indicators:
         try:
             IndicatorModelV1.from_stix_object(stix_json=indicator, grouping_id=dummy_grouping_id)
-        except (ValueError, AssertionError) as e:
+        except Exception as e:
             raise ValueError(f"Invalid indicator {json.dumps(indicator)}: {e}") from e

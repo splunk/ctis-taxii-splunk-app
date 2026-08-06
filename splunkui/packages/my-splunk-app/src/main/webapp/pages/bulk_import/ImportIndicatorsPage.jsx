@@ -1,31 +1,32 @@
 import React, { useState } from 'react';
 import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
-import { useValidateStixIndicators } from '@splunk/my-page/src/hooks/useValidateStixIndicators';
+import { useValidateStixIndicators } from '@splunk/my-page/src/hooks/useValidateStixObjects';
 import Container from './container';
-import { IndicatorsFileUploader } from './IndicatorsFileUploader';
-import IndicatorsValidationSummary from './IndicatorsValidationSummary';
-import { SubmissionForm } from './SubmissionForm';
+import { IndicatorsFileUploader } from './FileUploader';
+import ValidationSummary from './ValidationSummary';
+import { IndicatorsSubmissionForm } from './IndicatorsSubmissionForm';
 
 export default function ImportIndicatorsPage() {
     const [filename, setFilename] = useState(null);
     const [indicators, setIndicators] = useState([]);
-    const { validationError, loading: validationLoading, existingIndicatorIds } = useValidateStixIndicators(indicators);
+    const { validationError, loading: validationLoading, existingIds } = useValidateStixIndicators(indicators);
 
     return (<Container>
             <PageHeadingContainer>
                 <PageHeading level={1}>Bulk Import Indicators</PageHeading>
             </PageHeadingContainer>
             <IndicatorsFileUploader setIndicators={setIndicators} filename={filename} setFilename={setFilename}/>
-            <IndicatorsValidationSummary
-                indicators={indicators}
+            <ValidationSummary
+                stixObjects={indicators}
+                stixObjectType='indicator'
                 validationLoading={validationLoading}
                 validationError={validationError}
-                existingIndicatorIds={existingIndicatorIds}
+                existingIds={existingIds}
             />
             {!validationLoading && !validationError && indicators.length > 0 &&
-                <SubmissionForm indicators={indicators}
-                                filename={filename}
-                                numExistingIndicators={existingIndicatorIds.length} />}
+                <IndicatorsSubmissionForm indicators={indicators}
+                                          filename={filename}
+                                          numExistingIndicators={existingIds.length} />}
         </Container>
     );
 }

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Checkbox from '@splunk/react-ui/Checkbox';
 import PropTypes from 'prop-types';
 import { FormProvider, useForm } from 'react-hook-form';
 import styled from 'styled-components';
@@ -8,12 +7,11 @@ import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
 import { errorToText, postSubmitStixIndicatorsToImport } from '@splunk/my-page/src/ApiClient';
-import Message from '@splunk/react-ui/Message';
-import SubmitButton from '@splunk/my-page/src/SubmitButton';
 import P from '@splunk/react-ui/Paragraph';
 import Modal from '@splunk/react-ui/Modal';
 import { viewGrouping } from '@splunk/my-page/src/urls';
 import { StyledButton } from '@splunk/my-page/src/StyledButton';
+import ErrorMessage from '@splunk/my-page/src/ErrorMessage';
 import registerGroupingFields from '../../common/grouping_form/formRegistration';
 import { ContextField, DescriptionField, NameField } from '../../common/grouping_form/fields';
 import {
@@ -24,36 +22,14 @@ import {
 } from '../../common/grouping_form/const';
 import { FORM_FIELD_TLP_V2_RATING, TLPv2RatingField } from '../../common/tlp';
 import { ConfidenceField, FIELD_CONFIDENCE } from '../../common/confidence';
+import { GenericSubmitSection } from './GenericSubmitSection';
 
-function SubmitSection({numExistingIndicators, numNewIndicators, submitting = false}){
-    const [checked, setChecked] = useState(false);
-    const checkboxOnChange = (e, { checked: newChecked }) => {
-        setChecked(newChecked);
-    };
-    if (numExistingIndicators === 0) {
-        return <CustomControlGroup>
-            <SubmitButton submitting={submitting} appearance='primary' label={`Import ${numNewIndicators} indicators`} />
-        </CustomControlGroup>;
-    }
-    const disabledDueToUnchecked = (numExistingIndicators > 0 && !checked);
-    const buttonLabel = `Import ${numNewIndicators + numExistingIndicators} indicators (${numExistingIndicators} existing will be overwritten)`;
-    return (<CustomControlGroup>
-        <Checkbox checked={checked} onChange={checkboxOnChange}>I understand that some existing indicators will be
-            overwritten.</Checkbox>
-        <SubmitButton submitting={submitting} appearance="destructive" label={buttonLabel} disabled={disabledDueToUnchecked} />
-    </CustomControlGroup>);
-}
-SubmitSection.propTypes = {
-    numExistingIndicators: PropTypes.number.isRequired,
-    numNewIndicators: PropTypes.number.isRequired,
-    submitting: PropTypes.bool.isRequired,
-}
+
 const MyForm = styled.form`
     max-width: 1200px;
 `
 
-
-export function SubmissionForm({ filename, indicators, numExistingIndicators }) {
+export function IndicatorsSubmissionForm({ filename, indicators, numExistingIndicators }) {
     const numNewIndicators = indicators.length - numExistingIndicators;
     const formMethods = useForm({
         mode: 'all',
@@ -117,10 +93,10 @@ export function SubmissionForm({ filename, indicators, numExistingIndicators }) 
                     <div><code>{JSON.stringify(formState.errors)}</code></div>
                 </section>
             )}
-            <SubmitSection numExistingIndicators={numExistingIndicators}
-                           numNewIndicators={numNewIndicators}
+            <GenericSubmitSection numExistingRecords={numExistingIndicators}
+                           numNewRecords={numNewIndicators}
                            submitting={submitting} />
-            {submissionError && <Message type='error' appearance='fill'>ERROR: {String(submissionError)}</Message>}
+            {submissionError && <ErrorMessage message={String(submissionError)} />}
             <Modal open={submitSuccess}>
                 <Modal.Header
                     title='Successfully Imported Indicators And Created New Grouping'
@@ -134,7 +110,7 @@ export function SubmissionForm({ filename, indicators, numExistingIndicators }) 
     </FormProvider>;
 }
 
-SubmissionForm.propTypes = {
+IndicatorsSubmissionForm.propTypes = {
     filename: PropTypes.string.isRequired,
     indicators: PropTypes.array.isRequired,
     numExistingIndicators: PropTypes.number.isRequired,
