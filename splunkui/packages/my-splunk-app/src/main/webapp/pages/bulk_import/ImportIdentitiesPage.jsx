@@ -9,6 +9,7 @@ import ErrorMessage from '@splunk/my-page/src/ErrorMessage';
 import Modal from '@splunk/react-ui/Modal';
 import { StyledButton } from '@splunk/my-page/src/StyledButton';
 import { VIEW_IDENTITIES_PAGE } from '@splunk/my-page/src/urls';
+import { variables } from '@splunk/themes';
 import Container from './container';
 import { IdentitiesFileUploader } from './FileUploader';
 import ValidationSummary from './ValidationSummary';
@@ -18,6 +19,10 @@ import { GenericSubmitSection } from './GenericSubmitSection';
 const Form = styled.form`
     max-width: 1000px;
 `;
+
+const StyledErrorMessage = styled(ErrorMessage)`
+    margin-top: ${variables.spacingLarge};
+`
 
 function SuccessModal({ submissionWasSuccessful = false }) {
     return (<Modal open={submissionWasSuccessful}>
@@ -62,6 +67,7 @@ function SubmissionForm({ identities, numExisting }) {
 
     const onSubmit = async (data) => {
         setSubmitting(true);
+        setErrorMessage('');
         console.log(data);
 
         await postSubmitStixIdentitiesToImport({
@@ -77,7 +83,9 @@ function SubmissionForm({ identities, numExisting }) {
             <GenericSubmitSection numExistingRecords={numExisting}
                                   numNewRecords={identities.length - numExisting}
                                   submitting={submitting} />
-            {errorMessage && <ErrorMessage message={errorMessage} />}
+            {errorMessage &&
+                <StyledErrorMessage message={errorMessage} />
+            }
             {submitSuccess && <SuccessModal submissionWasSuccessful={submitSuccess} />}
         </Form>
     </FormProvider>);
