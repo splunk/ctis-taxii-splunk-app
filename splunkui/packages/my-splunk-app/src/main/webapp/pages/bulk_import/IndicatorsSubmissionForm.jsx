@@ -29,7 +29,7 @@ const MyForm = styled.form`
     max-width: 1200px;
 `
 
-export function SubmissionForm({ filename, indicators, numExistingIndicators }) {
+export function IndicatorsSubmissionForm({ filename, indicators, numExistingIndicators }) {
     const numNewIndicators = indicators.length - numExistingIndicators;
     const formMethods = useForm({
         mode: 'all',
@@ -110,7 +110,7 @@ export function SubmissionForm({ filename, indicators, numExistingIndicators }) 
     </FormProvider>;
 }
 
-SubmissionForm.propTypes = {
+IndicatorsSubmissionForm.propTypes = {
     filename: PropTypes.string.isRequired,
     indicators: PropTypes.array.isRequired,
     numExistingIndicators: PropTypes.number.isRequired,

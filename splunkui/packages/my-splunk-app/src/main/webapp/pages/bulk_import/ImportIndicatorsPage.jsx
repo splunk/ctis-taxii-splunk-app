@@ -4,7 +4,7 @@ import { useValidateStixIndicators } from '@splunk/my-page/src/hooks/useValidate
 import Container from './container';
 import { IndicatorsFileUploader } from './FileUploader';
 import ValidationSummary from './ValidationSummary';
-import { SubmissionForm } from './SubmissionForm';
+import { IndicatorsSubmissionForm } from './IndicatorsSubmissionForm';
 
 export default function ImportIndicatorsPage() {
     const [filename, setFilename] = useState(null);
@@ -24,9 +24,9 @@ export default function ImportIndicatorsPage() {
                 existingIds={existingIds}
             />
             {!validationLoading && !validationError && indicators.length > 0 &&
-                <SubmissionForm indicators={indicators}
-                                filename={filename}
-                                numExistingIndicators={existingIds.length} />}
+                <IndicatorsSubmissionForm indicators={indicators}
+                                          filename={filename}
+                                          numExistingIndicators={existingIds.length} />}
         </Container>
     );
 }
