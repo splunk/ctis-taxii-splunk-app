@@ -22,10 +22,10 @@ export function GenericSubmitSection({ numExistingRecords, numNewRecords, submit
         </CustomControlGroup>;
     }
     const disabledDueToUnchecked = (numExistingRecords > 0 && !checked);
-    const buttonLabel = `Import ${totalRecords} objects (${numExistingRecords} existing will be overwritten)`;
+    const buttonLabel = `Import ${totalRecords} records (${numExistingRecords} existing will be overwritten)`;
     return (<SubmitSectionContainer>
         <CustomControlGroup label="Please Check to Continue">
-            <Checkbox checked={checked} onChange={checkboxOnChange}>I understand that some existing objects will be
+            <Checkbox checked={checked} onChange={checkboxOnChange}>I understand that some existing records will be
                 overwritten.</Checkbox>
         </CustomControlGroup>
         <CustomControlGroup>

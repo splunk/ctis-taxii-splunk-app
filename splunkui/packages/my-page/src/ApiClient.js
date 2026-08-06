@@ -133,6 +133,15 @@ export function postSubmitStixIndicatorsToImport({ indicators, newGrouping, over
     }, successHandler, errorHandler)
 }
 
+export function postSubmitStixIdentitiesToImport({ identities, overwriteExisting = false, successHandler, errorHandler}) {
+    return postData('import-stix', {
+        action: "import",
+        stix_objects: identities,
+        overwrite_existing: overwriteExisting,
+        model_type: 'identity'
+    }, successHandler, errorHandler)
+}
+
 export function editIdentity(data, successHandler, errorHandler) {
     return postData('edit-identity', data, successHandler, errorHandler)
 }

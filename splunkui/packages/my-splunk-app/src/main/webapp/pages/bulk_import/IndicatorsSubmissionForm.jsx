@@ -7,11 +7,11 @@ import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
 import { errorToText, postSubmitStixIndicatorsToImport } from '@splunk/my-page/src/ApiClient';
-import Message from '@splunk/react-ui/Message';
 import P from '@splunk/react-ui/Paragraph';
 import Modal from '@splunk/react-ui/Modal';
 import { viewGrouping } from '@splunk/my-page/src/urls';
 import { StyledButton } from '@splunk/my-page/src/StyledButton';
+import ErrorMessage from '@splunk/my-page/src/ErrorMessage';
 import registerGroupingFields from '../../common/grouping_form/formRegistration';
 import { ContextField, DescriptionField, NameField } from '../../common/grouping_form/fields';
 import {
@@ -96,7 +96,7 @@ export function IndicatorsSubmissionForm({ filename, indicators, numExistingIndi
             <GenericSubmitSection numExistingRecords={numExistingIndicators}
                            numNewRecords={numNewIndicators}
                            submitting={submitting} />
-            {submissionError && <Message type='error' appearance='fill'>ERROR: {String(submissionError)}</Message>}
+            {submissionError && <ErrorMessage message={String(submissionError)} />}
             <Modal open={submitSuccess}>
                 <Modal.Header
                     title='Successfully Imported Indicators And Created New Grouping'
