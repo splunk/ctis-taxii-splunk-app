@@ -52,3 +52,25 @@ To delete an Identity, click on the trash can icon of the Identity you wish to d
 
 You will be prompted to confirm the deletion.
 ![Delete Button](identities_img/delete_button.png)
+
+## Import Identities from Bundle File
+
+**New in version `v1.36.0`.**
+
+You can import identities from a STIX 2.1 JSON Bundle file. To do so, navigate to `Identities > Bulk Import` in the navigation menu.
+
+![Navigation](bulk_import_identities_img/nav.png)
+
+The page looks like this:
+![Blank Form](bulk_import_identities_img/blank_form.png)
+
+Select a JSON file by clicking on the upload area.
+The bundle file should contain at least one identity object. Any other type of objects in the bundle will be ignored.
+![After Selecting a File](bulk_import_identities_img/after_select_file_no_existing.png)
+
+Click on the "Import" button to proceed.
+
+### Importing Existing Identities
+
+If the bundle file contains any identities that have an ID that already exists in the app, you will be prompted to confirm that you want to overwrite the existing identities.
+![File with Existing IDs](bulk_import_identities_img/after_select_file_with_existing.png)
