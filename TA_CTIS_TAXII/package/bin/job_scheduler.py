@@ -19,7 +19,7 @@ except ImportError as e:
     raise e
 
 # For the REST endpoints this is set by common_rest_handler_entrypoint.py. Need to do same here since this is not a REST endpoint.
-setup_root_logger(root_logger_log_file="submission_scheduler")
+setup_root_logger(root_logger_log_file="job_scheduler")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -30,7 +30,7 @@ class MyHandler(AbstractRestHandler):
 
 
 @Configuration()
-class SubmissionSchedulerCommand(GeneratingCommand):
+class JobSchedulerCommand(GeneratingCommand):
 
     def generate(self):
         # To connect with Splunk, use the instantiated service object which is created using the server-uri and
@@ -58,4 +58,4 @@ class SubmissionSchedulerCommand(GeneratingCommand):
                 logger.exception(f"Error submitting grouping: {exc}")
 
 
-dispatch(SubmissionSchedulerCommand, sys.argv, sys.stdin, sys.stdout, __name__)
+dispatch(JobSchedulerCommand, sys.argv, sys.stdin, sys.stdout, __name__)
