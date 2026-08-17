@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import time
+from typing import Optional, Dict
 
 sys.stderr.write(f"original sys.path: {sys.path}\n")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
@@ -14,6 +15,9 @@ from splunklib.searchcommands import dispatch, GeneratingCommand, Configuration
 try:
     from common import AbstractRestHandler, NAMESPACE, setup_root_logger
     from models import KVStoreCollectionsContext, SubmissionStatus
+    from const import ADDON_NAME
+    from solnlib.conf_manager import ConfManager
+    from solnlib.soln_exceptions import ConfManagerException
 except ImportError as e:
     sys.stderr.write(f"ImportError: {e}\n")
     raise e
@@ -29,6 +33,30 @@ class MyHandler(AbstractRestHandler):
         return {}
 
 
+def get_advanced_settings(session_key: str) -> Optional[Dict]:
+    # https://splunk.github.io/addonfactory-solutions-library-python/conf_manager/#solnlib.conf_manager.ConfManager.get_conf
+    cfm = ConfManager(session_key=session_key, app=ADDON_NAME)
+    try:
+        conf_file = cfm.get_conf('ta_ctis_taxii_settings')
+    except ConfManagerException:
+        logger.exception("Error reading advanced settings configuration")
+        return None
+
+    if conf_file.stanza_exist('advanced_settings'):
+        raw_config = conf_file.get('advanced_settings')
+        return raw_config
+    else:
+        return None
+
+def indicators_cleanup_job_is_enabled(session_key: str) -> bool:
+    advanced_settings = get_advanced_settings(session_key=session_key)
+    if 'enable_indicators_cleanup' in advanced_settings:
+        return advanced_settings['enable_indicators_cleanup'] == '1'
+    return False
+
+def search_result_from_object(obj: Dict) -> Dict:
+    return {'_time': time.time(), '_raw': json.dumps(obj)}
+
 @Configuration()
 class JobSchedulerCommand(GeneratingCommand):
 
@@ -42,9 +70,14 @@ class JobSchedulerCommand(GeneratingCommand):
             try:
                 updated_submission = self.handler.submit_grouping(session_key=self.service.token,
                                                              submission_id=submission.submission_id)
-                yield {'_time': time.time(), '_raw': json.dumps(updated_submission)}
+                yield search_result_from_object(obj=updated_submission)
             except Exception as exc:
                 logger.exception(f"Error submitting grouping: {exc}")
+
+    def job_cleanup_expired_indicators(self):
+        job_is_enabled = indicators_cleanup_job_is_enabled(session_key=self.service.token)
+        logger.info(f"Indicators Cleanup Job is enabled: {job_is_enabled}")
+        yield search_result_from_object(obj={})
 
 
     def generate(self):
@@ -60,8 +93,9 @@ class JobSchedulerCommand(GeneratingCommand):
         # Need to manually set the kvstore_collections_context since we are not using the REST handler's infrastructure
         self.handler.kvstore_collections_context = KVStoreCollectionsContext(session_key=session_key, app_namespace=NAMESPACE)
 
-        for job_func in [self.job_submission_scheduler]:
+        for job_func in [self.job_submission_scheduler, self.job_cleanup_expired_indicators]:
             try:
+                # yielding is expected by the GeneratingCommand class, but we are not using this functionally.
                 yield from job_func()
             except Exception:
                 logger.exception("Error executing job")
