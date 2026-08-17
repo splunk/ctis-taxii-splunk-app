@@ -3,6 +3,7 @@ from .abstract_collection import AbstractKVStoreCollection
 from ..indicator import IndicatorModelV1, indicator_converter
 from cattrs import Converter
 from typing import Dict, List, Type
+from datetime import datetime, timezone
 
 class IndicatorsCollection(AbstractKVStoreCollection[IndicatorModelV1]):
     INDICATOR_ID_FIELD = "indicator_id"
@@ -25,6 +26,17 @@ class IndicatorsCollection(AbstractKVStoreCollection[IndicatorModelV1]):
 
     def fetch_many_by_grouping_id(self, grouping_id: str) -> List[IndicatorModelV1]:
         return self.fetch_many_structured(query={"grouping_id": grouping_id})
+
+    # TODO integration test coverage
+    def fetch_expired_or_revoked(self) -> List[IndicatorModelV1]:
+        dt_utc = datetime.now(tz=timezone.utc)
+        dt_naive = dt_utc.replace(tzinfo=None)
+        timestamp_str = datetime.isoformat(dt_naive)
+        query = self.query_or([
+            {"revoked" : True},
+            {"valid_until": {"$lt": timestamp_str}}
+        ])
+        return self.fetch_many_structured(query=query)
 
     def get_indicator(self, indicator_id: str) -> IndicatorModelV1:
         return self.fetch_exactly_one_structured(query={IndicatorsCollection.INDICATOR_ID_FIELD: indicator_id})

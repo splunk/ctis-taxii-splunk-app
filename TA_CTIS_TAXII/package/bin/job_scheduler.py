@@ -76,8 +76,24 @@ class JobSchedulerCommand(GeneratingCommand):
 
     def job_cleanup_expired_indicators(self):
         job_is_enabled = indicators_cleanup_job_is_enabled(session_key=self.service.token)
-        logger.info(f"Indicators Cleanup Job is enabled: {job_is_enabled}")
-        yield search_result_from_object(obj={})
+        logger.info(f"Indicators Cleanup Job is enabled? {job_is_enabled}")
+
+        if not job_is_enabled:
+            yield search_result_from_object(obj={
+                "message": "Indicators Cleanup Job is disabled. Skipping cleanup."
+            })
+            return
+
+        indicators_to_delete = self.handler.kvstore_collections_context.indicators.fetch_expired_or_revoked()
+        if len(indicators_to_delete) > 0:
+            resp = self.handler.kvstore_collections_context.indicators.delete_many_by_primary_key(primary_key_values=[x.indicator_id for x in indicators_to_delete])
+            yield search_result_from_object(obj={
+                "delete_response": resp
+            })
+        else:
+            yield search_result_from_object(obj={
+                "message": "No indicators to delete."
+            })
 
 
     def generate(self):
