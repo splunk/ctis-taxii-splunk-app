@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from util import (list_submissions, post_submit_grouping_to_taxii_server, unschedule_submission,
                   get_submission, get_grouping, get_indicators_collection, create_new_sighting,
                   example_sighting)
+from date_util import datetime_in_future, timestamp_in_future
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -24,16 +25,6 @@ class TestTaxiiServerConnection:
         print(resp.json())
 
 
-def datetime_in_future(in_future: timedelta) -> datetime:
-    now = datetime.utcnow()
-    return now + in_future
-
-
-def timestamp_in_future(in_future: timedelta) -> str:
-    dt = datetime_in_future(in_future=in_future)
-    # No timezone info is expected, UTC is assumed.
-    timestamp = dt.isoformat(timespec="seconds")
-    return timestamp
 
 def get_grouping_last_submission_at(session, grouping_id) -> datetime:
     grouping = get_grouping(session=session, grouping_id=grouping_id)

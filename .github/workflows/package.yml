@@ -36,8 +36,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: List
         run: pwd && ls -l
-      - name: Install pytest
-        run: pip install pytest pytest-cov
+      - name: Install test requirements
+        run: pip install -r dev-requirements.txt
       - name: Install requirements
         run: pip install -r TA_CTIS_TAXII/package/lib/requirements.txt
       - name: Run unit tests
@@ -120,10 +120,10 @@ jobs:
     strategy:
       matrix:
         splunk_version:
-          - '9.3'
           - '9.4'
           - '10.0'
           - '10.2'
+          - '10.4'
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js

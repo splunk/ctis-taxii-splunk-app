@@ -15,7 +15,6 @@ class TestScenarios:
         assert_collections_are_empty(session)
         grouping = new_sample_grouping(session)
 
-        # Validation isn't done on grouping_id, but the UI forces a dropdown selection in the Indicator Form
         payload = create_indicator_form_payload(grouping_id=grouping["grouping_id"], indicators=[example_indicator()])
         create_new_indicator(session, payload=payload)
         indicators = get_indicators_collection(session)

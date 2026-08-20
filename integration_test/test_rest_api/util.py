@@ -390,3 +390,28 @@ def delete_taxii_config(session, taxii_config_name: str) -> dict:
     resp = session.delete(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_taxii_config/{taxii_config_name}', params=DEFAULT_REQUEST_PARAMS)
     resp_raise_for_status_and_log_response(resp)
     return resp.json()
+
+def get_advanced_settings(session) -> dict:
+    resp = session.get(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_settings/advanced_settings', params={"output_mode" : "json"})
+    resp.raise_for_status()
+    j = resp.json()
+    if "entry" in j and len(j["entry"]) > 0:
+        return j["entry"][0]["content"]
+    else:
+        raise RuntimeError(f"Expected response to have 'entry' to be a non-empty array.")
+
+def update_advanced_settings(session, enable_indicators_cleanup: bool = False) -> dict:
+    resp = session.post(f'{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/TA_CTIS_TAXII_settings/advanced_settings', data={
+        "enable_indicators_cleanup": int(enable_indicators_cleanup),
+    }, params={"output_mode" : "json"})
+    resp.raise_for_status()
+    return resp.json()
+
+def oneshot_splunk_search(session, spl_query: str):
+    resp = session.post(f"{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/search/v2/jobs", data={
+        "exec_mode": "oneshot",
+        "namespace": CTIS_APP_NAME,
+        "search": spl_query
+    }, params={"output_mode": "json"})
+    resp.raise_for_status()
+    return resp.json()

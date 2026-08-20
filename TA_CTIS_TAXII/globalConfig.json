@@ -221,6 +221,13 @@
                             "field": "enable_sightings",
                             "defaultValue": false,
                             "help": "EXPERIMENTAL. Note: Not supported for ASD CTIS partners. Enable to allow users to create sightings of indicators. Sightings can be included in Bundle submissions to the TAXII server."
+                        },
+                        {
+                            "type": "checkbox",
+                            "label": "Enable Indicators Cleanup Job",
+                            "field": "enable_indicators_cleanup",
+                            "defaultValue": false,
+                            "help": "Enable to allow periodic cleanup of indicators which are revoked or expired (valid_until in the past)."
                         }
                     ],
                     "title": "Advanced Settings"
@@ -395,7 +402,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.35.0+2252675",
+        "version": "1.36.0+9b86f4a",
         "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.10",
         "supportedThemes": [
