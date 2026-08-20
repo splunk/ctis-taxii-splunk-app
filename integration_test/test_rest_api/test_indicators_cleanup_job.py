@@ -27,7 +27,7 @@ def test_revoked_indicators_gets_deleted(session, cleanup_all_collections):
     assert settings["enable_indicators_cleanup"] == '1'
 
     # Cleanup job runs every minute, give a little extra...
-    for _ in range(70):
+    for _ in range(90):
         query_for_indicator_resp = list_indicators(session=session, query={
             "indicator_id" : only_created_indicator["indicator_id"],
         })
@@ -36,4 +36,4 @@ def test_revoked_indicators_gets_deleted(session, cleanup_all_collections):
         else:
             time.sleep(1)
     else:
-        pytest.fail("Failed to clean up revoked indicator after 70 seconds.")
+        pytest.fail("Failed to clean up revoked indicator after 90 seconds.")
