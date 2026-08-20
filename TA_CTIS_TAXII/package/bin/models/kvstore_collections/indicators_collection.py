@@ -27,7 +27,6 @@ class IndicatorsCollection(AbstractKVStoreCollection[IndicatorModelV1]):
     def fetch_many_by_grouping_id(self, grouping_id: str) -> List[IndicatorModelV1]:
         return self.fetch_many_structured(query={"grouping_id": grouping_id})
 
-    # TODO integration test coverage
     def fetch_expired_or_revoked(self) -> List[IndicatorModelV1]:
         dt_utc = datetime.now(tz=timezone.utc)
         dt_naive = dt_utc.replace(tzinfo=None)
