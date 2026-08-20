@@ -1,8 +1,6 @@
-import time
-
 from .util import (update_advanced_settings, get_advanced_settings, new_sample_grouping, create_indicator_form_payload,
-                   create_new_indicator, example_indicator, list_indicators)
-import pytest
+                   create_new_indicator, example_indicator, list_indicators, oneshot_splunk_search)
+
 
 def test_revoked_indicators_gets_deleted(session, cleanup_all_collections):
     update_advanced_settings(session=session, enable_indicators_cleanup=False)
@@ -26,14 +24,9 @@ def test_revoked_indicators_gets_deleted(session, cleanup_all_collections):
     settings = get_advanced_settings(session=session)
     assert settings["enable_indicators_cleanup"] == '1'
 
-    # Cleanup job runs every minute, give a little extra...
-    for _ in range(90):
-        query_for_indicator_resp = list_indicators(session=session, query={
-            "indicator_id" : only_created_indicator["indicator_id"],
-        })
-        if len(query_for_indicator_resp["records"]) == 0:
-            break
-        else:
-            time.sleep(1)
-    else:
-        pytest.fail("Failed to clean up revoked indicator after 90 seconds.")
+    oneshot_splunk_search(session=session, spl_query="| ctistaxiischeduler")
+
+    query_for_indicator_resp = list_indicators(session=session, query={
+        "indicator_id": only_created_indicator["indicator_id"],
+    })
+    assert len(query_for_indicator_resp["records"]) == 0, "Failed to clean up revoked indicator."

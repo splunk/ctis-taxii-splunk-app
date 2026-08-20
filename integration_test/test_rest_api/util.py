@@ -406,3 +406,12 @@ def update_advanced_settings(session, enable_indicators_cleanup: bool = False) -
     }, params={"output_mode" : "json"})
     resp.raise_for_status()
     return resp.json()
+
+def oneshot_splunk_search(session, spl_query: str):
+    resp = session.post(f"{SPLUNK_ADMIN_URL}/servicesNS/-/{CTIS_APP_NAME}/search/v2/jobs", data={
+        "exec_mode": "oneshot",
+        "namespace": CTIS_APP_NAME,
+        "search": spl_query
+    }, params={"output_mode": "json"})
+    resp.raise_for_status()
+    return resp.json()
