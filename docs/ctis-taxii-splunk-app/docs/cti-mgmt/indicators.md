@@ -140,3 +140,12 @@ that you want to overwrite the existing indicators with the new ones from the bu
 Check the checkbox to confirm that you want to overwrite the existing indicators, and click on the 'Import' button to proceed with the import.
 
 ![Confirm Overwrite](bulk_import_indicators_img/confirm_overwrite.png)
+
+## Automatic Cleanup of Revoked or Expired Indicators
+
+**New in version v1.37.0**
+
+Revoked or expired (valid_until in the past) indicators can be automatically deleted by enabling the Indicators Cleanup job in the app's Advanced Settings configuration.
+The cleanup job runs every minute by default.
+
+![Enable Indicators Cleanup](indicators_img/config_enable_indicators_job.png)
