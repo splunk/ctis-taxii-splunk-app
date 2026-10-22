@@ -228,6 +228,56 @@
                             "field": "enable_indicators_cleanup",
                             "defaultValue": false,
                             "help": "Enable to allow periodic cleanup of indicators which are revoked or expired (valid_until in the past)."
+                        },
+                        {
+                            "type": "singleSelect",
+                            "label": "Default TLP 2.0 Marking",
+                            "field": "default_tlp_v2_rating",
+                            "defaultValue": "TLP:GREEN",
+                            "help": "Default TLP 2.0 marking applied to new objects.",
+                            "options": {
+                                "disableSearch": true,
+                                "autoCompleteFields": [
+                                    {
+                                        "label": "TLP:CLEAR",
+                                        "value": "TLP:CLEAR"
+                                    },
+                                    {
+                                        "label": "TLP:GREEN",
+                                        "value": "TLP:GREEN"
+                                    },
+                                    {
+                                        "label": "TLP:AMBER",
+                                        "value": "TLP:AMBER"
+                                    },
+                                    {
+                                        "label": "TLP:AMBER+STRICT",
+                                        "value": "TLP:AMBER+STRICT"
+                                    },
+                                    {
+                                        "label": "TLP:RED",
+                                        "value": "TLP:RED"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "label": "Default Confidence",
+                            "field": "default_confidence",
+                            "defaultValue": 100,
+                            "help": "Default confidence rating (0 to 100) applied to new objects.",
+                            "validators": [
+                                {
+                                    "type": "number",
+                                    "range": [
+                                        0,
+                                        100
+                                    ],
+                                    "isInteger": true,
+                                    "errorMsg": "Confidence must be an integer between 0 and 100"
+                                }
+                            ]
                         }
                     ],
                     "title": "Advanced Settings"
@@ -402,7 +452,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.36.0+9b86f4a",
+        "version": "1.37.0+aa53d4c",
         "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.10",
         "supportedThemes": [
