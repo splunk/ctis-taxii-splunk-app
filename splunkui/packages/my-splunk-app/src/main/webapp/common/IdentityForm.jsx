@@ -8,6 +8,7 @@ import Modal from "@splunk/react-ui/Modal";
 import Button from "@splunk/react-ui/Button";
 import {VIEW_IDENTITIES_PAGE} from "@splunk/my-page/src/urls";
 import Loader from "@splunk/my-page/src/Loader";
+import {useAdvancedSettings} from "@splunk/my-page/src/hooks/useAdvancedSettings";
 import {CustomControlGroup} from "@splunk/my-page/src/CustomControlGroup";
 import {HorizontalButtonLayout} from "@splunk/my-page/src/HorizontalButtonLayout";
 import PropTypes from "prop-types";
@@ -86,7 +87,7 @@ SwitchForShouldAutogenerateId.propTypes = {
     setAutogenerateId: PropTypes.func,
 }
 
-export function Form({existingIdentity}) {
+export function Form({existingIdentity, defaults}) {
     const title = existingIdentity ? "Edit Identity" : "Create New Identity";
     usePageTitle(title);
 
@@ -95,14 +96,16 @@ export function Form({existingIdentity}) {
     const methods = useForm({
         mode: 'all',
         defaultValues: {
-            [FIELD_CONFIDENCE]: 100,
+            [FIELD_CONFIDENCE]: defaults?.confidence ?? 100,
+            [FORM_FIELD_TLP_V2_RATING]: defaults?.tlpV2Rating ?? "",
         }
     });
     const {register, unregister, setValue, handleSubmit, formState} = methods;
 
     register(FORM_FIELD_NAME, {required: "Name is required.", value: ""});
     register(FORM_FIELD_IDENTITY_CLASS, {required: "Identity Class is required.", value: ""});
-    register(FORM_FIELD_TLP_V2_RATING, FORM_FIELD_TLP_V2_RATING_OPTION);
+    // Omit the empty `value` so it doesn't override the default from useForm's defaultValues
+    register(FORM_FIELD_TLP_V2_RATING, {required: FORM_FIELD_TLP_V2_RATING_OPTION.required});
     register(FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION);
 
     if (existingIdentity) {
@@ -196,6 +199,25 @@ export function Form({existingIdentity}) {
 
 Form.propTypes = {
     existingIdentity: PropTypes.object,
+    defaults: PropTypes.shape({
+        tlpV2Rating: PropTypes.string,
+        confidence: PropTypes.number,
+    }),
+}
+
+function CreateModeForm() {
+    const {loading, advancedSettings} = useAdvancedSettings();
+    // A failure to load Advanced Settings must not block creating an identity, so the
+    // error is ignored and the form falls back to its built-in defaults.
+    const defaults = {
+        tlpV2Rating: advancedSettings.defaultTlpV2Rating,
+        confidence: advancedSettings.defaultConfidence,
+    };
+    return (
+        <Loader loading={loading}>
+            <Form defaults={defaults}/>
+        </Loader>
+    );
 }
 
 function EditModeForm({identityId}) {
@@ -215,7 +237,7 @@ EditModeForm.propTypes = {
 }
 
 export default function IdentityForm({editMode, identityId}) {
-    return editMode ? <EditModeForm identityId={identityId}/> : <Form/>;
+    return editMode ? <EditModeForm identityId={identityId}/> : <CreateModeForm/>;
 }
 IdentityForm.propTypes = {
     editMode: PropTypes.bool,
