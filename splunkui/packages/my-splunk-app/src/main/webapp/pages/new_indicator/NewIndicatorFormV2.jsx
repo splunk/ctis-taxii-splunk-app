@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {Provider, useDispatch, useSelector} from "react-redux";
 import {configureStore} from "@reduxjs/toolkit";
 import Loader from "@splunk/my-page/src/Loader";
+import {useAdvancedSettings} from "@splunk/my-page/src/hooks/useAdvancedSettings";
 import styled from "styled-components";
 import {variables} from "@splunk/themes";
 import Divider from "@splunk/react-ui/Divider";
@@ -136,9 +137,14 @@ const debugMode = false;
 
 function ComponentWithStoreContext({splunkEvent, initialSplunkFieldName}) {
     const {indicatorCategories, loading: loadingCategories} = useIndicatorCategories();
+    const {loading: loadingSettings, advancedSettings} = useAdvancedSettings();
+    const defaults = {
+        tlpV2Rating: advancedSettings.defaultTlpV2Rating,
+        confidence: advancedSettings.defaultConfidence,
+    };
     return <MaxWidthContainer>
-        <Loader loading={loadingCategories}>
-            <CommonPropertiesForm/>
+        <Loader loading={loadingCategories || loadingSettings}>
+            <CommonPropertiesForm defaults={defaults}/>
             <Divider/>
             <DisplayIndicators splunkEvent={splunkEvent} initialSplunkFieldName={initialSplunkFieldName}
                                indicatorCategories={indicatorCategories}/>

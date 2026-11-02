@@ -7,7 +7,7 @@ import P from "@splunk/react-ui/Paragraph";
 import {dateNowInSecondsPrecision, dateToIsoStringWithoutTimezone} from "@splunk/my-page/src/date_utils";
 import styled from "styled-components";
 import {variables} from "@splunk/themes";
-import {tlpV2RatingOptions} from "@splunk/my-page/src/tlpV2Rating";
+import PropTypes from "prop-types";
 import {getValidationSignal, submitData, validationDone} from './CommonProperties.slice'
 import {useRespondToValidationSignal} from "./formUtils";
 import {GroupingIdFieldV2} from "../../common/indicator_form/GroupingsDropdown";
@@ -27,13 +27,13 @@ const StyledSection = styled.section`
 `
 
 const COMMON_PROPERTIES_FIELDS = [FIELD_GROUPING_ID, FIELD_TLP_RATING, FIELD_CONFIDENCE, FIELD_VALID_FROM];
-const CommonPropertiesForm = () => {
+const CommonPropertiesForm = ({defaults}) => {
     const formMethods = useForm({
         mode: 'all',
         defaultValues: {
             [FIELD_GROUPING_ID]: '',
-            [FIELD_TLP_RATING]: tlpV2RatingOptions[0].value,
-            [FIELD_CONFIDENCE]: 50,
+            [FIELD_TLP_RATING]: defaults?.tlpV2Rating ?? '',
+            [FIELD_CONFIDENCE]: defaults?.confidence ?? 100,
             [FIELD_VALID_FROM]: dateToIsoStringWithoutTimezone(dateNowInSecondsPrecision())
         }
     })
@@ -80,6 +80,11 @@ const CommonPropertiesForm = () => {
     );
 };
 
-CommonPropertiesForm.propTypes = {};
+CommonPropertiesForm.propTypes = {
+    defaults: PropTypes.shape({
+        tlpV2Rating: PropTypes.string,
+        confidence: PropTypes.number,
+    }),
+};
 
 export default CommonPropertiesForm;
