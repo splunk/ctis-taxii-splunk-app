@@ -104,8 +104,7 @@ export function Form({existingIdentity, defaults}) {
 
     register(FORM_FIELD_NAME, {required: "Name is required.", value: ""});
     register(FORM_FIELD_IDENTITY_CLASS, {required: "Identity Class is required.", value: ""});
-    // Omit the empty `value` so it doesn't override the default from useForm's defaultValues
-    register(FORM_FIELD_TLP_V2_RATING, {required: FORM_FIELD_TLP_V2_RATING_OPTION.required});
+    register(FORM_FIELD_TLP_V2_RATING, FORM_FIELD_TLP_V2_RATING_OPTION);
     register(FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION);
 
     if (existingIdentity) {
