@@ -69,19 +69,23 @@ function useExistingSighting(sightingId) {
     return { sighting, loading, error };
 }
 
-export function Form({ existingSighting = null }) {
+export function Form({ existingSighting = null, defaults }) {
     // Pass in an existingSighting object to use edit mode.
     // Otherwise, assumed to be in create-new mode.
     const editMode = existingSighting !== null;
     const pageTitle = editMode ? `Edit Sighting ${existingSighting.sighting_id}` : 'New Sighting';
     usePageTitle(pageTitle);
 
-    const formMethods = useForm({
-        mode: 'all', defaultValues: {
-            [FIELD_CONFIDENCE]: 100,
-            [FORM_FIELD_COUNT]: 1,
-        }
-    });
+    const defaultValues = {
+        [FIELD_CONFIDENCE]: defaults?.confidence ?? 100,
+        [FORM_FIELD_COUNT]: 1,
+    };
+    if(defaults?.tlpV2Rating){
+        // TLP is optional for a Sighting, so only set it when a default exists
+        defaultValues[FORM_FIELD_TLP_V2_RATING] = defaults.tlpV2Rating;
+    }
+
+    const formMethods = useForm({ mode: 'all', defaultValues });
     const { handleSubmit, register, setValue, watch, formState, trigger } = formMethods;
 
     const validateFirstSeenIsBeforeLastSeen = (val, fullFormValues) => {
@@ -182,7 +186,11 @@ export function Form({ existingSighting = null }) {
 }
 
 Form.propTypes = {
-    existingSighting: PropTypes.object
+    existingSighting: PropTypes.object,
+    defaults: PropTypes.shape({
+        tlpV2Rating: PropTypes.string,
+        confidence: PropTypes.number,
+    }),
 };
 
 export function EditSightingForm({ existingSightingId = null }) {

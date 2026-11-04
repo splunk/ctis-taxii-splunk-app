@@ -30,7 +30,10 @@ function Router() {
     if (!advancedSettings.enableSightings){
         component = <WarningSightingsFeatureDisabled />;
     }else if (queryParams.has('action', 'create')) {
-        component = <CreateSighting />;
+        component = <CreateSighting defaults={{
+            tlpV2Rating: advancedSettings.defaultTlpV2Rating,
+            confidence: advancedSettings.defaultConfidence,
+        }} />;
     }else if(queryParams.has('action', 'edit')){
         component = <EditSighting sightingId={sightingId} />;
     }
