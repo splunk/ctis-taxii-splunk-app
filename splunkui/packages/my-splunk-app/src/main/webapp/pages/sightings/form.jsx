@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { DEFAULT_CONFIDENCE_FALLBACK } from '@splunk/my-page/src/hooks/useAdvancedSettings';
 import Loader from '@splunk/my-page/src/Loader';
 import { editSighting, getSighting, postCreateSighting, useGetRecord } from '@splunk/my-page/src/ApiClient';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -14,6 +15,7 @@ import { viewSighting } from '@splunk/my-page/src/urls';
 import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
 import { LabelsControlGroup } from '@splunk/my-page/src/controls/LabelsControlGroup';
 import { CheckboxControlGroup, RevokedCheckboxControlGroup } from '@splunk/my-page/src/controls/CheckboxControlGroup';
+import { formDefaultsPropType } from '../../common/formDefaults';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
 import {
@@ -77,7 +79,7 @@ export function Form({ existingSighting = null, defaults }) {
     usePageTitle(pageTitle);
 
     const defaultValues = {
-        [FIELD_CONFIDENCE]: defaults?.confidence ?? 100,
+        [FIELD_CONFIDENCE]: defaults?.confidence ?? DEFAULT_CONFIDENCE_FALLBACK,
         [FORM_FIELD_COUNT]: 1,
     };
     if(defaults?.tlpV2Rating){
@@ -187,10 +189,7 @@ export function Form({ existingSighting = null, defaults }) {
 
 Form.propTypes = {
     existingSighting: PropTypes.object,
-    defaults: PropTypes.shape({
-        tlpV2Rating: PropTypes.string,
-        confidence: PropTypes.number,
-    }),
+    defaults: formDefaultsPropType,
 };
 
 export function EditSightingForm({ existingSightingId = null }) {

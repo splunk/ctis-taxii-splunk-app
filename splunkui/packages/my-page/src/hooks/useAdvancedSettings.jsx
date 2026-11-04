@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { getAdvancedSettings, useGetRecord } from '../ApiClient';
 import { tlpV2RatingOptions } from '../tlpV2Rating';
 
-const FALLBACK_DEFAULT_CONFIDENCE = 100;
+export const DEFAULT_CONFIDENCE_FALLBACK = 100;
 
 function parseDefaultTlpV2Rating(value) {
     return tlpV2RatingOptions.some((option) => option.value === value) ? value : '';
@@ -11,7 +11,7 @@ function parseDefaultTlpV2Rating(value) {
 function parseDefaultConfidence(value) {
     const confidence = Number(value);
     const isValid = value !== undefined && value !== null && value !== '' && Number.isInteger(confidence) && confidence >= 0 && confidence <= 100;
-    return isValid ? confidence : FALLBACK_DEFAULT_CONFIDENCE;
+    return isValid ? confidence : DEFAULT_CONFIDENCE_FALLBACK;
 }
 
 export function useAdvancedSettings() {
@@ -31,5 +31,14 @@ export function useAdvancedSettings() {
         [record],
     );
 
-    return { loading, error, advancedSettings };
+    // Initial values for the TLP and Confidence fields of the "New ..." forms.
+    const formDefaults = useMemo(
+        () => ({
+            tlpV2Rating: advancedSettings.defaultTlpV2Rating,
+            confidence: advancedSettings.defaultConfidence,
+        }),
+        [advancedSettings],
+    );
+
+    return { loading, error, advancedSettings, formDefaults };
 }

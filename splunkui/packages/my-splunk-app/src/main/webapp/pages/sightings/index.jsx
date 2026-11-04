@@ -22,7 +22,7 @@ function WarningSightingsFeatureDisabled(){
 }
 
 function Router() {
-    const {loading, error, advancedSettings} = useAdvancedSettings();
+    const {loading, error, advancedSettings, formDefaults} = useAdvancedSettings();
     const queryParams = getUrlQueryParams();
     const sightingId = queryParams.get('sighting_id')
     let component = <ListSightings />;
@@ -30,10 +30,7 @@ function Router() {
     if (!advancedSettings.enableSightings){
         component = <WarningSightingsFeatureDisabled />;
     }else if (queryParams.has('action', 'create')) {
-        component = <CreateSighting defaults={{
-            tlpV2Rating: advancedSettings.defaultTlpV2Rating,
-            confidence: advancedSettings.defaultConfidence,
-        }} />;
+        component = <CreateSighting defaults={formDefaults} />;
     }else if(queryParams.has('action', 'edit')){
         component = <EditSighting sightingId={sightingId} />;
     }

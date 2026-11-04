@@ -14,7 +14,7 @@ import Modal from '@splunk/react-ui/Modal';
 import Button from '@splunk/react-ui/Button';
 import { urlForEditGrouping, VIEW_GROUPINGS_PAGE } from '@splunk/my-page/src/urls';
 import Loader from '@splunk/my-page/src/Loader';
-import { useAdvancedSettings } from '@splunk/my-page/src/hooks/useAdvancedSettings';
+import { useAdvancedSettings, DEFAULT_CONFIDENCE_FALLBACK } from '@splunk/my-page/src/hooks/useAdvancedSettings';
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import { HorizontalButtonLayout } from '@splunk/my-page/src/HorizontalButtonLayout';
 import DeleteButton from '@splunk/my-page/src/DeleteButton';
@@ -24,6 +24,7 @@ import useModal from '@splunk/my-page/src/useModal';
 import { DeleteGroupingModal } from '@splunk/my-page/src/DeleteModal';
 import PropTypes from 'prop-types';
 import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
+import { formDefaultsPropType } from './formDefaults';
 import { ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField } from './grouping_form/fields';
 import { useOnFormSubmit } from './formSubmit';
 import { usePageTitle } from './utils';
@@ -76,7 +77,7 @@ export function Form({existingGrouping, readOnly = false, defaults}) {
     const methods = useForm({
         mode: 'all',
         defaultValues: {
-            [FIELD_CONFIDENCE]: defaults?.confidence ?? 100,
+            [FIELD_CONFIDENCE]: defaults?.confidence ?? DEFAULT_CONFIDENCE_FALLBACK,
             [FORM_FIELD_TLP_V2_RATING]: defaults?.tlpV2Rating ?? '',
         }
     });
@@ -175,23 +176,16 @@ export function Form({existingGrouping, readOnly = false, defaults}) {
 Form.propTypes = {
     existingGrouping: PropTypes.object,
     readOnly: PropTypes.bool,
-    defaults: PropTypes.shape({
-        tlpV2Rating: PropTypes.string,
-        confidence: PropTypes.number,
-    }),
+    defaults: formDefaultsPropType,
 }
 
 function CreateModeForm() {
-    const {loading, advancedSettings} = useAdvancedSettings();
+    const {loading, formDefaults} = useAdvancedSettings();
     // A failure to load Advanced Settings must not block creating a grouping, so the
     // error is ignored and the form falls back to its built-in defaults.
-    const defaults = {
-        tlpV2Rating: advancedSettings.defaultTlpV2Rating,
-        confidence: advancedSettings.defaultConfidence,
-    };
     return (
         <Loader loading={loading}>
-            <Form defaults={defaults}/>
+            <Form defaults={formDefaults}/>
         </Loader>
     );
 }

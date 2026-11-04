@@ -137,14 +137,10 @@ const debugMode = false;
 
 function ComponentWithStoreContext({splunkEvent, initialSplunkFieldName}) {
     const {indicatorCategories, loading: loadingCategories} = useIndicatorCategories();
-    const {loading: loadingSettings, advancedSettings} = useAdvancedSettings();
-    const defaults = {
-        tlpV2Rating: advancedSettings.defaultTlpV2Rating,
-        confidence: advancedSettings.defaultConfidence,
-    };
+    const {loading: loadingSettings, formDefaults} = useAdvancedSettings();
     return <MaxWidthContainer>
         <Loader loading={loadingCategories || loadingSettings}>
-            <CommonPropertiesForm defaults={defaults}/>
+            <CommonPropertiesForm defaults={formDefaults}/>
             <Divider/>
             <DisplayIndicators splunkEvent={splunkEvent} initialSplunkFieldName={initialSplunkFieldName}
                                indicatorCategories={indicatorCategories}/>

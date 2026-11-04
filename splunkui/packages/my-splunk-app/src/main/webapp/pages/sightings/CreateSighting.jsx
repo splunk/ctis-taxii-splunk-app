@@ -1,7 +1,7 @@
 import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
 import React from 'react';
-import PropTypes from 'prop-types';
 import { usePageTitle } from '../../common/utils';
+import { formDefaultsPropType } from '../../common/formDefaults';
 import {Form} from './form';
 
 const PAGE_TITLE = 'New Sighting';
@@ -19,8 +19,5 @@ export default function CreateSighting({defaults}) {
 }
 
 CreateSighting.propTypes = {
-    defaults: PropTypes.shape({
-        tlpV2Rating: PropTypes.string,
-        confidence: PropTypes.number,
-    }),
+    defaults: formDefaultsPropType,
 };
