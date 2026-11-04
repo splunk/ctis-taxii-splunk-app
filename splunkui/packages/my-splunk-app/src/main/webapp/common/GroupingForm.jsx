@@ -14,6 +14,7 @@ import Modal from '@splunk/react-ui/Modal';
 import Button from '@splunk/react-ui/Button';
 import { urlForEditGrouping, VIEW_GROUPINGS_PAGE } from '@splunk/my-page/src/urls';
 import Loader from '@splunk/my-page/src/Loader';
+import { useAdvancedSettings, DEFAULT_CONFIDENCE_FALLBACK } from '@splunk/my-page/src/hooks/useAdvancedSettings';
 import { CustomControlGroup } from '@splunk/my-page/src/CustomControlGroup';
 import { HorizontalButtonLayout } from '@splunk/my-page/src/HorizontalButtonLayout';
 import DeleteButton from '@splunk/my-page/src/DeleteButton';
@@ -23,6 +24,7 @@ import useModal from '@splunk/my-page/src/useModal';
 import { DeleteGroupingModal } from '@splunk/my-page/src/DeleteModal';
 import PropTypes from 'prop-types';
 import { PageHeading, PageHeadingContainer } from '@splunk/my-page/src/PageHeading';
+import { formDefaultsPropType } from './formDefaults';
 import { ContextField, CreatedByField, DescriptionField, GroupingIdField, NameField } from './grouping_form/fields';
 import { useOnFormSubmit } from './formSubmit';
 import { usePageTitle } from './utils';
@@ -59,7 +61,7 @@ function GoToGroupingsButton() {
     return (<Button to={VIEW_GROUPINGS_PAGE} appearance="primary" label="Go to Groupings"/>);
 }
 
-export function Form({existingGrouping, readOnly = false}) {
+export function Form({existingGrouping, readOnly = false, defaults}) {
     if (readOnly && !existingGrouping) {
         throw new Error("existingGrouping is required when readOnly is true.");
     }
@@ -75,7 +77,8 @@ export function Form({existingGrouping, readOnly = false}) {
     const methods = useForm({
         mode: 'all',
         defaultValues: {
-            [FIELD_CONFIDENCE]: 100,
+            [FIELD_CONFIDENCE]: defaults?.confidence ?? DEFAULT_CONFIDENCE_FALLBACK,
+            [FORM_FIELD_TLP_V2_RATING]: defaults?.tlpV2Rating ?? '',
         }
     });
     const {register, setValue, handleSubmit, formState} = methods;
@@ -172,7 +175,19 @@ export function Form({existingGrouping, readOnly = false}) {
 
 Form.propTypes = {
     existingGrouping: PropTypes.object,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    defaults: formDefaultsPropType,
+}
+
+function CreateModeForm() {
+    const {loading, formDefaults} = useAdvancedSettings();
+    // A failure to load Advanced Settings must not block creating a grouping, so the
+    // error is ignored and the form falls back to its built-in defaults.
+    return (
+        <Loader loading={loading}>
+            <Form defaults={formDefaults}/>
+        </Loader>
+    );
 }
 
 function ExistingGroupingForm({groupingId, readOnly = false}) {
@@ -193,7 +208,7 @@ ExistingGroupingForm.propTypes = {
 }
 
 export default function GroupingForm({groupingId, readOnly = false}) {
-    return groupingId ? <ExistingGroupingForm readOnly={readOnly} groupingId={groupingId}/> : <Form/>;
+    return groupingId ? <ExistingGroupingForm readOnly={readOnly} groupingId={groupingId}/> : <CreateModeForm/>;
 }
 GroupingForm.propTypes = {
     groupingId: PropTypes.string,
