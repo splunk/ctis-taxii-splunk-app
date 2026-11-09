@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { DEFAULT_CONFIDENCE_FALLBACK } from '@splunk/my-page/src/hooks/useAdvancedSettings';
 import Loader from '@splunk/my-page/src/Loader';
 import { editSighting, getSighting, postCreateSighting, useGetRecord } from '@splunk/my-page/src/ApiClient';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -14,6 +15,7 @@ import { viewSighting } from '@splunk/my-page/src/urls';
 import CreatedByRef from '@splunk/my-page/src/controls/CreatedByRefFormControl';
 import { LabelsControlGroup } from '@splunk/my-page/src/controls/LabelsControlGroup';
 import { CheckboxControlGroup, RevokedCheckboxControlGroup } from '@splunk/my-page/src/controls/CheckboxControlGroup';
+import { formDefaultsPropType } from '../../common/formDefaults';
 import { usePageTitle } from '../../common/utils';
 import { ConfidenceField, FIELD_CONFIDENCE, FIELD_CONFIDENCE_OPTION } from '../../common/confidence';
 import {
@@ -69,19 +71,23 @@ function useExistingSighting(sightingId) {
     return { sighting, loading, error };
 }
 
-export function Form({ existingSighting = null }) {
+export function Form({ existingSighting = null, defaults }) {
     // Pass in an existingSighting object to use edit mode.
     // Otherwise, assumed to be in create-new mode.
     const editMode = existingSighting !== null;
     const pageTitle = editMode ? `Edit Sighting ${existingSighting.sighting_id}` : 'New Sighting';
     usePageTitle(pageTitle);
 
-    const formMethods = useForm({
-        mode: 'all', defaultValues: {
-            [FIELD_CONFIDENCE]: 100,
-            [FORM_FIELD_COUNT]: 1,
-        }
-    });
+    const defaultValues = {
+        [FIELD_CONFIDENCE]: defaults?.confidence ?? DEFAULT_CONFIDENCE_FALLBACK,
+        [FORM_FIELD_COUNT]: 1,
+    };
+    if(defaults?.tlpV2Rating){
+        // TLP is optional for a Sighting, so only set it when a default exists
+        defaultValues[FORM_FIELD_TLP_V2_RATING] = defaults.tlpV2Rating;
+    }
+
+    const formMethods = useForm({ mode: 'all', defaultValues });
     const { handleSubmit, register, setValue, watch, formState, trigger } = formMethods;
 
     const validateFirstSeenIsBeforeLastSeen = (val, fullFormValues) => {
@@ -182,7 +188,8 @@ export function Form({ existingSighting = null }) {
 }
 
 Form.propTypes = {
-    existingSighting: PropTypes.object
+    existingSighting: PropTypes.object,
+    defaults: formDefaultsPropType,
 };
 
 export function EditSightingForm({ existingSightingId = null }) {
