@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
       - name: Install Python dependencies
         run: pip install -r ./docs/ctis-taxii-splunk-app/requirements.txt
       - name: Build and deploy documentation
