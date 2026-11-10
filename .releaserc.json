@@ -11,7 +11,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "mkdocs build -v --config-file ./docs/ctis-taxii-splunk-app/mkdocs.yml && mv docs/ctis-taxii-splunk-app/site/documentation.pdf $GITHUB_WORKSPACE/dist/ctis-taxii-splunk-app-documentation-v${nextRelease.version}.pdf"
+        "prepareCmd": "PATH=$GITHUB_WORKSPACE/.venv-docs/bin:$PATH mkdocs build -v --config-file ./docs/ctis-taxii-splunk-app/mkdocs.yml && mv docs/ctis-taxii-splunk-app/site/documentation.pdf $GITHUB_WORKSPACE/dist/ctis-taxii-splunk-app-documentation-v${nextRelease.version}.pdf"
       }
     ],
     [
