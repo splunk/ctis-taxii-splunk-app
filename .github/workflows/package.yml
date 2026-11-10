@@ -83,6 +83,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.9'
+      - name: Show Python Version
+        run: which python && python --version
       - name: Create dist directory
         run: mkdir -p dist && pwd && ls -l
       - name: Release
