@@ -86,11 +86,18 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
+      # Python 3.9 is used for the Splunk app build. Python 3.13 is needed for mkdocs (docs PDF).
+      # The last version listed becomes the default `python` on PATH.
+      # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#specifying-multiple-pythonpypy-versions
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: |
+            3.13
+            3.9
       - name: Show Python Version
-        run: which python && python --version
+        run: |
+          which python && python --version
+          which python3.13 && python3.13 --version
       - name: Create dist directory
         run: mkdir -p dist && pwd && ls -l
       - name: Release
@@ -98,8 +105,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Using .releaserc.json to configure semantic-release
         run: |
-          pip install -r ./docs/ctis-taxii-splunk-app/requirements.txt
-          playwright install chromium --with-deps
+          python3.13 -m venv .venv-docs
+          .venv-docs/bin/pip install -r ./docs/ctis-taxii-splunk-app/requirements.txt
+          .venv-docs/bin/playwright install chromium --with-deps
           npm install @semantic-release/exec
           npx semantic-release
 
