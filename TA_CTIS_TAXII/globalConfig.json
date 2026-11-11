@@ -205,6 +205,14 @@
                             "alwaysDisplay": true
                         }
                     },
+                    "groups": [
+                        {
+                            "label": "Submission Criteria (Enforce requirements on any objects to be submitted)",
+                            "fields": [
+                                "tlp_2_0_submission_allowlist"
+                            ]
+                        }
+                    ],
                     "entity": [
                         {
                             "type": "singleSelect",
@@ -278,6 +286,37 @@
                                     "errorMsg": "Confidence must be an integer between 0 and 100"
                                 }
                             ]
+                        },
+                        {
+                            "type": "multipleSelect",
+                            "field": "tlp_2_0_submission_allowlist",
+                            "label": "TLP 2.0 Submission Allowed Values",
+                            "defaultValue": "TLP:RED|TLP:AMBER|TLP:AMBER+STRICT|TLP:GREEN|TLP:CLEAR",
+                            "options": {
+                                "delimiter": "|",
+                                "items": [
+                                    {
+                                        "value": "TLP:RED",
+                                        "label": "TLP:RED"
+                                    },
+                                    {
+                                        "value": "TLP:AMBER",
+                                        "label": "TLP:AMBER"
+                                    },
+                                    {
+                                        "value": "TLP:AMBER+STRICT",
+                                        "label": "TLP:AMBER+STRICT"
+                                    },
+                                    {
+                                        "value": "TLP:GREEN",
+                                        "label": "TLP:GREEN"
+                                    },
+                                    {
+                                        "value": "TLP:CLEAR",
+                                        "label": "TLP:CLEAR"
+                                    }
+                                ]
+                            }
                         }
                     ],
                     "title": "Advanced Settings"
@@ -452,7 +491,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.37.0+5e33bfd",
+        "version": "1.38.0+fdec25c",
         "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.10",
         "supportedThemes": [
