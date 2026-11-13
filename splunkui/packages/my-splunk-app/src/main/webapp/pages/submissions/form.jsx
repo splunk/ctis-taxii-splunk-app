@@ -219,6 +219,7 @@ export function Form({ groupingId }) {
                     <PreviewStixBundleJson
                         groupingId={groupingId}
                         includeSightings={includeSightings}
+                        advancedSettings={advancedSettings}
                     />
                 </Loader>
             </StyledForm>
