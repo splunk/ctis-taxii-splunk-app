@@ -205,6 +205,15 @@
                             "alwaysDisplay": true
                         }
                     },
+                    "groups": [
+                        {
+                            "label": "Submission Criteria (Enforce requirements on any objects to be submitted)",
+                            "fields": [
+                                "tlp_2_0_submission_allowlist",
+                                "min_confidence_for_submission"
+                            ]
+                        }
+                    ],
                     "entity": [
                         {
                             "type": "singleSelect",
@@ -276,6 +285,55 @@
                                     ],
                                     "isInteger": true,
                                     "errorMsg": "Confidence must be an integer between 0 and 100"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "multipleSelect",
+                            "field": "tlp_2_0_submission_allowlist",
+                            "label": "TLP 2.0 Allowed Values",
+                            "defaultValue": "TLP:RED|TLP:AMBER|TLP:AMBER+STRICT|TLP:GREEN|TLP:CLEAR",
+                            "options": {
+                                "delimiter": "|",
+                                "items": [
+                                    {
+                                        "value": "TLP:RED",
+                                        "label": "TLP:RED"
+                                    },
+                                    {
+                                        "value": "TLP:AMBER",
+                                        "label": "TLP:AMBER"
+                                    },
+                                    {
+                                        "value": "TLP:AMBER+STRICT",
+                                        "label": "TLP:AMBER+STRICT"
+                                    },
+                                    {
+                                        "value": "TLP:GREEN",
+                                        "label": "TLP:GREEN"
+                                    },
+                                    {
+                                        "value": "TLP:CLEAR",
+                                        "label": "TLP:CLEAR"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "field": "min_confidence_for_submission",
+                            "label": "Minimum Confidence",
+                            "defaultValue": 0,
+                            "help": "Minimum confidence rating (0 to 100) required for objects to be submitted.",
+                            "validators": [
+                                {
+                                    "type": "number",
+                                    "range": [
+                                        0,
+                                        100
+                                    ],
+                                    "isInteger": true,
+                                    "errorMsg": "Minimum Confidence must be an integer between 0 and 100"
                                 }
                             ]
                         }
@@ -452,7 +510,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.37.0+5e33bfd",
+        "version": "1.38.0+6d70b74",
         "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.10",
         "supportedThemes": [
