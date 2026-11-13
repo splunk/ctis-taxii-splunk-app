@@ -15,6 +15,7 @@ import P from '@splunk/react-ui/Paragraph';
 import { isString } from 'lodash';
 import { useDebounce } from '@splunk/my-page/src/debounce';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
+import { analyzeBundle } from '@splunk/my-page/src/stixBundleSubmissionCriteria';
 import {
     GroupingId,
     ScheduledAt,
@@ -40,6 +41,7 @@ import { DebugForm } from './debugForm';
 import { SwitchContainer } from './switchContainer';
 import { IncludeSightingsControlGroup } from './includeSightingsControlGroup';
 import { PreviewStixBundleJson } from './previewStixBundleJson';
+import { useStixBundlePreview } from './hooks/useStixBundlePreview';
 
 const StyledForm = styled.form`
     max-width: 1000px;
@@ -133,14 +135,38 @@ export function Form({ groupingId }) {
         setValue(FIELD_INCLUDE_SIGHTINGS, includeSightings);
     }, [includeSightings, setValue]);
 
+    const {
+        loading: bundlePreviewLoading,
+        error: bundlePreviewError,
+        bundleJsonString,
+        bundle,
+    } = useStixBundlePreview(groupingId, includeSightings);
+    const { minConfidenceForSubmission, tlpSubmissionAllowlist } = advancedSettings;
+    const submissionCriteriaViolations = useMemo(() => {
+        if (!bundle) {
+            return [];
+        }
+        return analyzeBundle(bundle, {
+            minConfidence: minConfidenceForSubmission,
+            tlpAllowlist: tlpSubmissionAllowlist,
+        }).violations;
+    }, [bundle, minConfidenceForSubmission, tlpSubmissionAllowlist]);
+
     const submitButtonDisabled = useMemo(
         () =>
             Object.keys(formState.errors).length > 0 ||
             collectionValidationLoading ||
             collectionOptionsLoading ||
             formState.isSubmitting ||
+            submitSuccess ||
+            submissionCriteriaViolations.length > 0,
+        [
             submitSuccess,
-        [submitSuccess, formState, collectionValidationLoading, collectionOptionsLoading],
+            formState,
+            collectionValidationLoading,
+            collectionOptionsLoading,
+            submissionCriteriaViolations,
+        ],
     );
 
     return (
@@ -217,9 +243,10 @@ export function Form({ groupingId }) {
                         </HorizontalButtonLayout>
                     </CustomControlGroup>
                     <PreviewStixBundleJson
-                        groupingId={groupingId}
-                        includeSightings={includeSightings}
-                        advancedSettings={advancedSettings}
+                        loading={bundlePreviewLoading}
+                        error={bundlePreviewError}
+                        bundleJsonString={bundleJsonString}
+                        violations={submissionCriteriaViolations}
                     />
                 </Loader>
             </StyledForm>
