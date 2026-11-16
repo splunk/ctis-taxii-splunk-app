@@ -189,9 +189,6 @@ export function Form({ groupingId }) {
                             fieldName={FIELD_TAXII_CONFIG_NAME}
                             options={taxiiConfigOptions}
                         />
-                        {/* <Code language="json" value={JSON.stringify(advancedSettings, null, 4)}/> */}
-                        {/* <Code language="json" value={JSON.stringify(selectedTaxiiConfigContent, null, 4)}/> */}
-
                         {shouldDiscoverTaxiiCollections && (
                             <TaxiiCollectionIdDropdown
                                 loading={collectionOptionsLoading}

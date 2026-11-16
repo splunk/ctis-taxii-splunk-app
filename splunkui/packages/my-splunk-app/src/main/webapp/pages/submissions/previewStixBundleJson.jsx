@@ -18,7 +18,7 @@ function SubmissionCriteriaError({ violations }) {
     }
     return (
         <Message appearance="fill" type="error">
-            <Message.Title>Submission Criteria set by the admin is in violation</Message.Title>
+            <Message.Title>Submission Criteria set by the Admin is in violation</Message.Title>
             <ul>
                 {violations.map((violation) => (
                     <li key={violation.id}>
