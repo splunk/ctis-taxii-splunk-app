@@ -207,7 +207,14 @@
                     },
                     "groups": [
                         {
-                            "label": "Submission Criteria (Enforce requirements on any objects to be submitted)",
+                            "label": "Default Values (Applied to new objects)",
+                            "fields": [
+                                "default_tlp_v2_rating",
+                                "default_confidence"
+                            ]
+                        },
+                        {
+                            "label": "Submission Criteria (Enforce requirements on objects)",
                             "fields": [
                                 "tlp_2_0_submission_allowlist",
                                 "min_confidence_for_submission"
@@ -510,7 +517,7 @@
     "meta": {
         "name": "TA_CTIS_TAXII",
         "restRoot": "TA_CTIS_TAXII",
-        "version": "1.38.0+e5194dd",
+        "version": "1.38.0+07a7e7b",
         "displayName": "CTIS TAXII App",
         "schemaVersion": "0.0.10",
         "supportedThemes": [
