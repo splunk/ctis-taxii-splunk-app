@@ -15,7 +15,6 @@ import P from '@splunk/react-ui/Paragraph';
 import { isString } from 'lodash';
 import { useDebounce } from '@splunk/my-page/src/debounce';
 import { shouldUseDebugMode } from '@splunk/my-page/src/queryParams';
-import { analyzeBundle } from '@splunk/my-page/src/stixBundleSubmissionCriteria';
 import {
     GroupingId,
     ScheduledAt,
@@ -41,7 +40,7 @@ import { DebugForm } from './debugForm';
 import { SwitchContainer } from './switchContainer';
 import { IncludeSightingsControlGroup } from './includeSightingsControlGroup';
 import { PreviewStixBundleJson } from './previewStixBundleJson';
-import { useStixBundlePreview } from './hooks/useStixBundlePreview';
+import { useSubmissionCriteriaCheck } from './hooks/useSubmissionCriteriaCheck';
 
 const StyledForm = styled.form`
     max-width: 1000px;
@@ -139,18 +138,8 @@ export function Form({ groupingId }) {
         loading: bundlePreviewLoading,
         error: bundlePreviewError,
         bundleJsonString,
-        bundle,
-    } = useStixBundlePreview(groupingId, includeSightings);
-    const { minConfidenceForSubmission, tlpSubmissionAllowlist } = advancedSettings;
-    const submissionCriteriaViolations = useMemo(() => {
-        if (!bundle) {
-            return [];
-        }
-        return analyzeBundle(bundle, {
-            minConfidence: minConfidenceForSubmission,
-            tlpAllowlist: tlpSubmissionAllowlist,
-        }).violations;
-    }, [bundle, minConfidenceForSubmission, tlpSubmissionAllowlist]);
+        violations: submissionCriteriaViolations,
+    } = useSubmissionCriteriaCheck(groupingId, includeSightings, advancedSettings);
 
     const submitButtonDisabled = useMemo(
         () =>
