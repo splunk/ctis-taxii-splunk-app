@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { variables } from '@splunk/themes';
+import List from '@splunk/react-ui/List';
 
 const Container = styled.div`
     display: flex;
@@ -19,15 +20,19 @@ function SubmissionCriteriaError({ violations }) {
     return (
         <Message appearance="fill" type="error">
             <Message.Title>Submission Criteria set by the Admin is in violation</Message.Title>
-            <ul>
+            <List>
                 {violations.map((violation) => (
-                    <li key={violation.id}>
+                    <List.Item key={violation.id}>
                         {violation.type}
                         {violation.name ? ` "${violation.name}"` : ''} ({violation.id}):{' '}
-                        {violation.reasons.join('; ')}
-                    </li>
+                        <List>
+                            {violation.reasons.map((reason) => (
+                                <List.Item key={reason}>{reason}</List.Item>
+                            ))}
+                        </List>
+                    </List.Item>
                 ))}
-            </ul>
+            </List>
         </Message>
     );
 }
