@@ -1,9 +1,10 @@
+import { isNil } from 'lodash';
 import { useMemo } from 'react';
 import { analyzeBundle } from '@splunk/my-page/src/stixBundleSubmissionCriteria';
 import { useStixBundlePreview } from './useStixBundlePreview';
 
 export function useSubmissionCriteriaCheck(groupingId, includeSightings, advancedSettings) {
-    const { loading, error, bundleJsonString, bundle } = useStixBundlePreview(
+    const { loading, error, isStale, bundleJsonString, bundle } = useStixBundlePreview(
         groupingId,
         includeSightings,
     );
@@ -19,5 +20,8 @@ export function useSubmissionCriteriaCheck(groupingId, includeSightings, advance
         }).violations;
     }, [bundle, minConfidenceForSubmission, tlpSubmissionAllowlist]);
 
-    return { loading, error, bundleJsonString, violations };
+    // True only when a bundle for the current grouping/sightings choice has loaded without error.
+    const isCheckComplete = !loading && !isStale && !error && !isNil(bundle);
+
+    return { loading, error, bundleJsonString, violations, isCheckComplete };
 }

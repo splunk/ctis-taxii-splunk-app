@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 export function useStixBundlePreview(groupingId, includeSightings = false) {
     const [bundleJsonString, setBundleJsonString] = useState(null);
-    const { loading, record, error } = useGetRecord({
+    const { loading, record, error, isStale } = useGetRecord({
         restGetFunction: getStixBundleForGrouping,
         restFunctionQueryArgs: { groupingId, includeSightings },
     });
@@ -13,5 +13,5 @@ export function useStixBundlePreview(groupingId, includeSightings = false) {
             setBundleJsonString(JSON.stringify(record.bundle, null, 4));
         }
     }, [record]);
-    return { loading, error, bundleJsonString, bundle: record?.bundle };
+    return { loading, error, isStale, bundleJsonString, bundle: record?.bundle };
 }

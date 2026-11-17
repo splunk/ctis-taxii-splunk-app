@@ -433,6 +433,9 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
     const [record, setRecord] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    // The (stringified) query args of the most recent response. Used to tell whether `record`
+    // belongs to the current args, since args are debounced and responses can arrive late.
+    const [loadedKey, setLoadedKey] = useState(null);
 
     const debouncedQueryArgs = useDebounce(JSON.stringify(restFunctionQueryArgs), 100);
     useEffect(() => {
@@ -443,18 +446,22 @@ export function useGetRecord({restGetFunction, restFunctionQueryArgs}) {
             successHandler: (resp) => {
                 console.log("Response:", resp);
                 setRecord(resp);
+                setLoadedKey(debouncedQueryArgs);
                 setLoading(false);
             },
             errorHandler: async (_error) => {
                 const errorText = await errorToText(_error);
                 setError(errorText);
                 console.error(errorText, _error);
+                setLoadedKey(debouncedQueryArgs);
                 setLoading(false);
             }
         });
         // TODO: return a cleanup function which cancels in-flight requests
     }, [debouncedQueryArgs, restGetFunction]);
-    return {record, loading, error};
+    // True until a response for the current query args has arrived (covers the debounce delay too).
+    const isStale = loadedKey !== JSON.stringify(restFunctionQueryArgs);
+    return {record, loading, error, isStale};
 }
 
 export function getIndicator({indicatorId, successHandler, errorHandler}) {

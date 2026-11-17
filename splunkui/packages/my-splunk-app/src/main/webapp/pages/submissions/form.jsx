@@ -139,6 +139,7 @@ export function Form({ groupingId }) {
         error: bundlePreviewError,
         bundleJsonString,
         violations: submissionCriteriaViolations,
+        isCheckComplete: submissionCriteriaCheckComplete,
     } = useSubmissionCriteriaCheck(groupingId, includeSightings, advancedSettings);
 
     const submitButtonDisabled = useMemo(
@@ -148,12 +149,14 @@ export function Form({ groupingId }) {
             collectionOptionsLoading ||
             formState.isSubmitting ||
             submitSuccess ||
+            !submissionCriteriaCheckComplete ||
             submissionCriteriaViolations.length > 0,
         [
             submitSuccess,
             formState,
             collectionValidationLoading,
             collectionOptionsLoading,
+            submissionCriteriaCheckComplete,
             submissionCriteriaViolations,
         ],
     );
