@@ -40,6 +40,7 @@ import { DebugForm } from './debugForm';
 import { SwitchContainer } from './switchContainer';
 import { IncludeSightingsControlGroup } from './includeSightingsControlGroup';
 import { PreviewStixBundleJson } from './previewStixBundleJson';
+import { useSubmissionCriteriaCheck } from './hooks/useSubmissionCriteriaCheck';
 
 const StyledForm = styled.form`
     max-width: 1000px;
@@ -133,14 +134,31 @@ export function Form({ groupingId }) {
         setValue(FIELD_INCLUDE_SIGHTINGS, includeSightings);
     }, [includeSightings, setValue]);
 
+    const {
+        loading: bundlePreviewLoading,
+        error: bundlePreviewError,
+        bundleJsonString,
+        violations: submissionCriteriaViolations,
+        isCheckComplete: submissionCriteriaCheckComplete,
+    } = useSubmissionCriteriaCheck(groupingId, includeSightings, advancedSettings);
+
     const submitButtonDisabled = useMemo(
         () =>
             Object.keys(formState.errors).length > 0 ||
             collectionValidationLoading ||
             collectionOptionsLoading ||
             formState.isSubmitting ||
+            submitSuccess ||
+            !submissionCriteriaCheckComplete ||
+            submissionCriteriaViolations.length > 0,
+        [
             submitSuccess,
-        [submitSuccess, formState, collectionValidationLoading, collectionOptionsLoading],
+            formState,
+            collectionValidationLoading,
+            collectionOptionsLoading,
+            submissionCriteriaCheckComplete,
+            submissionCriteriaViolations,
+        ],
     );
 
     return (
@@ -163,9 +181,6 @@ export function Form({ groupingId }) {
                             fieldName={FIELD_TAXII_CONFIG_NAME}
                             options={taxiiConfigOptions}
                         />
-                        {/* <Code language="json" value={JSON.stringify(advancedSettings, null, 4)}/> */}
-                        {/* <Code language="json" value={JSON.stringify(selectedTaxiiConfigContent, null, 4)}/> */}
-
                         {shouldDiscoverTaxiiCollections && (
                             <TaxiiCollectionIdDropdown
                                 loading={collectionOptionsLoading}
@@ -217,8 +232,10 @@ export function Form({ groupingId }) {
                         </HorizontalButtonLayout>
                     </CustomControlGroup>
                     <PreviewStixBundleJson
-                        groupingId={groupingId}
-                        includeSightings={includeSightings}
+                        loading={bundlePreviewLoading}
+                        error={bundlePreviewError}
+                        bundleJsonString={bundleJsonString}
+                        violations={submissionCriteriaViolations}
                     />
                 </Loader>
             </StyledForm>

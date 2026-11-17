@@ -14,6 +14,23 @@ function parseDefaultConfidence(value) {
     return isValid ? confidence : DEFAULT_CONFIDENCE_FALLBACK;
 }
 
+function parseMinConfidenceForSubmission(value) {
+    const confidence = Number(value);
+    const isValid = value !== undefined && value !== null && value !== '' && Number.isInteger(confidence) && confidence >= 0 && confidence <= 100;
+    return isValid ? confidence : 0;
+}
+
+// Values are '|' delimited. A missing/empty/unrecognised value means "all TLP values allowed",
+// matching the globalConfig default.
+function parseTlpSubmissionAllowlist(value) {
+    const allTlpValues = tlpV2RatingOptions.map((option) => option.value);
+    if (typeof value !== 'string' || value === '') {
+        return allTlpValues;
+    }
+    const allowed = value.split('|').filter((v) => allTlpValues.includes(v));
+    return allowed.length > 0 ? allowed : allTlpValues;
+}
+
 export function useAdvancedSettings() {
     const { loading, record, error } = useGetRecord({
         restGetFunction: getAdvancedSettings,
@@ -27,6 +44,8 @@ export function useAdvancedSettings() {
             enableSightings: record?.enable_sightings === '1',
             defaultTlpV2Rating: parseDefaultTlpV2Rating(record?.default_tlp_v2_rating),
             defaultConfidence: parseDefaultConfidence(record?.default_confidence),
+            minConfidenceForSubmission: parseMinConfidenceForSubmission(record?.min_confidence_for_submission),
+            tlpSubmissionAllowlist: parseTlpSubmissionAllowlist(record?.tlp_2_0_submission_allowlist),
         }),
         [record],
     );
