@@ -53,26 +53,26 @@ Username/password authentication is supported.
 
 ## Advanced Settings
 
-Advanced settings are all optional.
+![Advanced Settings](img/advanced_settings_v2.png)
 
+Advanced settings are all optional. Click **Save** after making changes.
 
-- **Default TAXII Configuration:** You can configure a default TAXII server configuration which is used for submissions.
+- **Default TAXII Configuration:** You can configure a default TAXII server configuration which is used for submissions. Choose an existing TAXII server configuration from the dropdown.
 - **Enable Sightings Feature:** This is an optional feature that allows users to create sightings of indicators. Sightings can be included in Bundle submissions to the TAXII server. Note: Not intended for ASD CTIS partners.
 - **Enable Indicators Cleanup Job:** Enables periodic cleanup of indicators that have been marked as 'revoked' or have passed their `valid_until` timestamp.
 
 ### Default Values
-Available in version `1.39.0`.
+Available from version `1.39.0`.
 
-Default values can be set by the app admin for both TLP 2.0 marking and confidence level.
+The app admin can set a default TLP 2.0 marking and a default confidence rating (0 to 100). These defaults are applied to new objects.
 
 ### Submission Criteria
-Available in version `1.39.0`.
+Available from version `1.39.0`.
 
-The app admin can configure a validation criteria for objects to be submitted to the TAXII server.
+The app admin can configure validation criteria for objects to be submitted to the TAXII server.
 An allowlist of TLP 2.0 values as well as a minimum confidence level can be configured.
 
 Bundles that contain objects that do not meet the criteria will be prevented from being submitted to the TAXII server.
 
-![Advanced Settings](img/advanced_settings_v2.png)
 
 
