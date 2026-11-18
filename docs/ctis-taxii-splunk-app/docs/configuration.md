@@ -30,30 +30,18 @@ If you select 'Basic' authentication, you will be prompted to enter a username a
 If you select 'API Key/Bearer Token' authentication, you will be prompted to enter the 'HTTP Header Name' and 'HTTP Header Value' for authentication.
 ![Add Config with Custom Auth](img/configuration_custom_auth.png)
 
+**TAXII Collection Discovery**: This should be enabled, unless your TAXII server credential does not have permission to access the `GET {api_root}/collections` endpoint.
+
+**Default Collection ID**: Is only required if TAXII Collection Discovery is disabled. This should be the default collection ID that you want to submit STIX bundles to.
+
 Clicking on **Add** will verify the connection to the TAXII server including network connectivity and authentication.
-
-
-## Additional Configuration
-
-### Optional TAXII Configuration fields to configure
-
-- TAXII Collection Discovery: This should be enabled, unless your TAXII server credential does not have permission to access the `GET {api_root}/collections` endpoint.
-- Default Collection ID: Is only required if TAXII Collection Discovery is disabled. This should be the default collection ID that you want to submit STIX bundles to.
 
 Authentication is verified by making a GET request to the TAXII server:
 
 - If 'TAXII Collection Discovery' is enabled, a GET request is made to `{api_root}/collections`.
 - Otherwise a GET request is made to `{api_root}/collections/{default_collection_id}`.
 
-### Default TAXII Configuration
-You can configure a default TAXII server configuration which is used for submissions.
-
-To configure this go to the 'Advanced Settings' tab.
-
-Choose an existing TAXII server configuration from the 'Default TAXII Configuration' dropdown and click 'Save'.
-![Advanced Settings](img/advanced_settings.png)
-
-### Proxy Server
+## Proxy Server
 Proxy server configuration is supported. TAXII server requests can be routed through a `http://` or `https://` proxy URL.
 To configure a proxy server, navigate to the 'Proxy' configuration tab.
 
@@ -62,3 +50,29 @@ To configure a proxy server, navigate to the 'Proxy' configuration tab.
 Username/password authentication is supported.
 
 ![Proxy Config](img/configuration_proxy.png)
+
+## Advanced Settings
+
+Advanced settings are all optional.
+
+
+- **Default TAXII Configuration:** You can configure a default TAXII server configuration which is used for submissions.
+- **Enable Sightings Feature:** This is an optional feature that allows users to create sightings of indicators. Sightings can be included in Bundle submissions to the TAXII server. Note: Not intended for ASD CTIS partners.
+- **Enable Indicators Cleanup Job:** Enables periodic cleanup of indicators that have been marked as 'revoked' or have passed their `valid_until` timestamp.
+
+### Default Values
+Available in version `1.39.0`.
+
+Default values can be set by the app admin for both TLP 2.0 marking and confidence level.
+
+### Submission Criteria
+Available in version `1.39.0`.
+
+The app admin can configure a validation criteria for objects to be submitted to the TAXII server.
+An allowlist of TLP 2.0 values as well as a minimum confidence level can be configured.
+
+Bundles that contain objects that do not meet the criteria will be prevented from being submitted to the TAXII server.
+
+![Advanced Settings](img/advanced_settings_v2.png)
+
+
